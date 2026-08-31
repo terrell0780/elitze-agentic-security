@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ink-950: #07040a;
+  --color-ink-900: #0c060c;
+  --color-ink-800: #140910;
+  --color-ink-700: #1c0d14;
+  --color-ink-600: #2a121c;
+  --color-cyber-400: #f87171;
+  --color-cyber-500: #ef4444;
+  --color-signal-400: #fb7185;
+  --color-signal-500: #e11d48;
+  --color-alert-400: #fbbf24;
+  --color-danger-400: #f87171;
+  --color-danger-500: #ef4444;
+  --color-ember-300: #fca5a5;
+  --color-ember-400: #f87171;
+  --color-ember-500: #ef4444;
+  --color-ember-600: #dc2626;
+  --color-ember-700: #b91c1c;
+  --color-bronze-400: #d4a574;
+  --color-bronze-500: #c4925a;
+}
+
+html, body {
+  background: #07040a;
+}
+
+body {
+  background-image:
+    radial-gradient(1200px 600px at 80% -10%, rgba(239, 68, 68, 0.14), transparent 60%),
+    radial-gradient(900px 500px at -10% 20%, rgba(185, 28, 28, 0.10), transparent 60%),
+    radial-gradient(700px 500px at 50% 110%, rgba(127, 29, 29, 0.12), transparent 60%),
+    radial-gradient(600px 400px at 50% 40%, rgba(212, 165, 116, 0.04), transparent 55%);
+  background-attachment: fixed;
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(248, 113, 113, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(248, 113, 113, 0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+.glow-red {
+  box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.35),
+    0 10px 40px -10px rgba(239, 68, 68, 0.45);
+}
+
+.glow-ember {
+  box-shadow: 0 0 0 1px rgba(248, 113, 113, 0.3),
+    0 10px 40px -10px rgba(220, 38, 38, 0.4);
+}
+
+.border-glow {
+  position: relative;
+}
+.border-glow::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    rgba(239, 68, 68, 0.6),
+    rgba(212, 165, 116, 0.35) 40%,
+    transparent 70%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.pulse-soft { animation: pulse-soft 2.4s ease-in-out infinite; }
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 12px rgba(239, 68, 68, 0.4); }
+  50% { box-shadow: 0 0 28px rgba(239, 68, 68, 0.75); }
+}
+.pulse-glow { animation: pulse-glow 2.8s ease-in-out infinite; }
+
+@keyframes scan {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(2000%); }
+}
+.scanline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.7), transparent);
+  animation: scan 6s linear infinite;
+}
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.blink { animation: blink 1.1s steps(1) infinite; }
+
+@keyframes dash {
+  to { stroke-dashoffset: -40; }
+}
+.dash { animation: dash 2s linear infinite; }
+
+@keyframes eye-pulse {
+  0%, 100% { filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.5)); }
+  50% { filter: drop-shadow(0 0 22px rgba(239, 68, 68, 0.9)); }
+}
+.eye-pulse { animation: eye-pulse 3s ease-in-out infinite; }
+
+.scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(248, 113, 113, 0.25); border-radius: 3px; }
