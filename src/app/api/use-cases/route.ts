@@ -1,8 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
 import { getDb } from "@/db";
 import { agentIntegrations, godsEyeFindings, useCases } from "@/db/schema";
-import { authorizeInternalRequest } from "@/lib/security/policy";
 import { asc, eq, sql } from "drizzle-orm";
+import { NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -10,7 +9,9 @@ export const runtime = "nodejs";
 export async function GET(request: Request) {
   try {
     const db = getDb();
-    const category = new URL(request.url).searchParams.get("category")?.trim();
+    const { searchParams } = new URL(request.url);
+    const category = searchParams.get("category");
+
     const [cases, integrations, findings, stats] = await Promise.all([
       category
         ? db.select().from(useCases).where(eq(useCases.category, category)).orderBy(asc(useCases.sortOrder))
@@ -26,6 +27,7 @@ export async function GET(request: Request) {
           (SELECT count(*) FROM gods_eye_findings WHERE severity IN ('critical','high')) AS high_findings
       `),
     ]);
+
     const s = (stats.rows[0] ?? {}) as Record<string, string | number>;
     return NextResponse.json({
       ok: true,
@@ -39,29 +41,14 @@ export async function GET(request: Request) {
       useCases: cases,
       integrations,
       findings,
+      industries: ["Financial services", "Healthcare", "Government", "SaaS and technology", "Retail and commerce", "Telecommunications", "Manufacturing", "Security operations"],
     });
   } catch (error) {
-    console.error("ELITZE use-case data load failed", error);
-    return NextResponse.json({ ok: false, error: "use_case_data_unavailable" }, { status: 503 });
+    console.error("ELITZE use-case load failed", error);
+    return NextResponse.json({ ok: false, error: "use_cases_unavailable" }, { status: 503 });
   }
 }
 
-export async function POST(request: NextRequest) {
-  if (!authorizeInternalRequest(request.headers.get("x-elitze-api-key"), process.env.ELITZE_INTERNAL_API_KEY)) {
-    return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
-  }
-  let body: unknown;
-  try { body = await request.json(); } catch { return NextResponse.json({ ok: false, error: "invalid_json" }, { status: 400 }); }
-  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, error: "invalid_request" }, { status: 400 });
-  const { action, id } = body as { action?: unknown; id?: unknown };
-  if (action !== "resolve-finding" || !Number.isInteger(id) || Number(id) < 1) {
-    return NextResponse.json({ ok: false, error: "invalid_action" }, { status: 400 });
-  }
-  try {
-    await getDb().update(godsEyeFindings).set({ status: "resolved" }).where(eq(godsEyeFindings.id, id as number));
-    return NextResponse.json({ ok: true });
-  } catch (error) {
-    console.error("ELITZE finding mutation failed", error);
-    return NextResponse.json({ ok: false, error: "mutation_failed" }, { status: 503 });
-  }
+export async function POST(request: Request) {
+  return NextResponse.json({ ok: false, error: "mutation_requires_internal_control_plane" }, { status: 401 });
 }
