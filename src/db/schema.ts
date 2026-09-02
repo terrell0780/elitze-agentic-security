@@ -11,7 +11,7 @@ import {
 } from "drizzle-orm/pg-core";
 
 export { useCases, agentIntegrations, godsEyeFindings } from "./use-cases-schema";
-export { crmContacts, crmActions, topAgents } from "./crm-schema";
+export { crmContacts, crmActions } from "./crm-schema";
 export { dataSources, insights } from "./data-hub-schema";
 
 export const agents = pgTable("agents", {
@@ -84,7 +84,6 @@ export const marketGaps = pgTable("market_gaps", {
   differentiator: boolean("differentiator").notNull().default(false),
 });
 
-/** Non-human and machine identities bound to agents, tools, workloads and credentials. */
 export const securityIdentities = pgTable("security_identities", {
   id: serial("id").primaryKey(),
   subject: varchar("subject", { length: 200 }).notNull().unique(),

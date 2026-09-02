@@ -1,0 +1,7 @@
+ALTER TABLE IF EXISTS top_agents DROP COLUMN IF EXISTS has_langgraph;
+ALTER TABLE IF EXISTS top_agents DROP COLUMN IF EXISTS has_bini_claws;
+ALTER TABLE IF EXISTS top_agents DROP COLUMN IF EXISTS reasoning_type;
+ALTER TABLE IF EXISTS top_agents DROP COLUMN IF EXISTS mythos_skills;
+ALTER TABLE IF EXISTS top_agents DROP COLUMN IF EXISTS search_domain;
+
+DROP TABLE IF EXISTS top_agents;

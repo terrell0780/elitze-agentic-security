@@ -9,11 +9,11 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-/** Full Security CRM for agents, customers, threats, and actions */
+/** Security CRM for customers, security contacts, and operational actions. */
 export const crmContacts = pgTable("crm_contacts", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 200 }).notNull(),
-  role: varchar("role", { length: 120 }).notNull(), // agent_owner | customer | security_lead | auditor | vendor
+  role: varchar("role", { length: 120 }).notNull(),
   organization: varchar("org", { length: 160 }).notNull(),
   emailDomain: varchar("email_domain", { length: 120 }),
   associatedAgents: jsonb("agents").$type<string[]>().notNull().default([]),
@@ -28,25 +28,8 @@ export const crmActions = pgTable("crm_actions", {
   id: serial("id").primaryKey(),
   contactId: integer("contact_id").notNull(),
   agentSlug: varchar("agent_slug", { length: 160 }),
-  actionType: varchar("action_type", { length: 80 }).notNull(), // discovery | approval | killswitch | audit_request | redteam
+  actionType: varchar("action_type", { length: 80 }).notNull(),
   status: varchar("status", { length: 40 }).notNull().default("pending"),
   result: text("result"),
-  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
-
-/** Top-level agent hierarchy with reasoning layers */
-export const topAgents = pgTable("top_agents", {
-  id: serial("id").primaryKey(),
-  name: varchar("name", { length: 200 }).notNull(),
-  slug: varchar("slug", { length: 120 }).notNull().unique(),
-  tier: integer("tier").notNull(), // 1 = root/archetype, 2 = reasoning, 3 = execution, 4 = skill/tool
-  parentSlug: varchar("parent_slug", { length: 120 }),
-  framework: varchar("framework", { length: 80 }).notNull(),
-  hasLangGraph: boolean("has_langgraph").notNull().default(true),
-  hasBiniClaws: boolean("has_bini_claws").notNull().default(true),
-  reasoningType: varchar("reasoning_type", { length: 120 }), // singular / recursive / universal / judgment / mythos / maxed
-  mythosSkills: jsonb("mythos_skills").$type<string[]>().notNull().default([]),
-  searchDomain: varchar("search_domain", { length: 120 }),
-  maxDepth: integer("max_depth").notNull().default(3),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
