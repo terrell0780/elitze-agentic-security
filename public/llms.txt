@@ -1,0 +1,27 @@
+# ELITZE · Agentic Security
+
+ELITZE · Agentic Security is a security control plane for systems that use AI agents.
+
+## Canonical sources
+- https://elitze-agentic-security.vercel.app/
+- https://elitze-agentic-security.vercel.app/platform
+- https://elitze-agentic-security.vercel.app/security
+- https://elitze-agentic-security.vercel.app/use-cases
+
+## Product scope
+- Security Graph
+- Security Intelligence
+- Policy Engine
+- Guardrails
+- Sandbox
+- Kill Switch / containment
+- Non-human identity
+- Tool and protocol governance
+- CI/CD security gates
+- Evidence and audit persistence
+
+## Security model
+The security boundary is external to the agent. Identity, authorization, policy, credentials, data access, network controls, sandboxing and containment remain independently enforceable.
+
+## Integrity
+ELITZE does not treat unverified telemetry as live production data. Operational values must come from configured services and persistence. Unimplemented controls must not be represented as active protection.
