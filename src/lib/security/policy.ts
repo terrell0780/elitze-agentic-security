@@ -24,6 +24,31 @@ export type PolicyEvaluation = {
   requestHash: string;
 };
 
+const POLICY_VERSION = "2026-09-02";
+
+export function isSecurityContext(value: unknown): value is SecurityContext {
+  if (!value || typeof value !== "object") return false;
+  const context = value as Record<string, unknown>;
+  if (typeof context.actorId !== "string" || context.actorId.trim() === "") return false;
+  if (!['human', 'agent', 'service'].includes(context.actorType as string)) return false;
+  if (typeof context.requestedAction !== "string" || context.requestedAction.trim() === "") return false;
+
+  const optionalStrings = ["agentId", "purpose", "resource"];
+  for (const key of optionalStrings) {
+    if (context[key] !== undefined && typeof context[key] !== "string") return false;
+  }
+
+  const dataClasses = ["public", "internal", "confidential", "restricted"];
+  if (context.dataClass !== undefined && !dataClasses.includes(context.dataClass as string)) return false;
+
+  const booleans = ["irreversible", "externalSideEffect", "financial", "privileged"];
+  for (const key of booleans) {
+    if (context[key] !== undefined && typeof context[key] !== "boolean") return false;
+  }
+
+  return true;
+}
+
 export function evaluatePolicy(context: SecurityContext): PolicyEvaluation {
   const reasons: string[] = [];
 
@@ -59,7 +84,7 @@ export function evaluatePolicy(context: SecurityContext): PolicyEvaluation {
   return {
     decision,
     reasons,
-    policyVersion: "2026-09-02",
+    policyVersion: POLICY_VERSION,
     evaluatedAt: new Date().toISOString(),
     requestHash,
   };
