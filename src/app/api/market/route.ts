@@ -1,4 +1,4 @@
-import { db } from "@/db";
+import { getDb } from "@/db";
 import {
   agents,
   asiControls,
@@ -7,38 +7,27 @@ import {
   hitlApprovals,
   marketGaps,
 } from "@/db/schema";
-import { ensureSeeded } from "@/lib/seed";
+import { authorizeInternalRequest } from "@/lib/security/policy";
 import { asc, desc, eq, sql } from "drizzle-orm";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+function authorized(request: NextRequest) {
+  return authorizeInternalRequest(request.headers.get("x-elitze-api-key"), process.env.ELITZE_INTERNAL_API_KEY);
+}
 
 export async function GET() {
   try {
-    await ensureSeeded();
-
-    const [
-      gapRows,
-      agentRows,
-      discoveryRows,
-      approvalRows,
-      asiRows,
-      eventRows,
-      stats,
-    ] = await Promise.all([
+    const db = getDb();
+    const [gapRows, agentRows, discoveryRows, approvalRows, asiRows, eventRows, stats] = await Promise.all([
       db.select().from(marketGaps).orderBy(desc(marketGaps.differentiator), asc(marketGaps.id)),
       db.select().from(agents).orderBy(desc(agents.riskScore)),
       db.select().from(discoveries).orderBy(desc(discoveries.discoveredAt)),
-      db
-        .select()
-        .from(hitlApprovals)
-        .orderBy(desc(hitlApprovals.requestedAt)),
+      db.select().from(hitlApprovals).orderBy(desc(hitlApprovals.requestedAt)),
       db.select().from(asiControls).orderBy(asc(asiControls.code)),
-      db
-        .select()
-        .from(enforcementEvents)
-        .orderBy(desc(enforcementEvents.createdAt))
-        .limit(12),
+      db.select().from(enforcementEvents).orderBy(desc(enforcementEvents.createdAt)).limit(100),
       db.execute(sql`
         SELECT
           (SELECT count(*) FROM agents) AS agents,
@@ -52,7 +41,6 @@ export async function GET() {
     ]);
 
     const s = (stats.rows[0] ?? {}) as Record<string, string | number>;
-
     return NextResponse.json({
       ok: true,
       stats: {
@@ -70,75 +58,43 @@ export async function GET() {
       approvals: approvalRows,
       asi: asiRows,
       events: eventRows,
-      insights: {
-        headline:
-          "Buyers are past chatbot guardrails. They want discovery, containment, NHI, HITL, and ASI-mapped evidence.",
-        sources: [
-          "Palo Alto 2026 Agentic AI Security POC checklist",
-          "OWASP ASI Top 10 for Agentic Applications 2026",
-          "Gartner AI Security Platforms / AI TRiSM",
-          "NIST AI Agent Standards Initiative",
-          "MintMCP governance-containment gap study",
-          "CISA / DoD careful adoption of agentic AI",
-        ],
-        overTheTop: [
-          "Intent-mismatch detection + purpose binding (not just allow/deny logs)",
-          "Shadow agent & MCP discovery with auto-quarantine",
-          "Per-agent non-human identity + short-lived vaulted credentials",
-          "Escalation-only HITL for irreversible / financial / external actions",
-          "Memory integrity (ASI06) — still a rare differentiator",
-          "Full OWASP ASI01–ASI10 control matrix with live coverage scores",
-          "Insurance-ready MTTR + evidence packs (planned)",
-        ],
-      },
     });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json(
-      { ok: false, error: "Failed to load market intelligence" },
-      { status: 500 },
-    );
+    console.error("ELITZE market data load failed", error);
+    return NextResponse.json({ ok: false, error: "market_data_unavailable" }, { status: 503 });
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
+  if (!authorized(request)) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+
+  let body: unknown;
+  try { body = await request.json(); } catch { return NextResponse.json({ ok: false, error: "invalid_json" }, { status: 400 }); }
+  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, error: "invalid_request" }, { status: 400 });
+
+  const { action, id, decidedBy } = body as { action?: unknown; id?: unknown; decidedBy?: unknown };
+  if (!Number.isInteger(id) || Number(id) < 1) return NextResponse.json({ ok: false, error: "id required" }, { status: 400 });
+  if (action !== "approve" && action !== "deny" && action !== "claim-discovery") {
+    return NextResponse.json({ ok: false, error: "unknown_action" }, { status: 400 });
+  }
+  if (decidedBy !== undefined && (typeof decidedBy !== "string" || decidedBy.length > 200)) {
+    return NextResponse.json({ ok: false, error: "invalid_decided_by" }, { status: 400 });
+  }
+
   try {
-    await ensureSeeded();
-    const body = (await request.json()) as {
-      action?: string;
-      id?: number;
-      decidedBy?: string;
-    };
-
-    if (body.action === "approve" || body.action === "deny") {
-      if (!body.id) {
-        return NextResponse.json({ ok: false, error: "id required" }, { status: 400 });
-      }
-      await db
-        .update(hitlApprovals)
-        .set({
-          status: body.action === "approve" ? "approved" : "denied",
-          decidedAt: new Date(),
-          decidedBy: body.decidedBy ?? "operator@elitze.io",
-        })
-        .where(eq(hitlApprovals.id, body.id));
-      return NextResponse.json({ ok: true });
+    const db = getDb();
+    if (action === "claim-discovery") {
+      await db.update(discoveries).set({ status: "claimed" }).where(eq(discoveries.id, id as number));
+    } else {
+      await db.update(hitlApprovals).set({
+        status: action === "approve" ? "approved" : "denied",
+        decidedAt: new Date(),
+        decidedBy: typeof decidedBy === "string" ? decidedBy : "internal-operator",
+      }).where(eq(hitlApprovals.id, id as number));
     }
-
-    if (body.action === "claim-discovery") {
-      if (!body.id) {
-        return NextResponse.json({ ok: false, error: "id required" }, { status: 400 });
-      }
-      await db
-        .update(discoveries)
-        .set({ status: "claimed" })
-        .where(eq(discoveries.id, body.id));
-      return NextResponse.json({ ok: true });
-    }
-
-    return NextResponse.json({ ok: false, error: "Unknown action" }, { status: 400 });
+    return NextResponse.json({ ok: true });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ ok: false, error: "Mutation failed" }, { status: 500 });
+    console.error("ELITZE market mutation failed", error);
+    return NextResponse.json({ ok: false, error: "mutation_failed" }, { status: 503 });
   }
 }

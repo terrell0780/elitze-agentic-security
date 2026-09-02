@@ -1,8 +1,7 @@
-const assert = (condition, message) => {
-  if (!condition) throw new Error(message);
-};
+import assert from "node:assert/strict";
+import { createHash, randomUUID } from "node:crypto";
 
-const decision = (context) => {
+const policy = (context) => {
   const reasons = [];
   if (!context.actorId || !context.requestedAction) reasons.push("missing_security_context");
   if (context.actorType === "agent" && !context.agentId) reasons.push("agent_identity_required");
@@ -13,9 +12,22 @@ const decision = (context) => {
   return "allow";
 };
 
-assert(decision({ actorId: "human", actorType: "human", requestedAction: "read" }) === "allow", "basic allow failed");
-assert(decision({ actorId: "agent", actorType: "agent", requestedAction: "tool" }) === "deny", "agent identity gate failed");
-assert(decision({ actorId: "agent", actorType: "agent", agentId: "a1", purpose: "ops", requestedAction: "send", externalSideEffect: true }) === "hitl", "HITL gate failed");
-assert(decision({ actorId: "agent", actorType: "agent", agentId: "a1", purpose: "ops", requestedAction: "read", privileged: true, dataClass: "restricted" }) === "deny", "privileged restricted gate failed");
+const normalizeHash = (context) => createHash("sha256")
+  .update(JSON.stringify(context, Object.keys(context).sort()))
+  .digest("hex");
+
+assert.equal(policy({ actorId: "human", actorType: "human", requestedAction: "read" }), "allow");
+assert.equal(policy({ actorId: "agent", actorType: "agent", requestedAction: "tool" }), "deny");
+assert.equal(policy({ actorId: "agent", actorType: "agent", agentId: "a1", purpose: "ops", requestedAction: "send", externalSideEffect: true }), "hitl");
+assert.equal(policy({ actorId: "agent", actorType: "agent", agentId: "a1", purpose: "ops", requestedAction: "read", privileged: true, dataClass: "restricted" }), "deny");
+
+const requestId = randomUUID();
+const a = normalizeHash({ actorId: "a", actorType: "service", requestedAction: "read", requestId });
+const b = normalizeHash({ actorId: "a", actorType: "service", requestedAction: "read", requestId: randomUUID() });
+assert.notEqual(a, b, "request hashes must not collide across generated request IDs");
+assert.equal(a.length, 64);
+
+const tooLarge = "x".repeat(201);
+assert.equal(tooLarge.length, 201);
 
 console.log("ELITZE security self-test: PASS");

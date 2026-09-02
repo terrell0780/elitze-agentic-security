@@ -1,35 +1,30 @@
-import { db } from "@/db";
+import { getDb } from "@/db";
 import { dataSources, insights } from "@/db/schema";
-import { ensureDataHubSeeded } from "@/lib/data-hub-seed";
-import { NextResponse } from "next/server";
+import { asc, desc, eq } from "drizzle-orm";
+import { NextRequest, NextResponse } from "next/server";
+import { authorizeInternalRequest } from "@/lib/security/policy";
 
 export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
 
 export async function GET(request: Request) {
   try {
-    await ensureDataHubSeeded();
-    const { searchParams } = new URL(request.url);
-    const kind = searchParams.get("kind");
-
-    const [sourcesData, insightsData] = await Promise.all([
-      db.select().from(dataSources).orderBy(dataSources.id),
-      kind
-        ? db.select().from(insights).where(kind ? undefined : undefined).orderBy(insights.createdAt)
-        : db.select().from(insights).orderBy(insights.createdAt),
+    const db = getDb();
+    const kind = new URL(request.url).searchParams.get("kind")?.trim();
+    const [sources, rows] = await Promise.all([
+      db.select().from(dataSources).orderBy(asc(dataSources.id)),
+      kind ? db.select().from(insights).where(eq(insights.kind, kind)).orderBy(desc(insights.createdAt)) : db.select().from(insights).orderBy(desc(insights.createdAt)),
     ]);
-
-    // Re-query with filter if needed (simple ORM limitation handled via JS filter for demo clarity)
-    const insightsFiltered = kind
-      ? insightsData.filter((i: { kind: string }) => i.kind === kind)
-      : insightsData;
-
-    return NextResponse.json({
-      ok: true,
-      sources: sourcesData,
-      insights: insightsFiltered,
-    });
+    return NextResponse.json({ ok: true, sources, insights: rows });
   } catch (error) {
-    console.error(error);
-    return NextResponse.json({ ok: false, error: "Hub load failed" }, { status: 500 });
+    console.error("ELITZE data hub load failed", error);
+    return NextResponse.json({ ok: false, error: "data_hub_unavailable" }, { status: 503 });
   }
+}
+
+export async function POST(request: NextRequest) {
+  if (!authorizeInternalRequest(request.headers.get("x-elitze-api-key"), process.env.ELITZE_INTERNAL_API_KEY)) {
+    return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  }
+  return NextResponse.json({ ok: false, error: "data_hub_mutation_not_supported" }, { status: 405 });
 }

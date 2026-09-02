@@ -9,7 +9,7 @@
     "typecheck": "tsc --noEmit",
     "test": "node scripts/security-self-test.mjs",
     "security:self-test": "node scripts/security-self-test.mjs",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "node scripts/migrate.mjs"
   },
   "dependencies": {
     "dotenv": "17.3.1",
