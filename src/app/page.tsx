@@ -12,7 +12,6 @@ import {
   Power,
   Radar,
   Scale,
-  Search,
   ShieldCheck,
   TerminalSquare,
   Workflow,
@@ -51,8 +50,9 @@ export default function HomePage() {
             </div>
           </Link>
           <nav className="hidden items-center gap-6 text-sm text-slate-400 md:flex">
-            <a href="#platform" className="transition hover:text-white">Platform</a>
-            <a href="#capabilities" className="transition hover:text-white">Capabilities</a>
+            <Link href="/platform" className="transition hover:text-white">Platform</Link>
+            <Link href="/security" className="transition hover:text-white">Security</Link>
+            <Link href="/use-cases" className="transition hover:text-white">Use cases</Link>
             <Link href="/console" className="transition hover:text-white">Console</Link>
           </nav>
           <Link href="/console" className="group flex items-center gap-2 rounded-lg border border-red-500/40 bg-red-500/10 px-4 py-2 text-sm font-medium text-red-100 transition hover:bg-red-500/20">
@@ -81,9 +81,9 @@ export default function HomePage() {
                 Enter the console
                 <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
               </Link>
-              <a href="#platform" className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-5 py-3 text-sm font-medium text-slate-200 transition hover:border-red-500/30 hover:bg-white/[0.06]">
-                See the control model
-              </a>
+              <Link href="/security" className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-5 py-3 text-sm font-medium text-slate-200 transition hover:border-red-500/30 hover:bg-white/[0.06]">
+                See the security model
+              </Link>
             </div>
             <p className="mt-4 text-xs text-slate-500">No synthetic telemetry is shown as live production data.</p>
           </div>
@@ -146,7 +146,7 @@ export default function HomePage() {
             </div>
             <div className="grid gap-3 sm:grid-cols-2">
               {capabilities.map(([Icon, title, description]) => {
-                const C = Icon as typeof Search;
+                const C = Icon as typeof ShieldCheck;
                 return (
                   <div key={title as string} className="rounded-xl border border-white/8 bg-white/[0.02] p-5">
                     <div className="flex items-center gap-3">
@@ -185,6 +185,9 @@ export default function HomePage() {
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-6 py-8 text-xs text-slate-500 sm:flex-row sm:items-center sm:justify-between">
           <span>ELITZE · Agentic Security</span>
           <div className="flex items-center gap-5">
+            <Link href="/platform" className="transition hover:text-white">Platform</Link>
+            <Link href="/security" className="transition hover:text-white">Security</Link>
+            <Link href="/use-cases" className="transition hover:text-white">Use cases</Link>
             <Link href="/console" className="transition hover:text-white">Console</Link>
             <Link href="/api/health" className="transition hover:text-white">Health</Link>
           </div>
