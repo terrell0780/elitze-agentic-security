@@ -4,6 +4,7 @@ import { securityDecisions } from "@/db/schema";
 import {
   authorizeInternalRequest,
   evaluatePolicy,
+  isSecurityContext,
   type SecurityContext,
 } from "@/lib/security/policy";
 
@@ -17,13 +18,18 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
-  let context: SecurityContext;
+  let payload: unknown;
   try {
-    context = (await request.json()) as SecurityContext;
+    payload = await request.json();
   } catch {
     return NextResponse.json({ error: "invalid_json" }, { status: 400 });
   }
 
+  if (!isSecurityContext(payload)) {
+    return NextResponse.json({ error: "invalid_security_context" }, { status: 400 });
+  }
+
+  const context = payload as SecurityContext;
   const evaluation = evaluatePolicy(context);
 
   try {
