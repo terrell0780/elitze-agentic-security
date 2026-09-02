@@ -1,0 +1,1 @@
+import { NextRequest } from "next/server"; import { prioritizeExposure } from "@/lib/elitze-secure/exposure"; export async function POST(request: NextRequest){return Response.json(prioritizeExposure(await request.json()));}
