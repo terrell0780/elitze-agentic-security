@@ -1,15 +1,8 @@
 import { getDb } from "@/db";
-import {
-  agents,
-  asiControls,
-  discoveries,
-  enforcementEvents,
-  hitlApprovals,
-  marketGaps,
-} from "@/db/schema";
-import { authorizeInternalRequest } from "@/lib/security/policy";
+import { agents, asiControls, discoveries, enforcementEvents, hitlApprovals, marketGaps } from "@/db/schema";
 import { asc, desc, eq, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
+import { authorizeInternalRequest } from "@/lib/security/policy";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -23,11 +16,11 @@ export async function GET() {
     const db = getDb();
     const [gapRows, agentRows, discoveryRows, approvalRows, asiRows, eventRows, stats] = await Promise.all([
       db.select().from(marketGaps).orderBy(desc(marketGaps.differentiator), asc(marketGaps.id)),
-      db.select().from(agents).orderBy(desc(agents.riskScore)),
+      db.select().from(agents).orderBy(desc(agents.riskScore), desc(agents.id)),
       db.select().from(discoveries).orderBy(desc(discoveries.discoveredAt)),
       db.select().from(hitlApprovals).orderBy(desc(hitlApprovals.requestedAt)),
       db.select().from(asiControls).orderBy(asc(asiControls.code)),
-      db.select().from(enforcementEvents).orderBy(desc(enforcementEvents.createdAt)).limit(100),
+      db.select().from(enforcementEvents).orderBy(desc(enforcementEvents.createdAt)).limit(50),
       db.execute(sql`
         SELECT
           (SELECT count(*) FROM agents) AS agents,
@@ -39,7 +32,6 @@ export async function GET() {
           (SELECT count(*) FROM market_gaps WHERE differentiator = true) AS differentiators
       `),
     ]);
-
     const s = (stats.rows[0] ?? {}) as Record<string, string | number>;
     return NextResponse.json({
       ok: true,
@@ -58,41 +50,34 @@ export async function GET() {
       approvals: approvalRows,
       asi: asiRows,
       events: eventRows,
+      insights: {
+        headline: "ELITZE operational intelligence is sourced from configured security records, not fabricated telemetry.",
+        sources: ["OWASP", "NIST", "CISA", "CVE / NVD", "EPSS"],
+      },
     });
   } catch (error) {
-    console.error("ELITZE market data load failed", error);
-    return NextResponse.json({ ok: false, error: "market_data_unavailable" }, { status: 503 });
+    console.error("ELITZE market intelligence load failed", error);
+    return NextResponse.json({ ok: false, error: "market_unavailable" }, { status: 503 });
   }
 }
 
 export async function POST(request: NextRequest) {
   if (!authorized(request)) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
-
-  let body: unknown;
-  try { body = await request.json(); } catch { return NextResponse.json({ ok: false, error: "invalid_json" }, { status: 400 }); }
-  if (!body || typeof body !== "object") return NextResponse.json({ ok: false, error: "invalid_request" }, { status: 400 });
-
-  const { action, id, decidedBy } = body as { action?: unknown; id?: unknown; decidedBy?: unknown };
-  if (!Number.isInteger(id) || Number(id) < 1) return NextResponse.json({ ok: false, error: "id required" }, { status: 400 });
-  if (action !== "approve" && action !== "deny" && action !== "claim-discovery") {
-    return NextResponse.json({ ok: false, error: "unknown_action" }, { status: 400 });
-  }
-  if (decidedBy !== undefined && (typeof decidedBy !== "string" || decidedBy.length > 200)) {
-    return NextResponse.json({ ok: false, error: "invalid_decided_by" }, { status: 400 });
-  }
-
   try {
     const db = getDb();
-    if (action === "claim-discovery") {
-      await db.update(discoveries).set({ status: "claimed" }).where(eq(discoveries.id, id as number));
-    } else {
-      await db.update(hitlApprovals).set({
-        status: action === "approve" ? "approved" : "denied",
-        decidedAt: new Date(),
-        decidedBy: typeof decidedBy === "string" ? decidedBy : "internal-operator",
-      }).where(eq(hitlApprovals.id, id as number));
+    const body = (await request.json()) as { action?: unknown; id?: unknown; decidedBy?: unknown };
+    const id = typeof body.id === "number" && Number.isInteger(body.id) && body.id > 0 ? body.id : null;
+    const decidedBy = typeof body.decidedBy === "string" && body.decidedBy.length <= 120 ? body.decidedBy : "operator";
+
+    if ((body.action === "approve" || body.action === "deny") && id) {
+      await db.update(hitlApprovals).set({ status: body.action === "approve" ? "approved" : "denied", decidedAt: new Date(), decidedBy }).where(eq(hitlApprovals.id, id));
+      return NextResponse.json({ ok: true });
     }
-    return NextResponse.json({ ok: true });
+    if (body.action === "claim-discovery" && id) {
+      await db.update(discoveries).set({ status: "claimed" }).where(eq(discoveries.id, id));
+      return NextResponse.json({ ok: true });
+    }
+    return NextResponse.json({ ok: false, error: "invalid_action" }, { status: 400 });
   } catch (error) {
     console.error("ELITZE market mutation failed", error);
     return NextResponse.json({ ok: false, error: "mutation_failed" }, { status: 503 });
