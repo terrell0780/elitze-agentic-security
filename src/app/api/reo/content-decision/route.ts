@@ -1,0 +1,1 @@
+import { NextRequest } from "next/server"; import { decideContent } from "@/lib/elitze-secure/content-integrity"; export async function POST(request: NextRequest){const assessment=await request.json();return Response.json({decision:decideContent(assessment)});}
