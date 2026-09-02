@@ -1,0 +1,1 @@
+import { NextRequest } from "next/server"; import { evaluateAgentRisk } from "@/lib/elitze-secure/agent-risk"; export async function POST(request: NextRequest){return Response.json(evaluateAgentRisk(await request.json()));}
