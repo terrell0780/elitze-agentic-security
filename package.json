@@ -1,12 +1,15 @@
 {
-  "name": "nextjs-postgresql-template",
+  "name": "elitze-agentic-security",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "node scripts/security-self-test.mjs",
+    "security:self-test": "node scripts/security-self-test.mjs",
+    "db:migrate": "drizzle-kit migrate"
   },
   "dependencies": {
     "dotenv": "17.3.1",
