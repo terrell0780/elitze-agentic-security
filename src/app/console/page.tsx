@@ -2,6 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { Activity, Database, Search, ShieldCheck, TriangleAlert, Users } from "lucide-react";
+import SmartChatHierarchy from "@/components/smart-chat-hierarchy";
 
 type Health = { ok: boolean };
 type Market = {
@@ -133,6 +134,8 @@ export default function ConsolePage() {
             </div>
           </div>
         </section>
+
+        <SmartChatHierarchy />
       </div>
     </main>
   );
