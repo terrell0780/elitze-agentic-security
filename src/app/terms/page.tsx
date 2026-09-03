@@ -28,7 +28,7 @@ export default function TermsPage() {
 
         <nav className="flex flex-wrap gap-4 text-sm">
           <Link className="underline underline-offset-4" href="/">Back to ELITZE</Link>
-          <a className="underline underline-offset-4" href="/legal/ELITZE-PRIVACY-NOTICE-2026.md">Privacy Notice</a>
+          <Link className="underline underline-offset-4" href="/privacy">Privacy Notice</Link>
         </nav>
 
         <p className="text-sm text-zinc-500">The published legal terms and applicable signed enterprise agreement control. This page does not constitute legal advice.</p>
