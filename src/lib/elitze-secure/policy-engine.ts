@@ -1,4 +1,4 @@
-import { PolicyFailure } from "../core/decision.js";
+import type { PolicyFailure } from "./decision.js";
 
 export interface PolicyContext {
   tenantId: string;
