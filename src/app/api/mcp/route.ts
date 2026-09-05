@@ -12,8 +12,7 @@ function unauthorized() {
 
 function authorized(request: Request) {
   if (!TOKEN) return false;
-  const value = request.headers.get("authorization");
-  return value === `Bearer ${TOKEN}`;
+  return request.headers.get("authorization") === `Bearer ${TOKEN}`;
 }
 
 async function googleRequest(path: string, body: unknown) {
@@ -31,20 +30,17 @@ async function googleRequest(path: string, body: unknown) {
 }
 
 function createServer() {
-  const server = new McpServer({
-    name: "ELITZE REO SEO Web Analytics",
-    version: "1.0.0",
-  });
+  const server = new McpServer({ name: "ELITZE REO SEO Web Analytics", version: "1.0.0" });
 
   server.registerTool(
     "search_performance",
     {
       title: "Search performance",
-      description: "Query live Google Search Console Search Analytics data for an authorized property. Returns clicks, impressions, CTR and average position grouped by the requested dimensions.",
+      description: "Query live Google Search Console Search Analytics data for an authorized property.",
       inputSchema: z.object({
         siteUrl: z.string().min(1),
-        startDate: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/),
-        endDate: z.string().regex(/^\\d{4}-\\d{2}-\\d{2}$/),
+        startDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
+        endDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
         dimensions: z.array(z.enum(["date", "query", "page", "country", "device", "searchAppearance"])).default(["date"]),
         type: z.enum(["web", "image", "video", "news", "discover", "googleNews"]).default("web"),
         rowLimit: z.number().int().min(1).max(25000).default(1000),
@@ -52,8 +48,7 @@ function createServer() {
     },
     async ({ siteUrl, startDate, endDate, dimensions, type, rowLimit }) => {
       try {
-        const encodedSite = encodeURIComponent(siteUrl);
-        const data = await googleRequest(`/webmasters/v3/sites/${encodedSite}/searchAnalytics/query`, {
+        const data = await googleRequest(`/webmasters/v3/sites/${encodeURIComponent(siteUrl)}/searchAnalytics/query`, {
           startDate, endDate, dimensions, type, rowLimit, dataState: "final",
         });
         return { content: [{ type: "text", text: JSON.stringify(data) }] };
@@ -100,16 +95,12 @@ function createServer() {
       inputSchema: z.object({}),
     },
     async () => ({
-      content: [{
-        type: "text",
-        text: JSON.stringify({
-          search_console: ["GOOGLE_ACCESS_TOKEN", "authorized Search Console property"],
-          ga4: ["GOOGLE_ACCESS_TOKEN", "authorized GA4 property"],
-          policy: "Unavailable data is reported as unavailable; no synthetic or demo metrics are returned.",
-          supported_search_console_dimensions: ["date", "query", "page", "country", "device", "searchAppearance"],
-          sources: ["Google Search Console Search Analytics API", "Google Analytics Data API"],
-        }),
-      }],
+      content: [{ type: "text", text: JSON.stringify({
+        search_console: ["GOOGLE_ACCESS_TOKEN", "authorized Search Console property"],
+        ga4: ["GOOGLE_ACCESS_TOKEN", "authorized GA4 property"],
+        policy: "Unavailable data is reported as unavailable; no synthetic or demo metrics are returned.",
+        supported_search_console_dimensions: ["date", "query", "page", "country", "device", "searchAppearance"],
+      }) }],
     }),
   );
 
