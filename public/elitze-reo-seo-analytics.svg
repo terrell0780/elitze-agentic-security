@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">ELITZE REO SEO Web Analytics</title>
+  <desc id="desc">ELITZE REO branded search analytics mark with an upward performance graph and security shield.</desc>
+  <rect width="256" height="256" rx="48" fill="#0c060c"/>
+  <path d="M48 178h160M64 158l38-38 30 22 58-64" fill="none" stroke="#ef4444" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M190 48l34 14v30c0 27-16 48-34 57-18-9-34-30-34-57V62l34-14z" fill="none" stroke="#fff" stroke-width="8" stroke-linejoin="round"/>
+  <path d="M176 91l10 10 20-22" fill="none" stroke="#ef4444" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="48" y="214" fill="#fff" font-family="Arial,Helvetica,sans-serif" font-size="24" font-weight="700" letter-spacing="3">ELITZE REO</text>
+</svg>
