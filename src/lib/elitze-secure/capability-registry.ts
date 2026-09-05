@@ -31,6 +31,8 @@ export const ELITZE_CAPABILITY_REGISTRY: Capability[] = [
   { id:"network-security", domain:"NETWORK", name:"Network and SASE Security", status:"PLANNED", requirement:"NGFW, ZTNA, SWG and cloud-delivered enforcement." },
   { id:"api-security", domain:"NETWORK", name:"API Security", status:"PARTIAL", requirement:"OpenAPI, runtime discovery, inventory and logic-abuse protection." },
   { id:"reo", domain:"REO", name:"Content Integrity Engine", status:"PARTIAL", requirement:"Provenance, evidence, uniqueness, risk and publishing governance." },
+  { id:"reo-seo-analytics", domain:"REO", name:"SEO Web Analytics", status:"PARTIAL", requirement:"Technical, on-page, off-page and search-performance analytics using tenant-authorized live sources." },
+  { id:"reo-search-connectors", domain:"REO", name:"Search Data Connectors", status:"PLANNED", requirement:"Tenant-authorized Google Search Console, Google Analytics and Bing Webmaster Tools connections with explicit data availability states." },
 ];
 
 export function capabilitySummary() {
