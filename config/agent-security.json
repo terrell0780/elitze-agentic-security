@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "product": "ELITZE Agentic Security",
+  "components": {
+    "agent_reach": {
+      "repository": "terrell0780/Agent-Reach",
+      "role": "capability-acquisition",
+      "trust_boundary": "external-content",
+      "authority": "none-over-elitze-policy-or-reo",
+      "revision": null
+    },
+    "skillspector": {
+      "repository": "terrell0780/SkillSpector",
+      "role": "skill-security-scanner",
+      "admission_required": true,
+      "revision": null
+    },
+    "reachability_engine": {
+      "role": "elitze-internal-security-reachability",
+      "distinct_from_agent_reach": true
+    }
+  },
+  "admission": {
+    "allowed_decisions": [
+      "ALLOW",
+      "DENY",
+      "REQUIRE_APPROVAL",
+      "QUARANTINE",
+      "RESCAN_REQUIRED",
+      "UNKNOWN"
+    ],
+    "scan_states": [
+      "PASS",
+      "FAIL",
+      "PARTIAL",
+      "UNAVAILABLE",
+      "UNKNOWN"
+    ],
+    "never_treat_scanner_failure_as_clean": true
+  },
+  "truth": {
+    "states": [
+      "OBSERVED",
+      "DECLARED",
+      "INFERRED",
+      "UNKNOWN",
+      "UNMEASURABLE"
+    ],
+    "fabrication_allowed": false
+  }
+}
