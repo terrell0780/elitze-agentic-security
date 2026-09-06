@@ -7,8 +7,9 @@
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
-    "test": "node scripts/security-self-test.mjs",
+    "test": "node scripts/security-self-test.mjs && node scripts/canonical-security-contract-test.mjs",
     "security:self-test": "node scripts/security-self-test.mjs",
+    "security:contract-test": "node scripts/canonical-security-contract-test.mjs",
     "db:migrate": "node scripts/migrate.mjs"
   },
   "dependencies": {
