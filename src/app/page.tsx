@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import {
   ArrowRight,
   Bot,
@@ -46,7 +46,7 @@ const flow = [
 function ThemeToggle() {
   const [light, setLight] = useState(false);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const stored = window.localStorage.getItem("elitze-theme");
     const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
     const nextLight = stored ? stored === "light" : prefersLight;
@@ -67,7 +67,7 @@ function ThemeToggle() {
       onClick={toggle}
       aria-label={`Switch to ${light ? "dark" : "light"} mode`}
       title={`Switch to ${light ? "dark" : "light"} mode`}
-      className="theme-toggle inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--panel)] text-[var(--muted-strong)] transition hover:border-[var(--accent)] hover:text-[var(--text)]"
+      className="theme-toggle inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--panel)] text-[var(--muted-strong)] transition hover:border-[var(--border-strong)]"
     >
       {light ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
     </button>
@@ -143,11 +143,11 @@ export default function HomePage() {
               ELITZE continuously tests software, validates exploitability, enforces agent guardrails, and verifies remediation before vulnerable changes reach production.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/console" className="group inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_35px_rgba(239,68,68,0.22)] transition hover:brightness-110">
+              <Link href="/console" className="group inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white shadow-[0_10px_35px_rgba(239,68,68,0.25)] transition hover:brightness-110">
                 Enter the console
                 <ArrowRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
               </Link>
-              <Link href="/security" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold transition hover:border-[var(--accent-border)]">
+              <Link href="/security" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold transition hover:border-[var(--border-strong)]">
                 Security model
               </Link>
             </div>
@@ -182,7 +182,7 @@ export default function HomePage() {
         <div className="max-w-3xl">
           <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--accent)]">One security system</p>
           <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Find it. Prove it. Fix it. Prove the fix.</h2>
-          <p className="mt-4 text-[var(--muted-strong)]">ELITZE combines application security, supply-chain controls, runtime defense and agentic guardrails into one security graph instead of a pile of disconnected scanners.</p>
+          <p className="mt-4 text-[var(--muted-strong)]">ELITZE combines application security, supply-chain controls, runtime defense and agentic guardrails into one security graph instead of a patchwork of point solutions.</p>
         </div>
         <div className="mt-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {controls.map(([Icon, title, description]) => {
@@ -202,7 +202,7 @@ export default function HomePage() {
             <div>
               <p className="text-xs font-bold uppercase tracking-[0.22em] text-[var(--accent)]">Infinite Pentest</p>
               <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Security becomes part of the release loop.</h2>
-              <p className="mt-4 text-[var(--muted-strong)]">Every relevant change is tested against the security state ELITZE can actually observe. Confirmed weaknesses stay in the loop until the remediation is verified.</p>
+              <p className="mt-4 text-[var(--muted-strong)]">Every relevant change is tested against the security state ELITZE can actually observe. Confirmed weaknesses stay in the loop until they're mitigated.</p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
               {flow.map(([number, title, description]) => <div key={number} className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5">
@@ -221,7 +221,7 @@ export default function HomePage() {
             [Fingerprint, "Identity first", "Every governed action has an attributable subject and explicit capability boundary."],
             [Network, "Security graph", "Connect assets, identities, code, dependencies, tools and observed attack paths."],
             [Bot, "Agent-safe by design", "Models can recommend actions; the security boundary decides what is actually allowed."],
-          ].map(([Icon, title, description]) => { const C = Icon as typeof Radar; return <div key={title as string} className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-6"><C className="h-5 w-5 text-[var(--accent)]" /><h3 className="mt-4 font-bold">{title as string}</h3><p className="mt-2 text-sm leading-6 text-[var(--muted)]">{description as string}</p></div>; })}
+          ].map(([Icon, title, description]) => { const C = Icon as typeof Radar; return <div key={title as string} className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-6"><C className="h-6 w-6 text-[var(--accent)]" /><h3 className="mt-5 text-base font-bold">{title as string}</h3><p className="mt-2 text-sm leading-6 text-[var(--muted)]">{description as string}</p></div>; })}
         </div>
       </section>
 
@@ -230,7 +230,7 @@ export default function HomePage() {
           <Workflow className="mx-auto h-7 w-7 text-[var(--accent)]" />
           <h2 className="mt-4 text-3xl font-bold tracking-tight">Self-securing software starts before production.</h2>
           <p className="mx-auto mt-4 max-w-2xl text-[var(--muted-strong)]">Security findings become governed release decisions, not forgotten tickets.</p>
-          <Link href="/console" className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition hover:brightness-110">Open ELITZE Console <ArrowRight className="h-4 w-4" /></Link>
+          <Link href="/console" className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-white transition hover:brightness-110">Open ELITZE</Link>
         </div>
       </section>
 
