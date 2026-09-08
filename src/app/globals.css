@@ -60,9 +60,21 @@ body {
   mask-image: linear-gradient(to bottom, black, transparent 80%);
 }
 
-@keyframes pulse-soft { 0%,100%{opacity:1} 50%{opacity:.45} }
+@keyframes pulse-soft { 0%,100% { opacity: 1; } 50% { opacity: .42; } }
+@keyframes drift { 0%,100% { transform: translate3d(0,0,0); } 50% { transform: translate3d(0,-5px,0); } }
+@keyframes signal { 0% { opacity: .2; transform: scale(.92); } 60% { opacity: .75; } 100% { opacity: 0; transform: scale(1.16); } }
+@keyframes scanline { 0% { transform: translateY(-120%); } 100% { transform: translateY(120%); } }
+
 .pulse-soft { animation: pulse-soft 2.4s ease-in-out infinite; }
+.float-soft { animation: drift 5.5s ease-in-out infinite; }
+.signal-ring { animation: signal 2.4s ease-out infinite; }
+.scanline { animation: scanline 5s linear infinite; }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; }
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
 }
