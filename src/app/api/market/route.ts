@@ -11,7 +11,12 @@ function authorized(request: NextRequest) {
   return authorizeInternalRequest(request.headers.get("x-elitze-api-key"), process.env.ELITZE_INTERNAL_API_KEY);
 }
 
+function databaseUnavailable() {
+  return NextResponse.json({ ok: false, error: "market_unavailable", reason: "DATABASE_URL is not configured" }, { status: 503 });
+}
+
 export async function GET() {
+  if (!process.env.DATABASE_URL) return databaseUnavailable();
   try {
     const db = getDb();
     const [gapRows, agentRows, discoveryRows, approvalRows, asiRows, eventRows, stats] = await Promise.all([
@@ -63,6 +68,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   if (!authorized(request)) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  if (!process.env.DATABASE_URL) return databaseUnavailable();
   try {
     const db = getDb();
     const body = (await request.json()) as { action?: unknown; id?: unknown; decidedBy?: unknown };
