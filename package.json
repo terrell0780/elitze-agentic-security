@@ -9,7 +9,8 @@
     "typecheck": "tsc --noEmit",
     "test": "node scripts/security-self-test.mjs",
     "security:self-test": "node scripts/security-self-test.mjs",
-    "db:migrate": "node scripts/migrate.mjs"
+    "db:migrate": "node scripts/migrate.mjs",
+    "mcp:github": "node src/lib/elitze-secure/github-control-mcp.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.0.0",
