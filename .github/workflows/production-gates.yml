@@ -12,14 +12,22 @@ permissions:
 jobs:
   verify:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
       - run: npm install
+      - run: npm audit --omit=dev --audit-level=high
       - run: npm run security:self-test
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run build
+      - name: Generate SBOM
+        run: npm sbom --sbom-format cyclonedx > sbom.cdx.json
+      - uses: actions/upload-artifact@v4
+        with:
+          name: elitze-agentic-security-sbom
+          path: sbom.cdx.json
+          if-no-files-found: error
