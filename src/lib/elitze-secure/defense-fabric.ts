@@ -9,17 +9,7 @@ export type AdapterHealth = "CONNECTED" | "NOT_CONFIGURED" | "UNAVAILABLE" | "ER
 export type DefenseActionState = "NOT_EXECUTED" | "APPROVAL_REQUIRED" | "EXECUTED" | "BLOCKED" | "FAILED";
 
 export type SecurityDomain =
-  | "AI"
-  | "IDENTITY"
-  | "CLOUD"
-  | "ENDPOINT"
-  | "NETWORK"
-  | "APPLICATION"
-  | "DATA"
-  | "SAAS"
-  | "EMAIL"
-  | "THREAT_INTEL"
-  | "SECOPS";
+  | "AI" | "IDENTITY" | "CLOUD" | "ENDPOINT" | "NETWORK" | "APPLICATION" | "DATA" | "SAAS" | "EMAIL" | "THREAT_INTEL" | "SECOPS";
 
 export interface ObservedSignal {
   id: string;
@@ -124,20 +114,12 @@ export class DefenseFabric {
   async observe(tenantId: string, query?: string): Promise<ObservedSignal[]> {
     const connected = this.adapters.filter((adapter) => adapter.health() === "CONNECTED" && adapter.collect);
     if (!connected.length) {
-      this.audit.append(tenantId, "defense.observe.empty", {
-        reason: "no_connected_collectors",
-        query,
-      });
+      this.audit.append(tenantId, "defense.observe.empty", { reason: "no_connected_collectors", query });
       return [];
     }
-
     const results = await Promise.all(connected.map((adapter) => adapter.collect!(tenantId, query)));
     const signals = results.flat();
-    this.audit.append(tenantId, "defense.observe.completed", {
-      sourceCount: connected.length,
-      signalCount: signals.length,
-      query,
-    });
+    this.audit.append(tenantId, "defense.observe.completed", { sourceCount: connected.length, signalCount: signals.length, query });
     return signals;
   }
 
@@ -153,7 +135,7 @@ export class DefenseFabric {
       riskSignals: context.riskSignals,
     });
 
-    const policyDecision = this.policy.evaluate({
+    const policyFailures = this.policy.evaluate({
       tenantId: context.tenantId,
       subjectId: context.agentId,
       action: context.requestedAction ?? "defense.observe",
@@ -161,21 +143,15 @@ export class DefenseFabric {
       mcpServerId: context.mcpServerId,
       dataClassification: context.dataClassification,
     });
-
-    const reasons = [
-      ...gateway.reasons,
-      ...policyDecision.hardPolicyFailures.map((failure) => failure.reason),
-    ];
-    const review = gateway.decision === "REVIEW" || policyDecision.decision === "REVIEW";
-    const allowed = gateway.decision !== "BLOCK" && policyDecision.decision !== "BLOCK";
+    const hardPolicyFailures = policyFailures.filter((failure) => failure.hardGate);
+    const reasons = [...gateway.reasons, ...hardPolicyFailures.map((failure) => failure.reason)];
+    const review = policyFailures.some((failure) => failure.severity === "MEDIUM" || failure.severity === "HIGH") || gateway.decision === "REVIEW";
+    const allowed = gateway.decision !== "BLOCK" && hardPolicyFailures.length === 0;
 
     return { allowed, review, reasons };
   }
 
-  async execute(
-    context: DefenseTaskContext,
-    action: AuthorizedAction,
-  ): Promise<ActionResult> {
+  async execute(context: DefenseTaskContext, action: AuthorizedAction): Promise<ActionResult> {
     const authorization = this.authorize({ ...context, requestedAction: action.action });
     if (!authorization.allowed) {
       const evidence = this.audit.append(context.tenantId, "defense.action.blocked", {
@@ -183,13 +159,7 @@ export class DefenseFabric {
         target: action.target,
         reasons: authorization.reasons,
       });
-      return {
-        state: "BLOCKED",
-        actionId: action.id,
-        target: action.target,
-        summary: "Policy or gateway controls blocked the action.",
-        evidenceIds: [evidence.id],
-      };
+      return { state: "BLOCKED", actionId: action.id, target: action.target, summary: "Policy or gateway controls blocked the action.", evidenceIds: [evidence.id] };
     }
 
     if (action.requiresApproval || authorization.review) {
@@ -198,40 +168,23 @@ export class DefenseFabric {
         target: action.target,
         reasons: authorization.reasons,
       });
-      return {
-        state: "APPROVAL_REQUIRED",
-        actionId: action.id,
-        target: action.target,
-        summary: "Action requires explicit authorization before execution.",
-        evidenceIds: [evidence.id],
-      };
+      return { state: "APPROVAL_REQUIRED", actionId: action.id, target: action.target, summary: "Action requires explicit authorization before execution.", evidenceIds: [evidence.id] };
     }
 
     const adapter = this.adapters.find(
       (candidate) => candidate.health() === "CONNECTED" && candidate.execute && candidate.domain === actionMetadataDomain(action),
     );
-
     if (!adapter?.execute) {
       const evidence = this.audit.append(context.tenantId, "defense.action.unavailable", {
         actionId: action.id,
         target: action.target,
         reason: "no_connected_execution_adapter",
       });
-      return {
-        state: "FAILED",
-        actionId: action.id,
-        target: action.target,
-        summary: "No connected execution adapter is available for this action.",
-        evidenceIds: [evidence.id],
-      };
+      return { state: "FAILED", actionId: action.id, target: action.target, summary: "No connected execution adapter is available for this action.", evidenceIds: [evidence.id] };
     }
 
     const result = await adapter.execute(action);
-    this.audit.append(context.tenantId, "defense.action.completed", {
-      actionId: action.id,
-      target: action.target,
-      state: result.state,
-    });
+    this.audit.append(context.tenantId, "defense.action.completed", { actionId: action.id, target: action.target, state: result.state });
     return result;
   }
 }
