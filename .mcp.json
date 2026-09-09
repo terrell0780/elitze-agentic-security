@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "elitze-github-control": {
+      "command": "npm",
+      "args": ["run", "mcp:github"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}",
+        "GITHUB_REPOSITORY": "terrell0780/elitze-agentic-security",
+        "ELITZE_GITHUB_MCP_WRITE": "false"
+      }
+    }
+  }
+}
