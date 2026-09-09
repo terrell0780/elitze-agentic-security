@@ -29,6 +29,20 @@ const taskSchema = z.object({
   requestedAction: z.string().optional(),
 });
 
+export async function GET() {
+  const agent = createMythosAgent();
+  return Response.json(
+    {
+      ok: true,
+      product: "ELITZE",
+      subsystem: "MYTHOS",
+      status: agent.defenseStatus(),
+      truthModel: ["OBSERVED", "INFERRED", "UNKNOWN", "UNMEASURABLE"],
+    },
+    { headers: { "cache-control": "no-store" } },
+  );
+}
+
 export async function POST(request: NextRequest) {
   const parsed = taskSchema.safeParse(await request.json());
   if (!parsed.success) {
@@ -38,9 +52,10 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const plan = createMythosAgent().plan(parsed.data);
+  const agent = createMythosAgent();
+  const plan = agent.plan(parsed.data);
   return Response.json(
-    { ok: true, plan },
+    { ok: true, plan, defense: agent.defenseStatus() },
     { headers: { "cache-control": "no-store" } },
   );
 }
