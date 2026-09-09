@@ -1,4 +1,4 @@
-import { boolean, integer, jsonb, pgTable, text, timestamp, varchar } from "drizzle-orm/pg-core";
+import { boolean, integer, jsonb, pgTable, serial, text, timestamp, varchar } from "drizzle-orm/pg-core";
 
 export const securityApprovals = pgTable("security_approvals", {
   id: serial("id").primaryKey(),
