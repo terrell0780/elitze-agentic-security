@@ -20,7 +20,7 @@ export type MythosTaskType =
   | "MEMORY_CAPTURE"
   | "REPORT_REVIEW";
 
-export type MythosRisk = "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+export type MythosPlanDecision = "ALLOW" | "REVIEW" | "BLOCK";
 
 export interface MythosTask {
   tenantId: string;
@@ -48,11 +48,23 @@ export interface MythosPlan {
   task: MythosTask;
   routes: MythosRoute[];
   controls: string[];
-  decision: "ALLOW" | "REVIEW" | "BLOCK";
+  decision: MythosPlanDecision;
   reasons: string[];
   evidenceRequired: boolean;
   execution: "READ_ONLY" | "APPROVAL_REQUIRED" | "BLOCKED";
   auditEventId: string;
+}
+
+export type MythosExecutionResult = {
+  ok: boolean;
+  plan: MythosPlan;
+  result?: unknown;
+  executionState: "NOT_EXECUTED" | "EXECUTED" | "REJECTED";
+  evidenceEventId: string;
+};
+
+export interface MythosActionExecutor {
+  execute(task: MythosTask, plan: MythosPlan): Promise<unknown>;
 }
 
 const TASK_ROUTES: Record<MythosTaskType, MythosRoute[]> = {
@@ -102,7 +114,7 @@ export class MythosAgent {
       riskSignals: task.riskSignals,
     });
 
-    const decision = this.enforcement.evaluate(
+    const enforcementDecision = this.enforcement.evaluate(
       {
         tenantId: task.tenantId,
         subjectId: task.agentId,
@@ -115,12 +127,12 @@ export class MythosAgent {
     );
 
     const routes = [...TASK_ROUTES[task.type]].sort((a, b) => b.priority - a.priority);
-    const reasons = [...gateway.reasons, ...decision.hardPolicyFailures.map((failure) => failure.reason)];
-    const critical = hasCriticalSignal(task.riskSignals) || reasons.length > 0 || decision.decision === "BLOCK";
+    const reasons = [...gateway.reasons, ...enforcementDecision.hardPolicyFailures.map((failure) => failure.reason)];
+    const critical = hasCriticalSignal(task.riskSignals);
     const highImpact = hasHighImpactAction(task.requestedAction);
-    const finalDecision = gateway.decision === "BLOCK" || decision.decision === "BLOCK"
+    const finalDecision: MythosPlanDecision = gateway.decision === "BLOCK" || enforcementDecision.decision === "BLOCK"
       ? "BLOCK"
-      : highImpact || critical
+      : critical || highImpact
         ? "REVIEW"
         : "ALLOW";
 
@@ -152,6 +164,27 @@ export class MythosAgent {
       execution,
       auditEventId: event.id,
     };
+  }
+
+  async execute(task: MythosTask, executor: MythosActionExecutor): Promise<MythosExecutionResult> {
+    const plan = this.plan(task);
+    if (plan.decision !== "ALLOW") {
+      const event = this.audit.append(task.tenantId, "mythos.execution.rejected", {
+        planId: plan.id,
+        decision: plan.decision,
+        execution: plan.execution,
+        reasons: plan.reasons,
+      });
+      return { ok: false, plan, executionState: "REJECTED", evidenceEventId: event.id };
+    }
+
+    const result = await executor.execute(task, plan);
+    const event = this.audit.append(task.tenantId, "mythos.execution.completed", {
+      planId: plan.id,
+      taskType: task.type,
+      resultRecorded: true,
+    });
+    return { ok: true, plan, result, executionState: "EXECUTED", evidenceEventId: event.id };
   }
 }
 
