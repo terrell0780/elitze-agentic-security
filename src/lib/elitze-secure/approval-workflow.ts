@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { and, desc, eq, gt } from "drizzle-orm";
+import { and, desc, eq, gt, lt } from "drizzle-orm";
 import { getDb } from "@/db";
 import { securityApprovals } from "@/db/enterprise-workflow-schema";
 import { AuditLedger } from "@/lib/elitze-secure/audit-ledger";
@@ -78,8 +78,8 @@ export async function decideApproval(input: { tenantId: string; approvalId: stri
 export async function expireStaleApprovals(tenantId?: string) {
   const now = new Date();
   const where = tenantId
-    ? and(eq(securityApprovals.tenantId, tenantId), eq(securityApprovals.status, "PENDING"), gt(now, securityApprovals.expiresAt))
-    : and(eq(securityApprovals.status, "PENDING"), gt(now, securityApprovals.expiresAt));
+    ? and(eq(securityApprovals.tenantId, tenantId), eq(securityApprovals.status, "PENDING"), lt(securityApprovals.expiresAt, now))
+    : and(eq(securityApprovals.status, "PENDING"), lt(securityApprovals.expiresAt, now));
   const rows = await getDb().update(securityApprovals).set({ status: "EXPIRED" }).where(where).returning({ approvalId: securityApprovals.approvalId, tenantId: securityApprovals.tenantId });
   for (const row of rows) audit.append(row.tenantId, "security.approval.expired", { approvalId: row.approvalId });
   return rows;
