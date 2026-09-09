@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto";
-import { AuditLedger } from "./audit-ledger.js";
-import { evaluateGatewayRequest, type ElitzeGatewayChannel } from "./gateway.js";
-import { PolicyEngine, requireTenantBoundary, restrictUnknownMcp, type PolicyContext } from "./policy-engine.js";
-import { EnforcementPoint } from "./runtime-enforcement.js";
+import { AuditLedger } from "@/lib/elitze-secure/audit-ledger";
+import { evaluateGatewayRequest, type ElitzeGatewayChannel } from "@/lib/elitze-secure/gateway";
+import { PolicyEngine, requireTenantBoundary, restrictUnknownMcp, type PolicyContext } from "@/lib/elitze-secure/policy-engine";
+import { EnforcementPoint } from "@/lib/elitze-secure/runtime-enforcement";
 
 export type MythosCapability =
   | "SECOPS"
