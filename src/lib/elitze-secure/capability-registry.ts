@@ -2,7 +2,7 @@ export type CapabilityStatus = "IMPLEMENTED" | "PARTIAL" | "PLANNED" | "BLOCKED"
 
 export type Capability = {
   id: string;
-  domain: "AI_SECURITY" | "SECOPS" | "IDENTITY" | "CLOUD" | "DATA" | "NETWORK" | "REO";
+  domain: "AI_SECURITY" | "SECOPS" | "IDENTITY" | "CLOUD" | "DATA" | "NETWORK" | "REO" | "ORCHESTRATION";
   name: string;
   status: CapabilityStatus;
   requirement: string;
@@ -16,6 +16,11 @@ export const ELITZE_CAPABILITY_REGISTRY: Capability[] = [
   { id:"ai-posture", domain:"AI_SECURITY", name:"AI Security Posture Management", status:"PLANNED", requirement:"Configuration, access and exposure posture across AI services and models." },
   { id:"model-security", domain:"AI_SECURITY", name:"AI Model and Artifact Security", status:"PLANNED", requirement:"Model integrity, backdoor, deserialization and artifact scanning." },
   { id:"ai-supply-chain", domain:"AI_SECURITY", name:"AI Supply Chain Security", status:"PLANNED", requirement:"Packages, dependencies, skills, datasets and provenance." },
+  { id:"mythos-core", domain:"ORCHESTRATION", name:"Mythos Governed Executive Orchestration", status:"IMPLEMENTED", requirement:"Route security and intelligence objectives through one policy-gated orchestration boundary with audit evidence." },
+  { id:"mythos-secops", domain:"SECOPS", name:"Mythos SecOps Routing", status:"PARTIAL", requirement:"Coordinate threat hunting, vulnerability analysis and incident-response plans through ELITZE controls; external execution remains adapter-bound." },
+  { id:"mythos-intelligence", domain:"ORCHESTRATION", name:"Mythos Intelligence", status:"PLANNED", requirement:"Production OSINT and investigative connectors with provenance, source trust and tenant authorization." },
+  { id:"mythos-memory", domain:"ORCHESTRATION", name:"Mythos Memory", status:"PLANNED", requirement:"Persistent tenant-scoped knowledge graph and evidence vault with retention and access controls." },
+  { id:"mythos-review", domain:"ORCHESTRATION", name:"Mythos Review", status:"PARTIAL", requirement:"Evidence-required review boundary for fraud analysis, incident response and published reporting." },
   { id:"endpoint", domain:"SECOPS", name:"Endpoint Security and EDR", status:"PLANNED", requirement:"Endpoint prevention, telemetry, detection and response." },
   { id:"xdr", domain:"SECOPS", name:"Cross-Domain XDR", status:"PLANNED", requirement:"Correlate endpoint, identity, cloud, SaaS, network and AI signals." },
   { id:"siem", domain:"SECOPS", name:"Next-Gen SIEM and Security Data Lake", status:"PLANNED", requirement:"Open ingestion, normalization, detection, hunting and federated search." },

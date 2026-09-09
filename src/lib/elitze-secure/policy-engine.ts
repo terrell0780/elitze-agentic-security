@@ -1,4 +1,4 @@
-import type { PolicyFailure } from "./decision.js";
+import type { PolicyFailure } from "@/lib/elitze-secure/decision";
 
 export interface PolicyContext {
   tenantId: string;
@@ -21,7 +21,7 @@ export class PolicyEngine {
 
   evaluate(context: PolicyContext): PolicyFailure[] {
     return this.policies
-      .map(policy => policy.evaluate(context))
+      .map((policy) => policy.evaluate(context))
       .filter((failure): failure is PolicyFailure => failure !== null);
   }
 }
