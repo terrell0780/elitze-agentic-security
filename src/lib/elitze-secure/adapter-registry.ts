@@ -3,7 +3,12 @@ import { createConfiguredAdapter } from "@/lib/elitze-secure/production-adapters
 
 function configuredAdapters(): SecurityAdapter[] {
   const definitions = [
-    { id: "microsoft-graph-security", domain: "SECOPS" as const, endpoint: process.env.ELITZE_GRAPH_SECURITY_URL, token: process.env.ELITZE_GRAPH_SECURITY_TOKEN },
+    {
+      id: "microsoft-graph-security",
+      domain: "SECOPS" as const,
+      endpoint: process.env.ELITZE_GRAPH_SECURITY_URL ?? "https://graph.microsoft.com/v1.0/security/alerts_v2?$top=100",
+      token: process.env.ELITZE_GRAPH_SECURITY_TOKEN,
+    },
     { id: "okta-system-log", domain: "IDENTITY" as const, endpoint: process.env.ELITZE_OKTA_SYSTEM_LOG_URL, token: process.env.ELITZE_OKTA_SYSTEM_LOG_TOKEN },
     { id: "github-security", domain: "APPLICATION" as const, endpoint: process.env.ELITZE_GITHUB_SECURITY_URL, token: process.env.ELITZE_GITHUB_SECURITY_TOKEN },
     { id: "threat-intelligence", domain: "THREAT_INTEL" as const, endpoint: process.env.ELITZE_THREAT_INTEL_URL, token: process.env.ELITZE_THREAT_INTEL_TOKEN },
