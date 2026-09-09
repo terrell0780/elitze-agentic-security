@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { AuditLedger } from "@/lib/elitze-secure/audit-ledger";
-import { createDefaultDefenseAdapters } from "@/lib/elitze-secure/adapter-registry";
 import { evaluateGatewayRequest } from "@/lib/elitze-secure/gateway";
 import { DEFAULT_SECURITY_POLICIES, PolicyEngine, type PolicyContext } from "@/lib/elitze-secure/policy-engine";
 
