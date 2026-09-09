@@ -1,6 +1,12 @@
-# ELITZE · Agentic Security
+# ELITZE
 
-ELITZE is a security control plane for identities, agents, tools, data access and runtime containment.
+ELITZE is a security control plane for identities, agents, tools, data access and runtime containment, built around a continuous **Detect → Explain → Authorize → Act → Retest → Evidence** loop.
+
+## Product standard
+
+ELITZE is being built against a five-platform enterprise benchmark and deliberately optimizes for the operating problems security teams repeatedly report: excessive complexity, alert noise, learning curves, expensive expansion and weak proof that remediation actually worked.
+
+See [`docs/ELITZE-CATEGORY-LEADER-MANIFEST.md`](docs/ELITZE-CATEGORY-LEADER-MANIFEST.md) for the acceptance standard and [`/compare`](src/app/compare/page.tsx) for the product-facing benchmark.
 
 ## Production path
 
