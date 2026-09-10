@@ -38,9 +38,18 @@ export const metadata: Metadata = {
   creator: "ELITZE",
   publisher: "ELITZE",
   authors: [{ name: "ELITZE" }],
-  alternates: { canonical: siteUrl },
   ...(googleVerification ? { verification: { google: googleVerification } } : {}),
-  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   openGraph: {
     type: "website",
     url: siteUrl,
