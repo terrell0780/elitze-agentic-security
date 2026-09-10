@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { Suspense, FormEvent, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -10,7 +10,7 @@ function messageFor(error: string) {
   return "Authentication is temporarily unavailable.";
 }
 
-export default function LoginPage() {
+function LoginContent() {
   const router = useRouter();
   const params = useSearchParams();
   const [email, setEmail] = useState("");
@@ -45,5 +45,13 @@ export default function LoginPage() {
         </form>
       </div>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<main className="flex min-h-screen items-center justify-center bg-[#07040a] px-6 text-slate-100"><div className="rounded-2xl border border-white/10 bg-white/[0.025] p-8 text-center"><div className="text-xs font-semibold tracking-[0.3em] text-red-300">ELITZE</div><h1 className="mt-4 text-xl font-semibold">Agentic Security</h1><p className="mt-3 text-sm text-slate-500">Preparing secure sign in…</p></div></main>}>
+      <LoginContent />
+    </Suspense>
   );
 }
