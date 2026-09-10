@@ -32,6 +32,11 @@ function getPool(): Pool {
   return databasePool;
 }
 
+/** Raw PostgreSQL pool for infrastructure paths that require parameterized SQL. */
+export function getPgPool(): Pool {
+  return getPool();
+}
+
 export function getDb() {
   databaseClient ??= drizzle(getPool());
   return databaseClient;
