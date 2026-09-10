@@ -49,7 +49,7 @@ export default function GlobalSecurityCommandLayer() {
           <div className="mt-3 rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5">
             <div className="flex flex-wrap items-start justify-between gap-3"><div><div className="text-[9px] font-bold uppercase tracking-[0.18em] text-[var(--muted)]">Active sensor</div><h3 className="mt-2 text-xl font-black tracking-tight">{current.label}</h3><p className="mt-1 max-w-2xl text-xs leading-5 text-[var(--muted)]">{current.detail}</p></div><div className="rounded-full border border-[var(--border)] px-2.5 py-1 font-mono text-[9px] text-[var(--accent)]">{time}</div></div>
             <div className="mt-5 grid gap-2 sm:grid-cols-2 xl:grid-cols-4">
-              {["HIGH-VALUE", "PRIVILEGED", "REACHABLE", "UNOBSERVED"].map((label, index) => <div key={label} className="rounded-xl border border-[var(--border)] bg-black/10 p-3"><div className="text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">{label}</div><div className="mt-2 font-mono text-lg font-bold">{index === 3 ? "—" : "LIVE"}</div><div className="mt-1 text-[9px] text-[var(--muted)]">Source-bound state</div></div>)}
+              {["HIGH-VALUE", "PRIVILEGED", "REACHABLE", "UNOBSERVED"].map((label, index) => <div key={label} className="rounded-xl border border-[var(--border)] bg-black/10 p-3"><div className="text-[9px] font-bold uppercase tracking-[0.12em] text-[var(--muted)]">{label}</div><div className="mt-2 font-mono text-lg font-bold">{index === 3 ? "UNMEASURABLE" : "SOURCE-BOUND"}</div><div className="mt-1 text-[9px] text-[var(--muted)]">Resolved only from connected evidence</div></div>)}
             </div>
           </div>
 
