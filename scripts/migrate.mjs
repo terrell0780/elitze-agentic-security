@@ -25,7 +25,13 @@ try {
     try { await client.query(sql); await client.query("INSERT INTO _elitze_migrations (id) VALUES ($1)", [id]); await client.query("COMMIT"); console.log(`Applied ${file}`); }
     catch (error) { await client.query("ROLLBACK"); throw error; }
   }
-  const requiredTables = ["agents", "discoveries", "hitl_approvals", "asi_controls", "enforcement_events", "market_gaps", "security_identities", "security_policies", "security_decisions", "attack_paths", "red_team_runs", "evidence_records", "security_approvals", "security_integration_events", "audit_ledger_events", "containment_actions"];
+  const requiredTables = [
+    "agents", "discoveries", "hitl_approvals", "asi_controls", "enforcement_events", "market_gaps",
+    "security_identities", "security_policies", "security_decisions", "attack_paths", "red_team_runs",
+    "evidence_records", "security_approvals", "security_integration_events", "audit_ledger_events",
+    "containment_actions", "decision_evidence", "analyst_feedback", "team_channels", "team_messages",
+    "team_channel_members",
+  ];
   const tableCheck = await client.query("SELECT table_name FROM information_schema.tables WHERE table_schema = current_schema() AND table_name = ANY($1::text[])", [requiredTables]);
   const present = new Set(tableCheck.rows.map((row) => row.table_name));
   const missing = requiredTables.filter((table) => !present.has(table));
