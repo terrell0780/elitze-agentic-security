@@ -13,3 +13,5 @@ export default defineConfig([
   },
   globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
 ]);
+
+// Release verification is performed by GitHub Actions before merge or production promotion.
