@@ -4,8 +4,8 @@ import { ArrowRight, ChevronDown, ShieldCheck } from "lucide-react";
 const faq = [
   ["Is ELITZE replacing our existing security tools?", "No. ELITZE is designed as a control and verification layer across connected code, cloud, identity, agent, data, runtime and security systems."],
   ["Does ELITZE invent live security data?", "No. Connected, verified records drive posture. Empty or unavailable integrations remain explicit instead of being filled with synthetic assets, alerts or telemetry."],
+  ["What is ELITZE Global Security View?", "It is the visual command surface for traversing connected security domains, security-graph relationships, exposure paths and authorized visual intelligence. Production posture still comes from verified data sources."],
   ["What makes continuous offensive validation different?", "The goal is to make authorized offensive validation part of the release loop: validate the relevant condition, remediate it, then retest the original condition and preserve the evidence."],
-  ["What is the interactive global security view?", "It is a visual control surface for traversing connected security domains and relationships. Production posture still comes from verified data sources."],
   ["What is the evidence intelligence layer?", "It preserves the relationship between signal, context, decision, action and verification so operators do not reconstruct the story from disconnected tickets."],
   ["Can autonomous actions be destructive?", "Actions are intended to remain inside explicit policy, identity and capability boundaries. Where required authorization or infrastructure is unavailable, the safe behavior is to fail closed rather than pretend an action occurred."],
   ["How does ELITZE handle AI risk?", "Models are decision inputs, not the security boundary. Authorization, policy enforcement, evidence and containment are deterministic control points."],
