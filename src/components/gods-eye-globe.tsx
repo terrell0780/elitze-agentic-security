@@ -17,10 +17,19 @@ const domains: Domain[] = [
   { id: "identity", label: "Identity", detail: "Human and service identity", x: 67, y: 70, orbit: 18 },
   { id: "cloud", label: "Cloud", detail: "Cloud assets and exposure paths", x: 35, y: 72, orbit: 21 },
   { id: "data", label: "Data", detail: "Sensitive data and authorization", x: 27, y: 45, orbit: 17 },
+  { id: "visual", label: "Visual", detail: "Authorized visual intelligence and camera-connected security signals", x: 50, y: 82, orbit: 24 },
 ];
+
+const layers = [
+  ["Security graph", "Relationships between assets, identities, agents, data and controls."],
+  ["Exposure", "Reachability, attack paths, vulnerabilities and business context."],
+  ["Visual intelligence", "Authorized camera or visual telemetry when a verified connector is present."],
+  ["Enforcement", "Policy decisions and runtime actions that remain inside explicit authorization boundaries."],
+] as const;
 
 export default function GodsEyeGlobe() {
   const [active, setActive] = useState("apps");
+  const [layer, setLayer] = useState("Security graph");
   const activeDomain = useMemo(() => domains.find((domain) => domain.id === active) ?? domains[0], [active]);
 
   return (
@@ -29,15 +38,23 @@ export default function GodsEyeGlobe() {
       <div className="flex items-start justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--accent)]">
-            <span className="h-2 w-2 rounded-full bg-[var(--accent)] pulse-soft" /> Gods Eye AI
+            <span className="h-2 w-2 rounded-full bg-[var(--accent)] pulse-soft" /> ELITZE Global Security View
           </div>
-          <h2 className="mt-2 text-lg font-bold sm:text-xl">Global security view</h2>
-          <p className="mt-1 max-w-md text-xs leading-5 text-[var(--muted)]">Interactive command surface for connected security domains. Live posture appears only when verified integrations are present.</p>
+          <h2 className="mt-2 text-lg font-bold sm:text-xl">See the security system in context.</h2>
+          <p className="mt-1 max-w-xl text-xs leading-5 text-[var(--muted)]">Interactive command surface for traversing connected security domains, exposure paths, verified visual intelligence and enforcement relationships.</p>
         </div>
         <div className="hidden rounded-xl border border-[var(--border)] bg-[var(--panel)] px-3 py-2 text-right sm:block">
           <div className="font-mono text-[10px] text-[var(--muted)]">MODE</div>
           <div className="mt-0.5 text-xs font-semibold">Evidence first</div>
         </div>
+      </div>
+
+      <div className="mt-6 flex flex-wrap gap-2">
+        {layers.map(([name]) => (
+          <button key={name} type="button" onClick={() => setLayer(name)} className={`rounded-full border px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.12em] transition ${layer === name ? "border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent)]" : "border-[var(--border)] bg-transparent text-[var(--muted)] hover:text-[var(--text)]"}`}>
+            {name}
+          </button>
+        ))}
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1.35fr_.65fr] lg:items-center">
@@ -50,19 +67,19 @@ export default function GodsEyeGlobe() {
           <div className="absolute inset-[8%] rounded-full [background-image:linear-gradient(90deg,transparent 49.7%,rgba(255,255,255,.06) 50%,transparent 50.3%),linear-gradient(0deg,transparent 49.7%,rgba(255,255,255,.06) 50%,transparent 50.3%)]" />
           <div className="absolute inset-[8%] rounded-full border border-[var(--accent-border)]/30" />
 
-          <div className="absolute inset-0 animate-[spin_24s_linear_infinite]">
+          <div className="absolute inset-0 animate-[spin_24s_linear_infinite]" aria-hidden="true">
             <div className="absolute left-1/2 top-[4%] h-3 w-3 -translate-x-1/2 rounded-full bg-[var(--accent)] shadow-[0_0_20px_rgba(239,68,68,.7)]" />
             <div className="absolute bottom-[6%] left-1/2 h-2 w-2 -translate-x-1/2 rounded-full bg-white/60" />
           </div>
 
-          <svg className="absolute inset-[3%] h-[94%] w-[94%] overflow-visible" viewBox="0 0 100 100" aria-label="Gods Eye security globe">
+          <svg className="absolute inset-[3%] h-[94%] w-[94%] overflow-visible" viewBox="0 0 100 100" aria-label="ELITZE Global Security View globe">
             <defs>
-              <radialGradient id="godsEyeCore" cx="50%" cy="50%" r="50%">
+              <radialGradient id="elitzeGlobalCore" cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stopColor="rgba(239,68,68,.24)" />
                 <stop offset="70%" stopColor="rgba(239,68,68,0)" />
               </radialGradient>
             </defs>
-            <circle cx="50" cy="50" r="28" fill="url(#godsEyeCore)" />
+            <circle cx="50" cy="50" r="28" fill="url(#elitzeGlobalCore)" />
             {domains.map((domain, index) => (
               <g key={domain.id}>
                 <line x1="50" y1="50" x2={domain.x} y2={domain.y} stroke="rgba(239,68,68,.2)" strokeDasharray="1.4 2" />
@@ -84,7 +101,7 @@ export default function GodsEyeGlobe() {
 
           <div className="absolute left-1/2 top-1/2 grid h-28 w-28 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-[var(--accent-border)] bg-black/30 text-center shadow-[0_0_55px_rgba(239,68,68,.12)] backdrop-blur-md sm:h-32 sm:w-32">
             <div>
-              <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-[var(--muted)]">Gods Eye</div>
+              <div className="font-mono text-[9px] uppercase tracking-[0.2em] text-[var(--muted)]">ELITZE</div>
               <div className="mt-1 text-sm font-bold">Security graph</div>
               <div className="mt-1 text-[9px] text-[var(--accent)]">{activeDomain.label} focus</div>
             </div>
@@ -103,7 +120,8 @@ export default function GodsEyeGlobe() {
               </button>
             ))}
           </div>
-          <div className="mt-6 rounded-xl border border-[var(--border)] bg-black/10 p-3 text-[10px] leading-5 text-[var(--muted)]">The globe is a control surface, not a synthetic world map. Production state is resolved from connected, verifiable sources.</div>
+          <div className="mt-6 rounded-xl border border-[var(--border)] bg-black/10 p-3 text-[10px] leading-5 text-[var(--muted)]">{layers.find(([name]) => name === layer)?.[1] ?? "Security relationships are resolved from connected, verifiable sources."}</div>
+          <div className="mt-3 rounded-xl border border-[var(--border)] bg-black/10 p-3 text-[10px] leading-5 text-[var(--muted)]">Visual intelligence is permissioned and connector-bound. ELITZE does not manufacture camera feeds, locations or live events.</div>
         </div>
       </div>
     </div>
