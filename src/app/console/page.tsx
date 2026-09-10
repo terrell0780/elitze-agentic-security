@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { Activity, Database, Search, ShieldCheck, TriangleAlert, Users } from "lucide-react";
 import SmartChatHierarchy from "@/components/smart-chat-hierarchy";
 import SecurityRoleMap from "@/components/security-role-map";
+import TeamCollaboration from "@/components/team-collaboration";
 
 type Health = { ok: boolean };
 type Market = {
@@ -12,6 +13,7 @@ type Market = {
   events?: Array<{ id: number; severity: string; eventType: string; summary: string; createdAt: string }>;
 };
 type SearchResult = { title: string; url: string; description: string; untrusted: true };
+type Metrics = { ok: boolean; metrics?: { enforcementEvents: number; highImpactEvents: number; averageEnforcementLatencyMs: number | null; intentMismatches: number; securityDecisions: number; deniedDecisions: number; humanReviewDecisions: number; autonomousDecisionRate: { value: number | null; state: string }; analystFeedbackCount: number; analystCoverage: { value: number | null; state: string }; feedbackBenignShare: { value: number | null; state: string }; pendingApprovals: number; decidedApprovals: number } };
 
 const cards = [
   [Activity, "Agents", (d: Market) => d.stats?.agents ?? 0],
@@ -20,9 +22,15 @@ const cards = [
   [ShieldCheck, "ASI coverage", (d: Market) => `${d.stats?.asiAvg ?? 0}%`],
 ] as const;
 
+function metricValue(metric?: { value: number | null; state: string }, suffix = "") {
+  if (!metric || metric.state !== "MEASURABLE" || metric.value === null) return "UNMEASURABLE";
+  return `${metric.value}${suffix}`;
+}
+
 export default function ConsolePage() {
   const [health, setHealth] = useState<Health | null>(null);
   const [market, setMarket] = useState<Market | null>(null);
+  const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -32,9 +40,11 @@ export default function ConsolePage() {
     void Promise.all([
       fetch("/api/health", { cache: "no-store" }).then((r) => r.json() as Promise<Health>).catch(() => ({ ok: false })),
       fetch("/api/market", { cache: "no-store" }).then((r) => r.json() as Promise<Market>).catch(() => ({ ok: false })),
-    ]).then(([h, m]) => {
+      fetch("/api/soc/metrics", { cache: "no-store" }).then((r) => r.json() as Promise<Metrics>).catch(() => ({ ok: false })),
+    ]).then(([h, m, s]) => {
       setHealth(h);
       setMarket(m);
+      setMetrics(s);
     });
   }, []);
 
@@ -77,7 +87,7 @@ export default function ConsolePage() {
       <div className="mx-auto max-w-7xl px-6 py-10">
         <div className="mb-8 flex flex-col gap-2">
           <h1 className="text-3xl font-semibold text-white">Security Console</h1>
-          <p className="text-sm text-slate-400">Live state comes only from the configured ELITZE services and database. Empty means empty; unavailable means unavailable.</p>
+          <p className="text-sm text-slate-400">Live state comes only from configured ELITZE services and database. Empty means empty; unavailable means unavailable.</p>
         </div>
 
         {!market?.ok && (
@@ -94,6 +104,17 @@ export default function ConsolePage() {
               <div className="mt-1 text-xs uppercase tracking-wider text-slate-500">{label}</div>
             </div>
           ))}
+        </section>
+
+        <section className="mt-8 rounded-2xl border border-white/8 bg-white/[0.02] p-6">
+          <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-red-300" /><h2 className="text-sm font-semibold text-white">SOC performance — measured from ELITZE records</h2></div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <div className="rounded-xl border border-white/7 bg-black/20 p-4"><div className="font-mono text-xl font-semibold">{metrics?.metrics ? metricValue(metrics.metrics.autonomousDecisionRate, "%") : "—"}</div><div className="mt-1 text-[10px] uppercase tracking-wider text-slate-500">Autonomous decision rate</div></div>
+            <div className="rounded-xl border border-white/7 bg-black/20 p-4"><div className="font-mono text-xl font-semibold">{metrics?.metrics ? metricValue(metrics.metrics.analystCoverage, "%") : "—"}</div><div className="mt-1 text-[10px] uppercase tracking-wider text-slate-500">Analyst feedback coverage</div></div>
+            <div className="rounded-xl border border-white/7 bg-black/20 p-4"><div className="font-mono text-xl font-semibold">{metrics?.metrics?.averageEnforcementLatencyMs === null ? "UNMEASURABLE" : metrics?.metrics ? `${Math.round(metrics.metrics.averageEnforcementLatencyMs ?? 0)} ms` : "—"}</div><div className="mt-1 text-[10px] uppercase tracking-wider text-slate-500">Average enforcement latency</div></div>
+            <div className="rounded-xl border border-white/7 bg-black/20 p-4"><div className="font-mono text-xl font-semibold">{metrics?.metrics?.intentMismatches ?? "—"}</div><div className="mt-1 text-[10px] uppercase tracking-wider text-slate-500">Intent mismatches recorded</div></div>
+          </div>
+          <p className="mt-4 text-[10px] text-slate-600">No synthetic measurements. A metric without sufficient observations remains UNMEASURABLE.</p>
         </section>
 
         <section className="mt-8 grid gap-6 lg:grid-cols-[1.25fr_0.75fr]">
@@ -138,6 +159,7 @@ export default function ConsolePage() {
 
         <SecurityRoleMap />
         <SmartChatHierarchy />
+        <TeamCollaboration />
       </div>
     </main>
   );
