@@ -5,13 +5,12 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.ca";
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      { userAgent: "*", allow: "/", disallow: ["/api/", "/console/"] },
-      { userAgent: "Googlebot", allow: "/" },
-      { userAgent: "Google-InspectionTool", allow: "/" },
-      { userAgent: "OAI-SearchBot", allow: "/" },
-      { userAgent: "OAI-AdsBot", allow: "/" },
+      {
+        userAgent: "*",
+        allow: "/",
+        disallow: ["/api/", "/console/"],
+      },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,
-    host: siteUrl,
   };
 }
