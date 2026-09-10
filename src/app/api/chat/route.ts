@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db";
 import { teamChannels, teamChannelMembers, teamMessages } from "@/db/schema";
@@ -14,15 +14,23 @@ const bodySchema = z.object({
 
 type ChatCompletion = { choices?: Array<{ message?: { content?: string } }> };
 
+async function channelMembership(channelId: number, actorId: string) {
+  const db = getDb();
+  const rows = await db.select({ id: teamChannelMembers.id }).from(teamChannelMembers)
+    .where(and(eq(teamChannelMembers.channelId, channelId), eq(teamChannelMembers.actorId, actorId), isNull(teamChannelMembers.leftAt))).limit(1);
+  return rows.length > 0;
+}
+
 async function findOrCreateAssistantChannel(actorId: string) {
   const db = getDb();
   const existing = await db.select({ id: teamChannels.id }).from(teamChannels)
     .innerJoin(teamChannelMembers, eq(teamChannelMembers.channelId, teamChannels.id))
-    .where(eq(teamChannelMembers.actorId, actorId)).limit(1);
+    .where(and(eq(teamChannelMembers.actorId, actorId), isNull(teamChannelMembers.leftAt), eq(teamChannels.channelType, "assistant"), isNull(teamChannels.archivedAt))).limit(1);
   if (existing.length) return existing[0].id;
 
+  const slug = `assistant-${actorId.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 80)}-${Date.now().toString(36)}`;
   const [channel] = await db.insert(teamChannels).values({
-    slug: `assistant-${actorId.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 80)}`,
+    slug,
     name: "ELITZE Chat",
     description: "Governed AI conversation channel",
     channelType: "assistant",
@@ -39,13 +47,15 @@ export async function POST(request: NextRequest) {
   const parsed = bodySchema.safeParse(await request.json().catch(() => null));
   if (!parsed.success) return NextResponse.json({ ok: false, error: "Invalid chat payload." }, { status: 400 });
 
+  const db = getDb();
+  const channelId = parsed.data.channelId ?? await findOrCreateAssistantChannel(session.actorId);
+  if (parsed.data.channelId && !await channelMembership(channelId, session.actorId)) {
+    return NextResponse.json({ ok: false, error: "Channel membership required." }, { status: 403 });
+  }
+
   const gatewayUrl = process.env.ELITZE_AI_GATEWAY_URL?.trim();
   if (!gatewayUrl) {
-    return NextResponse.json({
-      ok: false,
-      state: "UNAVAILABLE",
-      error: "ELITZE_AI_GATEWAY_URL is not configured. No model response was generated.",
-    }, { status: 503 });
+    return NextResponse.json({ ok: false, state: "UNAVAILABLE", error: "ELITZE_AI_GATEWAY_URL is not configured. No model response was generated." }, { status: 503 });
   }
 
   const decision = evaluatePolicy({
@@ -55,9 +65,7 @@ export async function POST(request: NextRequest) {
     purpose: "Security analysis and governed assistant response",
     dataClass: parsed.data.dataClass,
   });
-  if (decision.decision !== "allow") {
-    return NextResponse.json({ ok: false, state: "BLOCKED", decision }, { status: 403 });
-  }
+  if (decision.decision !== "allow") return NextResponse.json({ ok: false, state: "BLOCKED", decision }, { status: 403 });
 
   try {
     const response = await fetch(`${gatewayUrl.replace(/\/$/, "")}/chat/completions`, {
@@ -77,14 +85,10 @@ export async function POST(request: NextRequest) {
     });
 
     const payload = await response.json().catch(() => null) as ChatCompletion | null;
-    if (!response.ok) {
-      return NextResponse.json({ ok: false, state: "UPSTREAM_ERROR", error: "Configured AI gateway rejected the request." }, { status: 502 });
-    }
+    if (!response.ok) return NextResponse.json({ ok: false, state: "UPSTREAM_ERROR", error: "Configured AI gateway rejected the request." }, { status: 502 });
     const answer = payload?.choices?.[0]?.message?.content?.trim();
     if (!answer) return NextResponse.json({ ok: false, state: "INVALID_UPSTREAM_RESPONSE", error: "Configured AI gateway returned no assistant content." }, { status: 502 });
 
-    const db = getDb();
-    const channelId = parsed.data.channelId ?? await findOrCreateAssistantChannel(session.actorId);
     await db.insert(teamMessages).values({ channelId, authorId: session.actorId, authorType: "human", body: parsed.data.message });
     const [assistantMessage] = await db.insert(teamMessages).values({ channelId, authorId: "elitze-assistant", authorType: "assistant", body: answer }).returning({ id: teamMessages.id, createdAt: teamMessages.createdAt });
 
