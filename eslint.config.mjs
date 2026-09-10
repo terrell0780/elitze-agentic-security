@@ -15,3 +15,4 @@ export default defineConfig([
 ]);
 
 // Release verification is performed by GitHub Actions before merge or production promotion.
+// Final-verification branch: require a complete green gate before any production promotion.
