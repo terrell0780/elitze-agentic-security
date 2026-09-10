@@ -1,12 +1,24 @@
-# ELITZE
+# ELITZE Agentic Security
 
-ELITZE is a security control plane for identities, agents, tools, data access and runtime containment, built around a continuous **Detect → Explain → Authorize → Act → Retest → Evidence** loop.
+**Policy enforcement at the point of generation, not after the fact.**
+
+ELITZE Agentic Security is a governed security control plane for AI agents, MCP, LLM applications, APIs, software, cloud, identity, data and runtime behavior. It connects security graph context, policy enforcement, continuous validation and evidence so security decisions can be traced from signal to verified outcome.
+
+## Security surface
+
+- AI and agentic security: AI Security Gateway, agent boundaries, MCP and tool governance.
+- Application and API security: API security, OpenAPI governance, code and supply-chain controls.
+- Cloud, identity and data security: connected posture, authorization, sensitive-data pathways and runtime context.
+- Exposure and vulnerability operations: attack paths, CVE intelligence, remediation priority and verification.
+- Security operations: investigation, governed response, containment, audit and evidence.
+- **ELITZE Global Security View:** an interactive visual command surface for navigating connected security domains, exposure relationships and authorized visual intelligence.
+- **REO:** continuous validation of reachable and exploitable conditions with evidence-backed retesting.
 
 ## Product standard
 
-ELITZE is being built against a five-platform enterprise benchmark and deliberately optimizes for the operating problems security teams repeatedly report: excessive complexity, alert noise, learning curves, expensive expansion and weak proof that remediation actually worked.
+ELITZE is built around a continuous **Detect → Explain → Authorize → Act → Retest → Evidence** loop. It distinguishes observed evidence from inferred or unavailable state and does not manufacture live telemetry, assets, alerts or remediation outcomes.
 
-See [`docs/ELITZE-CATEGORY-LEADER-MANIFEST.md`](docs/ELITZE-CATEGORY-LEADER-MANIFEST.md) for the acceptance standard and [`/compare`](src/app/compare/page.tsx) for the product-facing benchmark.
+See [`docs/ELITZE-CATEGORY-LEADER-MANIFEST.md`](docs/ELITZE-CATEGORY-LEADER-MANIFEST.md) for the acceptance standard and [`src/app/compare/page.tsx`](src/app/compare/page.tsx) for the product-facing benchmark.
 
 ## Production path
 
