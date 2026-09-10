@@ -14,6 +14,8 @@ export { useCases, agentIntegrations, godsEyeFindings } from "./use-cases-schema
 export { crmContacts, crmActions } from "./crm-schema";
 export { dataSources, insights } from "./data-hub-schema";
 export { securityApprovals, securityIntegrationEvents } from "./enterprise-workflow-schema";
+export { teamChannels, teamMessages, teamChannelMembers } from "./team-schema";
+export { decisionEvidence, analystFeedback } from "./soc-schema";
 
 export const agents = pgTable("agents", {
   id: serial("id").primaryKey(),
