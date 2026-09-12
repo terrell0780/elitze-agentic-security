@@ -1,7 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { z } from "zod";
 import { createMythosAgent } from "@/lib/elitze-secure/mythos-agent";
-import { authorizeInternalRequest } from "@/lib/security/policy";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -13,9 +12,6 @@ const taskSchema = z.object({
 });
 export async function GET() { const agent = createMythosAgent(); return Response.json({ ok: true, product: "ELITZE Agentic Security", subsystem: "MYTHOS", status: agent.defenseStatus(), truthModel: ["OBSERVED", "INFERRED", "UNKNOWN", "UNMEASURABLE"] }, { headers: { "cache-control": "no-store" } }); }
 export async function POST(request: NextRequest) {
-  if (!authorizeInternalRequest(request.headers.get("x-elitze-api-key"), process.env.ELITZE_INTERNAL_API_KEY)) {
-    return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401, headers: { "cache-control": "no-store" } });
-  }
   let input: unknown; try { input = await request.json(); } catch { return Response.json({ ok: false, error: "invalid_json" }, { status: 400 }); }
   const parsed = taskSchema.safeParse(input); if (!parsed.success) return Response.json({ ok: false, error: "invalid Mythos task", issues: parsed.error.issues }, { status: 400, headers: { "cache-control": "no-store" } });
   try { const agent = createMythosAgent(); const plan = await agent.plan(parsed.data); return Response.json({ ok: true, plan, defense: agent.defenseStatus() }, { headers: { "cache-control": "no-store" } }); }

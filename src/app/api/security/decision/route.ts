@@ -2,7 +2,6 @@ import { NextRequest } from "next/server";
 import { enforceHardGates, type SecurityDecision } from "@/lib/elitze-secure/decision";
 import { DEFAULT_SECURITY_POLICIES, PolicyEngine, type PolicyContext } from "@/lib/elitze-secure/policy-engine";
 import { AuditLedger } from "@/lib/elitze-secure/audit-ledger";
-import { authorizeInternalRequest } from "@/lib/security/policy";
 
 export const dynamic = "force-dynamic";
 const audit = new AuditLedger();
@@ -11,9 +10,6 @@ const subjectTypes: SecurityDecision["subjectType"][] = ["CONTENT", "AGENT_ACTIO
 const evidenceStates = ["OBSERVED", "INFERRED", "UNKNOWN", "UNMEASURABLE"] as const;
 
 export async function POST(request: NextRequest) {
-  if (!authorizeInternalRequest(request.headers.get("x-elitze-api-key"), process.env.ELITZE_INTERNAL_API_KEY)) {
-    return Response.json({ error: "unauthorized" }, { status: 401, headers: { "cache-control": "no-store" } });
-  }
   let body: Record<string, unknown>;
   try { body = await request.json() as Record<string, unknown>; } catch { return Response.json({ error: "invalid_json" }, { status: 400 }); }
   if (typeof body.tenantId !== "string" || !body.tenantId.trim() || typeof body.subjectId !== "string" || !body.subjectId.trim() || typeof body.action !== "string" || !body.action.trim()) return Response.json({ error: "tenant_subject_and_action_required" }, { status: 400 });
@@ -24,5 +20,5 @@ export async function POST(request: NextRequest) {
   try { event = await audit.append(body.tenantId, "security.decision", body); } catch (error) { console.error("ELITZE audit persistence failed", error); return Response.json({ error: "security_audit_unavailable" }, { status: 503 }); }
   const evidenceState = typeof body.evidenceState === "string" && evidenceStates.includes(body.evidenceState as typeof evidenceStates[number]) ? body.evidenceState as typeof evidenceStates[number] : "UNKNOWN";
   const decision = enforceHardGates({ subjectId: body.subjectId, subjectType: body.subjectType as SecurityDecision["subjectType"], trustScore: typeof body.trustScore === "number" ? body.trustScore : null, hardPolicyFailures: failures, evidenceState, observedAt: new Date().toISOString(), auditEventId: event.id });
-  return Response.json(decision, { status: decision.decision === "BLOCK" ? 403 : 200, headers: { "cache-control": "no-store" } });
+  return Response.json(decision, { status: decision.decision === "BLOCK" ? 403 : 200 });
 }
