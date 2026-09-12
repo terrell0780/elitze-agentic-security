@@ -14,10 +14,13 @@ const routes = [
   "/reo",
   "/privacy",
   "/terms",
+  "/sales",
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return routes.map((path) => ({
     url: `${siteUrl}${path}`,
+    changeFrequency: path === "/" ? "weekly" : "monthly",
+    priority: path === "/" ? 1 : path === "/sales" || path === "/security" || path === "/platform" ? 0.9 : 0.7,
   }));
 }

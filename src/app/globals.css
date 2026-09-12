@@ -1,46 +1,50 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ink-950: #07040a;
-  --color-cyber-400: #f87171;
-  --color-cyber-500: #ef4444;
+  --color-ink-950: #061018;
+  --color-cyber-400: #67e8f9;
+  --color-cyber-500: #22d3ee;
 }
 
 :root {
-  --bg: #07040a;
-  --section: #0a060c;
+  --bg: #061018;
+  --section: #08131c;
   --panel: rgba(255,255,255,.035);
-  --panel-strong: #0d0810;
-  --header: rgba(7,4,10,.88);
-  --text: #f8fafc;
-  --muted: #8b93a3;
-  --muted-strong: #b9c0cc;
-  --border: rgba(255,255,255,.09);
-  --border-strong: rgba(239,68,68,.28);
-  --accent: #ef4444;
-  --accent-soft: rgba(239,68,68,.10);
-  --accent-border: rgba(239,68,68,.30);
-  --accent-glow: rgba(239,68,68,.12);
+  --panel-strong: #0b1923;
+  --header: rgba(6,16,24,.90);
+  --text: #f4f8fb;
+  --muted: #8fa1af;
+  --muted-strong: #c1cdd5;
+  --border: rgba(148,163,184,.14);
+  --border-strong: rgba(34,211,238,.34);
+  --accent: #22d3ee;
+  --accent-strong: #67e8f9;
+  --accent-soft: rgba(34,211,238,.09);
+  --accent-border: rgba(34,211,238,.30);
+  --accent-glow: rgba(34,211,238,.11);
+  --secondary: #a78bfa;
   --success: #4ade80;
   --success-soft: rgba(34,197,94,.09);
   --success-border: rgba(34,197,94,.25);
 }
 
 html[data-theme="light"] {
-  --bg: #f7f8fa;
-  --section: #eef1f5;
-  --panel: rgba(255,255,255,.88);
+  --bg: #f6fafc;
+  --section: #edf4f7;
+  --panel: rgba(255,255,255,.90);
   --panel-strong: #ffffff;
-  --header: rgba(247,248,250,.90);
-  --text: #111827;
-  --muted: #64748b;
-  --muted-strong: #475569;
-  --border: rgba(15,23,42,.11);
-  --border-strong: rgba(220,38,38,.28);
-  --accent: #dc2626;
-  --accent-soft: rgba(220,38,38,.08);
-  --accent-border: rgba(220,38,38,.25);
-  --accent-glow: rgba(220,38,38,.08);
+  --header: rgba(246,250,252,.92);
+  --text: #10202b;
+  --muted: #5f7381;
+  --muted-strong: #3f5563;
+  --border: rgba(15,45,60,.13);
+  --border-strong: rgba(8,145,178,.30);
+  --accent: #0891b2;
+  --accent-strong: #0e7490;
+  --accent-soft: rgba(8,145,178,.08);
+  --accent-border: rgba(8,145,178,.25);
+  --accent-glow: rgba(8,145,178,.08);
+  --secondary: #7c3aed;
   --success: #15803d;
   --success-soft: rgba(22,163,74,.08);
   --success-border: rgba(22,163,74,.22);
@@ -54,11 +58,18 @@ body {
 
 .hero-grid {
   background-image:
-    linear-gradient(rgba(239,68,68,.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(239,68,68,.035) 1px, transparent 1px);
+    linear-gradient(rgba(34,211,238,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(34,211,238,.035) 1px, transparent 1px);
   background-size: 44px 44px;
   mask-image: linear-gradient(to bottom, black, transparent 80%);
 }
+
+:where(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+button, a { -webkit-tap-highlight-color: transparent; }
 
 @keyframes pulse-soft { 0%,100% { opacity: 1; } 50% { opacity: .42; } }
 @keyframes drift { 0%,100% { transform: translate3d(0,0,0); } 50% { transform: translate3d(0,-5px,0); } }
