@@ -14,12 +14,13 @@ Required controls:
 - `robots.txt` allows public pages and blocks application/API surfaces.
 - XML sitemap contains only intended public URLs.
 - Page metadata has a stable title, description, canonical URL and social metadata.
-- Organization, WebSite and SoftwareApplication JSON-LD describe the actual product.
+- Organization and WebSite JSON-LD describe the actual product and organization.
+- `SoftwareApplication` structured data is used only when the public page visibly supports the required Google properties, including a real offer/price where required for the Google-supported software-app rich result. It must not be added merely to chase a rich result.
 - Structured data is not used to claim ratings, reviews, offers, awards, rankings or other facts that are not visibly supported.
 - No doorway pages, keyword stuffing, cloaking, scaled low-value content, fabricated testimonials, fabricated statistics or synthetic performance claims.
 - Public product pages explain capabilities and implementation status accurately.
 
-Google's current guidance makes clear that spam policies apply to Search and AI features, and that scaled content created primarily to manipulate rankings is not acceptable. Structured data must describe visible, relevant content and should be validated before relying on rich-result eligibility.
+Google's current guidance emphasizes helpful, reliable, people-first content and compliance with Search spam policies. Structured data must describe visible, relevant content; correct markup does not guarantee a rich result or ranking. citeturn0search2turn0search7turn0search13
 
 ## 2. REO — reputation and content integrity
 
@@ -54,6 +55,8 @@ No RIO score may be displayed as a measured fact when its source is unavailable.
 ## 4. Google Ads readiness
 
 Google Ads must use clear, relevant ads and functional landing pages. Campaigns must target the same canonical ELITZE domain and must not use misleading claims, fabricated rankings, unsupported customer results or policy-evasion tactics.
+
+Do not imply Google affiliation, endorsement, partnership, preferred placement, guaranteed ranking, guaranteed traffic, guaranteed conversion, or special access unless that relationship is real and authorized. Do not make claims that ELITZE is “top rated,” “#1,” “top five,” or similarly ranked unless there is current, independently verifiable evidence and the wording is permitted for the placement.
 
 Recommended measurement events are business outcomes such as qualified demo requests, contact submissions and completed product-intent actions. Exact Google Ads conversion IDs and labels must be supplied from the real Google Ads account; the repository never invents them.
 
@@ -108,3 +111,13 @@ Before declaring ELITZE product/business ready, verify:
 ## 8. Important limitation
 
 No code change can guarantee a Google ranking, an AI citation, a top-five market position, an ad approval, or a particular traffic level. Those outcomes depend on Google's systems, competition, real-world demand, account history, content quality, external authority and measured user behavior. The correct product standard is to make the site technically eligible, trustworthy, measurable and commercially useful, then optimize from real evidence.
+
+## 9. Policy references
+
+- Google Search Essentials: https://developers.google.com/search/docs/essentials
+- Google helpful, reliable, people-first content: https://developers.google.com/search/docs/fundamentals/creating-helpful-content
+- Google structured-data guidelines: https://developers.google.com/search/docs/appearance/structured-data/sd-policies
+- Google SoftwareApplication structured data: https://developers.google.com/search/docs/appearance/structured-data/software-app
+- Google Ads policies: https://support.google.com/adspolicy/answer/6008942
+- Google Ads misrepresentation policy: https://support.google.com/adspolicy/answer/6020955
+- Google Ads trademark policy: https://support.google.com/adspolicy/answer/6118
