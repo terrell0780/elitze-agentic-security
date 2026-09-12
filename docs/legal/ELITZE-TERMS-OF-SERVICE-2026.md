@@ -1,12 +1,12 @@
-# ELITZE Terms of Service
+# ELITZE Agentic Security Terms of Service
 
-**Version:** 2026.09
+**Version:** 2026.09  
 **Effective date:** September 3, 2026
 
-> This document is a product/legal draft for ELITZE and should be reviewed by qualified counsel before execution or publication. It is not legal advice.
+> This document is a product/legal draft for ELITZE Agentic Security and should be reviewed by qualified counsel before execution or publication. It is not legal advice.
 
 ## 1. Scope
-These Terms govern access to and use of ELITZE services, including ELITZE Secure, ELITZE REO, ELITZE Intelligence, ELITZE Sentinel, APIs, agents, dashboards, integrations, and related documentation (collectively, the “Services”).
+These Terms govern access to and use of **ELITZE Agentic Security**, including its security-control-plane capabilities, REO validation and governance capabilities, APIs, agents, dashboards, integrations, and related documentation (collectively, the “Services”).
 
 If a signed order form, enterprise agreement, data processing addendum, or other written agreement conflicts with these Terms, the signed agreement controls for that conflict.
 
