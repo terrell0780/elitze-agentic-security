@@ -4,6 +4,14 @@
 
 This directory contains buyer-facing sales and due-diligence material for the ELITZE Agentic Security software asset.
 
+## Source protection
+
+The canonical source repository is private. The public sales experience does **not** distribute the repository or provide a direct source-code link.
+
+Qualified buyer diligence may receive temporary read-only repository access only after the buyer is identified, demonstrates ability to fund the proposed transaction, and executes an appropriate NDA. Access scope and duration are controlled separately.
+
+The repository was previously public. That history is disclosed for diligence. Making the repository private does not erase historical distribution or represent that no third-party copies exist.
+
 ## Important status rule
 
 This package describes the repository and product using evidence available in the repository. It does not represent planned, blocked, inferred, or unverified capabilities as live production functionality.
@@ -30,12 +38,16 @@ See `docs/ELITZE-CATEGORY-LEADER-MANIFEST.md` for the project's acceptance stand
 
 ## Acquisition scope
 
-The package is structured around the **software/product asset**. Ownership, licensing, domain transfer, trademarks, customer contracts, infrastructure accounts, data, credentials, and any other business assets must be explicitly documented in the transaction agreement rather than assumed.
+The proposed asset package is **ELITZE Agentic Security — complete pre-revenue product asset acquisition**, subject to a definitive agreement and verification. Potential transfer items include the ELITZE product/source IP, owned brand/visual assets, `elitze.ca` if transferable, application/database migrations/SDK/documentation, deployment configuration, sales materials, and other expressly listed transferable assets.
+
+A proposed transition period is **30 days capped at 10 hours**, unless separately agreed in writing.
+
+The seller's personal GitHub account, personal email and financial accounts, unrelated repositories/projects, non-transferable vendor accounts, and third-party IP not owned by the seller are excluded.
 
 ## Current repository anchor
 
-Repository: `terrell0780/elitze-agentic-security`
-
 Canonical product name: **ELITZE Agentic Security**
 
-Product domain referenced by the current project context: `elitze.ca`
+Product domain: `elitze.ca`
+
+Source access: **private / qualified buyer diligence only**
