@@ -57,6 +57,12 @@ Tenant boundaries, RBAC, identity integration, policy governance, integrations, 
 
 No valuation, revenue, customer, traffic, ranking or implementation claim should be stated without diligence evidence.
 
+## Trust and endorsement rule
+
+References to CISA, NSA, ASD/ACSC, NCSC-UK, the Canadian Centre for Cyber Security, Google, Microsoft, Okta, SANS, or other third parties are informational references only. They do not imply endorsement, certification, partnership, sponsorship, preferred status, or affiliation with ELITZE unless a separate written relationship actually exists.
+
+Do not market ELITZE as “#1,” “top five,” “top rated,” “best,” or “five-star” unless the specific claim is supported by current, independently verifiable evidence and is appropriate for the advertising or sales channel.
+
 ## Sales sequence
 
 ### First message
