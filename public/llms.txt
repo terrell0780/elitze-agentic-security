@@ -24,6 +24,14 @@ ELITZE is a security control plane for software, cloud, identities, AI agents an
 - Evidence and audit persistence
 - REO content integrity
 - RIO reach and visibility measurement
+- Agent Skills security boundary and admission governance
+
+## Agent Skills security
+ELITZE treats Agent Skills as untrusted external capabilities until provenance, identity, policy and admission controls are satisfied.
+
+The control path is: Agent/Client -> Skill -> Agent Reach -> Provenance -> Policy + REO -> Admission -> Runtime tool/MCP/API controls -> Evidence.
+
+The Agent Skills client ecosystem is tracked as evidence in `config/agent-skills-client-registry.json`. Presence in that registry is not an ELITZE integration claim.
 
 ## Security model
 The security boundary is external to the agent. Identity, authorization, policy, credentials, data access, network controls, sandboxing and containment remain independently enforceable.
