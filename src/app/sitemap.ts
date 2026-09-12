@@ -10,7 +10,7 @@ const routes = [
   "/compare",
   "/about",
   "/faq",
-  "/mythos",
+  "/orchestration",
   "/reo",
   "/privacy",
   "/terms",
