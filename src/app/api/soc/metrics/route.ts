@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db";
+import { getCurrentUser } from "@/lib/auth";
 
 function ratioMetric(numerator: number, denominator: number) {
   if (denominator === 0) return { value: null, state: "UNMEASURABLE" } as const;
@@ -8,6 +9,8 @@ function ratioMetric(numerator: number, denominator: number) {
 }
 
 export async function GET() {
+  const user = await getCurrentUser().catch(() => null);
+  if (!user) return NextResponse.json({ ok: false, error: "authentication_required" }, { status: 401, headers: { "cache-control": "no-store" } });
   try {
     const db = getDb();
     const [events, decisions, feedback, approvals] = await Promise.all([
@@ -49,6 +52,7 @@ export async function GET() {
     return NextResponse.json({
       ok: true,
       source: "database",
+      tenantId: user.tenantId,
       metrics: {
         enforcementEvents: Number(event.total ?? 0),
         highImpactEvents: Number(event.high_impact ?? 0),
@@ -65,8 +69,8 @@ export async function GET() {
         decidedApprovals: Number(approval.decided ?? 0),
       },
       measurementPolicy: "Metrics with insufficient observations are returned as null with UNMEASURABLE; no synthetic values are generated.",
-    });
+    }, { headers: { "cache-control": "private, no-store" } });
   } catch {
-    return NextResponse.json({ ok: false, error: "SOC metrics data plane unavailable." }, { status: 503 });
+    return NextResponse.json({ ok: false, error: "SOC metrics data plane unavailable." }, { status: 503, headers: { "cache-control": "no-store" } });
   }
 }

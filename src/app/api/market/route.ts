@@ -1,3 +1,4 @@
+import { getCurrentUser } from "@/lib/auth";
 import { getDb } from "@/db";
 import { agents, asiControls, discoveries, enforcementEvents, hitlApprovals, marketGaps } from "@/db/schema";
 import { asc, desc, eq, sql } from "drizzle-orm";
@@ -16,6 +17,8 @@ function databaseUnavailable() {
 }
 
 export async function GET() {
+  const user = await getCurrentUser().catch(() => null);
+  if (!user) return NextResponse.json({ ok: false, error: "authentication_required" }, { status: 401, headers: { "cache-control": "no-store" } });
   if (!process.env.DATABASE_URL) return databaseUnavailable();
   try {
     const db = getDb();
@@ -40,6 +43,7 @@ export async function GET() {
     const s = (stats.rows[0] ?? {}) as Record<string, string | number>;
     return NextResponse.json({
       ok: true,
+      tenantId: user.tenantId,
       stats: {
         agents: Number(s.agents ?? 0),
         shadowAgents: Number(s.shadow_agents ?? 0),
@@ -59,10 +63,10 @@ export async function GET() {
         headline: "ELITZE operational intelligence is sourced from configured security records, not fabricated telemetry.",
         sources: ["OWASP", "NIST", "CISA", "CVE / NVD", "EPSS"],
       },
-    });
+    }, { headers: { "cache-control": "private, no-store" } });
   } catch (error) {
     console.error("ELITZE market intelligence load failed", error);
-    return NextResponse.json({ ok: false, error: "market_unavailable" }, { status: 503 });
+    return NextResponse.json({ ok: false, error: "market_unavailable" }, { status: 503, headers: { "cache-control": "no-store" } });
   }
 }
 
