@@ -76,6 +76,11 @@ async function clientMeta() {
   };
 }
 
+export async function getRateLimitKey(scope: string, identifier?: string) {
+  const meta = await clientMeta();
+  return `${scope}:${meta.ip}:${identifier ?? ""}`;
+}
+
 export async function consumeRateLimit(bucket: string, maxAttempts: number, windowSeconds = RATE_WINDOW_SECONDS) {
   const result = await getPgPool().query(
     `INSERT INTO auth_rate_limits (bucket,attempts,window_started_at)
