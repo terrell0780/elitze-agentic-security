@@ -12,7 +12,12 @@ Operating promise: **Pentest every release. Govern every agent. Verify every fix
 
 ## Buyer problem
 
-2026 enterprise research consistently points to the same operational gap: organizations are adopting agents faster than they can inventory, authorize and verify them. Okta reports that fewer than half of surveyed CISOs are confident they can identify all agents, centrally control their access, or authorize individual agent actions. SANS reports enterprise-wide visibility remains the leading SOC effectiveness barrier. Microsoft emphasizes observability, governance and security as agents scale.
+Current 2026 research supports a specific and measurable problem rather than a generic AI-security claim. Okta's Global CISO Insights 2026 survey of 306 security executives found that fewer than half were confident they could identify all AI agents (47%), control what agents can access (46%), or authorize what individual agents can do (45%). SANS' 2026 SOC survey found 24% of cyber leaders identified lack of enterprise-wide visibility as the single biggest barrier to SOC effectiveness. Microsoft likewise emphasizes observability, governance and security as agents scale.
+
+Sources:
+- Okta, Global CISO Insights 2026: https://www.okta.com/newsroom/articles/global-ciso-insights-2026/
+- SANS, 2026 SOC Survey: https://www.sans.org/press/announcements/24-of-cyber-leaders-cite-lack-of-enterprise-wide-visibility-as-the-biggest-barrier-to-soc-effectiveness-the-2026-sans-soc-survey-finds
+- Microsoft Security, Cyber Pulse: https://www.microsoft.com/en-ca/security/security-insider/emerging-trends/cyber-pulse-ai-security-report
 
 ELITZE should sell the outcome, not a feature checklist:
 
@@ -20,7 +25,7 @@ ELITZE should sell the outcome, not a feature checklist:
 
 ## Competitive wedge
 
-Do not claim competitors secretly lack a capability unless verified. The defensible wedge is the operating model:
+Do not claim competitors secretly lack a capability unless verified. Do not publish unsupported vendor scores or rankings. The defensible wedge is the operating model:
 
 1. Security graph context
 2. Policy decision before consequential action
@@ -50,7 +55,7 @@ Tenant boundaries, RBAC, identity integration, policy governance, integrations, 
 - OEM / embedded security-control-plane partnership
 - Strategic investment / partnership
 
-No valuation or implementation claim should be stated without diligence evidence.
+No valuation, revenue, customer, traffic, ranking or implementation claim should be stated without diligence evidence.
 
 ## Sales sequence
 
