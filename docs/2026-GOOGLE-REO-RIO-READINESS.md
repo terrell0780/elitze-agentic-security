@@ -20,7 +20,7 @@ Required controls:
 - No doorway pages, keyword stuffing, cloaking, scaled low-value content, fabricated testimonials, fabricated statistics or synthetic performance claims.
 - Public product pages explain capabilities and implementation status accurately.
 
-Google's current guidance emphasizes helpful, reliable, people-first content and compliance with Search spam policies. Structured data must describe visible, relevant content; correct markup does not guarantee a rich result or ranking. citeturn0search2turn0search7turn0search13
+Google's current guidance emphasizes helpful, reliable, people-first content and compliance with Search spam policies. Structured data must describe visible, relevant content; correct markup does not guarantee a rich result or ranking.
 
 ## 2. REO — reputation and content integrity
 
