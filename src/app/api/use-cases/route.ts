@@ -1,3 +1,4 @@
+import { getCurrentUser } from "@/lib/auth";
 import { getDb } from "@/db";
 import { agentIntegrations, godsEyeFindings, useCases } from "@/db/schema";
 import { asc, eq, sql } from "drizzle-orm";
@@ -7,6 +8,8 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 export async function GET(request: Request) {
+  const user = await getCurrentUser().catch(() => null);
+  if (!user) return NextResponse.json({ ok: false, error: "authentication_required" }, { status: 401, headers: { "cache-control": "no-store" } });
   try {
     const db = getDb();
     const { searchParams } = new URL(request.url);
@@ -31,6 +34,7 @@ export async function GET(request: Request) {
     const s = (stats.rows[0] ?? {}) as Record<string, string | number>;
     return NextResponse.json({
       ok: true,
+      tenantId: user.tenantId,
       stats: {
         useCases: Number(s.use_cases ?? 0),
         featured: Number(s.featured ?? 0),
@@ -42,10 +46,10 @@ export async function GET(request: Request) {
       integrations,
       findings,
       industries: ["Financial services", "Healthcare", "Government", "SaaS and technology", "Retail and commerce", "Telecommunications", "Manufacturing", "Security operations"],
-    });
+    }, { headers: { "cache-control": "private, no-store" } });
   } catch (error) {
     console.error("ELITZE use-case load failed", error);
-    return NextResponse.json({ ok: false, error: "use_cases_unavailable" }, { status: 503 });
+    return NextResponse.json({ ok: false, error: "use_cases_unavailable" }, { status: 503, headers: { "cache-control": "no-store" } });
   }
 }
 
