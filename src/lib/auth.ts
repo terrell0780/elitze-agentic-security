@@ -5,6 +5,8 @@ import { getPgPool } from "@/db";
 const SESSION_COOKIE = "elitze_session";
 const PERSISTENT_DAYS = 30;
 const PASSWORD_MIN = 12;
+const RATE_WINDOW_SECONDS = 15 * 60;
+const DUMMY_PASSWORD_HASH = "scrypt$16384$8$1$fixed-elitze-dummy-salt$1QW9Zfy7_xUt37q5OriffuvgMKnlAqlCu2b-M6LxnCBx82L5WdVeFJchv1_r9OBA1mc6CcPKXY03CwBE4qIdGw";
 
 type ScryptResult = Buffer<ArrayBuffer>;
 
@@ -64,13 +66,33 @@ async function verifyPassword(password: string, encoded: string) {
 
 async function clientMeta() {
   const requestHeaders = await headers();
+  const forwarded = requestHeaders.get("x-forwarded-for");
+  const ip = forwarded?.split(",").map((value) => value.trim()).filter(Boolean).at(-1)
+    ?? requestHeaders.get("x-real-ip")
+    ?? "unknown";
   return {
-    ip:
-      requestHeaders.get("x-forwarded-for")?.split(",")[0]?.trim() ??
-      requestHeaders.get("x-real-ip") ??
-      "unknown",
+    ip,
     ua: requestHeaders.get("user-agent") ?? "unknown",
   };
+}
+
+export async function consumeRateLimit(bucket: string, maxAttempts: number, windowSeconds = RATE_WINDOW_SECONDS) {
+  const result = await getPgPool().query(
+    `INSERT INTO auth_rate_limits (bucket,attempts,window_started_at)
+     VALUES ($1,1,now())
+     ON CONFLICT (bucket) DO UPDATE SET
+       attempts = CASE
+         WHEN auth_rate_limits.window_started_at <= now() - make_interval(secs => $2::double precision) THEN 1
+         ELSE auth_rate_limits.attempts + 1
+       END,
+       window_started_at = CASE
+         WHEN auth_rate_limits.window_started_at <= now() - make_interval(secs => $2::double precision) THEN now()
+         ELSE auth_rate_limits.window_started_at
+       END
+     RETURNING attempts`,
+    [digest(bucket), windowSeconds],
+  );
+  return Number(result.rows[0]?.attempts ?? maxAttempts + 1) <= maxAttempts;
 }
 
 function cookieOptions(expires: Date) {
@@ -246,8 +268,14 @@ export async function authenticate(email: string, password: string) {
       })
     | undefined;
 
-  if (!row) return null;
-  if (row.lockedUntil && new Date(row.lockedUntil).getTime() > Date.now()) return null;
+  if (!row) {
+    await verifyPassword(password, DUMMY_PASSWORD_HASH);
+    return null;
+  }
+  if (row.lockedUntil && new Date(row.lockedUntil).getTime() > Date.now()) {
+    await verifyPassword(password, DUMMY_PASSWORD_HASH);
+    return null;
+  }
 
   const ok = await verifyPassword(password, row.passwordHash);
   if (!ok) {
