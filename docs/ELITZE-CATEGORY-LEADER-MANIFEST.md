@@ -8,25 +8,15 @@ This document is the acceptance standard for that goal.
 
 ## Benchmark set
 
-The benchmark set is deliberately cross-category:
+The benchmark set is deliberately cross-category and is used for capability analysis, not unsupported ranking claims:
 
-- CrowdStrike Falcon — endpoint/XDR benchmark.
-- Wiz — cloud/CNAPP benchmark.
-- Microsoft Defender XDR — enterprise XDR benchmark.
-- Zscaler — zero-trust/SASE benchmark.
-- Palo Alto Cortex XSIAM — SOC/XSIAM benchmark.
+- Endpoint / XDR platforms — endpoint telemetry and detection.
+- Cloud / CNAPP platforms — cloud posture and exposure context.
+- Enterprise security platforms — identity and ecosystem integration.
+- Zero Trust / SASE platforms — access policy and enforcement.
+- SOC / XDR platforms — investigation and response consolidation.
 
-Current G2 reference ratings used for the September 2026 benchmark snapshot:
-
-| Platform | Reference rating | Reference volume |
-| --- | ---: | ---: |
-| CrowdStrike Falcon Endpoint Protection Platform | 4.6/5 | 396 reviews |
-| Wiz | 4.7/5 | 777 product reviews |
-| Microsoft Defender XDR | 4.5/5 | 286 reviews |
-| Zscaler | 4.5/5 | 780 reviews across Zscaler |
-| Palo Alto Cortex XSIAM | 4.4/5 | 73 reviews |
-
-These figures are market references, not a claim that ELITZE already outranks any listed platform.
+ELITZE does not publish invented vendor scores, review counts, rankings or claims that it outperforms a named platform without current, independently verifiable evidence.
 
 ## What ELITZE must beat
 
@@ -76,7 +66,7 @@ No UI may represent PLANNED or BLOCKED as live protection.
 7. Code, dependency and software-supply-chain security.
 8. Runtime telemetry and detection.
 9. Containment and kill switch.
-10. Continuous offensive validation / Infinite Pentest.
+10. Continuous offensive validation.
 11. Attack-path and exposure analysis.
 12. Evidence and immutable audit trail.
 13. CI/CD release security gates.
