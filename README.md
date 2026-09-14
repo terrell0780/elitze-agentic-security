@@ -14,6 +14,13 @@ ELITZE Agentic Security is a governed security control plane for AI agents, MCP,
 - **ELITZE Global Security View:** an interactive visual command surface for navigating connected security domains, exposure relationships and authorized visual intelligence.
 - **REO:** continuous validation of reachable and exploitable conditions with evidence-backed retesting.
 - **ROI:** evidence-backed business value measurement connecting security outcomes to approved financial assumptions.
+- **ELITZE Security Skill Registry:** governed capabilities with authorization, verification, evidence and reference mappings.
+
+## Product brand and ownership
+
+ELITZE is the product brand and canonical product identity. Product-facing code and copy use ELITZE naming and visual identity. External technologies and standards may appear only as dependencies, integrations, compatibility targets, or reference mappings; they are not presented as ELITZE-owned products.
+
+See [`docs/ELITZE-BRAND-AND-IP-POLICY.md`](docs/ELITZE-BRAND-AND-IP-POLICY.md), [`docs/ELITZE-SECURITY-SKILLS.md`](docs/ELITZE-SECURITY-SKILLS.md), and [`docs/SALE-READINESS.md`](docs/SALE-READINESS.md).
 
 ## Product standard
 
@@ -39,7 +46,7 @@ When required observations or financial assumptions are unavailable, ELITZE show
 2. Set `DATABASE_URL` and `ELITZE_INTERNAL_API_KEY`.
 3. Run `npm install`.
 4. Run `npm run db:migrate` against the production database.
-5. Run `npm run typecheck`, `npm run lint`, `npm test`, and `npm run build`.
+5. Run `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`, and `npm run sale:readiness`.
 6. Deploy the application with the same runtime environment and database.
 
 The repository does not seed synthetic records on startup. Empty database state is surfaced as empty state in the console.
@@ -53,6 +60,7 @@ The model or agent is not the security boundary. Internal security-decision and 
 - `GET /api/health` — database readiness check.
 - `GET /api/search?q=...` — server-side public search broker with bounded input and untrusted-result labeling.
 - `GET /api/roi` — observed ELITZE security-value signals for the executive ROI surface.
+- `GET /api/security/skills` — ELITZE governed security skill metadata.
 - `POST /api/security/decision` — authenticated policy decision and persistence.
 - `POST /api/security/kill-switch` — authenticated containment request and optional executor dispatch.
 - `GET /api/market` — database-backed security state.
