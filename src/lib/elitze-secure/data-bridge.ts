@@ -1,12 +1,12 @@
-import { createHash, randomBytes } from "node:crypto";
+import { createHash, randomBytes, randomUUID } from "node:crypto";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { z } from "zod";
-import { desc, eq, and, sql } from "drizzle-orm";
 import { getDb } from "@/db";
-import { dataBridgeEvents, dataBridgeSources, dataSources } from "@/db/data-bridge-schema";
+import { dataBridgeEvents, dataBridgeSources, dataSources } from "@/db/schema";
 import { AuditLedger } from "@/lib/elitze-secure/audit-ledger";
 
-const MAX_EVENT_BYTES = 256_000;
 const MAX_BATCH = 100;
+const MAX_REQUEST_BYTES = 5_000_000;
 const TOKEN_BYTES = 48;
 
 const eventSchema = z.object({
@@ -24,12 +24,12 @@ const eventSchema = z.object({
   payload: z.record(z.string(), z.unknown()).default({}),
 });
 
-const ingestSchema = z.object({
-  events: z.array(eventSchema).min(1).max(MAX_BATCH),
-});
+const ingestSchema = z.object({ events: z.array(eventSchema).min(1).max(MAX_BATCH) });
 
 export type DataBridgeEventInput = z.infer<typeof eventSchema>;
-export type DataBridgeEventStatus = "ACCEPTED" | "DUPLICATE" | "REJECTED";
+export type DataBridgeEventStatus = "ACCEPTED" | "DUPLICATE";
+
+type SourceRow = typeof dataBridgeSources.$inferSelect;
 
 function stableStringify(value: unknown): string {
   if (value === null || typeof value !== "object") return JSON.stringify(value);
@@ -37,7 +37,7 @@ function stableStringify(value: unknown): string {
   return `{${Object.keys(value as Record<string, unknown>).sort().map((key) => `${JSON.stringify(key)}:${stableStringify((value as Record<string, unknown>)[key])}`).join(",")}}`;
 }
 
-function payloadHash(value: unknown): string {
+function sha256(value: unknown): string {
   return createHash("sha256").update(stableStringify(value)).digest("hex");
 }
 
@@ -45,11 +45,16 @@ function tokenHash(token: string): string {
   return createHash("sha256").update(token).digest("hex");
 }
 
-function normalizeEvent(sourceId: string, tenantId: string, input: DataBridgeEventInput) {
-  const eventId = input.eventId?.trim() || `evt_${payloadHash(input).slice(0, 32)}`;
+function slugify(value: string): string {
+  const slug = value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 120);
+  return slug || `source-${randomUUID().slice(0, 8)}`;
+}
+
+function normalizeEvent(source: SourceRow, input: DataBridgeEventInput) {
+  const eventId = input.eventId?.trim() || `evt_${sha256(input).slice(0, 32)}`;
   const observedAt = input.observedAt ? new Date(input.observedAt) : new Date();
   if (Number.isNaN(observedAt.getTime())) throw new Error("invalid_observed_at");
-  const raw = {
+  const normalized = {
     eventId,
     eventType: input.eventType.trim(),
     observedAt: observedAt.toISOString(),
@@ -64,23 +69,23 @@ function normalizeEvent(sourceId: string, tenantId: string, input: DataBridgeEve
     payload: input.payload,
   };
   return {
-    id: crypto.randomUUID(),
-    tenantId,
-    sourceId,
+    id: randomUUID(),
+    tenantId: source.tenantId,
+    sourceId: source.id,
     eventId,
-    eventType: raw.eventType,
+    eventType: normalized.eventType,
     schemaVersion: "1",
     observedAt,
-    severity: raw.severity,
-    subject: raw.subject,
-    action: raw.action,
-    state: raw.state,
-    summary: raw.summary,
-    assetIds: raw.assetIds,
-    evidenceIds: raw.evidenceIds,
-    normalized: raw,
+    severity: normalized.severity,
+    subject: normalized.subject,
+    action: normalized.action,
+    state: normalized.state,
+    summary: normalized.summary,
+    assetIds: normalized.assetIds,
+    evidenceIds: normalized.evidenceIds,
+    normalized,
     rawPayload: input,
-    contentHash: payloadHash(raw),
+    contentHash: sha256(normalized),
   };
 }
 
@@ -88,13 +93,12 @@ function readBearer(request: Request): string | null {
   const explicit = request.headers.get("x-elitze-source-token")?.trim();
   if (explicit) return explicit;
   const authorization = request.headers.get("authorization")?.trim();
-  if (!authorization?.startsWith("Bearer ")) return null;
-  return authorization.slice(7).trim() || null;
+  return authorization?.startsWith("Bearer ") ? authorization.slice(7).trim() || null : null;
 }
 
-async function assertBodySize(request: Request): Promise<void> {
+export function assertRequestSize(request: Request): void {
   const length = request.headers.get("content-length");
-  if (length && Number(length) > MAX_EVENT_BYTES * MAX_BATCH) throw new Error("request_too_large");
+  if (length && Number(length) > MAX_REQUEST_BYTES) throw new Error("request_too_large");
 }
 
 export function parseIngestBody(body: unknown) {
@@ -111,25 +115,26 @@ export function sourceTokenDigest(token: string): string {
   return tokenHash(token);
 }
 
-export async function authenticateSource(request: Request) {
+export async function authenticateSource(request: Request): Promise<SourceRow | null> {
   const token = readBearer(request);
   if (!token) return null;
-  const hash = tokenHash(token);
-  const rows = await getDb().select().from(dataBridgeSources).where(and(eq(dataBridgeSources.tokenHash, hash), eq(dataBridgeSources.active, true))).limit(1);
+  const rows = await getDb().select().from(dataBridgeSources).where(and(eq(dataBridgeSources.tokenHash, tokenHash(token)), eq(dataBridgeSources.active, true))).limit(1);
   return rows[0] ?? null;
 }
 
 export async function provisionSource(args: { tenantId: string; name: string; kind: string; description?: string }) {
   const tenantId = args.tenantId.trim();
+  const name = args.name.trim();
   if (!tenantId) throw new Error("tenant_id_required");
   if (tenantId.length > 200) throw new Error("tenant_id_too_long");
-  const name = args.name.trim();
   if (!name || name.length > 200) throw new Error("source_name_invalid");
   const token = issueSourceToken();
-  const db = getDb();
-  const [source] = await db.insert(dataBridgeSources).values({
+  const baseSlug = slugify(name);
+  const slug = `${baseSlug}-${randomUUID().slice(0, 8)}`;
+  const [source] = await getDb().insert(dataBridgeSources).values({
     tenantId,
     name,
+    slug,
     kind: args.kind.trim().slice(0, 80) || "external",
     description: args.description?.trim() || null,
     tokenHash: tokenHash(token),
@@ -139,15 +144,14 @@ export async function provisionSource(args: { tenantId: string; name: string; ki
   return { source, token };
 }
 
-export async function ingestEvents(source: typeof dataBridgeSources.$inferSelect, body: unknown) {
-  await assertBodySize(new Request("http://internal", { headers: { "content-length": "0" } }));
+export async function ingestEvents(source: SourceRow, body: unknown) {
   const parsed = parseIngestBody(body);
   const db = getDb();
   const audit = new AuditLedger();
   const results: Array<{ eventId: string; status: DataBridgeEventStatus }> = [];
 
   for (const input of parsed.events) {
-    const normalized = normalizeEvent(source.id, source.tenantId, input);
+    const normalized = normalizeEvent(source, input);
     const [inserted] = await db.insert(dataBridgeEvents).values({
       id: normalized.id,
       tenantId: normalized.tenantId,
@@ -167,7 +171,6 @@ export async function ingestEvents(source: typeof dataBridgeSources.$inferSelect
       rawPayload: normalized.rawPayload,
       contentHash: normalized.contentHash,
       status: "ACCEPTED",
-      receivedAt: new Date(),
     }).onConflictDoNothing({ target: [dataBridgeEvents.tenantId, dataBridgeEvents.sourceId, dataBridgeEvents.eventId] }).returning();
 
     if (!inserted) {
@@ -185,26 +188,39 @@ export async function ingestEvents(source: typeof dataBridgeSources.$inferSelect
     });
   }
 
-  await db.update(dataBridgeSources).set({ lastIngestAt: new Date(), eventsAccepted: sql`${dataBridgeSources.eventsAccepted} + ${results.filter((result) => result.status === "ACCEPTED").length}` }).where(eq(dataBridgeSources.id, source.id));
-  await db.update(dataSources).set({ lastIngestAt: new Date(), eventsToday: sql`${dataSources.eventsToday} + ${results.filter((result) => result.status === "ACCEPTED").length}` }).where(eq(dataSources.slug, source.slug));
-  return { tenantId: source.tenantId, sourceId: source.id, accepted: results.filter((result) => result.status === "ACCEPTED").length, duplicates: results.filter((result) => result.status === "DUPLICATE").length, results };
+  const accepted = results.filter((result) => result.status === "ACCEPTED").length;
+  if (accepted > 0) {
+    await db.update(dataBridgeSources).set({ lastIngestAt: new Date(), eventsAccepted: sql`${dataBridgeSources.eventsAccepted} + ${accepted}`, updatedAt: new Date() }).where(eq(dataBridgeSources.id, source.id));
+    await db.update(dataSources).set({ lastIngestAt: new Date(), eventsToday: sql`${dataSources.eventsToday} + ${accepted}` }).where(eq(dataSources.slug, source.slug));
+  }
+
+  return {
+    tenantId: source.tenantId,
+    sourceId: source.id,
+    accepted,
+    duplicates: results.length - accepted,
+    results,
+  };
 }
 
-export async function listEvents(args: { tenantId: string; sourceId?: string; limit?: number; cursor?: string }) {
+export async function listEvents(args: { tenantId: string; sourceId?: string; limit?: number }) {
   const limit = Math.min(Math.max(args.limit ?? 50, 1), 200);
   const conditions = [eq(dataBridgeEvents.tenantId, args.tenantId)];
   if (args.sourceId) conditions.push(eq(dataBridgeEvents.sourceId, args.sourceId));
-  const events = await getDb().select().from(dataBridgeEvents).where(and(...conditions)).orderBy(desc(dataBridgeEvents.receivedAt)).limit(limit);
-  return events;
+  return getDb().select().from(dataBridgeEvents).where(and(...conditions)).orderBy(desc(dataBridgeEvents.receivedAt)).limit(limit);
 }
 
 export async function health(tenantId?: string) {
-  const sourceConditions = tenantId ? eq(dataBridgeSources.tenantId, tenantId) : undefined;
-  const eventConditions = tenantId ? eq(dataBridgeEvents.tenantId, tenantId) : undefined;
-  const [sources, accepted, rejected] = await Promise.all([
-    getDb().select({ id: dataBridgeSources.id, name: dataBridgeSources.name, tenantId: dataBridgeSources.tenantId, active: dataBridgeSources.active, lastIngestAt: dataBridgeSources.lastIngestAt, eventsAccepted: dataBridgeSources.eventsAccepted }).from(dataBridgeSources).where(sourceConditions),
-    getDb().select({ count: sql<number>`count(*)` }).from(dataBridgeEvents).where(and(eventConditions, eq(dataBridgeEvents.status, "ACCEPTED"))),
-    getDb().select({ count: sql<number>`count(*)` }).from(dataBridgeEvents).where(and(eventConditions, eq(dataBridgeEvents.status, "REJECTED"))),
-  ]);
-  return { sources, acceptedEvents: Number(accepted[0]?.count ?? 0), rejectedEvents: Number(rejected[0]?.count ?? 0) };
+  const db = getDb();
+  const sourceRows = tenantId
+    ? await db.select({ id: dataBridgeSources.id, name: dataBridgeSources.name, tenantId: dataBridgeSources.tenantId, active: dataBridgeSources.active, lastIngestAt: dataBridgeSources.lastIngestAt, eventsAccepted: dataBridgeSources.eventsAccepted }).from(dataBridgeSources).where(eq(dataBridgeSources.tenantId, tenantId))
+    : await db.select({ id: dataBridgeSources.id, name: dataBridgeSources.name, tenantId: dataBridgeSources.tenantId, active: dataBridgeSources.active, lastIngestAt: dataBridgeSources.lastIngestAt, eventsAccepted: dataBridgeSources.eventsAccepted }).from(dataBridgeSources);
+  const acceptedQuery = tenantId
+    ? db.select({ count: sql<number>`count(*)` }).from(dataBridgeEvents).where(and(eq(dataBridgeEvents.tenantId, tenantId), eq(dataBridgeEvents.status, "ACCEPTED")))
+    : db.select({ count: sql<number>`count(*)` }).from(dataBridgeEvents).where(eq(dataBridgeEvents.status, "ACCEPTED"));
+  const duplicateQuery = tenantId
+    ? db.select({ count: sql<number>`count(*)` }).from(dataBridgeEvents).where(and(eq(dataBridgeEvents.tenantId, tenantId), eq(dataBridgeEvents.status, "DUPLICATE")))
+    : db.select({ count: sql<number>`count(*)` }).from(dataBridgeEvents).where(eq(dataBridgeEvents.status, "DUPLICATE"));
+  const [accepted, duplicate] = await Promise.all([acceptedQuery, duplicateQuery]);
+  return { sources: sourceRows, acceptedEvents: Number(accepted[0]?.count ?? 0), duplicateEvents: Number(duplicate[0]?.count ?? 0) };
 }
