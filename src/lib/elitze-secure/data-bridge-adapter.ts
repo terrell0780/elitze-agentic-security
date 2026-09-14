@@ -35,6 +35,8 @@ export type DataBridgeConnector = {
   publish?(events: readonly DataBridgeEventInput[], config: DataBridgeConnectionConfig, context: DataBridgeConnectorContext): Promise<{ accepted: number; rejected: number }>;
 };
 
+type JsonRecord = Record<string, unknown>;
+
 const connectorManifestSchema = z.object({
   id: z.string().regex(/^[a-z0-9][a-z0-9._-]{1,80}$/),
   displayName: z.string().min(1).max(160),
@@ -42,6 +44,10 @@ const connectorManifestSchema = z.object({
   transports: z.array(z.enum(["WEBHOOK", "REST_PULL", "EVENT_STREAM", "MCP", "CUSTOM"])).min(1),
   capabilities: z.array(z.enum(["INGEST", "HEALTH", "DISCOVERY", "NORMALIZE", "PUBLISH", "EXECUTE"])).min(1),
 });
+
+function isJsonRecord(value: unknown): value is JsonRecord {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 
 export function validateConnectorManifest(connector: Pick<DataBridgeConnector, "id" | "displayName" | "version" | "transports" | "capabilities">) {
   return connectorManifestSchema.parse({ ...connector });
@@ -61,20 +67,29 @@ export function createGenericHttpJsonConnector(): DataBridgeConnector {
       return { ok: true, status: "AUTHENTICATED", detail: "configuration_valid" };
     },
     normalize(payload, context) {
-      if (!payload || typeof payload !== "object" || Array.isArray(payload)) {
+      if (!isJsonRecord(payload)) {
         return [{ eventType: "source.payload", subject: context.sourceId, summary: "Observed non-object source payload", payload: { value: payload } }];
       }
-      const record = payload as Record<string, unknown>;
-      const items = Array.isArray(record.items)
+
+      const record = payload;
+      const items: unknown[] = Array.isArray(record.items)
         ? record.items
         : Array.isArray(record.events)
           ? record.events
           : Array.isArray(record.findings)
             ? record.findings
             : [record];
-      return items.map((item, index) => {
-        const value = item && typeof item === "object" && !Array.isArray(item) ? item as Record<string, unknown> : { value: item };
+
+      return items.map((item, index): DataBridgeEventInput => {
+        const value: JsonRecord = isJsonRecord(item) ? item : { value: item };
         const eventId = typeof value.id === "string" ? value.id : `${context.sourceId}:${index}`;
+        const assetIds = Array.isArray(value.assetIds)
+          ? value.assetIds.filter((entry: unknown): entry is string => typeof entry === "string")
+          : undefined;
+        const evidenceIds = Array.isArray(value.evidenceIds)
+          ? value.evidenceIds.filter((entry: unknown): entry is string => typeof entry === "string")
+          : undefined;
+
         return {
           eventId,
           eventType: typeof value.eventType === "string" ? value.eventType : "source.event",
@@ -84,15 +99,15 @@ export function createGenericHttpJsonConnector(): DataBridgeConnector {
           action: typeof value.action === "string" ? value.action : undefined,
           state: typeof value.state === "string" ? value.state : "OBSERVED",
           summary: typeof value.summary === "string" ? value.summary : undefined,
-          assetIds: Array.isArray(value.assetIds) ? value.assetIds.filter((entry): entry is string => typeof entry === "string") : undefined,
-          evidenceIds: Array.isArray(value.evidenceIds) ? value.evidenceIds.filter((entry): entry is string => typeof entry === "string") : undefined,
+          assetIds,
+          evidenceIds,
           metadata: { connector: "generic-http-json", sourceId: context.sourceId },
           payload: value,
-        } satisfies DataBridgeEventInput;
+        };
       });
     },
     async health(config, context) {
-      return this.connect ? this.connect(config, context) : { ok: false, status: "UNAVAILABLE", detail: "health_not_supported" };
+      return this.connect(config, context);
     },
   };
 }
