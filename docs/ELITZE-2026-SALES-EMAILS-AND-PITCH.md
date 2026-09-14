@@ -24,7 +24,7 @@ If agent governance, SOC automation or non-human identity risk is on your 2026 r
 
 **Subject:** Strategic acquisition opportunity: ELITZE Agentic Security
 
-ELITZE Agentic Security is a security decision and evidence-plane product focused on the rapidly expanding agentic enterprise.
+ELITZE Agentic Security is a security decision and evidence-plane product focused on the agentic enterprise.
 
 The product combines security graph context, agent/model/MCP/API relationships, policy enforcement, SOC response support, continuous validation and evidence-backed verification.
 
@@ -122,3 +122,9 @@ ELITZE Agentic Security is built around that loop.
 **See the threat. Control the path. Prove the fix.**
 
 https://elitze.ca
+
+## Sales trust rule
+
+Third-party names, research, government guidance and platform references are informational only. They do not imply endorsement, certification, partnership, sponsorship, preferred status or affiliation with ELITZE unless a separate written relationship actually exists.
+
+Do not claim “#1,” “top five,” “top rated,” “best,” or “five-star” status without current, independently verifiable evidence appropriate to the sales or advertising channel. Do not guarantee Google rankings, traffic, ad placement, conversions, security outcomes or customer results.
