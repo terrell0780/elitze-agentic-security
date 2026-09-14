@@ -1,0 +1,41 @@
+import { boolean, integer, jsonb, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+
+export const dataBridgeSources = pgTable("data_bridge_sources", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  tenantId: varchar("tenant_id", { length: 200 }).notNull(),
+  name: varchar("name", { length: 200 }).notNull(),
+  slug: varchar("slug", { length: 160 }).notNull().unique(),
+  kind: varchar("kind", { length: 80 }).notNull(),
+  description: text("description"),
+  tokenHash: varchar("token_hash", { length: 64 }).notNull().unique(),
+  tokenPrefix: varchar("token_prefix", { length: 16 }).notNull(),
+  active: boolean("active").notNull().default(true),
+  lastIngestAt: timestamp("last_ingest_at", { withTimezone: true }),
+  eventsAccepted: integer("events_accepted").notNull().default(0),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const dataBridgeEvents = pgTable("data_bridge_events", {
+  id: uuid("id").primaryKey(),
+  tenantId: varchar("tenant_id", { length: 200 }).notNull(),
+  sourceId: uuid("source_id").notNull().references(() => dataBridgeSources.id),
+  eventId: varchar("event_id", { length: 200 }).notNull(),
+  eventType: varchar("event_type", { length: 120 }).notNull(),
+  schemaVersion: varchar("schema_version", { length: 20 }).notNull().default("1"),
+  observedAt: timestamp("observed_at", { withTimezone: true }).notNull(),
+  receivedAt: timestamp("received_at", { withTimezone: true }).notNull().defaultNow(),
+  severity: varchar("severity", { length: 40 }).notNull().default("unknown"),
+  subject: varchar("subject", { length: 300 }),
+  action: varchar("action", { length: 200 }),
+  state: varchar("state", { length: 80 }).notNull().default("OBSERVED"),
+  summary: text("summary"),
+  assetIds: jsonb("asset_ids").$type<string[]>().notNull().default([]),
+  evidenceIds: jsonb("evidence_ids").$type<string[]>().notNull().default([]),
+  normalized: jsonb("normalized").$type<Record<string, unknown>>().notNull(),
+  rawPayload: jsonb("raw_payload").$type<Record<string, unknown>>().notNull(),
+  contentHash: varchar("content_hash", { length: 64 }).notNull(),
+  status: varchar("status", { length: 40 }).notNull().default("ACCEPTED"),
+  error: text("error"),
+  processedAt: timestamp("processed_at", { withTimezone: true }),
+});
