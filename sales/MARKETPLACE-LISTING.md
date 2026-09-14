@@ -24,13 +24,25 @@ The repository does not seed synthetic records on startup and explicitly disting
 
 ## What is included
 
-- ELITZE Agentic Security source repository.
-- Application source code and documented product architecture.
-- Database schema/migrations and build configuration.
-- Security and sales documentation contained in the repository.
-- Product/IP transfer subject to a negotiated agreement.
+The proposed acquisition package, subject to a definitive agreement and verification, includes:
 
-Additional assets such as domain, trademarks, cloud accounts, customer contracts, customer data, analytics, or third-party subscriptions are included only if expressly stated in the transaction.
+- ELITZE Agentic Security source repository and commit history.
+- Application source, console, database schema/migrations, SDK, and documented architecture.
+- Product and security documentation.
+- Owned ELITZE brand and visual assets.
+- `elitze.ca`, if transferable under the transaction.
+- Deployment configuration and documentation.
+- Sales/acquisition materials.
+- Transferable cloud, communications, analytics, and social accounts only where legally and contractually transferable.
+- 30 days of transition support capped at 10 hours, unless separately agreed.
+
+The seller's personal GitHub account, personal email and financial accounts, unrelated repositories/projects, non-transferable vendor accounts, and third-party IP not owned by the seller are excluded.
+
+## Source-access protocol
+
+The source repository is private and is not distributed from the public listing. Qualified buyer diligence may receive temporary read-only access only after buyer identification, demonstration of ability to fund the proposed transaction, and execution of an appropriate NDA.
+
+The repository was previously public. This is disclosed for diligence. Making it private does not erase historical distribution or represent that no third-party copies exist.
 
 ## Technical stack
 
@@ -48,4 +60,4 @@ Best suited to a cybersecurity company, MSSP, AI-security vendor, security platf
 
 ## Buyer due diligence
 
-A buyer should independently verify production deployment, database configuration, live integrations, test/build results, security controls, third-party dependencies, ownership of transferable assets, and any commercial claims before closing.
+A buyer should independently verify production deployment, database configuration, live integrations, test/build results, security controls, third-party dependencies, ownership of transferable assets, source-history exposure, and any commercial claims before closing.

@@ -40,10 +40,10 @@ Potential transaction paths:
 - strategic partnership/OEM
 - investment or technology transaction
 
-Repository and implementation diligence are available. No synthetic metrics or invented production claims are used as diligence evidence.
+Repository and implementation diligence are available to qualified buyers under a controlled access process. No synthetic metrics or invented production claims are used as diligence evidence.
 
 **Product:** https://elitze.ca
-**Repository:** https://github.com/terrell0780/elitze-agentic-security
+**Source access:** Request repository access through the sales process; the source repository is private.
 
 ## Email 3 — SOC / Security Operations
 
@@ -74,6 +74,34 @@ The differentiator is not another AI dashboard. It is the closed loop:
 **Observe → Understand → Authorize → Act → Retest → Prove.**
 
 The model is not the security boundary.
+
+### Acquisition package
+
+**ELITZE Agentic Security — complete pre-revenue product asset acquisition**
+
+Proposed scope, subject to definitive agreement and diligence:
+
+- `elitze.ca`
+- ELITZE source repository and commit history
+- owned ELITZE brand and visual assets
+- application, console, database migrations and SDK
+- product and security documentation
+- deployment configuration
+- sales materials
+- transferable cloud/social/communications accounts only where legally and contractually transferable
+- 30 days of transition support, capped at 10 hours
+
+Excluded:
+
+- seller's personal GitHub account
+- personal email and financial accounts
+- non-transferable vendor accounts
+- unrelated repositories and projects
+- third-party IP not owned by the seller
+
+Source access is controlled. A prospective buyer must be identified, demonstrate ability to fund the transaction, execute an appropriate NDA, and receive temporary read-only access during diligence.
+
+The repository was previously public. This is disclosed to buyers; making it private does not represent that previously downloaded copies do not exist.
 
 ## X / LinkedIn short post
 

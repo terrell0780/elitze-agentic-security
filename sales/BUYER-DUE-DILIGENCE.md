@@ -3,11 +3,25 @@
 ## 1. Product identity
 
 - Product: **ELITZE Agentic Security**
-- Repository: `terrell0780/elitze-agentic-security`
-- Canonical domain referenced by the project: `elitze.ca`
+- Canonical domain: `elitze.ca`
+- Repository: private GitHub repository, disclosed to qualified buyers during diligence
 - Default repository branch: `main`
+- Commercial status: pre-revenue product asset unless separately verified
 
-## 2. Code and build review
+## 2. Source-access protocol
+
+The source repository is intentionally private for the acquisition process. Repository access is not provided through the public sales page.
+
+Read-only source access may be granted only after:
+
+1. The prospective buyer is identified.
+2. The buyer demonstrates ability to fund the proposed transaction.
+3. An appropriate NDA is executed.
+4. Access is limited to the agreed diligence scope and duration.
+
+The repository was previously public. This fact is disclosed for diligence. Making the repository private does not erase historical distribution or represent that no third-party copies exist.
+
+## 3. Code and build review
 
 Buyer should verify:
 
@@ -21,7 +35,7 @@ Buyer should verify:
 - Known defects and blockers.
 - Third-party dependencies and licenses.
 
-## 3. Runtime review
+## 4. Runtime review
 
 Verify in a buyer-controlled environment:
 
@@ -34,7 +48,7 @@ Verify in a buyer-controlled environment:
 - Kill-switch behavior matches the documented fail-closed model.
 - Empty-data state does not fabricate telemetry.
 
-## 4. Security review
+## 5. Security review
 
 Buyer should review:
 
@@ -48,27 +62,28 @@ Buyer should review:
 - Dependency vulnerabilities.
 - CI/CD controls.
 - Runtime containment configuration.
+- Secret-scanning results and any historical secret exposure.
 
-## 5. Commercial review
+## 6. Commercial review
 
 Revenue, customers, contracts, traffic, retention, valuation, certifications, regulatory status, security attestations, and production performance should be treated as **unverified unless supporting evidence is provided separately**.
 
-## 6. Asset-transfer review
+## 7. Asset-transfer review
 
-The transaction should explicitly state whether it includes:
+The proposed software/product asset package may include, subject to the definitive transaction agreement:
 
-- Source code/IP.
-- Domain.
-- Brand/trademarks.
-- Infrastructure.
-- Deployment configuration.
-- Cloud accounts.
-- Database/data.
-- Customer contracts.
-- Third-party accounts.
-- Documentation.
-- Support/handoff period.
+- ELITZE Agentic Security source code and commit history.
+- Application and database migrations.
+- SDK and product/security documentation.
+- ELITZE brand and visual assets owned by the seller.
+- `elitze.ca` domain, if transferable under the transaction.
+- Deployment configuration and documentation.
+- Sales and acquisition materials.
+- Transferable cloud, analytics, communications, and social accounts only where legally and contractually transferable.
+- Up to 30 days of transition support, capped at 10 hours, unless separately agreed.
 
-## 7. Evidence rule
+The seller's personal GitHub account, personal email and financial accounts, unrelated repositories/projects, non-transferable vendor accounts, and third-party IP not owned by the seller are excluded.
+
+## 8. Evidence rule
 
 A buyer should prefer reproducible evidence over screenshots or verbal claims. Production status should be independently verified before closing.

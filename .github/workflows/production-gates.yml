@@ -21,6 +21,7 @@ jobs:
       - run: npm install
       - run: npm audit --omit=dev --audit-level=high
       - run: npm run security:self-test
+      - run: npm run data-bridge:self-test
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run build
