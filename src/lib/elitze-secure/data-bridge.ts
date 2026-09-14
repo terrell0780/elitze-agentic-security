@@ -29,14 +29,14 @@ const ingestSchema = z.object({ events: z.array(eventSchema).min(1).max(MAX_BATC
 
 export type DataBridgeEventInput = z.infer<typeof eventSchema>;
 export type DataBridgeEventStatus = "ACCEPTED" | "DUPLICATE";
-
 type SourceRow = typeof dataBridgeSources.$inferSelect;
 type EventRow = typeof dataBridgeEvents.$inferSelect;
 
 function stableStringify(value: unknown): string {
   if (value === null || typeof value !== "object") return JSON.stringify(value);
   if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
-  return `{${Object.keys(value as Record<string, unknown>).sort().map((key) => `${JSON.stringify(key)}:${stableStringify((value as Record<string, unknown>)[key])}`).join(",`)}}`;
+  const object = value as Record<string, unknown>;
+  return `{${Object.keys(object).sort().map((key) => `${JSON.stringify(key)}:${stableStringify(object[key])}`).join(",")}}`;
 }
 
 function sha256(value: unknown): string {
@@ -77,14 +77,7 @@ export function toObservedSignal(event: EventRow): ObservedSignal {
     summary: event.summary ?? `${event.eventType}${event.subject ? `: ${event.subject}` : ""}`,
     assetIds: event.assetIds,
     evidenceIds: event.evidenceIds,
-    metadata: {
-      bridgeEventId: event.eventId,
-      severity: event.severity,
-      action: event.action,
-      sourceEventState: event.state,
-      contentHash: event.contentHash,
-      normalized: event.normalized,
-    },
+    metadata: { bridgeEventId: event.eventId, severity: event.severity, action: event.action, sourceEventState: event.state, contentHash: event.contentHash, normalized: event.normalized },
   };
 }
 
@@ -107,11 +100,23 @@ function normalizeEvent(source: SourceRow, input: DataBridgeEventInput) {
     payload: input.payload,
   };
   return {
-    id: randomUUID(), tenantId: source.tenantId, sourceId: source.id, eventId,
-    eventType: normalized.eventType, schemaVersion: "1", observedAt,
-    severity: normalized.severity, subject: normalized.subject, action: normalized.action,
-    state: normalized.state, summary: normalized.summary, assetIds: normalized.assetIds,
-    evidenceIds: normalized.evidenceIds, normalized, rawPayload: input, contentHash: sha256(normalized),
+    id: randomUUID(),
+    tenantId: source.tenantId,
+    sourceId: source.id,
+    eventId,
+    eventType: normalized.eventType,
+    schemaVersion: "1",
+    observedAt,
+    severity: normalized.severity,
+    subject: normalized.subject,
+    action: normalized.action,
+    state: normalized.state,
+    summary: normalized.summary,
+    assetIds: normalized.assetIds,
+    evidenceIds: normalized.evidenceIds,
+    normalized,
+    rawPayload: input,
+    contentHash: sha256(normalized),
   };
 }
 
@@ -159,7 +164,6 @@ export async function ingestEvents(source: SourceRow, body: unknown) {
   const db = getDb();
   const audit = new AuditLedger();
   const results: Array<{ eventId: string; status: DataBridgeEventStatus }> = [];
-
   for (const input of parsed.events) {
     const normalized = normalizeEvent(source, input);
     const [inserted] = await db.insert(dataBridgeEvents).values({ ...normalized, status: "ACCEPTED" }).onConflictDoNothing({ target: [dataBridgeEvents.tenantId, dataBridgeEvents.sourceId, dataBridgeEvents.eventId] }).returning();
@@ -167,7 +171,6 @@ export async function ingestEvents(source: SourceRow, body: unknown) {
     results.push({ eventId: normalized.eventId, status: "ACCEPTED" });
     await audit.append(source.tenantId, "data_bridge.ingested", { sourceId: source.id, sourceKind: source.kind, eventId: normalized.eventId, eventType: normalized.eventType, contentHash: normalized.contentHash });
   }
-
   const accepted = results.filter((result) => result.status === "ACCEPTED").length;
   if (accepted > 0) {
     await db.update(dataBridgeSources).set({ lastIngestAt: new Date(), eventsAccepted: sql`${dataBridgeSources.eventsAccepted} + ${accepted}`, updatedAt: new Date() }).where(eq(dataBridgeSources.id, source.id));
