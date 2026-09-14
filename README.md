@@ -13,12 +13,25 @@ ELITZE Agentic Security is a governed security control plane for AI agents, MCP,
 - Security operations: investigation, governed response, containment, audit and evidence.
 - **ELITZE Global Security View:** an interactive visual command surface for navigating connected security domains, exposure relationships and authorized visual intelligence.
 - **REO:** continuous validation of reachable and exploitable conditions with evidence-backed retesting.
+- **ROI:** evidence-backed business value measurement connecting security outcomes to approved financial assumptions.
 
 ## Product standard
 
-ELITZE is built around a continuous **Detect → Explain → Authorize → Act → Retest → Evidence** loop. It distinguishes observed evidence from inferred or unavailable state and does not manufacture live telemetry, assets, alerts or remediation outcomes.
+ELITZE is built around a continuous **Detect → Explain → Authorize → Act → Retest → Evidence** loop. It distinguishes observed evidence from inferred or unavailable state and does not manufacture live telemetry, assets, alerts, remediation outcomes or financial savings.
 
-See [`docs/ELITZE-CATEGORY-LEADER-MANIFEST.md`](docs/ELITZE-CATEGORY-LEADER-MANIFEST.md) for the acceptance standard and [`src/app/compare/page.tsx`](src/app/compare/page.tsx) for the product-facing benchmark.
+See [`docs/ELITZE-CATEGORY-LEADER-MANIFEST.md`](docs/ELITZE-CATEGORY-LEADER-MANIFEST.md) for the acceptance standard, [`docs/ELITZE-ROI.md`](docs/ELITZE-ROI.md) for the ROI model, and [`src/app/compare/page.tsx`](src/app/compare/page.tsx) for the product-facing benchmark.
+
+## ROI model
+
+The executive ROI surface is available at `/console/roi`. ELITZE separates persisted security observations from customer-approved financial assumptions.
+
+**Annual benefit = incident cost avoided + engineering value recovered + AI/cloud spend avoided + audit/evidence cost avoided.**
+
+**Net benefit = annual benefit − annual ELITZE cost.**
+
+**ROI = net benefit ÷ annual ELITZE cost.**
+
+When required observations or financial assumptions are unavailable, ELITZE shows `UNMEASURABLE` rather than fabricating a savings figure.
 
 ## Production path
 
@@ -39,6 +52,7 @@ The model or agent is not the security boundary. Internal security-decision and 
 
 - `GET /api/health` — database readiness check.
 - `GET /api/search?q=...` — server-side public search broker with bounded input and untrusted-result labeling.
+- `GET /api/roi` — observed ELITZE security-value signals for the executive ROI surface.
 - `POST /api/security/decision` — authenticated policy decision and persistence.
 - `POST /api/security/kill-switch` — authenticated containment request and optional executor dispatch.
 - `GET /api/market` — database-backed security state.
