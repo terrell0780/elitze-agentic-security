@@ -10,6 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "node scripts/security-self-test.mjs",
     "security:self-test": "node scripts/security-self-test.mjs",
+    "brand:self-test": "node scripts/brand-self-test.mjs",
+    "sale:readiness": "node scripts/sale-readiness.mjs && node scripts/brand-self-test.mjs",
     "db:migrate": "node scripts/migrate.mjs",
     "mcp:github": "node src/lib/elitze-secure/github-control-mcp.mjs"
   },
