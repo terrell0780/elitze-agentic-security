@@ -15,6 +15,7 @@ ELITZE Agentic Security is a governed security control plane for AI agents, MCP,
 - **REO:** continuous validation of reachable and exploitable conditions with evidence-backed retesting.
 - **ROI:** evidence-backed business value measurement connecting security outcomes to approved financial assumptions.
 - **ELITZE Security Skill Registry:** governed capabilities with authorization, verification, evidence and reference mappings.
+- **ELITZE Data Bridge:** authenticated, tenant-bound security-data ingress with normalization, idempotency, evidence and canonical observed signals.
 
 ## Product brand and ownership
 
@@ -39,6 +40,14 @@ The executive ROI surface is available at `/console/roi`. ELITZE separates persi
 **ROI = net benefit ÷ annual ELITZE cost.**
 
 When required observations or financial assumptions are unavailable, ELITZE shows `UNMEASURABLE` rather than fabricating a savings figure.
+
+## Data Bridge
+
+The ELITZE Data Bridge is the controlled path for external security data entering the ELITZE control plane:
+
+`External source → source authentication → tenant binding → validation → normalization → idempotent persistence → audit evidence → ObservedSignal`
+
+See [`docs/ELITZE-DATA-BRIDGE.md`](docs/ELITZE-DATA-BRIDGE.md).
 
 ## Production path
 
@@ -65,6 +74,13 @@ The model or agent is not the security boundary. Internal security-decision and 
 - `POST /api/security/kill-switch` — authenticated containment request and optional executor dispatch.
 - `GET /api/market` — database-backed security state.
 - `GET /api/data-hub` — database-backed data-source and insight state.
+- `POST /api/data-bridge/ingest` — authenticated external security-event ingestion.
+- `POST /api/data-bridge/sources` — authenticated source provisioning.
+- `GET /api/data-bridge/sources?tenantId=...` — authenticated source inventory.
+- `PATCH /api/data-bridge/sources/{sourceId}` — authenticated source enable/disable.
+- `GET /api/data-bridge/events?tenantId=...` — authenticated bridge-event inspection.
+- `GET /api/data-bridge/observe?tenantId=...` — authenticated normalized observed-security signals.
+- `GET /api/data-bridge/health?tenantId=...` — authenticated bridge health.
 - `GET /api/use-cases` — database-backed use-case state.
 - `GET /api/crm` — authenticated CRM state.
 
