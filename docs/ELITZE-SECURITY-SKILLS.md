@@ -1,6 +1,12 @@
 # ELITZE Security Skill Architecture
 
-ELITZE uses a governed skill architecture for agentic security workflows.
+ELITZE uses a governed, proprietary skill architecture for agentic security workflows.
+
+## Brand and ownership rule
+
+The product, user experience, skill registry structure, policy model, evidence workflow, ROI model, and ELITZE-specific implementations are presented as ELITZE assets. No third-party product name, logo, vendor identity, or community library is used as ELITZE product branding.
+
+External standards may appear only as reference mappings or legal/compliance disclosures. A reference mapping does not transfer ownership, imply endorsement, or grant execution authority.
 
 ## Rule
 
@@ -12,15 +18,11 @@ A skill describes **what can be done**. ELITZE determines **whether it may be do
 
 ## Registry fields
 
-Each ELITZE skill has a stable identifier, domain, prerequisites, authorization level, verification requirements, evidence requirements, framework mappings, and implementation/dependency status.
+Each ELITZE skill has a stable identifier, domain, prerequisites, authorization level, verification requirements, evidence requirements, reference mappings, and implementation/dependency status.
 
-## Third-party boundary
+## Reference mappings
 
-The public Anthropic Cybersecurity Skills repository is not copied wholesale into ELITZE. Its progressive-disclosure and structured-skill concepts are useful architectural references, but ELITZE retains its own proprietary control-plane model and only adds third-party material where separately reviewed, license-compliant, attributed, and necessary.
-
-## Framework mappings
-
-Skills can map to MITRE ATT&CK, MITRE ATLAS, MITRE D3FEND, NIST CSF, NIST AI RMF and other customer-required control sets. A mapping is metadata, not proof that a control is effective. Effectiveness requires observed ELITZE evidence and verification.
+ELITZE may map a capability to recognized security or AI-risk frameworks when useful for customer governance. These mappings are metadata only; they are not claims that ELITZE owns those standards or that a mapping by itself proves control effectiveness.
 
 ## Safety boundary
 
