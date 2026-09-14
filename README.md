@@ -47,7 +47,9 @@ The ELITZE Data Bridge is the controlled path for external security data enterin
 
 `External source → source authentication → tenant binding → validation → normalization → idempotent persistence → audit evidence → ObservedSignal`
 
-See [`docs/ELITZE-DATA-BRIDGE.md`](docs/ELITZE-DATA-BRIDGE.md).
+The bridge is vendor-neutral. It exposes a connector contract for `WEBHOOK`, `REST_PULL`, `EVENT_STREAM`, `MCP`, and reviewed `CUSTOM` transports. The built-in Generic HTTPS JSON connector is an integration primitive; it is not a claim of compatibility, certification, partnership, or endorsement by any named vendor.
+
+See [`docs/ELITZE-DATA-BRIDGE.md`](docs/ELITZE-DATA-BRIDGE.md) and [`docs/ELITZE-DATA-BRIDGE-INTEGRATION-CONTRACT.md`](docs/ELITZE-DATA-BRIDGE-INTEGRATION-CONTRACT.md).
 
 ## Production path
 
@@ -55,7 +57,7 @@ See [`docs/ELITZE-DATA-BRIDGE.md`](docs/ELITZE-DATA-BRIDGE.md).
 2. Set `DATABASE_URL` and `ELITZE_INTERNAL_API_KEY`.
 3. Run `npm install`.
 4. Run `npm run db:migrate` against the production database.
-5. Run `npm run typecheck`, `npm run lint`, `npm test`, `npm run build`, and `npm run sale:readiness`.
+5. Run `npm run typecheck`, `npm run lint`, `npm test`, `npm run data-bridge:self-test`, `npm run build`, and `npm run sale:readiness`.
 6. Deploy the application with the same runtime environment and database.
 
 The repository does not seed synthetic records on startup. Empty database state is surfaced as empty state in the console.
@@ -81,6 +83,7 @@ The model or agent is not the security boundary. Internal security-decision and 
 - `GET /api/data-bridge/events?tenantId=...` — authenticated bridge-event inspection.
 - `GET /api/data-bridge/observe?tenantId=...` — authenticated normalized observed-security signals.
 - `GET /api/data-bridge/health?tenantId=...` — authenticated bridge health.
+- `GET /api/data-bridge/adapters` — authenticated connector capability manifest.
 - `GET /api/use-cases` — database-backed use-case state.
 - `GET /api/crm` — authenticated CRM state.
 
