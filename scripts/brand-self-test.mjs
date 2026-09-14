@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const allowedDocs = ["docs/legal/", "docs/2026-GOOGLE-", "sales/"];
+const allowedReferenceDocs = ["docs/legal/", "docs/2026-GOOGLE-"];
 const prohibitedBrandTerms = [
   /anthropic/i,
   /openai/i,
@@ -24,7 +24,7 @@ const files = execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8" })
 const failures = [];
 for (const rel of files) {
   const file = fs.readFileSync(path.join(root, rel), "utf8");
-  if (allowedDocs.some((prefix) => rel.startsWith(prefix))) continue;
+  if (allowedReferenceDocs.some((prefix) => rel.startsWith(prefix))) continue;
   for (const pattern of prohibitedBrandTerms) {
     if (pattern.test(file)) {
       failures.push(`${rel}: prohibited third-party product branding match (${pattern})`);
