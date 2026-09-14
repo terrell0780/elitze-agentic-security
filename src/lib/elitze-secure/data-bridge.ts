@@ -4,6 +4,7 @@ import { z } from "zod";
 import { getDb } from "@/db";
 import { dataBridgeEvents, dataBridgeSources, dataSources } from "@/db/schema";
 import { AuditLedger } from "@/lib/elitze-secure/audit-ledger";
+import type { ObservedSignal, SecurityDomain } from "@/lib/elitze-secure/defense-fabric";
 
 const MAX_BATCH = 100;
 const MAX_REQUEST_BYTES = 5_000_000;
@@ -30,11 +31,12 @@ export type DataBridgeEventInput = z.infer<typeof eventSchema>;
 export type DataBridgeEventStatus = "ACCEPTED" | "DUPLICATE";
 
 type SourceRow = typeof dataBridgeSources.$inferSelect;
+type EventRow = typeof dataBridgeEvents.$inferSelect;
 
 function stableStringify(value: unknown): string {
   if (value === null || typeof value !== "object") return JSON.stringify(value);
   if (Array.isArray(value)) return `[${value.map(stableStringify).join(",")}]`;
-  return `{${Object.keys(value as Record<string, unknown>).sort().map((key) => `${JSON.stringify(key)}:${stableStringify((value as Record<string, unknown>)[key])}`).join(",")}}`;
+  return `{${Object.keys(value as Record<string, unknown>).sort().map((key) => `${JSON.stringify(key)}:${stableStringify((value as Record<string, unknown>)[key])}`).join(",`)}}`;
 }
 
 function sha256(value: unknown): string {
@@ -48,6 +50,42 @@ function tokenHash(token: string): string {
 function slugify(value: string): string {
   const slug = value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 120);
   return slug || `source-${randomUUID().slice(0, 8)}`;
+}
+
+function inferDomain(event: EventRow): SecurityDomain {
+  const value = `${event.eventType} ${event.subject ?? ""} ${event.action ?? ""}`.toLowerCase();
+  if (value.includes("identity") || value.includes("credential") || value.includes("user")) return "IDENTITY";
+  if (value.includes("cloud") || value.includes("workload") || value.includes("container")) return "CLOUD";
+  if (value.includes("endpoint") || value.includes("host")) return "ENDPOINT";
+  if (value.includes("network") || value.includes("firewall")) return "NETWORK";
+  if (value.includes("email")) return "EMAIL";
+  if (value.includes("saas")) return "SAAS";
+  if (value.includes("data") || value.includes("secret")) return "DATA";
+  if (value.includes("vuln") || value.includes("cve") || value.includes("threat") || value.includes("indicator")) return "THREAT_INTEL";
+  if (value.includes("secops") || value.includes("incident") || value.includes("alert")) return "SECOPS";
+  return "AI";
+}
+
+export function toObservedSignal(event: EventRow): ObservedSignal {
+  return {
+    id: event.id,
+    tenantId: event.tenantId,
+    domain: inferDomain(event),
+    source: event.sourceId,
+    state: "OBSERVED",
+    observedAt: event.observedAt.toISOString(),
+    summary: event.summary ?? `${event.eventType}${event.subject ? `: ${event.subject}` : ""}`,
+    assetIds: event.assetIds,
+    evidenceIds: event.evidenceIds,
+    metadata: {
+      bridgeEventId: event.eventId,
+      severity: event.severity,
+      action: event.action,
+      sourceEventState: event.state,
+      contentHash: event.contentHash,
+      normalized: event.normalized,
+    },
+  };
 }
 
 function normalizeEvent(source: SourceRow, input: DataBridgeEventInput) {
@@ -69,23 +107,11 @@ function normalizeEvent(source: SourceRow, input: DataBridgeEventInput) {
     payload: input.payload,
   };
   return {
-    id: randomUUID(),
-    tenantId: source.tenantId,
-    sourceId: source.id,
-    eventId,
-    eventType: normalized.eventType,
-    schemaVersion: "1",
-    observedAt,
-    severity: normalized.severity,
-    subject: normalized.subject,
-    action: normalized.action,
-    state: normalized.state,
-    summary: normalized.summary,
-    assetIds: normalized.assetIds,
-    evidenceIds: normalized.evidenceIds,
-    normalized,
-    rawPayload: input,
-    contentHash: sha256(normalized),
+    id: randomUUID(), tenantId: source.tenantId, sourceId: source.id, eventId,
+    eventType: normalized.eventType, schemaVersion: "1", observedAt,
+    severity: normalized.severity, subject: normalized.subject, action: normalized.action,
+    state: normalized.state, summary: normalized.summary, assetIds: normalized.assetIds,
+    evidenceIds: normalized.evidenceIds, normalized, rawPayload: input, contentHash: sha256(normalized),
   };
 }
 
@@ -107,13 +133,8 @@ export function parseIngestBody(body: unknown) {
   return parsed.data;
 }
 
-export function issueSourceToken(): string {
-  return randomBytes(TOKEN_BYTES).toString("base64url");
-}
-
-export function sourceTokenDigest(token: string): string {
-  return tokenHash(token);
-}
+export function issueSourceToken(): string { return randomBytes(TOKEN_BYTES).toString("base64url"); }
+export function sourceTokenDigest(token: string): string { return tokenHash(token); }
 
 export async function authenticateSource(request: Request): Promise<SourceRow | null> {
   const token = readBearer(request);
@@ -129,18 +150,7 @@ export async function provisionSource(args: { tenantId: string; name: string; ki
   if (tenantId.length > 200) throw new Error("tenant_id_too_long");
   if (!name || name.length > 200) throw new Error("source_name_invalid");
   const token = issueSourceToken();
-  const baseSlug = slugify(name);
-  const slug = `${baseSlug}-${randomUUID().slice(0, 8)}`;
-  const [source] = await getDb().insert(dataBridgeSources).values({
-    tenantId,
-    name,
-    slug,
-    kind: args.kind.trim().slice(0, 80) || "external",
-    description: args.description?.trim() || null,
-    tokenHash: tokenHash(token),
-    tokenPrefix: token.slice(0, 10),
-    active: true,
-  }).returning();
+  const [source] = await getDb().insert(dataBridgeSources).values({ tenantId, name, slug: `${slugify(name)}-${randomUUID().slice(0, 8)}`, kind: args.kind.trim().slice(0, 80) || "external", description: args.description?.trim() || null, tokenHash: tokenHash(token), tokenPrefix: token.slice(0, 10), active: true }).returning();
   return { source, token };
 }
 
@@ -152,40 +162,10 @@ export async function ingestEvents(source: SourceRow, body: unknown) {
 
   for (const input of parsed.events) {
     const normalized = normalizeEvent(source, input);
-    const [inserted] = await db.insert(dataBridgeEvents).values({
-      id: normalized.id,
-      tenantId: normalized.tenantId,
-      sourceId: normalized.sourceId,
-      eventId: normalized.eventId,
-      eventType: normalized.eventType,
-      schemaVersion: normalized.schemaVersion,
-      observedAt: normalized.observedAt,
-      severity: normalized.severity,
-      subject: normalized.subject,
-      action: normalized.action,
-      state: normalized.state,
-      summary: normalized.summary,
-      assetIds: normalized.assetIds,
-      evidenceIds: normalized.evidenceIds,
-      normalized: normalized.normalized,
-      rawPayload: normalized.rawPayload,
-      contentHash: normalized.contentHash,
-      status: "ACCEPTED",
-    }).onConflictDoNothing({ target: [dataBridgeEvents.tenantId, dataBridgeEvents.sourceId, dataBridgeEvents.eventId] }).returning();
-
-    if (!inserted) {
-      results.push({ eventId: normalized.eventId, status: "DUPLICATE" });
-      continue;
-    }
-
+    const [inserted] = await db.insert(dataBridgeEvents).values({ ...normalized, status: "ACCEPTED" }).onConflictDoNothing({ target: [dataBridgeEvents.tenantId, dataBridgeEvents.sourceId, dataBridgeEvents.eventId] }).returning();
+    if (!inserted) { results.push({ eventId: normalized.eventId, status: "DUPLICATE" }); continue; }
     results.push({ eventId: normalized.eventId, status: "ACCEPTED" });
-    await audit.append(source.tenantId, "data_bridge.ingested", {
-      sourceId: source.id,
-      sourceKind: source.kind,
-      eventId: normalized.eventId,
-      eventType: normalized.eventType,
-      contentHash: normalized.contentHash,
-    });
+    await audit.append(source.tenantId, "data_bridge.ingested", { sourceId: source.id, sourceKind: source.kind, eventId: normalized.eventId, eventType: normalized.eventType, contentHash: normalized.contentHash });
   }
 
   const accepted = results.filter((result) => result.status === "ACCEPTED").length;
@@ -193,14 +173,7 @@ export async function ingestEvents(source: SourceRow, body: unknown) {
     await db.update(dataBridgeSources).set({ lastIngestAt: new Date(), eventsAccepted: sql`${dataBridgeSources.eventsAccepted} + ${accepted}`, updatedAt: new Date() }).where(eq(dataBridgeSources.id, source.id));
     await db.update(dataSources).set({ lastIngestAt: new Date(), eventsToday: sql`${dataSources.eventsToday} + ${accepted}` }).where(eq(dataSources.slug, source.slug));
   }
-
-  return {
-    tenantId: source.tenantId,
-    sourceId: source.id,
-    accepted,
-    duplicates: results.length - accepted,
-    results,
-  };
+  return { tenantId: source.tenantId, sourceId: source.id, accepted, duplicates: results.length - accepted, results };
 }
 
 export async function listEvents(args: { tenantId: string; sourceId?: string; limit?: number }) {
@@ -210,17 +183,18 @@ export async function listEvents(args: { tenantId: string; sourceId?: string; li
   return getDb().select().from(dataBridgeEvents).where(and(...conditions)).orderBy(desc(dataBridgeEvents.receivedAt)).limit(limit);
 }
 
+export async function observeEvents(args: { tenantId: string; sourceId?: string; limit?: number }) {
+  const events = await listEvents(args);
+  return events.map(toObservedSignal);
+}
+
 export async function health(tenantId?: string) {
   const db = getDb();
-  const sourceRows = tenantId
+  const sources = tenantId
     ? await db.select({ id: dataBridgeSources.id, name: dataBridgeSources.name, tenantId: dataBridgeSources.tenantId, active: dataBridgeSources.active, lastIngestAt: dataBridgeSources.lastIngestAt, eventsAccepted: dataBridgeSources.eventsAccepted }).from(dataBridgeSources).where(eq(dataBridgeSources.tenantId, tenantId))
     : await db.select({ id: dataBridgeSources.id, name: dataBridgeSources.name, tenantId: dataBridgeSources.tenantId, active: dataBridgeSources.active, lastIngestAt: dataBridgeSources.lastIngestAt, eventsAccepted: dataBridgeSources.eventsAccepted }).from(dataBridgeSources);
-  const acceptedQuery = tenantId
-    ? db.select({ count: sql<number>`count(*)` }).from(dataBridgeEvents).where(and(eq(dataBridgeEvents.tenantId, tenantId), eq(dataBridgeEvents.status, "ACCEPTED")))
-    : db.select({ count: sql<number>`count(*)` }).from(dataBridgeEvents).where(eq(dataBridgeEvents.status, "ACCEPTED"));
-  const duplicateQuery = tenantId
-    ? db.select({ count: sql<number>`count(*)` }).from(dataBridgeEvents).where(and(eq(dataBridgeEvents.tenantId, tenantId), eq(dataBridgeEvents.status, "DUPLICATE")))
-    : db.select({ count: sql<number>`count(*)` }).from(dataBridgeEvents).where(eq(dataBridgeEvents.status, "DUPLICATE"));
-  const [accepted, duplicate] = await Promise.all([acceptedQuery, duplicateQuery]);
-  return { sources: sourceRows, acceptedEvents: Number(accepted[0]?.count ?? 0), duplicateEvents: Number(duplicate[0]?.count ?? 0) };
+  const accepted = tenantId
+    ? await db.select({ count: sql<number>`count(*)` }).from(dataBridgeEvents).where(and(eq(dataBridgeEvents.tenantId, tenantId), eq(dataBridgeEvents.status, "ACCEPTED")))
+    : await db.select({ count: sql<number>`count(*)` }).from(dataBridgeEvents).where(eq(dataBridgeEvents.status, "ACCEPTED"));
+  return { sources, acceptedEvents: Number(accepted[0]?.count ?? 0) };
 }
