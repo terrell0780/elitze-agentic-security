@@ -94,11 +94,11 @@ async function upsertGraphEdge(client: PoolClient, tenantId: string, from: strin
   const fromId = ids.get(from); const toId = ids.get(to);
   if (!fromId || !toId) return;
   const content = JSON.stringify({ tenantId,from,to,relation,evidenceState,accessMode,sourceRef,observedAt:observedAt.toISOString(),metadata});
-  const contentHash = crypto.createHash("sha256").update(content).digest("hex").digest;
+  const contentHash = crypto.createHash("sha256").update(content).digest("hex");
   await client.query(
     `INSERT INTO security_graph_edges (tenant_id,from_node_id,to_node_id,relation,access_mode,evidence_state,source,source_ref,observed_at,metadata,content_hash)
      VALUES ($1,$2,$3,$4,$5,$6,'mcp-gateway',$7,$8,$9,$10)
      ON CONFLICT (tenant_id,from_node_id,to_node_id,relation,access_mode,policy_effect) DO UPDATE SET evidence_state=EXCLUDED.evidence_state,source_ref=EXCLUDED.source_ref,observed_at=EXCLUDED.observed_at,metadata=EXCLUDED.metadata,content_hash=EXCLUDED.content_hash,active=true`,
-    [tenantId,fromId,toId,relation,accessMode,evidenceState,sourceRef,observedAt.toISOString(),metadata,crypto.createHash("sha256").update(content).digest("hex")],
+    [tenantId,fromId,toId,relation,accessMode,evidenceState,sourceRef,observedAt.toISOString(),metadata,contentHash],
   );
 }
