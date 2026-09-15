@@ -9,6 +9,14 @@ export type DataBridgeConnectionConfig = {
   token?: string;
   headers?: Record<string, string>;
   timeoutMs?: number;
+  /** AWS IAM access key for SigV4 connections. Never log or expose this value. */
+  accessKeyId?: string;
+  /** AWS IAM secret key for SigV4 connections. Never log or expose this value. */
+  secretAccessKey?: string;
+  /** AWS region used to scope SigV4 requests. */
+  region?: string;
+  /** Temporary AWS session token, when using short-lived credentials. */
+  sessionToken?: string;
 };
 
 export type DataBridgeConnectorContext = {
