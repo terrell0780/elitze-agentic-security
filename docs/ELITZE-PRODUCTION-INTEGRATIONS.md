@@ -26,7 +26,7 @@ These integrations are not decorative data imports. Each adapter has a specific 
 
 **Evidence:** request/decision records plus observed tool outcomes are retained in the ELITZE audit/evidence path.
 
-The adapter targets the MCP `2026-07-28` wire/authentication model; authorization failures and unavailable servers remain explicit integration failures, not inferred success.
+The adapter targets the MCP `2026-07-28` wire/authentication model; authorization failures and unavailable servers remain explicit integration failures, not inferred success. Reference: https://blog.modelcontextprotocol.io/posts/2026-07-28/
 
 ### GitHub + GitHub Actions
 
@@ -38,7 +38,7 @@ The adapter targets the MCP `2026-07-28` wire/authentication model; authorizatio
 
 **Evidence:** workflow-run events and repository metadata become observed evidence for release/runtime verification.
 
-GitHub Actions OIDC should be preferred for cloud federation instead of long-lived cloud credentials where supported. citeturn563073search0turn563073search3
+GitHub Actions OIDC should be preferred for cloud federation instead of long-lived cloud credentials where supported. Reference: https://docs.github.com/en/actions/reference/security/oidc and https://docs.github.com/en/actions/how-tos/secure-your-work/security-harden-deployments/oidc-in-cloud-providers
 
 ### AWS IAM + CloudTrail
 
@@ -48,7 +48,7 @@ GitHub Actions OIDC should be preferred for cloud federation instead of long-liv
 
 **Policy:** AWS activity can be correlated with ELITZE identity/purpose/capability policy decisions.
 
-**Evidence:** CloudTrail events provide account activity history, including principal, service, action and request context. citeturn803755search5turn803755search11
+**Evidence:** CloudTrail events provide account activity history, including principal, service, action and request context. References: https://docs.aws.amazon.com/awscloudtrail/latest/userguide/cloudtrail-events.html and https://docs.aws.amazon.com/IAM/latest/UserGuide/cloudtrail-integration.html
 
 ### Microsoft Entra ID + Azure
 
@@ -58,7 +58,7 @@ GitHub Actions OIDC should be preferred for cloud federation instead of long-liv
 
 **Policy:** ELITZE uses the observed identity context to evaluate authorization and high-impact actions.
 
-**Evidence:** Entra audit/sign-in activity can be accessed through Graph and routed through Azure Monitor or SIEM integrations. citeturn563073search4turn563073search10
+**Evidence:** Entra audit/sign-in activity can be accessed through Graph and routed through Azure Monitor or SIEM integrations. References: https://learn.microsoft.com/en-us/entra/identity/monitoring-health/howto-access-activity-logs and https://learn.microsoft.com/en-us/entra/identity/monitoring-health/howto-integrate-activity-logs-with-azure-monitor-logs
 
 ### Kubernetes
 
