@@ -35,7 +35,8 @@ async function github(path: string): Promise<unknown> {
 
 export async function observeGitHub(repository: string): Promise<GitHubObservation> {
   const repo = repository.trim();
-  if (!/^[^/\s]+\/[^/\s]+$/.test(repo)) throw new Error("github_repository_invalid");
+  const repoPattern = /^[^\s/]+\/[^\s/]+$/;
+  if (!repoPattern.test(repo)) throw new Error("github_repository_invalid");
   const [repositoryData, workflows, branchProtection, secretMetadata] = await Promise.all([
     github(`/repos/${repo}`),
     github(`/repos/${repo}/actions/workflows?per_page=100`),
