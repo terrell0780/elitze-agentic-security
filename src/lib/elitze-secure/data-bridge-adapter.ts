@@ -9,6 +9,8 @@ export type DataBridgeConnectionConfig = {
   token?: string;
   headers?: Record<string, string>;
   timeoutMs?: number;
+  owner?: string;
+  repository?: string;
   /** AWS IAM access key for SigV4 connections. Never log or expose this value. */
   accessKeyId?: string;
   /** AWS IAM secret key for SigV4 connections. Never log or expose this value. */
