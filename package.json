@@ -11,6 +11,7 @@
     "test": "node scripts/security-self-test.mjs",
     "security:self-test": "node scripts/security-self-test.mjs",
     "data-bridge:self-test": "node scripts/data-bridge-self-test.mjs",
+    "mcp-workload-identity:self-test": "node scripts/mcp-workload-identity-self-test.mjs",
     "brand:self-test": "node scripts/brand-self-test.mjs",
     "sale:readiness": "node scripts/sale-readiness.mjs && node scripts/brand-self-test.mjs",
     "db:migrate": "node scripts/migrate.mjs",
