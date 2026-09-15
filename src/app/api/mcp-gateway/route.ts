@@ -4,6 +4,7 @@ import { Pool } from "pg";
 import { evaluateMcpCall, signGatewayEvidence } from "@/lib/elitze-secure/mcp-gateway";
 import { hashWorkloadToken, verifyWorkloadToken } from "@/lib/elitze-secure/workload-identity";
 import { evaluatePolicies, type PolicyDocument } from "@/lib/elitze-secure/deterministic-policy";
+import { persistObservedTool } from "@/lib/elitze-secure/mcp-observation";
 
 export const runtime = "nodejs";
 
@@ -98,7 +99,19 @@ export async function POST(request: NextRequest) {
         catch { return json({ error: "MCP_UPSTREAM_UNAVAILABLE", failClosed: true }, 503); }
         if (!response.ok) return json({ error: "MCP_UPSTREAM_UNAVAILABLE", server: server.name, status: response.status }, 502);
         const result = await response.json();
-        if (Array.isArray(result?.result?.tools)) merged.push(...result.result.tools.map((tool: any) => ({ ...tool, _server: server.name })));
+        if (Array.isArray(result?.result?.tools)) {
+          for (const tool of result.result.tools) {
+            await persistObservedTool(client, {
+              tenantId: String(chain.tenant_id),
+              serverId: String(server.id),
+              serverName: String(server.name),
+              tool,
+              sourceRef: `mcp:${server.id}:tools/list`,
+              observedAt: new Date(),
+            });
+            merged.push({ ...tool, _server: server.name });
+          }
+        }
       }
       return json({ jsonrpc: "2.0", id: body.id ?? null, result: { tools: merged } });
     }
@@ -186,8 +199,8 @@ export async function POST(request: NextRequest) {
       const signed = signGatewayEvidence({ ...baseEvent, approvalReference }, previousHash);
       const inserted = await client.query(
         `INSERT INTO mcp_gateway_decisions
-          (tenant_id, request_id, agent_identity_id, gateway_server_id, tool_name, action, decision, policy_version, constraints, approval_reference, evidence_hash, evidence_signature, previous_evidence_hash, workload_session_id, human_owner_id, application_id, delegation_source, purpose, requested_capability, resource_type, resource_id, credential_ref, approval_authority_id, expires_at, policy_id, evidence_source, evidence_state, source_ref, freshness_at, observed_at, evidence_event)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32)
+          (tenant_id, request_id, agent_identity_id, gateway_server_id, tool_name, action, decision, policy_version, constraints, approval_reference, evidence_hash, evidence_signature, previous_evidence_hash, workload_session_id, human_owner_id, application_id, delegation_source, purpose, requested_capability, resource_type, resource_id, credential_ref, approval_authority_id, expires_at, policy_id, evidence_source, evidence_state, source_ref, freshness_at, observed_at, evidence_event, decision_ref)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$2)
          RETURNING decision_ref`,
         [chain.tenant_id, requestId, chain.agent_identity_id, server.id, toolName, toolName, decision, policyVersion, constraints, approvalReference, signed.evidenceHash, signed.signature, previousHash, chain.id, chain.human_owner_id, chain.application_id, chain.delegation_source, purpose, chain.requested_capability, chain.resource_type ?? null, resource ?? null, chain.credential_ref ?? null, chain.approval_authority_id ?? null, chain.expires_at, policyId, "mcp-gateway", "OBSERVED", baseEvent.sourceRef, baseEvent.freshnessAt, baseEvent.requestedAt, JSON.stringify({ ...baseEvent, recordHash: signed.evidenceHash, signature: signed.signature, previousRecordHash: previousHash })],
       );
@@ -208,8 +221,8 @@ export async function POST(request: NextRequest) {
     const signed = signGatewayEvidence({ ...baseEvent, upstreamStatus: upstream.status, upstreamResultHash }, previousHash);
     const inserted = await client.query(
       `INSERT INTO mcp_gateway_decisions
-        (tenant_id, request_id, agent_identity_id, gateway_server_id, tool_name, action, decision, policy_version, constraints, upstream_status, upstream_result_hash, evidence_hash, evidence_signature, previous_evidence_hash, workload_session_id, human_owner_id, application_id, delegation_source, purpose, requested_capability, resource_type, resource_id, credential_ref, approval_authority_id, expires_at, policy_id, evidence_source, evidence_state, source_ref, freshness_at, observed_at, evidence_event)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32)
+        (tenant_id, request_id, agent_identity_id, gateway_server_id, tool_name, action, decision, policy_version, constraints, upstream_status, upstream_result_hash, evidence_hash, evidence_signature, previous_evidence_hash, workload_session_id, human_owner_id, application_id, delegation_source, purpose, requested_capability, resource_type, resource_id, credential_ref, approval_authority_id, expires_at, policy_id, evidence_source, evidence_state, source_ref, freshness_at, observed_at, evidence_event, decision_ref)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$32,$2)
        RETURNING decision_ref`,
       [chain.tenant_id, requestId, chain.agent_identity_id, server.id, toolName, toolName, decision, policyVersion, constraints, upstream.status, upstreamResultHash, signed.evidenceHash, signed.signature, previousHash, chain.id, chain.human_owner_id, chain.application_id, chain.delegation_source, purpose, chain.requested_capability, chain.resource_type ?? null, resource ?? null, chain.credential_ref ?? null, chain.approval_authority_id ?? null, chain.expires_at, policyId, "mcp-gateway", "OBSERVED", baseEvent.sourceRef, baseEvent.freshnessAt, baseEvent.requestedAt, JSON.stringify({ ...baseEvent, upstreamStatus: upstream.status, upstreamResultHash, recordHash: signed.evidenceHash, signature: signed.signature, previousRecordHash: previousHash })],
     );
