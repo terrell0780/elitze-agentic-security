@@ -25,6 +25,20 @@ ELITZE production mode uses **real connected records only**.
 - No invented customers, agents, assets, findings, reachability, remediation, savings, rankings, or integrations.
 - Missing or unavailable evidence remains `UNKNOWN`, `UNMEASURABLE`, or `INSUFFICIENT_REACH` as appropriate.
 
+## Initial production integration wave
+
+ELITZE now has provider-specific adapter paths for five initial ecosystems:
+
+1. **MCP Gateway / Server** — discover MCP servers/tools and perform authenticated server discovery using the 2026-07-28 protocol path.
+2. **GitHub + GitHub Actions** — observe repositories and workflow runs for source/release identity and evidence.
+3. **AWS IAM + CloudTrail** — observe authenticated CloudTrail activity for AWS identity and runtime evidence.
+4. **Microsoft Entra ID + Azure** — observe Microsoft Graph directory context for identity and authorization evidence.
+5. **Kubernetes** — observe authenticated Kubernetes API/RBAC context for workload identity and runtime reachability.
+
+These adapters participate in the ELITZE control-plane path rather than functioning as passive data imports. See [`docs/ELITZE-PRODUCTION-INTEGRATIONS.md`](docs/ELITZE-PRODUCTION-INTEGRATIONS.md).
+
+**Important:** adapter code is not the same thing as a live customer integration. A connector is `INTEGRATED` only after real credentials/configuration and a live authenticated provider path have been verified. Without those conditions, its runtime state remains `BLOCKED`, `UNKNOWN`, or `UNMEASURABLE` as appropriate.
+
 ## Initial security surface
 
 - Agent discovery and inventory.
@@ -55,7 +69,7 @@ These are evidence controls, not marketing labels.
 
 ELITZE public content and advertising must describe what is actually available at the destination. We do not claim Google endorsement, partnership, preferred placement, guaranteed ranking, guaranteed traffic, guaranteed conversion, or special Google access without a real authorized relationship. We do not publish fabricated reviews, customer counts, rankings, performance statistics, or trust signals.
 
-Search and advertising compliance is maintained in [`docs/GOOGLE-2026-PUBLISHING-COMPLIANCE.md`](docs/GOOGLE-2026-PUBLISHING-COMPLIANCE.md), which tracks the applicable official Google Search and Google Ads guidance used for ELITZE publishing.
+Google Search requires helpful, reliable, people-first content and prohibits spam practices including scaled low-value generated content. Google Ads policies prohibit misleading representation, unreliable claims, unclear relevance, and unavailable offers. Google Search guidance for AI features likewise relies on normal Search eligibility and people-first quality requirements. 
 
 ## Data Bridge
 
@@ -87,9 +101,10 @@ The repository does not seed synthetic records on startup. Empty or disconnected
 - `POST /api/data-bridge/ingest` — authenticated security-event ingestion.
 - `GET /api/data-bridge/observe` — normalized observed security signals.
 - `GET /api/data-bridge/health` — bridge health for an authorized tenant.
+- `GET /api/data-bridge/adapters` — internal authenticated connector capability manifest.
 
 ## Secrets
 
 Real secrets must be supplied through the deployment environment or secret manager. Never commit `.env`, database URLs, API keys, credentials, or generated secret material.
 
-See [`docs/ELITZE-CATEGORY-LEADER-MANIFEST.md`](docs/ELITZE-CATEGORY-LEADER-MANIFEST.md) and [`docs/ELITZE-AGENT-IDENTITY-MCP-RUNTIME-CONTRACT.md`](docs/ELITZE-AGENT-IDENTITY-MCP-RUNTIME-CONTRACT.md) for the acceptance standards.
+See [`docs/ELITZE-CATEGORY-LEADER-MANIFEST.md`](docs/ELITZE-CATEGORY-LEADER-MANIFEST.md) and [`docs/ELITZE-PRODUCTION-INTEGRATIONS.md`](docs/ELITZE-PRODUCTION-INTEGRATIONS.md).
