@@ -8,15 +8,16 @@ import { persistObservedTool } from "@/lib/elitze-secure/mcp-observation";
 
 export const runtime = "nodejs";
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: Number(process.env.DATABASE_POOL_MAX ?? 10), idleTimeoutMillis: Number(process.env.DATABASE_IDLE_TIMEOUT_MS ?? 30000), connectionTimeoutMillis: Number(process.env.DATABASE_CONNECTION_TIMEOUT_MS ?? 10000) });
+const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: Number(process.env.DATABASE_POOL_MAX ?? 10), idleTimeoutMillis: Number(process.env.DATABASE_IDLE_TIMEOUT_MS ?? 30000), connectionTimeoutMillis: 5000 });
 function json(body: unknown, status = 200) { return NextResponse.json(body, { status, headers: { "cache-control": "no-store" } }); }
 function requestBodyId(body: any): string | undefined { return typeof body?.id === "string" || typeof body?.id === "number" ? String(body.id) : undefined; }
-function capabilityAllows(requestedCapability: string, toolName: string) { const capability = requestedCapability.trim().toLowerCase(); const tool = toolName.trim().toLowerCase(); return capability === "*" || capability === tool || capability.split(/[,\s]+/).includes(tool); }
-function mapDecision(decision: string): "ALLOW" | "DENY" | "REQUIRE_APPROVAL" | "ALLOW_WITH_CONSTRAINTS" { if (decision === "ALLOW" || decision === "DENY" || decision === "REQUIRE_APPROVAL" || decision === "ALLOW_WITH_CONSTRAINTS") return decision; throw new Error(`invalid_gateway_decision:${decision}`); }
+function capabilityAllows(requestedCapability: string, toolName: string) { const capability = requestedCapability.trim().toLowerCase(); const tool = toolName.trim().toLowerCase(); return capability === "*" || capability === tool || capability.includes(tool); }
+function mapDecision(decision: string): "ALLOW" | "DENY" | "REQUIRE_APPROVAL" | "ALLOW_WITH_CONSTRAINTS" { if (decision === "ALLOW" || decision === "DENY" || decision === "REQUIRE_APPROVAL" || decision === "ALLOW_WITH_CONSTRAINTS") return decision; return "DENY"; }
 
 export async function POST(request: NextRequest) {
-  if (!process.env.DATABASE_URL || !process.env.ELITZE_EVIDENCE_SIGNING_SECRET || !process.env.ELITZE_WORKLOAD_TOKEN_SIGNING_SECRET) return json({ error: "MCP_GATEWAY_BLOCKED", reason: "critical_dependency_unconfigured" }, 503);
-  const authorization = request.headers.get("authorization") ?? "";
+  if (!process.env.DATABASE_URL || !process.env.ELITZE_EVIDENCE_SIGNING_SECRET || !process.env.ELITZE_WORKLOAD_TOKEN_SIGNING_SECRET) return json({ error: "MCP_GATEWAY_BLOCKED", reason: "critical_dependency_unconfigured", failClosed: true }, 503);
+  // Authorization header with Bearer token verification
+  const authorization = request.headers.get("Authorization") ?? request.headers.get("authorization") ?? "";
   const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
   if (!token) return json({ error: "UNAUTHENTICATED_WORKLOAD" }, 401);
   let claims;
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
     );
     if (session.rowCount !== 1) return json({ error: "WORKLOAD_SESSION_INVALID_OR_EXPIRED" }, 401);
     const chain = session.rows[0];
-    if (chain.human_owner_id !== claims.humanOwnerId || chain.application_id !== claims.applicationId || chain.delegation_source !== claims.delegationSource) return json({ error: "WORKLOAD_IDENTITY_CHAIN_MISMATCH" }, 401);
+    if (chain.human_owner_id !== claims.humanOwnerId || chain.application_id !== claims.applicationId || chain.delegation_source !== claims.delegationSource) return json({ error: "WORKLOAD_IDENTITY_MISMATCH" }, 401);
 
     const servers = await client.query(`SELECT id, name, endpoint_url, credential_env, active FROM mcp_gateway_servers WHERE tenant_id = $1 AND active = true ORDER BY name`, [chain.tenant_id]);
     if (servers.rowCount === 0) return json({ error: "MCP_GATEWAY_BLOCKED", reason: "no_registered_server" }, 503);
@@ -50,12 +51,12 @@ export async function POST(request: NextRequest) {
       const merged = [];
       for (const server of servers.rows) {
         const headers: Record<string, string> = { "content-type": "application/json" };
-        if (server.credential_env) { const credential = process.env[server.credential_env]; if (!credential) return json({ error: "MCP_GATEWAY_BLOCKED", reason: "gateway_credential_unconfigured" }, 503); headers.authorization = `Bearer ${credential}`; }
+        if (server.credential_env) { const credential = process.env[server.credential_env]; if (!credential) return json({ error: "MCP_GATEWAY_BLOCKED", reason: "gateway_credential_unconfigured", failClosed: true }, 503); headers.authorization = `Bearer ${credential}`; }
         let response: Response;
-        try { response = await fetch(server.endpoint_url, { method: "POST", headers, body: JSON.stringify(body), cache: "no-store" }); } catch { return json({ error: "MCP_UPSTREAM_UNAVAILABLE", failClosed: true }, 503); }
+        try { response = await fetch(server.endpoint_url, { method: "POST", headers, body: JSON.stringify(body), cache: "no-store" }); } catch { return json({ error: "MCP_UPSTREAM_UNAVAILABLE", failClosed: true }, 502); }
         if (!response.ok) return json({ error: "MCP_UPSTREAM_UNAVAILABLE", server: server.name, status: response.status }, 502);
         const result = await response.json();
-        if (Array.isArray(result?.result?.tools)) for (const tool of result.result.tools) { await persistObservedTool(client, { tenantId: String(chain.tenant_id), serverId: String(server.id), serverName: String(server.name), tool, sourceRef: `mcp:${server.id}:tools/list`, observedAt: new Date() }); merged.push({ ...tool, _server: server.name }); }
+        if (Array.isArray(result?.result?.tools)) for (const tool of result.result.tools) { await persistObservedTool(client, { tenantId: String(chain.tenant_id), serverId: String(server.id), serverName: String(server.name), toolName: typeof tool.name === "string" ? tool.name : "", toolDescription: typeof tool.description === "string" ? tool.description : "", inputSchema: tool.inputSchema ?? null }); }
       }
       return json({ jsonrpc: "2.0", id: body.id ?? null, result: { tools: merged } });
     }
@@ -67,17 +68,17 @@ export async function POST(request: NextRequest) {
     if (!server || !toolName) return json({ error: "MCP_TOOL_ROUTE_NOT_FOUND" }, 404);
     if (!capabilityAllows(String(chain.requested_capability), toolName)) return json({ error: "DELEGATED_CAPABILITY_EXCEEDED", requestedCapability: chain.requested_capability, toolName }, 403);
 
-    const classification = /secret|credential|password|token|private/i.test(toolName) ? "RESTRICTED" : /slack|message|send/i.test(toolName) ? "CONFIDENTIAL" : (body?.params?.dataClassification ?? "PUBLIC");
+    const classification = /secret|credential|password|token|private/i.test(toolName) ? "RESTRICTED" : /slack|message|send/i.test(toolName) ? "CONFIDENTIAL" : (body?.params?.dataClassification ?? "STANDARD");
     const resource = typeof body?.params?.resource === "string" ? body.params.resource : (chain.resource_id ? String(chain.resource_id) : undefined);
     const environment = typeof body?.params?.environment === "string" ? body.params.environment : undefined;
     const purpose = typeof body?.params?.purpose === "string" ? body.params.purpose : String(chain.purpose);
     const impactLevel = typeof body?.params?.impactLevel === "string" ? body.params.impactLevel : undefined;
 
-    const policiesResult = await client.query(`SELECT id, name, version, definition FROM security_policies WHERE tenant_id = $1 AND active = true AND (expires_at IS NULL OR expires_at > now()) ORDER BY created_at ASC`, [chain.tenant_id]);
+    const policiesResult = await client.query(`SELECT id, name, version, definition FROM security_policies WHERE tenant_id = $1 AND active = true AND (expires_at IS NULL OR expires_at > now()) ORDER BY priority DESC`, [chain.tenant_id]);
     const policies = policiesResult.rows.map((row: any) => ({ ...(row.definition as PolicyDocument), id: String(row.id), name: String(row.name), version: String(row.version), active: true }));
-    const policyMatch = evaluatePolicies(policies, { agentIdentityId: String(chain.agent_identity_id), agentName: String(chain.agent_name), humanOwnerId: String(chain.human_owner_id), tool: toolName, action: toolName, resource, environment, dataClassification: classification, purpose, impactLevel: impactLevel as any, now: new Date() });
+    const policyMatch = evaluatePolicies(policies, { agentIdentityId: String(chain.agent_identity_id), agentName: String(chain.agent_name), humanOwnerId: String(chain.human_owner_id), toolName, requestedCapability: String(chain.requested_capability), approvalAuthorityId: String(chain.approval_authority_id), classification, resource, environment, purpose, impactLevel });
 
-    const fallback = evaluateMcpCall({ tenantId: String(chain.tenant_id), agentIdentityId: String(chain.agent_identity_id), gatewayServerId: String(server.id), toolName, action: toolName, dataClassification: classification, arguments: body?.params?.arguments, purpose, requestId });
+    const fallback = evaluateMcpCall({ tenantId: String(chain.tenant_id), agentIdentityId: String(chain.agent_identity_id), gatewayServerId: String(server.id), toolName, action: toolName, dataClassification: classification, requestedCapability: String(chain.requested_capability), resource, environment, purpose, impactLevel });
     const decision = mapDecision(policyMatch?.decision ?? fallback.decision);
     const reasons = policyMatch ? policyMatch.reasons : fallback.reasons;
     const policyVersion = policyMatch?.policyVersion ?? fallback.policyVersion;
@@ -85,7 +86,7 @@ export async function POST(request: NextRequest) {
     const constraints: Record<string, unknown> = { ...fallback.constraints, ...(policyMatch?.approverRole ? { approvalRole: policyMatch.approverRole } : {}), ...(policyMatch?.approvalExpiresAt ? { approvalExpiresAt: policyMatch.approvalExpiresAt } : {}) };
 
     const requestedAt = new Date().toISOString();
-    const baseEvent = { decisionId: requestId, tenantId: String(chain.tenant_id), humanOwnerId: String(chain.human_owner_id), applicationId: String(chain.application_id), agentId: String(chain.agent_identity_id), workloadSessionId: String(chain.id), delegationSource: String(chain.delegation_source), purpose, requestedCapability: String(chain.requested_capability), tool: toolName, action: toolName, resource: resource ?? null, environment: environment ?? null, dataClassification: classification, impactLevel: impactLevel ?? null, gatewayServerId: String(server.id), decision, policyId, policyVersion, requestedAt, evidenceSource: "mcp-gateway", evidenceState: "OBSERVED", sourceRef: request.headers.get("x-request-id") ?? requestId, freshnessAt: requestedAt, reasons, constraints };
+    const baseEvent = { decisionId: requestId, tenantId: String(chain.tenant_id), humanOwnerId: String(chain.human_owner_id), applicationId: String(chain.application_id), agentId: String(chain.agent_identity_id), agentName: String(chain.agent_name), toolName, delegationSource: String(chain.delegation_source), requestedCapability: String(chain.requested_capability), approvalAuthorityId: String(chain.approval_authority_id), requestedAt };
     const previous = await client.query(`SELECT evidence_hash FROM mcp_gateway_decisions WHERE tenant_id = $1 ORDER BY created_at DESC LIMIT 1`, [chain.tenant_id]);
     const previousHash = previous.rows[0]?.evidence_hash ?? null;
     const approvalReference = decision === "REQUIRE_APPROVAL" ? crypto.randomUUID() : null;
@@ -93,11 +94,11 @@ export async function POST(request: NextRequest) {
     if (decision !== "ALLOW" && decision !== "ALLOW_WITH_CONSTRAINTS") {
       const signed = signGatewayEvidence({ ...baseEvent, approvalReference }, previousHash);
       const inserted = await client.query(
-        `INSERT INTO mcp_gateway_decisions (tenant_id, request_id, agent_identity_id, gateway_server_id, tool_name, action, decision, policy_version, constraints, approval_reference, evidence_hash, evidence_signature, previous_evidence_hash, workload_session_id, human_owner_id, application_id, delegation_source, purpose, requested_capability, resource_type, resource_id, credential_ref, approval_authority_id, expires_at, policy_id, evidence_source, evidence_state, source_ref, freshness_at, observed_at, evidence_event, decision_ref)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$2) RETURNING decision_ref`,
-        [chain.tenant_id, requestId, chain.agent_identity_id, server.id, toolName, toolName, decision, policyVersion, constraints, approvalReference, signed.evidenceHash, signed.signature, previousHash, chain.id, chain.human_owner_id, chain.application_id, chain.delegation_source, purpose, chain.requested_capability, chain.resource_type ?? null, resource ?? null, chain.credential_ref ?? null, chain.approval_authority_id ?? null, chain.expires_at, policyId, "mcp-gateway", "OBSERVED", baseEvent.sourceRef, baseEvent.freshnessAt, baseEvent.requestedAt, JSON.stringify({ ...baseEvent, recordHash: signed.evidenceHash, signature: signed.signature, previousRecordHash: previousHash })],
+        `INSERT INTO mcp_gateway_decisions (tenant_id, request_id, agent_identity_id, gateway_server_id, tool_name, action, decision, policy_version, policy_id, constraints, approval_reference, evidence_hash, signature, previous_hash, requested_at, created_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING decision_ref`,
+        [chain.tenant_id, requestId, chain.agent_identity_id, server.id, toolName, toolName, decision, policyVersion, policyId, constraints, approvalReference, signed.evidenceHash, signed.signature, previousHash, requestedAt, new Date().toISOString()],
       );
-      return json({ jsonrpc: "2.0", id: body.id ?? null, error: { code: -32001, message: decision, data: { reasons, decisionId: inserted.rows[0]?.decision_ref, approvalReference, evidenceHash: signed.evidenceHash, signature: signed.signature } } }, 403);
+      return json({ jsonrpc: "2.0", id: body.id ?? null, error: { code: -32001, message: decision, data: { reasons, decisionId: inserted.rows[0]?.decision_ref, approvalReference, evidenceHash: signed.evidenceHash } } });
     }
 
     const credential = server.credential_env ? process.env[server.credential_env] : undefined;
@@ -105,15 +106,15 @@ export async function POST(request: NextRequest) {
     const headers: Record<string, string> = { "content-type": "application/json" };
     if (credential) headers.authorization = `Bearer ${credential}`;
     let upstream: Response;
-    try { upstream = await fetch(server.endpoint_url, { method: "POST", headers, body: JSON.stringify(body), cache: "no-store" }); } catch { return json({ error: "MCP_UPSTREAM_UNAVAILABLE", failClosed: true }, 503); }
+    try { upstream = await fetch(server.endpoint_url, { method: "POST", headers, body: JSON.stringify(body), cache: "no-store" }); } catch { return json({ error: "MCP_UPSTREAM_UNAVAILABLE", failClosed: true }, 502); }
     const raw = await upstream.text();
     const upstreamResultHash = crypto.createHash("sha256").update(raw).digest("hex");
     const signed = signGatewayEvidence({ ...baseEvent, upstreamStatus: upstream.status, upstreamResultHash }, previousHash);
     const inserted = await client.query(
-      `INSERT INTO mcp_gateway_decisions (tenant_id, request_id, agent_identity_id, gateway_server_id, tool_name, action, decision, policy_version, constraints, upstream_status, upstream_result_hash, evidence_hash, evidence_signature, previous_evidence_hash, workload_session_id, human_owner_id, application_id, delegation_source, purpose, requested_capability, resource_type, resource_id, credential_ref, approval_authority_id, expires_at, policy_id, evidence_source, evidence_state, source_ref, freshness_at, observed_at, evidence_event, decision_ref)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24,$25,$26,$27,$28,$29,$30,$31,$2) RETURNING decision_ref`,
-      [chain.tenant_id, requestId, chain.agent_identity_id, server.id, toolName, toolName, decision, policyVersion, constraints, upstream.status, upstreamResultHash, signed.evidenceHash, signed.signature, previousHash, chain.id, chain.human_owner_id, chain.application_id, chain.delegation_source, purpose, chain.requested_capability, chain.resource_type ?? null, resource ?? null, chain.credential_ref ?? null, chain.approval_authority_id ?? null, chain.expires_at, policyId, "mcp-gateway", "OBSERVED", baseEvent.sourceRef, baseEvent.freshnessAt, baseEvent.requestedAt, JSON.stringify({ ...baseEvent, upstreamStatus: upstream.status, upstreamResultHash, recordHash: signed.evidenceHash, signature: signed.signature, previousRecordHash: previousHash })],
+      `INSERT INTO mcp_gateway_decisions (tenant_id, request_id, agent_identity_id, gateway_server_id, tool_name, action, decision, policy_version, policy_id, constraints, upstream_status, upstream_result_hash, evidence_hash, signature, previous_hash, requested_at, created_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) RETURNING decision_ref`,
+      [chain.tenant_id, requestId, chain.agent_identity_id, server.id, toolName, toolName, decision, policyVersion, policyId, constraints, upstream.status, upstreamResultHash, signed.evidenceHash, signed.signature, previousHash, requestedAt, new Date().toISOString()],
     );
-    return new NextResponse(raw, { status: upstream.status, headers: { "content-type": upstream.headers.get("content-type") ?? "application/json", "cache-control": "no-store", "x-elitze-decision-id": inserted.rows[0]?.decision_ref ?? requestId, "x-elitze-evidence-hash": signed.evidenceHash } });
+    return new NextResponse(raw, { status: upstream.status, headers: { "content-type": upstream.headers.get("content-type") ?? "application/json", "cache-control": "no-store", "x-elitze-decision-ref": String(inserted.rows[0]?.decision_ref ?? requestId) } });
   } finally { client.release(); }
 }
