@@ -2,18 +2,49 @@
 
 ## Purpose
 
-This document is the acceptance contract for enterprise deployment of ELITZE Agentic Security. A requirement is not considered complete because it is documented or represented in the UI. It becomes complete only when evidence exists for the required implementation, configuration, test, review, and operational owner.
+This document is the acceptance contract for enterprise deployment of ELITZE Agentic Security. A requirement is not considered complete because it is documented, coded, listed in a registry, or represented in the UI. It becomes claimable only when the required real-world evidence exists and is current.
 
-## Status model
+## Strict status model
 
-- `IMPLEMENTED`: implemented in the repository and supported by repeatable verification evidence.
-- `CONFIGURED`: implementation exists and is configured for a real tenant/environment with verification evidence.
-- `TEST_REQUIRED`: implementation or process exists but the required independent or operational test has not yet been completed.
-- `PROGRAM_REQUIRED`: organizational certification, legal, insurance, or external assurance activity is required.
-- `BLOCKED`: cannot be accepted because a prerequisite, dependency, or evidence source is missing.
-- `UNKNOWN`: insufficient evidence to make a defensible claim.
+Every enterprise control has two independent dimensions: **implementation state** and **claim state**. Implementation never implies assurance.
 
-No status may be presented as compliant merely because a control is planned.
+### Implementation state
+
+- `NOT_STARTED`: no implementation or program evidence exists.
+- `PLANNED`: documented target only.
+- `IMPLEMENTED`: repository implementation exists and has repeatable verification evidence.
+- `CONFIGURED`: implemented and configured for a real tenant/environment with verification evidence.
+- `OPERATIONAL`: configured, actively used in the target environment, and supported by current operational evidence.
+- `BLOCKED`: prerequisite or dependency is missing and the control cannot be accepted.
+
+### Claim state
+
+- `UNCLAIMABLE`: there is not enough current evidence to make the assertion.
+- `EVIDENCE_PENDING`: implementation exists, but required evidence has not been produced or reviewed.
+- `VERIFIED`: required evidence exists, is current, is attributable to an identified scope, and has passed review.
+- `ACCEPTED_RISK`: the control is not fully verified, but an authorized owner has explicitly accepted the documented residual risk for a defined scope and period.
+- `EXPIRED`: previously verified evidence is outside its validity/review period and cannot support a current claim.
+- `REJECTED`: evidence failed validation or review.
+
+**Default claim state is `UNCLAIMABLE`.** A documentation page, code path, checklist item, passing unit test, successful build, or UI badge can establish implementation evidence but cannot by itself establish an enterprise assurance claim.
+
+## Prohibited inference rules
+
+ELITZE must not convert any of the following into a positive assurance claim without the required external or operational evidence:
+
+- documentation -> certification
+- code implementation -> production readiness
+- automated test -> independent penetration test
+- security checklist -> SOC 2 or ISO 27001 certification
+- privacy policy -> GDPR/PIPEDA compliance determination
+- insurance requirement -> active insurance coverage
+- planned control -> implemented control
+- implemented control -> operational control
+- historical test -> current assurance after its validity period
+- internal review -> independent assurance
+- simulated result -> production observation
+
+No green, compliant, certified, passed, or production-ready state may be rendered unless the underlying claim state is `VERIFIED` or, where explicitly allowed, `ACCEPTED_RISK`.
 
 ## Immediate enterprise gate
 
@@ -31,9 +62,30 @@ No status may be presented as compliant merely because a control is planned.
 10. Privileged-access review covering owner/admin accounts, service identities, break-glass access, credential rotation, and least privilege.
 11. Disaster-recovery exercise with measured recovery results and identified gaps.
 
+### Required evidence for each immediate control
+
+Each control must have a machine-readable evidence record containing, at minimum:
+
+- control identifier
+- control owner
+- implementation reference
+- real environment/tenant scope
+- test/review procedure
+- evidence source and source reference
+- observed timestamp
+- evidence creation timestamp
+- reviewer/approver identity
+- result
+- evidence integrity/hash reference where applicable
+- validity/expiration or next-review date
+- remediation reference when failed
+- residual-risk acceptance reference when applicable
+
+Absence, staleness, ambiguity, or unverifiable provenance keeps the claim `UNCLAIMABLE` or `EXPIRED`.
+
 ## Enterprise assurance program
 
-These are organizational programs and must not be represented as certifications until the applicable independent assessment or certification is actually completed.
+These are organizational programs and must not be represented as certifications, attestations, or completed assurance activities until the applicable external assessment, examination, certification, contract, or insurance evidence actually exists.
 
 - SOC 2 Type I readiness and examination.
 - SOC 2 Type II observation period and examination.
@@ -43,6 +95,8 @@ These are organizational programs and must not be represented as certifications 
 - Subprocessor register with ownership, purpose, data categories, location, and review process.
 - Enterprise security questionnaire package with evidence-backed answers.
 - Cyber-liability insurance appropriate to the actual operating risk profile.
+
+For SOC 2, ISO 27001, insurance, and other externally validated claims, the required evidence must identify the issuing or assessing organization, covered entity/scope, effective period, and applicable report/certificate/policy reference. A self-authored statement is not sufficient evidence of certification, examination, or coverage.
 
 ## Product security requirements
 
@@ -72,33 +126,52 @@ These are organizational programs and must not be represented as certifications 
 - Administrative approval workflows for sensitive configuration and policy changes.
 - Audit export and customer-visible administrative activity records.
 
-## Evidence requirements
+## Evidence semantics
 
-Every enterprise control needs an owner, implementation reference, verification procedure, evidence location, review cadence, and freshness timestamp.
+For security assertions, distinguish `OBSERVED`, `INFERRED`, `SIMULATED`, `UNKNOWN`, and `UNMEASURABLE`.
 
-Minimum evidence fields:
+- `OBSERVED` requires a real source observation tied to scope and time.
+- `INFERRED` may support analysis but cannot be presented as direct observation.
+- `SIMULATED` may support design/testing only and can never satisfy a production evidence requirement.
+- `UNKNOWN` means the required fact is not established.
+- `UNMEASURABLE` means the required measurement cannot currently be produced from available evidence.
 
-- control identifier
-- control owner
-- implementation reference
-- environment/tenant scope
-- test or review procedure
-- evidence source
-- evidence reference
-- observed timestamp
-- reviewer/approver
-- result
-- expiration/review date
-- remediation reference when failed
+## Evidence freshness
 
-For security assertions, distinguish `OBSERVED`, `INFERRED`, `SIMULATED`, `UNKNOWN`, and `UNMEASURABLE`. Simulated evidence may support design testing but must never be represented as production observation.
+Evidence must define an explicit validity or review period appropriate to the control. Expired evidence cannot silently continue to support a current claim. A current claim must reference the latest verified evidence available for the declared scope.
 
-## Release gate
+## Release and deployment gate
 
-An enterprise release is not security-ready until all mandatory immediate controls have either:
+An enterprise release is not security-ready until every **mandatory** gate has one of these outcomes:
 
-1. passed with current evidence,
-2. been explicitly accepted as a documented residual risk by an authorized owner, or
-3. been blocked from enterprise deployment.
+1. `VERIFIED` with current, attributable evidence; or
+2. `ACCEPTED_RISK` with an explicit authorized residual-risk decision, defined scope, justification, compensating controls where applicable, owner, and expiration/review date.
 
-Certification claims, customer compliance claims, penetration-test claims, insurance claims, and production security claims require their underlying evidence. The ELITZE repository must not manufacture or infer these claims from the existence of documentation.
+Anything else is a deployment block:
+
+- `UNCLAIMABLE`
+- `EVIDENCE_PENDING`
+- `EXPIRED`
+- `REJECTED`
+- `BLOCKED`
+
+A residual-risk acceptance does **not** transform the underlying control into `VERIFIED`, `CERTIFIED`, `COMPLIANT`, or `PENETRATION-TESTED`. It only records an authorized decision to proceed despite the documented gap.
+
+## Claim firewall
+
+Public site copy, sales material, console status, acquisition materials, security questionnaires, and API responses must derive assurance language from the claim state and evidence record. The system must not manufacture positive claims from documentation existence.
+
+Examples:
+
+- SOC 2: `UNCLAIMABLE` until applicable examination evidence exists; then `VERIFIED` only for the covered scope and period.
+- ISO 27001: `UNCLAIMABLE` until applicable certification evidence exists; then `VERIFIED` only for the covered scope and period.
+- Independent penetration test: `UNCLAIMABLE` until a qualifying independent report is recorded and reviewed.
+- Cyber insurance: `UNCLAIMABLE` until current policy evidence is recorded for the applicable entity and period.
+- Production security readiness: `UNCLAIMABLE` until mandatory operational controls are evidenced in the actual target environment.
+- Compliance: never a blanket status; each applicable framework/control scope must be evaluated separately.
+
+The repository must preserve the difference between **implemented**, **operationally verified**, **externally assured**, and **accepted risk**.
+
+## Acceptance principle
+
+**No evidence, no claim. No current evidence, no current claim. No independent evidence, no independent-assurance claim. No verified mandatory controls, no enterprise release.**
