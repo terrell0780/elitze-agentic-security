@@ -21,6 +21,12 @@ function requestBodyId(body: any): string | undefined {
   return typeof body?.id === "string" || typeof body?.id === "number" ? String(body.id) : undefined;
 }
 
+function capabilityAllows(requestedCapability: string, toolName: string) {
+  const capability = requestedCapability.trim().toLowerCase();
+  const tool = toolName.trim().toLowerCase();
+  return capability === "*" || capability === tool || capability.split(/[,\s]+/).includes(tool);
+}
+
 export async function POST(request: NextRequest) {
   if (!process.env.DATABASE_URL || !process.env.ELITZE_EVIDENCE_SIGNING_SECRET || !process.env.ELITZE_WORKLOAD_TOKEN_SIGNING_SECRET) {
     return json({ error: "MCP_GATEWAY_BLOCKED", reason: "critical_dependency_unconfigured" }, 503);
@@ -52,9 +58,17 @@ export async function POST(request: NextRequest) {
     const session = await client.query(
       `SELECT ws.id, ws.tenant_id, ws.human_owner_id, ws.application_id, ws.agent_identity_id,
               ws.delegation_source, ws.purpose, ws.requested_capability, ws.approval_authority_id,
-              ws.expires_at, ws.revoked_at, ai.name AS agent_name
+              ws.expires_at, ws.revoked_at, ai.name AS agent_name,
+              wd.tool_id, wd.resource_type, wd.resource_id, wd.credential_ref
        FROM workload_sessions ws
        JOIN agent_identities ai ON ai.id = ws.agent_identity_id
+       LEFT JOIN LATERAL (
+         SELECT tool_id, resource_type, resource_id, credential_ref
+         FROM workload_delegations
+         WHERE workload_session_id = ws.id
+         ORDER BY created_at DESC
+         LIMIT 1
+       ) wd ON true
        WHERE ws.id = $1 AND ws.tenant_id = $2 AND ws.agent_identity_id = $3
          AND ws.token_hash = $4 AND ws.revoked_at IS NULL AND ws.expires_at > now()
        LIMIT 1`,
@@ -105,6 +119,9 @@ export async function POST(request: NextRequest) {
     const serverName = typeof body?.params?.server === "string" ? body.params.server : undefined;
     const server = servers.rows.find((candidate: any) => !serverName || candidate.name === serverName);
     if (!server || !toolName) return json({ error: "MCP_TOOL_ROUTE_NOT_FOUND" }, 404);
+    if (!capabilityAllows(String(chain.requested_capability), toolName)) {
+      return json({ error: "DELEGATED_CAPABILITY_EXCEEDED", requestedCapability: chain.requested_capability, toolName }, 403);
+    }
 
     const classification = /secret|credential|password|token|private/i.test(toolName) ? "RESTRICTED" : /slack|message|send/i.test(toolName) ? "CONFIDENTIAL" : "PUBLIC";
     const evaluation = evaluateMcpCall({
@@ -128,6 +145,9 @@ export async function POST(request: NextRequest) {
       delegationSource: String(chain.delegation_source),
       purpose: String(chain.purpose),
       requestedCapability: String(chain.requested_capability),
+      resourceType: chain.resource_type ? String(chain.resource_type) : null,
+      resourceId: chain.resource_id ? String(chain.resource_id) : null,
+      credentialRef: chain.credential_ref ? String(chain.credential_ref) : null,
       approvalAuthorityId: chain.approval_authority_id ? String(chain.approval_authority_id) : null,
       gatewayServerId: String(server.id),
       toolName,
@@ -148,9 +168,9 @@ export async function POST(request: NextRequest) {
       const signed = signGatewayEvidence(baseEvent, previousHash);
       await client.query(
         `INSERT INTO mcp_gateway_decisions
-          (tenant_id, request_id, agent_identity_id, gateway_server_id, tool_name, action, decision, policy_version, constraints, approval_reference, evidence_hash, evidence_signature, previous_evidence_hash, workload_session_id, human_owner_id, application_id, delegation_source, purpose, requested_capability, approval_authority_id, expires_at)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21)`,
-        [chain.tenant_id, requestId, chain.agent_identity_id, server.id, toolName, toolName, evaluation.decision, evaluation.policyVersion, evaluation.constraints, null, signed.evidenceHash, signed.signature, previousHash, chain.id, chain.human_owner_id, chain.application_id, chain.delegation_source, chain.purpose, chain.requested_capability, chain.approval_authority_id ?? null, chain.expires_at],
+          (tenant_id, request_id, agent_identity_id, gateway_server_id, tool_name, action, decision, policy_version, constraints, approval_reference, evidence_hash, evidence_signature, previous_evidence_hash, workload_session_id, human_owner_id, application_id, delegation_source, purpose, requested_capability, resource_type, resource_id, credential_ref, approval_authority_id, expires_at)
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24)`,
+        [chain.tenant_id, requestId, chain.agent_identity_id, server.id, toolName, toolName, evaluation.decision, evaluation.policyVersion, evaluation.constraints, null, signed.evidenceHash, signed.signature, previousHash, chain.id, chain.human_owner_id, chain.application_id, chain.delegation_source, chain.purpose, chain.requested_capability, chain.resource_type ?? null, chain.resource_id ?? null, chain.credential_ref ?? null, chain.approval_authority_id ?? null, chain.expires_at],
       );
       return json({ jsonrpc: "2.0", id: body.id ?? null, error: { code: -32001, message: evaluation.decision, data: { reasons: evaluation.reasons, evidenceHash: signed.evidenceHash, signature: signed.signature, workloadSessionId: chain.id } } }, 403);
     }
@@ -173,9 +193,9 @@ export async function POST(request: NextRequest) {
     const signed = signGatewayEvidence({ ...baseEvent, upstreamStatus: upstream.status, upstreamResultHash }, previousHash);
     await client.query(
       `INSERT INTO mcp_gateway_decisions
-        (tenant_id, request_id, agent_identity_id, gateway_server_id, tool_name, action, decision, policy_version, constraints, upstream_status, upstream_result_hash, evidence_hash, evidence_signature, previous_evidence_hash, workload_session_id, human_owner_id, application_id, delegation_source, purpose, requested_capability, approval_authority_id, expires_at)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22)`,
-      [chain.tenant_id, requestId, chain.agent_identity_id, server.id, toolName, toolName, evaluation.decision, evaluation.policyVersion, evaluation.constraints, upstream.status, upstreamResultHash, signed.evidenceHash, signed.signature, previousHash, chain.id, chain.human_owner_id, chain.application_id, chain.delegation_source, chain.purpose, chain.requested_capability, chain.approval_authority_id ?? null, chain.expires_at],
+        (tenant_id, request_id, agent_identity_id, gateway_server_id, tool_name, action, decision, policy_version, constraints, upstream_status, upstream_result_hash, evidence_hash, evidence_signature, previous_evidence_hash, workload_session_id, human_owner_id, application_id, delegation_source, purpose, requested_capability, resource_type, resource_id, credential_ref, approval_authority_id, expires_at)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,$22,$23,$24)`,
+      [chain.tenant_id, requestId, chain.agent_identity_id, server.id, toolName, toolName, evaluation.decision, evaluation.policyVersion, evaluation.constraints, upstream.status, upstreamResultHash, signed.evidenceHash, signed.signature, previousHash, chain.id, chain.human_owner_id, chain.application_id, chain.delegation_source, chain.purpose, chain.requested_capability, chain.resource_type ?? null, chain.resource_id ?? null, chain.credential_ref ?? null, chain.approval_authority_id ?? null, chain.expires_at],
     );
 
     return new NextResponse(raw, {
