@@ -27,7 +27,11 @@ ALTER TABLE mcp_gateway_decisions
 ALTER TABLE mcp_gateway_decisions
   ADD COLUMN IF NOT EXISTS observed_at timestamptz NOT NULL DEFAULT now();
 ALTER TABLE mcp_gateway_decisions
+  ADD COLUMN IF NOT EXISTS previous_evidence_hash text;
+ALTER TABLE mcp_gateway_decisions
   ADD COLUMN IF NOT EXISTS evidence_event jsonb NOT NULL DEFAULT '{}'::jsonb;
+ALTER TABLE mcp_gateway_decisions
+  ADD COLUMN IF NOT EXISTS evidence_signature text;
 ALTER TABLE mcp_gateway_decisions
   ADD COLUMN IF NOT EXISTS verification_status text NOT NULL DEFAULT 'UNVERIFIED' CHECK (verification_status IN ('UNVERIFIED','VERIFIED','FAILED'));
 ALTER TABLE mcp_gateway_decisions
