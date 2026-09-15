@@ -10,9 +10,11 @@ export const SEARCH_DESTINATIONS = [
   { path: "/sales", keywords: ["acquisition", "buy", "sale", "enterprise", "acquire"], title: "ELITZE Acquisition / Enterprise" },
 ] as const;
 
+type SearchDestination = (typeof SEARCH_DESTINATIONS)[number];
+
 export function getCanonicalSearchDestination(query: string) {
   const normalized = query.toLowerCase();
-  let best = SEARCH_DESTINATIONS[0];
+  let best: SearchDestination = SEARCH_DESTINATIONS[0];
   let bestScore = 0;
 
   for (const destination of SEARCH_DESTINATIONS) {
