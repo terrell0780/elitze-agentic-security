@@ -1,41 +1,62 @@
 # ELITZE Agentic Security — Product Capabilities
 
-This document separates what the current repository explicitly describes from anything that would require deployment or external verification.
+This document defines the **initial commercial category** and prevents the sales surface from treating broad architecture as simultaneously proven production capability.
 
-## Documented product capabilities
+## Initial category
 
-| Area | Repository-documented capability | Sales status wording |
+**Agent Identity and MCP Runtime Security**
+
+## Initial product promise
+
+> Discover every agent and MCP server, map what each identity can reach, enforce policy before sensitive tool execution, and preserve verifiable evidence of every decision.
+
+## Required end-to-end control path
+
+| Stage | Required evidence | Sales status |
 |---|---|---|
-| AI security | AI Security Gateway, agent boundaries, MCP and tool governance | Documented capability; deployment verification required |
-| API security | API security and OpenAPI governance | Documented capability; deployment verification required |
-| Application/code security | Code and software-supply-chain controls | Documented capability; deployment verification required |
-| Cloud/identity/data | Posture, authorization, sensitive-data pathways and runtime context | Documented capability; deployment verification required |
-| Exposure/vulnerability | Attack paths, CVE intelligence, remediation priority and verification | Documented capability; deployment verification required |
-| SecOps | Investigation, governed response, containment, audit and evidence | Documented capability; deployment verification required |
-| Global Security View | Interactive visual command surface | Documented capability; deployed behavior should be demonstrated before sale |
-| REO | Continuous validation of reachable/exploitable conditions with evidence-backed retesting | Core documented capability; operational verification required |
-| Security decision API | `POST /api/security/decision` | Repository-documented endpoint; runtime/configuration verification required |
-| Kill-switch API | `POST /api/security/kill-switch` | Repository-documented endpoint; executor availability must be verified |
-| Health API | `GET /api/health` | Repository-documented endpoint |
-| Public search broker | `GET /api/search?q=...` | Repository-documented endpoint |
-| Security state | `GET /api/market` | Repository-documented endpoint |
-| Data hub | `GET /api/data-hub` | Repository-documented endpoint |
-| Use cases | `GET /api/use-cases` | Repository-documented endpoint |
-| CRM | `GET /api/crm` | Repository-documented authenticated endpoint |
+| Agent / MCP discovery | Real tenant-scoped discovery record | Must be verified in deployment |
+| Workload identity | Real identity record with cryptographic verification material | Must be verified in deployment |
+| Reachability | Real identity → tool/API/secret/data relationships | Must be verified in deployment |
+| Policy evaluation | Real request + enabled policy + decision | Repository control exists; runtime verification required |
+| Decision | Allow / deny / approval / constraint result | Repository control exists; runtime verification required |
+| Evidence | Hash-linked request/decision evidence | Repository audit/evidence controls exist; runtime verification required |
+| Authorized execution | Separately authorized gateway/execution path | Executor must be configured and tested |
+| Runtime observation | Actual execution outcome from connected source | Deployment/integration verification required |
+| Retest | Authorized retest of the affected path | Deployment/integration verification required |
+| Risk closure | Evidence showing whether the affected condition was removed | Must never be inferred from status alone |
 
-## Security boundary
+## Explicit non-claims
 
-Internal security-decision and containment APIs require the ELITZE internal API key. Containment additionally requires an infrastructure executor. Without an executor, the documented behavior is to record the request and fail closed rather than claim infrastructure isolation.
+ELITZE does **not** treat the following as proven initial-category claims merely because supporting architecture exists elsewhere in the repository:
 
-## Production requirements documented by the project
+- broad cloud posture;
+- generic application security;
+- full enterprise SOC consolidation;
+- generalized vulnerability operations;
+- arbitrary third-party integrations;
+- counterfactual or copied-graph simulation;
+- fabricated or synthetic operational telemetry.
 
-1. Secret-managed environment variables.
-2. `DATABASE_URL` configured.
-3. `ELITZE_INTERNAL_API_KEY` configured.
-4. Database migrations applied with `npm run db:migrate`.
-5. Validation with `npm run typecheck`, `npm run lint`, `npm test`, and `npm run build`.
-6. Deployment using the same runtime environment and database requirements.
+These may exist as secondary architecture or future scope, but public and sales-facing claims must use the actual implementation state.
 
-## What is not claimed here
+## Production truth
 
-This file does not claim current customer count, recurring revenue, traffic, uptime, production telemetry, successful remediation history, regulatory certification, penetration-test certification, or live connector coverage unless separately evidenced.
+- No mock data.
+- No fake data.
+- No synthetic operational metrics.
+- No simulated security events represented as real.
+- No placeholder success state.
+- No invented customers, assets, agents, findings, reachability, remediation, savings, rankings, or integrations.
+- Missing evidence is shown as missing, `UNKNOWN`, `UNMEASURABLE`, or `INSUFFICIENT_REACH` as appropriate.
+
+## REO / RIO / ROE
+
+**REO:** evidence-backed retesting of an actual reachable or exploitable condition.
+
+**RIO:** observed security outcomes separated from customer-approved financial assumptions; no invented ROI values.
+
+**ROE:** authorized validation scope and execution rules for security testing, with evidence retained for the actual activity performed.
+
+## Google 2026 publishing boundary
+
+Public pages and advertising must accurately describe the available product and destination. No fabricated testimonials, ratings, customer counts, rankings, performance statistics, Google affiliation, endorsement, partnership, preferred placement, guaranteed ranking, guaranteed traffic, guaranteed conversion, or special access claims. Offers and prices advertised must be available at the destination. Search content must remain useful, original, relevant, and people-first rather than scaled low-value generated pages.
