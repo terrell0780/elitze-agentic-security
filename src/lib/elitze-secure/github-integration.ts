@@ -63,6 +63,14 @@ export async function observeGitHub(repository: string): Promise<GitHubObservati
     installations = undefined;
   }
 
+  let auditEvents: unknown[] | undefined = undefined;
+  try {
+    const audit = await github(`/orgs/${encodeURIComponent(owner)}/audit-log?per_page=100`);
+    auditEvents = Array.isArray(audit) ? audit : undefined;
+  } catch {
+    auditEvents = undefined;
+  }
+
   return {
     repository: repositoryData as Record<string, unknown> | undefined,
     installations: installations as Record<string, unknown> | undefined,
@@ -81,5 +89,6 @@ export async function observeGitHub(repository: string): Promise<GitHubObservati
           created_at: secret.created_at,
         }))
       : [],
+    auditEvents,
   };
 }
