@@ -22,41 +22,43 @@ The initial SOC 2 system scope covers, at minimum:
 
 ## Trust Services Criteria selection
 
-AICPA's SOC 2 Trust Services Criteria cover **Security, Availability, Processing Integrity, Confidentiality, and Privacy**. citeturn344736search0turn344736search2
+AICPA's SOC 2 Trust Services Criteria cover **Security, Availability, Processing Integrity, Confidentiality, and Privacy**. The initial ELITZE program selects three criteria as mandatory: **Security, Availability, and Confidentiality**.
 
-### Selected for the initial ELITZE program
+### Required now
 
-**1. Security — INCLUDED**
+**1. Security — REQUIRED NOW**
 
-Security is the initial mandatory criterion for ELITZE because the service is a security control plane. The scoped control program must address protection against unauthorized access, use, disclosure, modification, or destruction of systems and information relevant to the service.
+Security is mandatory because ELITZE is a security control plane. The scoped control program must address protection against unauthorized access, use, disclosure, modification, or destruction of systems and information relevant to the service.
 
-**2. Availability — INCLUDED**
+**2. Availability — REQUIRED NOW**
 
-Availability is included because ELITZE operates a customer-facing service and its security-control function must have explicit availability, continuity, recovery, and service-level expectations. Availability evidence must be based on actual operational measurements and recovery testing, not stated targets alone.
+Availability is mandatory because ELITZE is a customer-facing security service whose control path must have explicit availability, continuity, recovery, monitoring, and service-level expectations. Availability evidence must be based on actual operational measurements and recovery testing, not stated targets alone.
 
-**3. Confidentiality — INCLUDED**
+**3. Confidentiality — REQUIRED NOW**
 
-Confidentiality is included because ELITZE may handle customer security data, credentials or credential references, proprietary code/context, policy configurations, graph relationships, evidence, and other information that customers may designate as confidential. Scope and control design must follow the actual data processed by the service.
+Confidentiality is mandatory because ELITZE may handle customer security data, credentials or credential references, proprietary code/context, policy configurations, graph relationships, evidence, and other information customers may designate as confidential. Scope and control design must follow the actual data processed by the service.
 
-**4. Privacy — CONDITIONAL / REQUIRED WHEN APPLICABLE**
+### Not selected as mandatory at program start
 
-Privacy is not automatically claimed. It becomes part of the examination scope when ELITZE's actual processing activities and customer commitments require the Privacy criterion. The decision must be based on actual personal-information processing, jurisdictions, contracts, and the final CPA-firm scope determination.
+**4. Privacy — NOT SELECTED AT PROGRAM START**
 
-**5. Processing Integrity — CONDITIONAL / REQUIRED WHEN APPLICABLE**
+Privacy is not automatically included in the initial mandatory set. It must be assessed separately against actual personal-information processing, jurisdictions, contracts, customer commitments, and the final independent CPA-firm scope determination. It must be added if those facts require it.
 
-Processing Integrity becomes part of the examination scope when ELITZE makes material commitments about the completeness, validity, accuracy, timeliness, or authorized execution of processing. The criterion is particularly relevant to policy decisions, enforcement outcomes, evidence generation, and other customer-facing security processing where those characteristics are contractually or operationally promised.
+**5. Processing Integrity — NOT SELECTED AT PROGRAM START**
+
+Processing Integrity is not automatically included in the initial mandatory set. It must be assessed separately against actual customer commitments regarding completeness, validity, accuracy, timeliness, and authorized processing. It should be added if those commitments make the criterion applicable.
 
 ## Selection rule
 
-The initial ELITZE readiness program therefore tracks:
+The initial ELITZE SOC 2 readiness program therefore tracks:
 
 - **Security: REQUIRED NOW**
 - **Availability: REQUIRED NOW**
 - **Confidentiality: REQUIRED NOW**
-- **Privacy: ASSESS AND INCLUDE WHEN REQUIRED BY ACTUAL PROCESSING/COMMITMENTS**
-- **Processing Integrity: ASSESS AND INCLUDE WHEN REQUIRED BY ACTUAL PROCESSING/COMMITMENTS**
+- **Privacy: NOT SELECTED AT PROGRAM START**
+- **Processing Integrity: NOT SELECTED AT PROGRAM START**
 
-The final examination scope must be confirmed with the independent CPA firm. A criterion being tracked internally does not mean that ELITZE has been examined against it.
+The final examination scope must be confirmed with the independent CPA firm. Internal selection does not mean that ELITZE has been examined against any criterion.
 
 ## Scope boundary rule
 
@@ -72,8 +74,8 @@ A component may not be treated as out of scope merely because it is operated by 
 - Independent attestation: **NOT AVAILABLE**
 - Scope definition: **STARTED**
 - Trust Services Criteria selection: **STARTED — SECURITY / AVAILABILITY / CONFIDENTIALITY**
-- Privacy criterion: **PENDING APPLICABILITY ASSESSMENT**
-- Processing Integrity criterion: **PENDING APPLICABILITY ASSESSMENT**
+- Privacy criterion: **NOT SELECTED AT PROGRAM START**
+- Processing Integrity criterion: **NOT SELECTED AT PROGRAM START**
 - Control/evidence mapping: **REQUIRED**
 - External CPA engagement: **REQUIRED**
 
@@ -101,7 +103,7 @@ Evidence must distinguish **OBSERVED**, **INFERRED**, **SIMULATED**, **UNKNOWN**
 
 ## First external step
 
-Obtain a SOC 2 readiness assessment and CPA-firm engagement scoped to the system and criteria described here. Final examination scope must be confirmed with the independent CPA firm before claiming that any SOC 2 criterion has been examined.
+Obtain a SOC 2 readiness assessment and CPA-firm engagement scoped to the system and three required criteria described here. Final examination scope must be confirmed with the independent CPA firm before claiming that any SOC 2 criterion has been examined.
 
 ## Acceptance rule
 
