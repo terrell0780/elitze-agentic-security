@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getBuiltInDataBridgeConnectors, validateConnectorManifest } from "@/lib/elitze-secure/data-bridge-adapter";
+import { getProductionIntegrationConnectors } from "@/lib/elitze-secure/production-integrations";
 import { authorizeInternalRequest } from "@/lib/security/policy";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +11,7 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
   }
 
-  const connectors = getBuiltInDataBridgeConnectors().map((connector) =>
+  const connectors = [...getBuiltInDataBridgeConnectors(), ...getProductionIntegrationConnectors()].map((connector) =>
     validateConnectorManifest(connector),
   );
 
