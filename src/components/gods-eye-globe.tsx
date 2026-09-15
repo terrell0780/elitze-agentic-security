@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { Activity, ArrowUpRight, Database, FileSearch, Fingerprint, Layers3, Maximize2, Radar, RotateCcw, ShieldCheck, ScanLine, Waypoints } from "lucide-react";
+import { Activity, ArrowUpRight, Database, FileSearch, Fingerprint, Layers3, Radar, RotateCcw, ShieldCheck, ScanLine, Waypoints } from "lucide-react";
 
 type DomainId = "agents" | "identity" | "mcp" | "tools" | "apis" | "data";
 type ViewMode = "GRAPH" | "SCAN" | "MAP" | "EVIDENCE";
