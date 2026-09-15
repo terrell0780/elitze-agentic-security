@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     for (const roleArn of roleArns) {
       const key = `aws-role:${roleArn}`;
       await upsertGraphNode({ tenantId: body.tenantId, nodeType: "CLOUD_ROLE", subjectKey: key, displayName: roleArn, source: "aws-iam", evidenceState: "OBSERVED", sourceRef: "aws:iam:ListRoles", observedAt });
-      if (callerArn) await upsertGraphEdge({ tenantId: body.tenantId, from: key, to: accountKey, relation: "DEPLOYED_IN", evidenceState: "OBSERVED", source: "aws-iam", accessMode: "ASSUME" as any, sourceRef: "aws:iam:ListRoles", observedAt });
+      if (callerArn) await upsertGraphEdge({ tenantId: body.tenantId, from: key, to: accountKey, relation: "DEPLOYED_IN", evidenceState: "OBSERVED", source: "aws-iam", accessMode: "EXECUTE", sourceRef: "aws:iam:ListRoles", observedAt });
     }
 
     const policyArns = allTags(observed.policiesXml, "Arn");
