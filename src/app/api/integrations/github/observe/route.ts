@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authorizeInternalRequest } from "@/lib/security/policy";
-import { getPgPool } from "@/db";
 import { observeGitHub } from "@/lib/elitze-secure/github-integration";
 import { upsertGraphEdge, upsertGraphNode } from "@/lib/elitze-secure/security-graph-v2";
 
@@ -18,6 +17,13 @@ export async function POST(request: NextRequest) {
     const repo = observation.repository as any;
     const repoKey = `github-repository:${repo.full_name}`;
     await upsertGraphNode({ tenantId: body.tenantId, nodeType: "DATA_STORE", subjectKey: repoKey, displayName: String(repo.full_name), source: "github-api", evidenceState: "OBSERVED", sourceRef: `github:repo:${repo.full_name}`, observedAt, metadata: { visibility: repo.visibility, defaultBranch: repo.default_branch, archived: repo.archived } });
+
+    if (observation.installations) {
+      const installation = observation.installations as any;
+      const installationKey = `github-installation:${installation.id ?? repo.full_name}`;
+      await upsertGraphNode({ tenantId: body.tenantId, nodeType: "SERVICE_ACCOUNT", subjectKey: installationKey, displayName: `GitHub App installation ${installation.id ?? ""}`.trim(), source: "github-api", evidenceState: "OBSERVED", sourceRef: `github:installation:${installation.id ?? repo.full_name}`, observedAt, metadata: { appId: installation.app_id ?? null, account: installation.account?.login ?? null } });
+      await upsertGraphEdge({ tenantId: body.tenantId, from: installationKey, to: repoKey, relation: "AUTHORIZES", evidenceState: "OBSERVED", source: "github-api", accessMode: "EXECUTE", sourceRef: `github:installation:${installation.id ?? repo.full_name}`, observedAt });
+    }
 
     for (const workflow of observation.workflows ?? []) {
       const item = workflow as any;
@@ -40,7 +46,17 @@ export async function POST(request: NextRequest) {
       await upsertGraphEdge({ tenantId: body.tenantId, from: repoKey, to: key, relation: "USES", evidenceState: "OBSERVED", source: "github-api", accessMode: "EXECUTE", sourceRef: `github:secret-metadata:${repo.full_name}:${item.name}`, observedAt });
     }
 
-    return NextResponse.json({ ok: true, source: "github-api", observedAt, repository: observation.repository, installations: observation.installations ?? "UNAVAILABLE", workflows: observation.workflows?.length ?? 0, protectedBranches: observation.branchProtections?.length ?? 0, secretMetadata: observation.secretMetadata?.length ?? 0, auditEvents: observation.auditEvents ?? "UNAVAILABLE" });
+    if (Array.isArray(observation.auditEvents)) {
+      for (const audit of observation.auditEvents) {
+        const item = audit as any;
+        const auditId = item.id ?? item._document_id ?? `${item.created_at ?? observedAt}:${item.action ?? "event"}:${item.actor_login ?? "unknown"}`;
+        const key = `github-audit:${repo.full_name}:${String(auditId)}`;
+        await upsertGraphNode({ tenantId: body.tenantId, nodeType: "RUNTIME_ACTION", subjectKey: key, displayName: String(item.action ?? "GitHub audit event"), source: "github-audit-log", evidenceState: "OBSERVED", sourceRef: `github:audit:${repo.full_name}:${auditId}`, observedAt: item.created_at ? new Date(Number(item.created_at) * 1000).toISOString() : observedAt, metadata: { actor: item.actor_login ?? null, repo: item.repo ?? null, org: item.org ?? null } });
+        await upsertGraphEdge({ tenantId: body.tenantId, from: repoKey, to: key, relation: "RESULTED_IN", evidenceState: "OBSERVED", source: "github-audit-log", accessMode: "EXECUTE", sourceRef: `github:audit:${repo.full_name}:${auditId}`, observedAt: item.created_at ? new Date(Number(item.created_at) * 1000).toISOString() : observedAt });
+      }
+    }
+
+    return NextResponse.json({ ok: true, source: "github-api", observedAt, repository: observation.repository, installations: observation.installations ?? "UNAVAILABLE", workflows: observation.workflows?.length ?? 0, protectedBranches: observation.branchProtections?.length ?? 0, secretMetadata: observation.secretMetadata?.length ?? 0, auditEvents: Array.isArray(observation.auditEvents) ? observation.auditEvents.length : "UNAVAILABLE" });
   } catch (error) {
     console.error("ELITZE GitHub observation failed", error);
     return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "github_observation_failed", evidenceState: "UNAVAILABLE" }, { status: 503 });
