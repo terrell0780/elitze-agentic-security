@@ -12,6 +12,10 @@ export type McpGatewayRequest = {
   arguments?: unknown;
   purpose?: string;
   requestId?: string;
+  requestedCapability?: string;
+  resource?: string;
+  environment?: string;
+  impactLevel?: string;
 };
 
 export type GatewayEvaluation = {
