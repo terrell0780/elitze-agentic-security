@@ -2,7 +2,7 @@
 
 ## Purpose
 
-ELITZE must establish customer evidence before making category, ranking, scale, or market-leadership claims. Documentation, a working prototype, or a design-partner conversation is not customer proof.
+ELITZE must establish customer evidence before making customer, outcome, scale, ranking, or market-leadership claims. Documentation, a prototype, or a design-partner conversation is not customer proof.
 
 ## Initial wedge
 
@@ -12,29 +12,17 @@ Initial promise:
 
 > Discover every agent and MCP server, map what each identity can reach, enforce policy before sensitive tool execution, and preserve verifiable evidence of every decision.
 
-## First five design partners
+## Customer pilot model
 
-Recruit one organization from each category:
+Run only with an actual organization that has authorized participation and a reachable ELITZE-controlled or customer-controlled environment.
 
-1. AI-native SaaS
-2. Financial services
-3. Healthcare or another regulated environment
-4. MSP/MSSP
-5. Enterprise deploying or testing internal agents
-
-Selection must be based on actual agent/MCP security exposure, willingness to provide controlled access to relevant evidence, named executive/security sponsor, and agreement on measurable pilot outcomes.
-
-## Pilot structure
-
-Target duration: **60–90 days**.
-
-Every pilot requires:
+A pilot requires:
 
 - written scope
 - authorized tenant/environment boundary
 - named customer owner
 - success criteria agreed before measurement
-- baseline measurement where available
+- available baseline where one exists
 - collection/provenance rules
 - evidence retention and deletion terms
 - incident/escalation path
@@ -64,21 +52,9 @@ Measure only outcomes that can be supported by customer evidence:
 - mean time to investigate
 - evidence preparation time
 
-Additional outcomes may be added, but every metric must define numerator, denominator, scope, observation window, collection method, and evidence source.
+A metric is not reportable when the required source data, scope, or measurement method is unavailable. In that case record `UNKNOWN` or `UNMEASURABLE`.
 
-## Commercial proof model
-
-The following are **targets**, not current claims:
-
-- 50–100 enterprise customers
-- multi-million-dollar ARR
-- strong gross retention
-- verified expansion
-- recognized security research
-- major partnerships
-- independent analyst/practitioner recognition
-
-No target may be rendered as an achieved metric without current evidence.
+Every reported metric must define numerator, denominator where applicable, scope, observation window, collection method, and evidence source.
 
 ## Evidence standard
 
@@ -100,87 +76,46 @@ Every customer result must record:
 
 Customer case studies require customer approval before publication. Claims must preserve the distinction between observed facts, customer-provided assumptions, inference, and marketing language.
 
-## Research and references
+## Research use
 
-Customer pilots should feed the ELITZE research program only when the customer has authorized use of the relevant evidence. No customer data may be repurposed into public research without documented authorization and applicable contractual/privacy review.
+Customer-pilot evidence may feed the ELITZE research program only when the customer has explicitly authorized that use and applicable contractual/privacy review permits it. Customer data must not be repurposed into public research by default.
 
-## Organization model
+## Current executable scope
 
-### Initial team target
+The repository may document pilot requirements and measurement contracts, but it must not represent the following as current ELITZE facts unless separately evidenced:
 
-- CEO / commercial founder
-- CTO / security architect
-- 2 backend/platform engineers
-- 2 security research engineers
-- identity/cloud integration engineer
-- frontend/product engineer
-- product/security lead
-- enterprise seller
-- solutions engineer
-- fractional legal/compliance support
+- active design partners
+- customer count
+- ARR
+- retention or expansion
+- customer outcomes
+- case studies
+- partnerships
+- analyst recognition
+- successful pilot completion
 
-These are staffing targets, not evidence that roles are currently filled.
+No staffing plan is treated as current organizational capacity. No future hiring requirement is treated as an existing capability.
 
-## Phase gates
+## Next executable actions
 
-### Phase 1 — Harden and validate
+The only actions in this document that should be treated as immediate are those that can be performed with currently available access and evidence:
 
-- harden the product
-- complete initial production integrations
-- independent penetration test
-- establish research workflow
-- recruit five design partners
-- remove unsupported product claims
-- publish one technically reviewed research report
-- define measurable pilot criteria
+1. Identify an actual prospective customer organization.
+2. Obtain explicit pilot authorization and scope.
+3. Connect only real customer-controlled sources that are available and approved.
+4. Establish the baseline using observed data.
+5. Run authorized ELITZE controls and record decisions/evidence.
+6. Measure only supported outcomes.
+7. Obtain customer approval before publishing any customer-specific result.
 
-### Phase 2 — Convert and expand
-
-- add Entra ID and Kubernetes production integrations
-- deliver TypeScript, Python, and Go SDKs as separately verified releases
-- publish 20+ production-qualified detections/policies when their evidence requirements are met
-- begin/continue SOC 2 program based on actual operating scope
-- convert design partners into paying customers
-- target 10 customers and initial ARR
-- publish three verified case studies with customer approval
-
-### Phase 3 — Enterprise scale
-
-- establish dedicated research and integration capability
-- expand SIEM, cloud and identity coverage
-- complete SOC 2 Type II when the required observation period and examination are actually complete
-- establish MSSP/channel program
-- grow verified enterprise ARR
-- pursue recognized technology partnerships
-
-### Phase 4 — Category leadership attempt
-
-- international sales/support
-- sustained proprietary research
-- broad native integration coverage
-- completed compliance/certification programs applicable to actual scope
-- channel partnerships
-- large-scale enterprise customer acquisition
-- competitive engineering and threat intelligence
-- pursue top-five category position only when supported by an independently defensible market methodology
+Anything requiring a customer, completed external audit, independent assurance, hiring, insurance, certification, partnership, or market recognition is not an immediate product capability and is excluded from the executable scope until that external prerequisite exists.
 
 ## Claim firewall
 
-ELITZE must not state or imply any of the following solely because a target, plan, pilot, or document exists:
+ELITZE must not state or imply customer traction, revenue, retention, partnerships, recognition, successful pilots, completed penetration testing, certifications, production-scale reliability, or category leadership because a plan or document exists.
 
-- 50–100 customers
-- multi-million-dollar ARR
-- strong retention or expansion
-- recognized category leadership
-- major partnerships
-- analyst recognition
-- successful design-partner outcomes
-- completed penetration testing
-- completed certifications
-- production-scale reliability
-
-The public state must remain `UNKNOWN` or `UNMEASURABLE` until the evidence exists.
+The public state remains `UNKNOWN` or `UNMEASURABLE` until evidence exists.
 
 ## Completion rule
 
-Customer validation is complete only when the relevant customer evidence, approvals, measurements, and commercial records exist. A roadmap item remains a roadmap item until its acceptance evidence is verified.
+Customer validation is complete only when the relevant customer authorization, evidence, measurements, approvals, and commercial records actually exist. A roadmap or staffing target is not completion evidence.
