@@ -23,6 +23,7 @@ jobs:
       - run: npm run security:self-test
       - run: npm run data-bridge:self-test
       - run: npm run mcp-workload-identity:self-test
+      - run: npm run policy-evidence:self-test
       - run: npm run typecheck
       - run: npm run lint
       - run: npm run build
