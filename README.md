@@ -1,92 +1,97 @@
 # ELITZE Agentic Security
 
-**Policy enforcement at the point of generation, not after the fact.**
+**Agent Identity and MCP Runtime Security**
 
-ELITZE Agentic Security is a governed security control plane for AI agents, MCP, LLM applications, APIs, software, cloud, identity, data and runtime behavior. It connects security graph context, policy enforcement, continuous validation and evidence so security decisions can be traced from signal to verified outcome.
+**Discover every agent and MCP server, map what each identity can reach, enforce policy before sensitive tool execution, and preserve verifiable evidence of every decision.**
 
-## Security surface
+ELITZE is narrowing its initial commercial proof to a real, evidence-backed control path for agent identity, MCP servers, tools, reachability, policy enforcement, authorized execution, runtime observation, retesting, and tamper-evident evidence.
 
-- AI and agentic security: AI Security Gateway, agent boundaries, MCP and tool governance.
-- Application and API security: API security, OpenAPI governance, code and supply-chain controls.
-- Cloud, identity and data security: connected posture, authorization, sensitive-data pathways and runtime context.
-- Exposure and vulnerability operations: attack paths, CVE intelligence, remediation priority and verification.
-- Security operations: investigation, governed response, containment, audit and evidence.
-- **ELITZE Global Security View:** an interactive visual command surface for navigating connected security domains, exposure relationships and authorized visual intelligence.
-- **REO:** continuous validation of reachable and exploitable conditions with evidence-backed retesting.
-- **ROI:** evidence-backed business value measurement connecting security outcomes to approved financial assumptions.
-- **ELITZE Security Skill Registry:** governed capabilities with authorization, verification, evidence and reference mappings.
-- **ELITZE Data Bridge:** authenticated, tenant-bound security-data ingress with normalization, idempotency, evidence and canonical observed signals.
+## Initial control loop
 
-## Product brand and ownership
+`Discover → Identify → Map Reach → Evaluate Policy → Decide → Authorize Execution → Observe → Retest → Prove`
 
-ELITZE is the product brand and canonical product identity. Product-facing code and copy use ELITZE naming and visual identity. External technologies and standards may appear only as dependencies, integrations, compatibility targets, or reference mappings; they are not presented as ELITZE-owned products.
+The system is not complete because a dashboard state changes. The underlying tenant-scoped records, authorization decision, execution result, retest result, and evidence must exist in the connected control path.
 
-See [`docs/ELITZE-BRAND-AND-IP-POLICY.md`](docs/ELITZE-BRAND-AND-IP-POLICY.md), [`docs/ELITZE-SECURITY-SKILLS.md`](docs/ELITZE-SECURITY-SKILLS.md), and [`docs/SALE-READINESS.md`](docs/SALE-READINESS.md).
+## Production truth
 
-## Product standard
+ELITZE production mode uses **real connected records only**.
 
-ELITZE is built around a continuous **Detect → Explain → Authorize → Act → Retest → Evidence** loop. It distinguishes observed evidence from inferred or unavailable state and does not manufacture live telemetry, assets, alerts, remediation outcomes or financial savings.
+- No mock data.
+- No fake telemetry.
+- No synthetic operational metrics.
+- No simulated security events presented as real.
+- No counterfactual/copy-of-graph simulation represented as an operational security control.
+- No placeholder success states.
+- No invented customers, agents, assets, findings, reachability, remediation, savings, rankings, or integrations.
+- Missing or unavailable evidence remains `UNKNOWN`, `UNMEASURABLE`, or `INSUFFICIENT_REACH` as appropriate.
 
-See [`docs/ELITZE-CATEGORY-LEADER-MANIFEST.md`](docs/ELITZE-CATEGORY-LEADER-MANIFEST.md) for the acceptance standard, [`docs/ELITZE-ROI.md`](docs/ELITZE-ROI.md) for the ROI model, and [`src/app/compare/page.tsx`](src/app/compare/page.tsx) for the product-facing benchmark.
+## Initial security surface
 
-## ROI model
+- Agent discovery and inventory.
+- MCP server and tool inventory.
+- Workload / non-human identity.
+- Identity-to-capability and reachability mapping.
+- Secrets and sensitive-data reachability.
+- Policy enforcement before sensitive tool execution.
+- Approval boundaries for high-impact actions.
+- Separately authorized gateway execution.
+- Tamper-evident decision evidence.
+- Observed runtime outcomes.
+- Retesting and evidence-backed closure.
 
-The executive ROI surface is available at `/console/roi`. ELITZE separates persisted security observations from customer-approved financial assumptions.
+Broader security domains may exist in the architecture, but they are not claimed as simultaneously proven product scope unless the relevant live control path is implemented, connected, and verified.
 
-**Annual benefit = incident cost avoided + engineering value recovered + AI/cloud spend avoided + audit/evidence cost avoided.**
+## REO / RIO / ROE
 
-**Net benefit = annual benefit − annual ELITZE cost.**
+**REO** is evidence-backed retesting of a real reachable/exploitable condition and proof of the resulting security state.
 
-**ROI = net benefit ÷ annual ELITZE cost.**
+**RIO** separates observed security outcomes from customer-approved financial assumptions. No financial result is invented when the required inputs are unavailable.
 
-When required observations or financial assumptions are unavailable, ELITZE shows `UNMEASURABLE` rather than fabricating a savings figure.
+**ROE** governs authorized validation activity, scope, approvals, evidence, and release/runtime testing boundaries.
+
+These are evidence controls, not marketing labels.
+
+## Google 2026 publishing standard
+
+ELITZE public content and advertising must describe what is actually available at the destination. We do not claim Google endorsement, partnership, preferred placement, guaranteed ranking, guaranteed traffic, guaranteed conversion, or special Google access without a real authorized relationship. We do not publish fabricated reviews, customer counts, rankings, performance statistics, or trust signals.
+
+Google Search requires helpful, reliable, people-first content and prohibits spam practices including scaled low-value generated content. Google Ads policies prohibit misleading representation, unreliable claims, unclear relevance, and unavailable offers. citeturn160058search0turn160058search1turn160058search3
+
+Google's 2026 guidance for AI features also states that there are no special technical requirements for AI Overviews or AI Mode beyond normal Search eligibility and that helpful, reliable, people-first SEO practices remain foundational. citeturn310158search3turn310158search5
 
 ## Data Bridge
 
-The ELITZE Data Bridge is the controlled path for external security data entering the ELITZE control plane:
+The ELITZE Data Bridge is the controlled path for authorized external security data entering the ELITZE control plane:
 
 `External source → source authentication → tenant binding → validation → normalization → idempotent persistence → audit evidence → ObservedSignal`
 
-The bridge is vendor-neutral. It exposes a connector contract for `WEBHOOK`, `REST_PULL`, `EVENT_STREAM`, `MCP`, and reviewed `CUSTOM` transports. The built-in Generic HTTPS JSON connector is an integration primitive; it is not a claim of compatibility, certification, partnership, or endorsement by any named vendor.
-
-See [`docs/ELITZE-DATA-BRIDGE.md`](docs/ELITZE-DATA-BRIDGE.md) and [`docs/ELITZE-DATA-BRIDGE-INTEGRATION-CONTRACT.md`](docs/ELITZE-DATA-BRIDGE-INTEGRATION-CONTRACT.md).
-
-## Production path
-
-1. Copy `.env.example` to a secret-managed environment.
-2. Set `DATABASE_URL` and `ELITZE_INTERNAL_API_KEY`.
-3. Run `npm install`.
-4. Run `npm run db:migrate` against the production database.
-5. Run `npm run typecheck`, `npm run lint`, `npm test`, `npm run data-bridge:self-test`, `npm run build`, and `npm run sale:readiness`.
-6. Deploy the application with the same runtime environment and database.
-
-The repository does not seed synthetic records on startup. Empty database state is surfaced as empty state in the console.
+The bridge remains vendor-neutral and supports reviewed transports including `WEBHOOK`, `REST_PULL`, `EVENT_STREAM`, `MCP`, and `CUSTOM`.
 
 ## Security boundary
 
-The model or agent is not the security boundary. Internal security-decision and containment APIs require the ELITZE internal API key. Containment also requires a separately configured infrastructure executor; without one, ELITZE records the request and fails closed rather than claiming that infrastructure was isolated.
+The model or agent is not the security boundary. Identity, policy, authorization, execution controls, evidence, and verified runtime outcomes form the security boundary.
+
+## Production path
+
+1. Provide `DATABASE_URL` and required internal authentication secrets through the deployment environment.
+2. Run the database migrations against the production database.
+3. Verify the connected tenant and identity path.
+4. Run typecheck, lint, tests, Data Bridge self-test, build, and sale-readiness checks.
+5. Deploy the application with the same database and secret configuration.
+
+The repository does not seed synthetic records on startup. Empty or disconnected production state remains empty or explicitly unavailable.
 
 ## Core endpoints
 
-- `GET /api/health` — database readiness check.
-- `GET /api/search?q=...` — server-side public search broker with bounded input and untrusted-result labeling.
-- `GET /api/roi` — observed ELITZE security-value signals for the executive ROI surface.
-- `GET /api/security/skills` — ELITZE governed security skill metadata.
-- `POST /api/security/decision` — authenticated policy decision and persistence.
-- `POST /api/security/kill-switch` — authenticated containment request and optional executor dispatch.
-- `GET /api/market` — database-backed security state.
-- `GET /api/data-hub` — database-backed data-source and insight state.
-- `POST /api/data-bridge/ingest` — authenticated external security-event ingestion.
-- `POST /api/data-bridge/sources` — authenticated source provisioning.
-- `GET /api/data-bridge/sources?tenantId=...` — authenticated source inventory.
-- `PATCH /api/data-bridge/sources/{sourceId}` — authenticated source enable/disable.
-- `GET /api/data-bridge/events?tenantId=...` — authenticated bridge-event inspection.
-- `GET /api/data-bridge/observe?tenantId=...` — authenticated normalized observed-security signals.
-- `GET /api/data-bridge/health?tenantId=...` — authenticated bridge health.
-- `GET /api/data-bridge/adapters` — authenticated connector capability manifest.
-- `GET /api/use-cases` — database-backed use-case state.
-- `GET /api/crm` — authenticated CRM state.
+- `GET /api/health` — database readiness.
+- `GET /api/security/skills` — governed ELITZE security skills.
+- `POST /api/security/decision` — authenticated policy evaluation and persistence.
+- `POST /api/data-bridge/ingest` — authenticated security-event ingestion.
+- `GET /api/data-bridge/observe` — normalized observed security signals.
+- `GET /api/data-bridge/health` — bridge health for an authorized tenant.
 
 ## Secrets
 
-Real secrets must be supplied through the deployment environment or secret manager. Never commit `.env`, `.env.local`, API keys, credentials, or production database URLs.
+Real secrets must be supplied through the deployment environment or secret manager. Never commit `.env`, database URLs, API keys, credentials, or generated secret material.
+
+See [`docs/ELITZE-CATEGORY-LEADER-MANIFEST.md`](docs/ELITZE-CATEGORY-LEADER-MANIFEST.md) for the acceptance standard.
