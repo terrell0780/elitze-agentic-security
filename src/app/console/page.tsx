@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { Activity, Database, Search, ShieldCheck, TriangleAlert, Users } from "lucide-react";
+import { Activity, Database, Network, Search, ShieldCheck, TriangleAlert, Users } from "lucide-react";
 import SmartChatHierarchy from "@/components/smart-chat-hierarchy";
 import SecurityRoleMap from "@/components/security-role-map";
 import TeamCollaboration from "@/components/team-collaboration";
@@ -11,6 +11,7 @@ type Health = { ok: boolean };
 type Market = { ok: boolean; stats?: { agents: number; shadowAgents: number; openDiscoveries: number; pendingApprovals: number; asiAvg: number }; events?: Array<{ id: number; severity: string; eventType: string; summary: string; createdAt: string }> };
 type SearchResult = { title: string; url: string; description: string; untrusted: true };
 type Metrics = { ok: boolean; metrics?: { enforcementEvents: number; highImpactEvents: number; averageEnforcementLatencyMs: number | null; intentMismatches: number; securityDecisions: number; deniedDecisions: number; humanReviewDecisions: number; autonomousDecisionRate: { value: number | null; state: string }; analystFeedbackCount: number; analystCoverage: { value: number | null; state: string }; feedbackBenignShare: { value: number | null; state: string }; pendingApprovals: number; decidedApprovals: number } };
+type Graph = { ok: boolean; nodes?: Array<{ nodeType: string; displayName: string; evidenceState: string; source: string; observedAt: string | null }>; edges?: Array<{ relation: string; from: string; to: string; evidenceState: string; source: string }>; error?: string };
 
 const cards = [
   [Activity, "Agents", (d: Market) => d.stats?.agents ?? 0],
@@ -28,6 +29,7 @@ export default function ConsolePage() {
   const [health, setHealth] = useState<Health | null>(null);
   const [market, setMarket] = useState<Market | null>(null);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
+  const [graph, setGraph] = useState<Graph | null>(null);
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -38,7 +40,8 @@ export default function ConsolePage() {
       fetch("/api/health", { cache: "no-store" }).then((r) => r.json() as Promise<Health>).catch(() => ({ ok: false })),
       fetch("/api/market", { cache: "no-store" }).then((r) => r.json() as Promise<Market>).catch(() => ({ ok: false })),
       fetch("/api/soc/metrics", { cache: "no-store" }).then((r) => r.json() as Promise<Metrics>).catch(() => ({ ok: false })),
-    ]).then(([h, m, s]) => { setHealth(h); setMarket(m); setMetrics(s); });
+      fetch("/api/console/security-graph", { cache: "no-store" }).then((r) => r.json() as Promise<Graph>).catch(() => ({ ok: false, error: "security_graph_unavailable" })),
+    ]).then(([h, m, s, g]) => { setHealth(h); setMarket(m); setMetrics(s); setGraph(g); });
   }, []);
 
   async function runSearch(event: FormEvent) {
@@ -64,6 +67,8 @@ export default function ConsolePage() {
         <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">{cards.map(([Icon, label, value]) => <div key={label} className="rounded-2xl border border-white/8 bg-white/[0.025] p-5"><Icon className="h-4 w-4 text-red-300" /><div className="mt-5 font-mono text-2xl font-semibold text-white">{market ? value(market) : "—"}</div><div className="mt-1 text-xs uppercase tracking-wider text-slate-500">{label}</div></div>)}</section>
 
         <section className="mt-8 rounded-2xl border border-white/8 bg-white/[0.02] p-6"><div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-red-300" /><h2 className="text-sm font-semibold text-white">SOC performance — measured from ELITZE records</h2></div><div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><div className="rounded-xl border border-white/7 bg-black/20 p-4"><div className="font-mono text-xl font-semibold">{metrics?.metrics ? metricValue(metrics.metrics.autonomousDecisionRate, "%") : "—"}</div><div className="mt-1 text-[10px] uppercase tracking-wider text-slate-500">Autonomous decision rate</div></div><div className="rounded-xl border border-white/7 bg-black/20 p-4"><div className="font-mono text-xl font-semibold">{metrics?.metrics ? metricValue(metrics.metrics.analystCoverage, "%") : "—"}</div><div className="mt-1 text-[10px] uppercase tracking-wider text-slate-500">Analyst feedback coverage</div></div><div className="rounded-xl border border-white/7 bg-black/20 p-4"><div className="font-mono text-xl font-semibold">{metrics?.metrics?.averageEnforcementLatencyMs === null ? "UNMEASURABLE" : metrics?.metrics ? `${Math.round(metrics.metrics.averageEnforcementLatencyMs ?? 0)} ms` : "—"}</div><div className="mt-1 text-[10px] uppercase tracking-wider text-slate-500">Average enforcement latency</div></div><div className="rounded-xl border border-white/7 bg-black/20 p-4"><div className="font-mono text-xl font-semibold">{metrics?.metrics?.intentMismatches ?? "—"}</div><div className="mt-1 text-[10px] uppercase tracking-wider text-slate-500">Intent mismatches recorded</div></div></div><p className="mt-4 text-[10px] text-slate-600">No synthetic measurements. A metric without sufficient observations remains UNMEASURABLE.</p></section>
+
+        <section className="mt-8 rounded-2xl border border-white/8 bg-white/[0.02] p-6"><div className="flex items-center gap-2"><Network className="h-4 w-4 text-red-300" /><h2 className="text-sm font-semibold text-white">Security graph — observed records</h2></div>{graph?.ok ? <><div className="mt-3 text-xs text-slate-500">{graph.nodes?.length ?? 0} nodes · {graph.edges?.length ?? 0} edges. No risk score is calculated from missing evidence.</div><div className="mt-4 grid gap-3 lg:grid-cols-2"><div><div className="mb-2 text-[10px] uppercase tracking-wider text-slate-600">Observed nodes</div><div className="max-h-72 space-y-2 overflow-auto">{(graph.nodes ?? []).slice(0, 20).map((node, index) => <div key={`${node.nodeType}:${node.displayName}:${index}`} className="rounded-lg border border-white/7 bg-black/20 p-3"><div className="text-xs font-medium text-white">{node.displayName}</div><div className="mt-1 text-[10px] text-slate-500">{node.nodeType} · {node.source} · {node.evidenceState}</div></div>)}{(graph.nodes ?? []).length === 0 && <div className="rounded-lg border border-dashed border-white/10 p-4 text-xs text-slate-600">UNKNOWN — no graph records are available.</div>}</div></div><div><div className="mb-2 text-[10px] uppercase tracking-wider text-slate-600">Observed relationships</div><div className="max-h-72 space-y-2 overflow-auto">{(graph.edges ?? []).slice(0, 20).map((edge, index) => <div key={`${edge.relation}:${edge.from}:${edge.to}:${index}`} className="rounded-lg border border-white/7 bg-black/20 p-3"><div className="text-xs font-medium text-white">{edge.from} → {edge.to}</div><div className="mt-1 text-[10px] text-slate-500">{edge.relation} · {edge.source} · {edge.evidenceState}</div></div>)}{(graph.edges ?? []).length === 0 && <div className="rounded-lg border border-dashed border-white/10 p-4 text-xs text-slate-600">UNAVAILABLE — no observed relationships are available.</div>}</div></div></div></> : <div className="mt-4 rounded-lg border border-dashed border-white/10 p-4 text-xs text-amber-300">{graph?.error ?? "UNAVAILABLE"}. The console will not substitute simulated graph data.</div>}</section>
 
         <GovernedChat />
 
