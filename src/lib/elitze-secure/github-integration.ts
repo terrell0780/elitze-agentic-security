@@ -7,13 +7,13 @@ export type GitHubObservation = {
   auditEvents?: unknown[];
 };
 
-function token() {
+function token(): string {
   const value = process.env.GITHUB_TOKEN?.trim();
   if (!value) throw new Error("github_token_unconfigured");
   return value;
 }
 
-async function github(path: string) {
+async function github(path: string): Promise<unknown> {
   const response = await fetch(`https://api.github.com${path}`, {
     headers: {
       Accept: "application/vnd.github+json",
@@ -24,9 +24,13 @@ async function github(path: string) {
   });
   const text = await response.text();
   let body: unknown;
-  try { body = JSON.parse(text); } catch { body = text; }
+  try {
+    body = JSON.parse(text);
+  } catch {
+    body = text;
+  }
   if (!response.ok) throw new Error(`github_http_${response.status}`);
-  return body as any;
+  return body;
 }
 
 export async function observeGitHub(repository: string): Promise<GitHubObservation> {
@@ -40,13 +44,29 @@ export async function observeGitHub(repository: string): Promise<GitHubObservati
   ]);
 
   let installations: unknown = undefined;
-  try { installations = await github(`/repos/${repo}/installation`); } catch { installations = undefined; }
+  try {
+    installations = await github(`/repos/${repo}/installation`);
+  } catch {
+    installations = undefined;
+  }
 
   return {
-    repository: repositoryData,
+    repository: repositoryData as Record<string, unknown> | undefined,
     installations: installations as Record<string, unknown> | undefined,
     workflows: Array.isArray((workflows as any)?.workflows) ? (workflows as any).workflows : [],
-    branchProtections: Array.isArray(branchProtection) ? branchProtection.map((branch: any) => ({ name: branch.name, protected: branch.protected, protection_url: `/repos/${repo}/branches/${encodeURIComponent(branch.name)}/protection` })) : [],
-    secretMetadata: Array.isArray((secretMetadata as any)?.secrets) ? (secretMetadata as any).secrets.map((secret: any) => ({ name: secret.name, updated_at: secret.updated_at, created_at: secret.created_at })) : [],
+    branchProtections: Array.isArray(branchProtection)
+      ? branchProtection.map((branch: any) => ({
+          name: branch.name,
+          protected: branch.protected,
+          protection_url: `/repos/${repo}/branches/${encodeURIComponent(branch.name)}/protection`,
+        }))
+      : [],
+    secretMetadata: Array.isArray((secretMetadata as any)?.secrets)
+      ? (secretMetadata as any).secrets.map((secret: any) => ({
+          name: secret.name,
+          updated_at: secret.updated_at,
+          created_at: secret.created_at,
+        }))
+      : [],
   };
 }
