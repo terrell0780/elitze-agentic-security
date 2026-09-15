@@ -13,6 +13,7 @@
     "data-bridge:self-test": "node scripts/data-bridge-self-test.mjs",
     "mcp-workload-identity:self-test": "node scripts/mcp-workload-identity-self-test.mjs",
     "policy-evidence:self-test": "node scripts/policy-evidence-self-test.mjs",
+    "phase5-6:self-test": "node scripts/phase5-6-self-test.mjs",
     "verify:evidence": "node scripts/verify-evidence.mjs",
     "brand:self-test": "node scripts/brand-self-test.mjs",
     "sale:readiness": "node scripts/sale-readiness.mjs && node scripts/brand-self-test.mjs",
