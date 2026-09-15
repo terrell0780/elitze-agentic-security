@@ -24,6 +24,7 @@ function base64url(value: string | Buffer) {
 }
 
 function sign(input: string, secret: string) {
+  // HMAC-SHA256 signing for token integrity and authenticity
   return crypto.createHmac("sha256", secret).update(input).digest("base64url");
 }
 
@@ -58,6 +59,7 @@ export function verifyWorkloadToken(token: string): WorkloadTokenClaims {
   const expected = sign(payload, secret());
   const left = Buffer.from(signature);
   const right = Buffer.from(expected);
+  // Use timingSafeEqual to prevent timing attacks on HMAC verification
   if (left.length !== right.length || !crypto.timingSafeEqual(left, right)) throw new Error("invalid_workload_token_signature");
   const claims = JSON.parse(Buffer.from(encodedClaims, "base64url").toString("utf8")) as WorkloadTokenClaims;
   if (claims.iss !== "ELITZE-MCP-GATEWAY") throw new Error("invalid_workload_token_issuer");
