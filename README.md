@@ -55,9 +55,7 @@ These are evidence controls, not marketing labels.
 
 ELITZE public content and advertising must describe what is actually available at the destination. We do not claim Google endorsement, partnership, preferred placement, guaranteed ranking, guaranteed traffic, guaranteed conversion, or special Google access without a real authorized relationship. We do not publish fabricated reviews, customer counts, rankings, performance statistics, or trust signals.
 
-Google Search requires helpful, reliable, people-first content and prohibits spam practices including scaled low-value generated content. Google Ads policies prohibit misleading representation, unreliable claims, unclear relevance, and unavailable offers. citeturn160058search0turn160058search1turn160058search3
-
-Google's 2026 guidance for AI features also states that there are no special technical requirements for AI Overviews or AI Mode beyond normal Search eligibility and that helpful, reliable, people-first SEO practices remain foundational. citeturn310158search3turn310158search5
+Search and advertising compliance is maintained in [`docs/GOOGLE-2026-PUBLISHING-COMPLIANCE.md`](docs/GOOGLE-2026-PUBLISHING-COMPLIANCE.md), which tracks the applicable official Google Search and Google Ads guidance used for ELITZE publishing.
 
 ## Data Bridge
 
@@ -94,4 +92,4 @@ The repository does not seed synthetic records on startup. Empty or disconnected
 
 Real secrets must be supplied through the deployment environment or secret manager. Never commit `.env`, database URLs, API keys, credentials, or generated secret material.
 
-See [`docs/ELITZE-CATEGORY-LEADER-MANIFEST.md`](docs/ELITZE-CATEGORY-LEADER-MANIFEST.md) for the acceptance standard.
+See [`docs/ELITZE-CATEGORY-LEADER-MANIFEST.md`](docs/ELITZE-CATEGORY-LEADER-MANIFEST.md) and [`docs/ELITZE-AGENT-IDENTITY-MCP-RUNTIME-CONTRACT.md`](docs/ELITZE-AGENT-IDENTITY-MCP-RUNTIME-CONTRACT.md) for the acceptance standards.
