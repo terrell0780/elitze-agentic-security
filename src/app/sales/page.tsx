@@ -1,19 +1,21 @@
+import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight, Check, FileCheck2, LockKeyhole, ShieldCheck } from "lucide-react";
 
 export const metadata = {
-  title: "Enterprise Sales & Acquisition",
-  description: "ELITZE Agentic Security enterprise, licensing and acquisition information.",
+  title: "Enterprise Sales & Acquisition | ELITZE Agentic Security",
+  description: "ELITZE Agentic Security enterprise licensing and complete product acquisition information.",
 };
 
 const capabilities = [
-  "Security decision and evidence plane for agentic systems",
-  "Identity, agent, model, MCP, API, asset and exposure relationships",
-  "Policy enforcement before generation and tool execution",
-  "SOC incident → action → support → verification workflow",
-  "Continuous validation and evidence-bound security state",
-  "REO provenance, evidence, uniqueness and governance model",
-  "Mobile-ready experience for solo operators and teams",
-  "Enterprise integration boundaries for cloud, endpoint, network and threat intelligence",
+  "Agent and MCP discovery",
+  "Tenant-scoped workload identity",
+  "Reachability and security graph context",
+  "Policy evaluation before sensitive execution",
+  "Runtime observation and evidence",
+  "Retesting and evidence-backed closure",
+  "REO / RIO / ROE evidence controls",
+  "Private repository and diligence access",
 ];
 
 const included = [
@@ -24,12 +26,11 @@ const included = [
   "Authentication implementation",
   "Database schema and migrations",
   "ELITZE SDK",
-  "CI/CD configuration",
   "Deployment documentation",
   "Security architecture documentation",
   "Product and sales materials",
-  "Owned logos, designs, and visual assets",
-  "Transferable product accounts",
+  "Owned logos, designs and visual assets",
+  "Transferable product accounts where legally transferable",
   "Ten hours of transition support over 30 days",
 ];
 
@@ -46,106 +47,19 @@ const excluded = [
 export default function SalesPage() {
   return (
     <main className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
-      <header className="border-b border-[var(--border)]">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5 sm:px-6">
-          <Link href="/" className="text-sm font-black tracking-[.22em] text-[var(--accent)]">ELITZE</Link>
-          <Link href="/console" className="rounded-xl border border-[var(--border)] px-4 py-2 text-sm font-semibold">Open Console</Link>
-        </div>
-      </header>
+      <header className="border-b border-[var(--border)] bg-[var(--header)]/95 backdrop-blur-xl"><div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-5 sm:px-6"><Link href="/" className="flex items-center gap-3"><div className="grid h-9 w-9 place-items-center rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent)]"><ShieldCheck className="h-5 w-5" /></div><span className="text-sm font-black tracking-[.18em]">ELITZE</span></Link><Link href="/sales/access" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-4 py-2.5 text-sm font-semibold">Request source access <ArrowRight className="h-4 w-4" /></Link></div></header>
 
-      <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 sm:py-20">
-        <div className="max-w-4xl">
-          <div className="text-[10px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">Enterprise / acquisition</div>
-          <h1 className="mt-4 text-4xl font-black tracking-[-.05em] sm:text-6xl">ELITZE Agentic Security is built to become the security decision layer for the agentic enterprise.</h1>
-          <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--muted-strong)]">For organizations evaluating deployment, licensing, strategic partnership or outright acquisition, this is the concise operating view. Technical evidence, repository history and actual implementation status should be reviewed during diligence.</p>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <a
-              href="mailto:terrell0780@gmail.com?subject=ELITZE%20acquisition%20%E2%80%94%20private%20technical%20review"
-              className="rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950"
-            >
-              Request Private Technical Review
-            </a>
-            <Link href="/security" className="rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold">Review security model</Link>
-          </div>
-        </div>
+      <section className="relative overflow-hidden border-b border-[var(--border)]"><div className="pointer-events-none absolute inset-0 hero-grid opacity-40" /><div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[.8fr_1.2fr] lg:items-center"><div><div className="text-[10px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">Enterprise / acquisition</div><h1 className="mt-4 text-4xl font-black tracking-[-.055em] sm:text-6xl">ELITZE Agentic Security.</h1><p className="mt-4 text-2xl font-semibold tracking-[-.02em] text-[var(--muted-strong)]">A security control plane built around identity, reach, policy, execution and proof.</p><p className="mt-6 max-w-3xl text-base leading-7 text-[var(--muted-strong)]">For deployment, licensing, strategic partnership or outright acquisition, this is the buyer-facing operating view. Technical evidence, repository history, implementation status and commercial terms remain subject to diligence.</p><div className="mt-8 flex flex-wrap gap-3"><a href="mailto:terrell0780@gmail.com?subject=ELITZE%20Agentic%20Security%20-%20private%20technical%20review" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950">Request private technical review <ArrowRight className="h-4 w-4" /></a><Link href="/sales/access" className="rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold">Repository access process</Link></div></div><div className="overflow-hidden rounded-[30px] border border-[var(--accent-border)] bg-black/20"><Image src="/elitze-command-plane-2026.svg" alt="ELITZE command plane acquisition visual" width={1600} height={1000} priority className="h-auto w-full" /></div></div></section>
 
-        <section className="mt-14 rounded-3xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-6 sm:p-10">
-          <div className="text-[10px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">Transaction</div>
-          <h2 className="mt-3 text-3xl font-black tracking-[-.03em] sm:text-4xl">Complete Product Acquisition</h2>
-          <p className="mt-5 text-lg font-semibold">ELITZE is available as a complete early-stage product asset acquisition.</p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5">
-              <div className="text-xs font-bold uppercase tracking-[.18em] text-[var(--muted)]">Asking price</div>
-              <div className="mt-2 text-3xl font-black">$18,000 USD</div>
-            </div>
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5">
-              <div className="text-xs font-bold uppercase tracking-[.18em] text-[var(--muted)]">Accelerated cash-close</div>
-              <div className="mt-2 text-3xl font-black">$10,000 USD</div>
-              <p className="mt-2 text-sm text-[var(--muted-strong)]">Available to qualified buyers.</p>
-            </div>
-          </div>
-          <p className="mt-5 text-sm font-semibold text-[var(--muted-strong)]">Offer expiration: September 17, 2026, at 5:00 p.m. Pacific Time.</p>
-          <p className="mt-5 max-w-4xl text-sm leading-7 text-[var(--muted-strong)]">The proposed transaction includes ELITZE.ca, the complete private source repository, owned brand assets, product documentation, SDK, database and deployment materials, and limited founder transition support.</p>
-          <p className="mt-3 max-w-4xl text-sm leading-7 text-[var(--muted-strong)]">Private technical access is provided after buyer qualification and NDA.</p>
-          <p className="mt-3 max-w-4xl text-sm leading-7 text-[var(--muted)]">ELITZE is an early-stage product asset. Production capability, integrations, commercial terms, and implementation status remain subject to buyer diligence.</p>
-        </section>
+      <section className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14"><div className="rounded-[28px] border border-[var(--accent-border)] bg-[var(--accent-soft)] p-6 sm:p-9"><div className="flex items-center gap-3"><LockKeyhole className="h-5 w-5 text-[var(--accent)]" /><div className="text-[10px] font-bold uppercase tracking-[.22em] text-[var(--accent)]">Transaction</div></div><h2 className="mt-3 text-3xl font-black tracking-[-.035em]">Complete Product Acquisition</h2><p className="mt-4 max-w-3xl text-lg font-semibold">ELITZE is available as a complete early-stage product asset acquisition.</p><div className="mt-7 grid gap-3 sm:grid-cols-2"><div className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5"><div className="text-xs font-bold uppercase tracking-[.18em] text-[var(--muted)]">Asking price</div><div className="mt-2 text-3xl font-black">$18,000 USD</div></div><div className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5"><div className="text-xs font-bold uppercase tracking-[.18em] text-[var(--muted)]">Accelerated cash-close</div><div className="mt-2 text-3xl font-black">$10,000 USD</div><div className="mt-2 text-sm text-[var(--muted-strong)]">Available to qualified buyers.</div></div></div><p className="mt-5 text-sm font-semibold text-[var(--muted-strong)]">Offer expiration: September 17, 2026, at 5:00 p.m. Pacific Time.</p><p className="mt-4 max-w-4xl text-sm leading-7 text-[var(--muted-strong)]">The proposed transaction includes ELITZE.ca, the complete private source repository, owned brand assets, product documentation, SDK, database and deployment materials, and limited founder transition support.</p><p className="mt-3 text-sm leading-7 text-[var(--muted)]">Private technical access is provided after buyer qualification and NDA. Capability and implementation claims remain subject to technical diligence.</p></div></section>
 
-        <section className="mt-4 grid gap-4 lg:grid-cols-2">
-          <div className="rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-6 sm:p-8">
-            <h2 className="text-2xl font-black">Included</h2>
-            <div className="mt-6 grid gap-3 sm:grid-cols-2">
-              {included.map((item) => (
-                <div key={item} className="rounded-2xl border border-[var(--border)] bg-[var(--panel-strong)] p-4 text-sm leading-6 text-[var(--muted-strong)]">{item}</div>
-              ))}
-            </div>
-          </div>
-          <div className="rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-6 sm:p-8">
-            <h2 className="text-2xl font-black">Excluded</h2>
-            <div className="mt-6 grid gap-3">
-              {excluded.map((item) => (
-                <div key={item} className="rounded-2xl border border-[var(--border)] bg-[var(--panel-strong)] p-4 text-sm leading-6 text-[var(--muted-strong)]">{item}</div>
-              ))}
-            </div>
-          </div>
-        </section>
+      <section className="mx-auto grid max-w-7xl gap-4 px-4 pb-4 sm:px-6 lg:grid-cols-2"><div className="rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-6 sm:p-8"><h2 className="text-2xl font-black">Included</h2><div className="mt-6 grid gap-3 sm:grid-cols-2">{included.map((item) => <div key={item} className="flex gap-3 rounded-2xl border border-[var(--border)] bg-[var(--panel-strong)] p-4 text-sm leading-6 text-[var(--muted-strong)]"><Check className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" />{item}</div>)}</div></div><div className="rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-6 sm:p-8"><h2 className="text-2xl font-black">Excluded</h2><div className="mt-6 grid gap-3">{excluded.map((item) => <div key={item} className="rounded-2xl border border-[var(--border)] bg-[var(--panel-strong)] p-4 text-sm leading-6 text-[var(--muted-strong)]">{item}</div>)}</div></div></section>
 
-        <div className="mt-4 rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-6 sm:p-8">
-          <h2 className="text-2xl font-black">What is being offered</h2>
-          <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {capabilities.map((item) => <div key={item} className="rounded-2xl border border-[var(--border)] bg-[var(--panel-strong)] p-4 text-sm leading-6 text-[var(--muted-strong)]">{item}</div>)}
-          </div>
-        </div>
+      <section className="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-8"><div className="rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-6 sm:p-8"><div className="flex items-center gap-3"><FileCheck2 className="h-5 w-5 text-[var(--accent)]" /><h2 className="text-2xl font-black">Buyer diligence</h2></div><p className="mt-4 max-w-4xl text-sm leading-7 text-[var(--muted-strong)]">No synthetic metrics or invented production claims are used as diligence evidence. A serious buyer should validate source code, dependency posture, CI gates, deployment configuration, database state, integrations, identity controls, tenancy, telemetry and runtime performance.</p><div className="mt-7 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">{capabilities.map((item, i) => <div key={item} className="rounded-2xl border border-[var(--border)] bg-[var(--panel-strong)] p-4"><div className="font-mono text-[9px] text-[var(--accent)]">0{i + 1}</div><div className="mt-2 text-sm font-semibold">{item}</div></div>)}</div></div></section>
 
-        <div className="mt-4 grid gap-4 lg:grid-cols-[1.1fr_.9fr]">
-          <section className="rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-6 sm:p-8">
-            <h2 className="text-2xl font-black">Buyer diligence</h2>
-            <p className="mt-4 text-sm leading-6 text-[var(--muted-strong)]">No synthetic metrics or invented production claims are used as diligence evidence. A serious buyer should validate source code, dependency posture, CI gates, deployment configuration, database state, integrations, identity controls, tenancy, telemetry and operational performance.</p>
-            <div className="mt-6 space-y-3 text-sm">
-              <div><b>Commercial paths</b><p className="text-[var(--muted)]">Strategic acquisition · enterprise license · technology/IP transaction · partnership</p></div>
-              <div><b>Evaluation</b><p className="text-[var(--muted)]">Technical review · security review · product demonstration · architecture diligence · legal/commercial diligence</p></div>
-            </div>
-          </section>
-          <section className="rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-6 sm:p-8">
-            <h2 className="text-2xl font-black">Private source access</h2>
-            <p className="mt-4 text-sm leading-6 text-[var(--muted-strong)]">The canonical source repository is private. Qualified buyers can request a controlled technical review; source access is handled separately after qualification and NDA.</p>
-            <a
-              href="mailto:terrell0780@gmail.com?subject=ELITZE%20acquisition%20%E2%80%94%20private%20technical%20review"
-              className="mt-6 inline-flex rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950"
-            >
-              Request Private Technical Review
-            </a>
-          </section>
-        </div>
+      <section className="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-8"><div className="grid gap-4 lg:grid-cols-[1.05fr_.95fr]"><div className="rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-6 sm:p-8"><h2 className="text-2xl font-black">Private source access</h2><p className="mt-4 text-sm leading-6 text-[var(--muted-strong)]">The canonical source repository is private. Qualified buyers can request controlled technical review; repository access is handled separately after qualification and NDA.</p><Link href="/sales/access" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950">Request repository access <ArrowRight className="h-4 w-4" /></Link></div><div className="rounded-3xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-6 sm:p-8"><div className="text-[10px] font-bold uppercase tracking-[.22em] text-[var(--accent)]">Operating promise</div><h2 className="mt-3 text-2xl font-black">Pentest every release. Govern every agent. Verify every fix.</h2><p className="mt-4 text-sm leading-6 text-[var(--muted-strong)]">The model is not the security boundary. ELITZE is designed around policy, identity, reachability, evidence and verification.</p></div></div></section>
 
-        <section className="mt-4 rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-6 sm:p-8">
-          <h2 className="text-2xl font-black">The operating promise</h2>
-          <p className="mt-4 text-lg font-semibold">Pentest every release. Govern every agent. Verify every fix.</p>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--muted)]">The model is not the security boundary. ELITZE is designed around policy, identity, reachability, evidence and verification.</p>
-        </section>
-
-        <section className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 text-xs leading-5 text-[var(--muted)]"><b className="text-[var(--text)]">Trust disclosure:</b> References to government agencies, standards bodies, technology providers or other third parties are informational only and do not imply endorsement, certification, partnership or affiliation with ELITZE unless a separate written relationship exists. Product capabilities, implementation status and commercial terms remain subject to technical and legal diligence.</section>
-        <footer className="mt-12 flex flex-wrap gap-5 text-xs text-[var(--muted)]"><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/security">Security</Link><Link href="/">Home</Link></footer>
-      </div>
+      <section className="mx-auto max-w-7xl px-4 py-4 sm:px-6 sm:py-8"><div className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 text-xs leading-5 text-[var(--muted)]"><b className="text-[var(--text)]">Trust disclosure:</b> Third-party references are informational only and do not imply endorsement, certification, partnership or affiliation with ELITZE unless a separate written relationship exists. Product capabilities, implementation status and commercial terms remain subject to technical and legal diligence.</div><footer className="mt-8 flex flex-wrap gap-5 pb-10 text-xs text-[var(--muted)]"><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/security">Security</Link><Link href="/">Home</Link></footer></section>
     </main>
   );
 }
