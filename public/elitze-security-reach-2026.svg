@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000" role="img" aria-labelledby="title desc">
+  <title id="title">ELITZE Security Reach Intelligence</title>
+  <desc id="desc">Abstract 3D security graph showing agent identities, protected resources, policy gates and verified evidence paths.</desc>
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="48%" r="72%"><stop offset="0" stop-color="#10232e"/><stop offset=".55" stop-color="#07121a"/><stop offset="1" stop-color="#02060a"/></radialGradient>
+    <linearGradient id="a" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ecfeff"/><stop offset=".4" stop-color="#67e8f9"/><stop offset="1" stop-color="#0284c7"/></linearGradient>
+    <linearGradient id="b" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ede9fe"/><stop offset=".45" stop-color="#c4b5fd"/><stop offset="1" stop-color="#7c3aed"/></linearGradient>
+    <filter id="g"><feGaussianBlur stdDeviation="10" result="x"/><feMerge><feMergeNode in="x"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+    <pattern id="p" width="48" height="48" patternUnits="userSpaceOnUse"><path d="M48 0H0V48" fill="none" stroke="#67e8f9" stroke-opacity=".04"/></pattern>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <rect width="1600" height="1000" fill="url(#p)"/>
+  <g transform="translate(800 500)">
+    <ellipse rx="580" ry="270" fill="none" stroke="#67e8f9" stroke-opacity=".12" stroke-width="2"/>
+    <ellipse rx="450" ry="205" fill="none" stroke="#a78bfa" stroke-opacity=".13" stroke-width="2"/>
+    <ellipse rx="320" ry="145" fill="none" stroke="#67e8f9" stroke-opacity=".2" stroke-width="2" stroke-dasharray="8 16"/>
+    <g fill="none" stroke-linecap="round">
+      <path d="M-540-40 C-360-180-260-160-130-75 C-40-15 50-10 140-90 C280-220 410-190 545-75" stroke="#67e8f9" stroke-opacity=".32" stroke-width="4"/>
+      <path d="M-535 90 C-340 30-225 55-125 120 C-20 190 90 177 200 90 C310 2 408 12 530 92" stroke="#a78bfa" stroke-opacity=".24" stroke-width="3"/>
+      <path d="M-410-205 C-320-90-240-60-110-20 C-10 10 95 5 225-48 C340-95 390-45 425 80" stroke="#67e8f9" stroke-opacity=".2" stroke-width="2"/>
+    </g>
+    <g fill="#071219" stroke-width="2">
+      <g transform="translate(-540,-40)"><circle r="38" stroke="#67e8f9" stroke-opacity=".6"/><circle r="10" fill="url(#a)" filter="url(#g)"/><path d="M-18 0h36M0-18v36" stroke="#67e8f9" stroke-opacity=".35"/></g>
+      <g transform="translate(-125,-75)"><circle r="30" stroke="#67e8f9" stroke-opacity=".55"/><circle r="9" fill="url(#a)" filter="url(#g)"/></g>
+      <g transform="translate(140,-90)"><circle r="34" stroke="#c4b5fd" stroke-opacity=".6"/><circle r="10" fill="url(#b)" filter="url(#g)"/></g>
+      <g transform="translate(545,-75)"><circle r="42" stroke="#a78bfa" stroke-opacity=".55"/><circle r="11" fill="url(#b)" filter="url(#g)"/><path d="M-18-7L0 12L18-7" fill="none" stroke="#ddd6fe" stroke-opacity=".5"/></g>
+      <g transform="translate(-535,90)"><circle r="35" stroke="#67e8f9" stroke-opacity=".55"/><circle r="10" fill="url(#a)" filter="url(#g)"/></g>
+      <g transform="translate(530,92)"><circle r="35" stroke="#a78bfa" stroke-opacity=".55"/><circle r="10" fill="url(#b)" filter="url(#g)"/></g>
+    </g>
+    <g transform="translate(0 24)">
+      <path d="M0-115 L105-58 L105 54 L0 112 L-105 54 L-105-58Z" fill="#091822" stroke="#67e8f9" stroke-opacity=".38" stroke-width="3"/>
+      <path d="M0-80 L72-40 L72 35 L0 75 L-72 35 L-72-40Z" fill="#0c2631" stroke="#67e8f9" stroke-opacity=".26" stroke-width="2"/>
+      <circle r="39" fill="none" stroke="url(#a)" stroke-width="4" filter="url(#g)"/>
+      <circle r="12" fill="#e0fbff" filter="url(#g)"/>
+      <path d="M-150 0H-90M90 0H150M0-165V-95M0 95V165" stroke="#67e8f9" stroke-opacity=".35" stroke-width="3"/>
+    </g>
+    <g transform="translate(-290 230)">
+      <rect x="-95" y="-32" width="190" height="64" rx="18" fill="#09151d" stroke="#67e8f9" stroke-opacity=".32"/>
+      <circle cx="-58" r="8" fill="#67e8f9"/><text x="-36" y="7" font-family="ui-monospace,monospace" font-size="18" fill="#d9fbff" letter-spacing="2">IDENTITY</text>
+    </g>
+    <g transform="translate(290 230)">
+      <rect x="-88" y="-32" width="176" height="64" rx="18" fill="#0a151f" stroke="#a78bfa" stroke-opacity=".32"/>
+      <circle cx="-50" r="8" fill="#a78bfa"/><text x="-28" y="7" font-family="ui-monospace,monospace" font-size="18" fill="#eee9ff" letter-spacing="2">EVIDENCE</text>
+    </g>
+  </g>
+  <g font-family="ui-monospace,SFMono-Regular,Menlo,monospace" font-size="19" letter-spacing="4" fill="#c9f9ff">
+    <text x="88" y="96">ELITZE / REACH INTELLIGENCE</text>
+    <text x="88" y="930" fill="#7dd3fc" fill-opacity=".72">AGENT · MCP · TOOL · API · SECRET · DATA · POLICY · PROOF</text>
+    <text x="1205" y="96" fill="#c4b5fd" fill-opacity=".8">CONNECTED PATHS ONLY</text>
+  </g>
+</svg>
