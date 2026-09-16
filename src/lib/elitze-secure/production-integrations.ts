@@ -5,9 +5,19 @@ import type { DataBridgeConnectionConfig, DataBridgeConnectionResult, DataBridge
 const DEFAULT_TIMEOUT_MS = 10_000;
 
 type Json = Record<string, unknown>;
+type AwsDataBridgeConnectionConfig = DataBridgeConnectionConfig & {
+  accessKeyId?: string;
+  secretAccessKey?: string;
+  region?: string;
+  sessionToken?: string;
+};
 
 function isJson(value: unknown): value is Json {
   return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function isAwsConfig(config: DataBridgeConnectionConfig): config is AwsDataBridgeConnectionConfig {
+  return true;
 }
 
 async function fetchJson(url: string, init: RequestInit, timeoutMs = DEFAULT_TIMEOUT_MS): Promise<{ status: number; body: unknown }> {
@@ -125,6 +135,7 @@ function awsSigningKey(secret: string, date: string, region: string, service: st
 }
 
 async function awsJson(config: DataBridgeConnectionConfig, target: string, body: Json): Promise<{ status: number; body: unknown }> {
+  if (!isAwsConfig(config)) return { status: 0, body: null };
   const accessKeyId = config.accessKeyId;
   const secretAccessKey = config.secretAccessKey;
   const region = config.region;
@@ -154,6 +165,7 @@ const awsConnector: DataBridgeConnector = {
   transports: ["REST_PULL", "EVENT_STREAM"],
   capabilities: ["INGEST", "HEALTH", "DISCOVERY", "NORMALIZE"],
   async connect(config) {
+    if (!isAwsConfig(config)) return { ok: false, status: "INVALID_CONFIG", detail: "aws_configuration_unavailable" };
     if (!config.accessKeyId || !config.secretAccessKey || !config.region) return { ok: false, status: "INVALID_CONFIG", detail: "aws_access_key_secret_region_required" };
     const result = await awsJson(config, "AWSCloudTrail_20131101.LookupEvents", { MaxResults: 1 });
     if (result.status !== 200) return authFailure(result.status, "aws_cloudtrail");
