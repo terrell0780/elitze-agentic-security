@@ -5,6 +5,10 @@ import type { DataBridgeConnectionConfig, DataBridgeConnectionResult, DataBridge
 const DEFAULT_TIMEOUT_MS = 10_000;
 
 type Json = Record<string, unknown>;
+type GitHubDataBridgeConnectionConfig = DataBridgeConnectionConfig & {
+  owner?: string;
+  repository?: string;
+};
 type AwsDataBridgeConnectionConfig = DataBridgeConnectionConfig & {
   accessKeyId?: string;
   secretAccessKey?: string;
@@ -14,10 +18,6 @@ type AwsDataBridgeConnectionConfig = DataBridgeConnectionConfig & {
 
 function isJson(value: unknown): value is Json {
   return typeof value === "object" && value !== null && !Array.isArray(value);
-}
-
-function isAwsConfig(config: DataBridgeConnectionConfig): config is AwsDataBridgeConnectionConfig {
-  return true;
 }
 
 async function fetchJson(url: string, init: RequestInit, timeoutMs = DEFAULT_TIMEOUT_MS): Promise<{ status: number; body: unknown }> {
@@ -44,13 +44,14 @@ function event(sourceId: string, eventId: string, eventType: string, summary: st
 }
 
 async function connectGitHub(config: DataBridgeConnectionConfig): Promise<DataBridgeConnectionResult> {
-  if (!config.token || !config.owner || !config.repository) return { ok: false, status: "INVALID_CONFIG", detail: "github_token_owner_repository_required" };
-  const base = (config.endpoint || "https://api.github.com").replace(/\/$/, "");
-  const headers = { Authorization: `Bearer ${config.token}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", ...config.headers };
-  const repoPath = `/repos/${encodeURIComponent(config.owner)}/${encodeURIComponent(config.repository)}`;
-  const repo = await fetchJson(`${base}${repoPath}`, { headers }, config.timeoutMs);
+  const githubConfig = config as GitHubDataBridgeConnectionConfig;
+  if (!githubConfig.token || !githubConfig.owner || !githubConfig.repository) return { ok: false, status: "INVALID_CONFIG", detail: "github_token_owner_repository_required" };
+  const base = (githubConfig.endpoint || "https://api.github.com").replace(/\/$/, "");
+  const headers = { Authorization: `Bearer ${githubConfig.token}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", ...githubConfig.headers };
+  const repoPath = `/repos/${encodeURIComponent(githubConfig.owner)}/${encodeURIComponent(githubConfig.repository)}`;
+  const repo = await fetchJson(`${base}${repoPath}`, { headers }, githubConfig.timeoutMs);
   if (repo.status !== 200) return authFailure(repo.status, "github");
-  const runs = await fetchJson(`${base}${repoPath}/actions/runs?per_page=1`, { headers }, config.timeoutMs);
+  const runs = await fetchJson(`${base}${repoPath}/actions/runs?per_page=1`, { headers }, githubConfig.timeoutMs);
   if (runs.status !== 200) return authFailure(runs.status, "github_actions");
   return { ok: true, status: "CONNECTED", detail: "github_repository_and_actions_observed" };
 }
@@ -135,10 +136,10 @@ function awsSigningKey(secret: string, date: string, region: string, service: st
 }
 
 async function awsJson(config: DataBridgeConnectionConfig, target: string, body: Json): Promise<{ status: number; body: unknown }> {
-  if (!isAwsConfig(config)) return { status: 0, body: null };
-  const accessKeyId = config.accessKeyId;
-  const secretAccessKey = config.secretAccessKey;
-  const region = config.region;
+  const awsConfig = config as AwsDataBridgeConnectionConfig;
+  const accessKeyId = awsConfig.accessKeyId;
+  const secretAccessKey = awsConfig.secretAccessKey;
+  const region = awsConfig.region;
   if (!accessKeyId || !secretAccessKey || !region) return { status: 0, body: null };
   const host = `cloudtrail.${region}.amazonaws.com`;
   const service = "cloudtrail";
@@ -154,8 +155,8 @@ async function awsJson(config: DataBridgeConnectionConfig, target: string, body:
   const stringToSign = `AWS4-HMAC-SHA256\n${amzDate}\n${credentialScope}\n${createHash("sha256").update(canonicalRequest).digest("hex")}`;
   const signature = createHmac("sha256", awsSigningKey(secretAccessKey, date, region, service)).update(stringToSign, "utf8").digest("hex");
   const headers: Record<string, string> = { "Content-Type": "application/x-amz-json-1.1", Host: host, "X-Amz-Date": amzDate, "X-Amz-Target": target, Authorization: `AWS4-HMAC-SHA256 Credential=${accessKeyId}/${credentialScope}, SignedHeaders=${signedHeaders}, Signature=${signature}` };
-  if (config.sessionToken) headers["X-Amz-Security-Token"] = config.sessionToken;
-  return fetchJson(`https://${host}/`, { method: "POST", headers, body: payload }, config.timeoutMs);
+  if (awsConfig.sessionToken) headers["X-Amz-Security-Token"] = awsConfig.sessionToken;
+  return fetchJson(`https://${host}/`, { method: "POST", headers, body: payload }, awsConfig.timeoutMs);
 }
 
 const awsConnector: DataBridgeConnector = {
@@ -165,8 +166,8 @@ const awsConnector: DataBridgeConnector = {
   transports: ["REST_PULL", "EVENT_STREAM"],
   capabilities: ["INGEST", "HEALTH", "DISCOVERY", "NORMALIZE"],
   async connect(config) {
-    if (!isAwsConfig(config)) return { ok: false, status: "INVALID_CONFIG", detail: "aws_configuration_unavailable" };
-    if (!config.accessKeyId || !config.secretAccessKey || !config.region) return { ok: false, status: "INVALID_CONFIG", detail: "aws_access_key_secret_region_required" };
+    const awsConfig = config as AwsDataBridgeConnectionConfig;
+    if (!awsConfig.accessKeyId || !awsConfig.secretAccessKey || !awsConfig.region) return { ok: false, status: "INVALID_CONFIG", detail: "aws_access_key_secret_region_required" };
     const result = await awsJson(config, "AWSCloudTrail_20131101.LookupEvents", { MaxResults: 1 });
     if (result.status !== 200) return authFailure(result.status, "aws_cloudtrail");
     return { ok: true, status: "CONNECTED", detail: "aws_cloudtrail_lookup_observed" };
