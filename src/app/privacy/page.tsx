@@ -24,7 +24,7 @@ export default function PrivacyPage() {
 
         <section className="space-y-5 text-zinc-300">
           <h2 className="text-2xl font-semibold text-white">Cookies and digital markers</h2>
-          <p>ELITZE uses a first-party consent cookie named <code className="rounded bg-white/10 px-1.5 py-0.5 text-zinc-100">__Host-ELITZE_CONSENT</code>. It records whether the visitor selected necessary-only or optional analytics consent. This preference cookie is not used for advertising profiling.</p>
+          <p>ELITZE uses a first-party consent cookie named <code className="rounded bg-white/10 px-1.5 py-0.5 text-zinc-100">__Host-ELITZE_CONSENT</code>. It records whether the visitor selected necessary-only or optional analytics consent and is retained for 180 days unless cleared sooner. This preference cookie is not used for advertising profiling.</p>
           <p>Necessary cookies may also be used by authenticated or security-sensitive parts of the application to maintain sessions, protect requests, enforce access controls, and support required site functions.</p>
           <p>Optional analytics is disabled until the visitor selects &quot;Allow analytics&quot;. When enabled and configured, ELITZE may load Google Analytics 4 and/or Google Ads measurement using the deployment values documented in the environment example. Analytics preferences can be changed at any time with Cookie settings.</p>
           <p>ELITZE does not claim that a third-party analytics provider will collect no information. Provider-specific processing is governed by the provider&apos;s current terms and privacy documentation as well as applicable law.</p>
