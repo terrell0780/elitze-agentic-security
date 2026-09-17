@@ -45,7 +45,6 @@ export const metadata: Metadata = {
   creator: "ELITZE",
   publisher: "ELITZE",
   authors: [{ name: "ELITZE" }],
-  alternates: { canonical: siteUrl },
   ...(googleVerification
     ? { verification: { google: googleVerification } }
     : {}),
