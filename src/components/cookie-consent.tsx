@@ -14,9 +14,33 @@ function readConsent(): "necessary" | "analytics" | null {
   return value === "analytics" || value === "necessary" ? value : null;
 }
 
+function clearAnalyticsCookies() {
+  for (const cookie of document.cookie.split(";")) {
+    const name = cookie.split("=")[0]?.trim();
+    if (!name || (!name.startsWith("_ga") && !name.startsWith("_gcl_"))) {
+      continue;
+    }
+    document.cookie = `${name}=; Max-Age=0; Path=/; SameSite=Lax`;
+  }
+}
+
 function writeConsent(value: "necessary" | "analytics") {
   const secure = window.location.protocol === "https:" ? "; Secure" : "";
   document.cookie = `${CONSENT_COOKIE}=${value}; Max-Age=${MAX_AGE}; Path=/; SameSite=Lax${secure}`;
+
+  if (value === "necessary") {
+    const gtag = (window as Window & {
+      gtag?: (...args: unknown[]) => void;
+    }).gtag;
+    gtag?.("consent", "update", {
+      analytics_storage: "denied",
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied",
+    });
+    clearAnalyticsCookies();
+  }
+
   window.dispatchEvent(new Event("elitze-consent-updated"));
 }
 
