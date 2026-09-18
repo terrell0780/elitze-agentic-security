@@ -80,6 +80,12 @@ Google's Terms of Service are effective July 30, 2026. Google Search spam polici
 
 ELITZE therefore does not promise search rankings, AI citations, traffic, ad approval, conversion rates, or acquisition outcomes. Search and advertising measurement is evidence collection, not a guarantee.
 
+## Privacy measurement boundary
+
+The public measurement design uses opt-in consent for optional analytics/advertising measurement and provides a reset path. This is consistent with the Canadian privacy principle that non-integral secondary collection/use should be optional and that consent should be meaningful and withdrawable. ELITZE does not treat analytics consent as a condition of accessing the public product information.
+
+Reference basis: Office of the Privacy Commissioner of Canada guidance on meaningful consent and cookies: https://www.priv.gc.ca/en/privacy-topics/privacy-laws-in-canada/the-personal-information-protection-and-electronic-documents-act-pipeda/p_principle/principles/p_consent/
+
 ## Human validation
 
 Every business claim should be classified before publication:
