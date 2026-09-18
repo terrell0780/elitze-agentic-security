@@ -40,7 +40,7 @@ function authFailure(status: number, service: string): DataBridgeConnectionResul
 }
 
 function event(sourceId: string, eventId: string, eventType: string, summary: string, payload: unknown): DataBridgeEventInput {
-  return { eventId, eventType, subject: sourceId, summary, state: "OBSERVED", metadata: { sourceId }, payload };
+  const safePayload = typeof payload === "object" && payload !== null && !Array.isArray(payload) ? payload as Record<string, unknown> : { value: payload };\n  return { eventId, eventType, subject: sourceId, summary, state: "OBSERVED", metadata: { sourceId }, payload: safePayload };
 }
 
 async function connectGitHub(config: DataBridgeConnectionConfig): Promise<DataBridgeConnectionResult> {
