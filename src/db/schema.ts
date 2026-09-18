@@ -17,6 +17,7 @@ export { dataBridgeSources, dataBridgeEvents } from "./data-bridge-schema";
 export { securityApprovals, securityIntegrationEvents } from "./enterprise-workflow-schema";
 export { teamChannels, teamMessages, teamChannelMembers } from "./team-schema";
 export { decisionEvidence, analystFeedback } from "./soc-schema";
+export { debugSessions, debugEvents } from "./debugger-schema";
 
 export const agents = pgTable("agents", {
   id: serial("id").primaryKey(),
