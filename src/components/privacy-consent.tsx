@@ -14,7 +14,7 @@ function readConsent(): ConsentState {
 }
 
 function writeConsent(value: Exclude<ConsentState, "unknown">) {
-  document.cookie = `elitze_consent=${value}; Max-Age=31536000; Path=/; SameSite=Lax; Secure`;
+  document.cookie = `elitze_consent=${value}; Max-Age=31536000; Path=/; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
   window.dispatchEvent(new Event("elitze-consent-changed"));
 }
 
