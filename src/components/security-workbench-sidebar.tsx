@@ -5,6 +5,7 @@ const items = [
   { href: "/console", label: "Command Center", icon: LayoutDashboard, description: "Live control plane" },
   { href: "/console/pentesting", label: "Pentesting", icon: Crosshair, description: "Authorized security testing" },
   { href: "/console/vulnerabilities", label: "Vulnerability Search", icon: Bug, description: "CVE, KEV, zero-day intelligence" },
+  { href: "/console/debugger", label: "Runtime Debugger", icon: Bug, description: "Breakpoints, expressions and AI investigation" },
   { href: "/security", label: "Security Model", icon: ShieldCheck, description: "Controls and boundaries" },
 ];
 
