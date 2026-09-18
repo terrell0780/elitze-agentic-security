@@ -19,17 +19,25 @@ export type RoiObserved = {
 
 export type RoiStatus = "MEASURABLE" | "INSUFFICIENT_EVIDENCE" | "UNMEASURABLE";
 
+function validNonNegative(value: number) {
+  return Number.isFinite(value) && value >= 0;
+}
+
 export function roiMeasurementState(observed: RoiObserved | null | undefined): RoiStatus {
   if (!observed) return "INSUFFICIENT_EVIDENCE";
-  const totalObservations = Object.values(observed).reduce((sum, value) => sum + Math.max(0, value), 0);
+  const values = Object.values(observed);
+  if (!values.every(validNonNegative)) return "INSUFFICIENT_EVIDENCE";
+  const totalObservations = values.reduce((sum, value) => sum + value, 0);
   return totalObservations > 0 ? "MEASURABLE" : "INSUFFICIENT_EVIDENCE";
 }
 
 export function calculateRoi(inputs: RoiInputs, observed: RoiObserved | null | undefined) {
   const securityStatus = roiMeasurementState(observed);
-  if (securityStatus !== "MEASURABLE") {
+  const validFinancialInputs = Object.values(inputs).every(validNonNegative);
+
+  if (securityStatus !== "MEASURABLE" || !validFinancialInputs) {
     return {
-      status: securityStatus,
+      status: securityStatus === "MEASURABLE" && !validFinancialInputs ? "UNMEASURABLE" as const : securityStatus,
       preventionValue: null,
       engineeringValue: null,
       aiSpendValue: null,
@@ -42,12 +50,12 @@ export function calculateRoi(inputs: RoiInputs, observed: RoiObserved | null | u
     };
   }
 
-  const preventionValue = Math.max(0, inputs.annualIncidentCostAvoided);
-  const engineeringValue = Math.max(0, inputs.engineeringHoursSaved) * Math.max(0, inputs.engineeringHourlyCost);
-  const aiSpendValue = Math.max(0, inputs.annualAiSpendAvoided);
-  const auditValue = Math.max(0, inputs.annualAuditCostAvoided);
+  const preventionValue = inputs.annualIncidentCostAvoided;
+  const engineeringValue = inputs.engineeringHoursSaved * inputs.engineeringHourlyCost;
+  const aiSpendValue = inputs.annualAiSpendAvoided;
+  const auditValue = inputs.annualAuditCostAvoided;
   const annualBenefit = preventionValue + engineeringValue + aiSpendValue + auditValue;
-  const investment = Math.max(0, inputs.annualElitzeCost);
+  const investment = inputs.annualElitzeCost;
 
   if (annualBenefit <= 0 || investment <= 0) {
     return {
