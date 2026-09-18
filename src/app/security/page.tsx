@@ -5,6 +5,7 @@ import { ArrowRight, FileCheck2, Fingerprint, KeyRound, Lock, Power, Scale, Shie
 export const metadata = {
   title: "Security Architecture | ELITZE Agentic Security",
   description: "ELITZE security architecture for identity, policy enforcement, runtime control and evidence.",
+  alternates: { canonical: "/security" },
 };
 
 const controls = [
