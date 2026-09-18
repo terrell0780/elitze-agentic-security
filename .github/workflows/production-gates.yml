@@ -30,10 +30,12 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
 
       - name: Install dependencies
         run: npm install --no-audit --no-fund
+
+      - name: Verify dependency install-script policy
+        run: npm install-scripts ls --json
 
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
