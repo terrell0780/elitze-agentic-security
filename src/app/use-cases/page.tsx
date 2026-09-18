@@ -4,6 +4,7 @@ import { ArrowRight, Building2, Database, Eye, Fingerprint, GitBranch, ShieldChe
 export const metadata = {
   title: "Use Cases | ELITZE · Agentic Security",
   description: "How ELITZE · Agentic Security governs AI agents across security operations, software delivery, identity, runtime and enterprise systems.",
+  alternates: { canonical: "/use-cases" },
 };
 
 const cases = [
