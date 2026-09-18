@@ -100,7 +100,7 @@ export class DebugSession {
     this.child.on("error",(e)=>{this.status="error";this.logs.push({at:new Date().toISOString(),level:"error",message:e.message});this.readyReject(e);});
     this.child.on("exit",(code,signal)=>{if(this.status!=="stopped")this.status=code===0?"exited":"crashed";this.logs.push({at:new Date().toISOString(),level:code===0?"info":"error",message:"Process exited code="+String(code)+" signal="+String(signal)});void audit(this.id,"process.exit",{code,signal,status:this.status});void this.finishAudit();});
     try{await getDb().insert(debugSessions).values({sessionId:this.id,actorId:this.actorId,entry:this.entry,cwd:this.cwd,status:"starting"});this.auditPersistence="connected"}catch{this.auditPersistence="unavailable"}
-    await this.ready; this.status="paused"; await audit(this.id,"session.started",{entry:this.entry,cwd:this.cwd,pid:this.child.pid||null});
+    await this.ready; this.status="running"; await audit(this.id,"session.started",{entry:this.entry,cwd:this.cwd,pid:this.child.pid||null});
   }
 
   private async connect(url:string){
@@ -175,7 +175,7 @@ export class DebugSession {
     const values:Array<{scope:string;values:Array<{name:string;value:RemoteSummary}>}>=[];
     for(const scope of frame.scopeChain||[]){const objectId=scope.object?.objectId;if(!objectId)continue;
       const response=await this.inspector.request("Runtime.getProperties",{objectId,ownProperties:true,accessorPropertiesOnly:false,generatePreview:true});
-      const props=Array.isArray(response.result)?response.result as Array<{name?:string;value?:unknown}>:[];
+      const properties=response.result?.result; const props=Array.isArray(properties)?properties as Array<{name?:string;value?:unknown}>:[];
       values.push({scope:scope.name||scope.type,values:props.slice(0,200).map((p)=>({name:p.name||"(unnamed)",value:summarize(p.value)}))});
     }
     await audit(this.id,"debug.variables.read",{frameIndex,scopes:values.length});return values;
