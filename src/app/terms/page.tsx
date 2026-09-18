@@ -3,6 +3,7 @@ import Link from "next/link";
 export const metadata = {
   title: "Terms of Service | ELITZE",
   description: "ELITZE 2026 Terms of Service and AI-specific service terms.",
+  alternates: { canonical: "/terms" },
 };
 
 export default function TermsPage() {
