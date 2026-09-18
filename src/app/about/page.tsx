@@ -1,4 +1,10 @@
 import Link from "next/link";
+
+export const metadata = {
+  title: "About | ELITZE Agentic Security",
+  description: "ELITZE Agentic Security product philosophy, evidence-first control model and verified security loop.",
+  alternates: { canonical: "/about" },
+};
 import { ArrowRight, Check, ShieldCheck } from "lucide-react";
 
 const principles = [
