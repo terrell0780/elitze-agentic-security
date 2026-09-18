@@ -35,7 +35,7 @@ export default function Analytics() {
         strategy="afterInteractive"
       />
       <Script id="google-analytics-and-ads" strategy="afterInteractive">
-        {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("consent","update",{analytics_storage:"granted",ad_storage:"granted",ad_user_data:"granted",ad_personalization:"granted"});${ga4 ? `gtag("config","${ga4}",{send_page_view:true});` : ""}${ads ? `gtag("config","${ads}");` : ""}`}
+        {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag("js",new Date());gtag("consent","default",{analytics_storage:"denied",ad_storage:"denied",ad_user_data:"denied",ad_personalization:"denied"});gtag("consent","update",{analytics_storage:"granted",ad_storage:"granted",ad_user_data:"granted",ad_personalization:"granted"});${ga4 ? `gtag("config","${ga4}",{send_page_view:true});` : ""}${ads ? `gtag("config","${ads}");` : ""}`}
       </Script>
     </>
   );
