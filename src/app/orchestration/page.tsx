@@ -4,6 +4,7 @@ import { ArrowRight, BrainCircuit, Database, Eye, FileCheck2, Radar, ShieldAlert
 export const metadata = {
   title: "ELITZE Orchestration | Agentic Security",
   description: "Governed orchestration for ELITZE security operations, intelligence workflows and evidence.",
+  alternates: { canonical: "/orchestration" },
 };
 
 const units = [
