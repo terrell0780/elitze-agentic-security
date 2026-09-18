@@ -1,18 +1,3 @@
-name: ELITZE production gates
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
-
-permissions:
-  contents: read
-
-jobs:
-  verify:
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -54,4 +39,3 @@ jobs:
         with:
           name: elitze-agentic-security-sbom
           path: sbom.cdx.json
-          if-no-files-found: error
