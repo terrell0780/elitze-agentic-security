@@ -5,6 +5,7 @@ import { ArrowRight, Bot, Check, Database, Fingerprint, KeyRound, LockKeyhole, N
 export const metadata = {
   title: "Platform | ELITZE Agentic Security",
   description: "ELITZE Agent Identity and MCP Runtime Security with evidence-backed policy enforcement.",
+  alternates: { canonical: "/platform" },
 };
 
 const domains = [
