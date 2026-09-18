@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { trackElitzeEvent } from "@/lib/analytics-events";
 
 type ConsentState = "unknown" | "granted" | "denied";
 
@@ -45,20 +46,22 @@ export default function PrivacyConsent() {
             onClick={() => {
               writeConsent("denied");
               setConsent("denied");
+              trackElitzeEvent("privacy_consent_denied");
             }}
             className="rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm font-semibold"
           >
-            Continue without optional analytics
+            Continue without optional measurement
           </button>
           <button
             type="button"
             onClick={() => {
               writeConsent("granted");
               setConsent("granted");
+              trackElitzeEvent("privacy_consent_granted");
             }}
             className="rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-slate-950"
           >
-            Allow optional analytics
+            Allow analytics and advertising measurement
           </button>
         </div>
       </div>
