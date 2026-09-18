@@ -6,6 +6,7 @@ import AcquisitionCta from "@/components/acquisition-cta";
 export const metadata = {
   title: "Enterprise Sales & Acquisition | ELITZE Agentic Security",
   description: "ELITZE Agentic Security enterprise licensing and complete product acquisition information, with evidence-gated RIO and ROI measurement.",
+  alternates: { canonical: "/sales" },
 };
 
 const capabilities = [
