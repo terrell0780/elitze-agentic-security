@@ -10,15 +10,15 @@ const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: "ELITZE Agentic Security | AI Security Control Plane", template: "%s | ELITZE Agentic Security" },
-  description: "ELITZE is a security decision and evidence plane for AI agents, MCP, APIs, software, cloud, identity and runtime operations.",
+  description: "ELITZE Agentic Security provides an evidence-backed control path for agent identity, MCP servers, tools, reachability, policy enforcement, authorized execution, runtime observation and retesting.",
   applicationName: "ELITZE Agentic Security",
   category: "cybersecurity",
-  keywords: ["ELITZE Agentic Security", "agentic security", "AI agent security", "AI security", "MCP security", "LLM security", "API security", "AI governance", "agent runtime security", "security control plane", "security decision plane", "security evidence", "continuous security validation", "vulnerability management", "exposure management", "security operations", "SOC automation"],
+  keywords: ["ELITZE Agentic Security", "agent identity security", "MCP runtime security", "AI agent security", "agent reachability", "tool authorization", "security control plane", "security evidence", "runtime security", "security validation"],
   creator: "ELITZE", publisher: "ELITZE", authors: [{ name: "ELITZE" }],
   ...(googleVerification ? { verification: { google: googleVerification } } : {}),
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
-  openGraph: { type: "website", url: siteUrl, siteName: "ELITZE Agentic Security", title: "ELITZE Agentic Security | See the threat. Control the path. Prove the fix.", description: "A security decision and evidence plane for AI agents, software, cloud, identity, APIs and runtime behavior.", locale: "en_CA" },
-  twitter: { card: "summary_large_image", title: "ELITZE Agentic Security | See the threat. Control the path. Prove the fix.", description: "Security decision, policy enforcement and verification for the agentic enterprise." },
+  alternates: { canonical: siteUrl },\n  openGraph: { type: "website", url: siteUrl, siteName: "ELITZE Agentic Security", title: "ELITZE Agentic Security | Discover. Control. Prove.", description: "Evidence-backed security controls for agent identity, MCP runtime paths, policy enforcement and verification.", locale: "en_CA" },
+  twitter: { card: "summary_large_image", title: "ELITZE Agentic Security | Discover. Control. Prove.", description: "Evidence-backed security controls for agent identity, MCP runtime paths, policy enforcement and verification." },
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#061018" }, { media: "(prefers-color-scheme: light)", color: "#f6fafc" }] };
