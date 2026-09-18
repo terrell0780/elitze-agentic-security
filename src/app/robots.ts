@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const siteUrl = "https://elitze.ca";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.ca";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -8,10 +8,9 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/api/", "/console/", "/login", "/register", "/auth/"],
+        disallow: ["/api/", "/console/"],
       },
     ],
     sitemap: `${siteUrl}/sitemap.xml`,
-    host: siteUrl,
   };
 }
