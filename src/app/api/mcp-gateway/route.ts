@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     if (servers.rowCount === 0) return json({ error: "MCP_GATEWAY_BLOCKED", reason: "no_registered_server" }, 503);
 
     if (method === "tools/list") {
-      const merged = [];
+      const merged: unknown[] = [];
       for (const server of servers.rows) {
         const headers: Record<string, string> = { "content-type": "application/json" };
         if (server.credential_env) { const credential = process.env[server.credential_env]; if (!credential) return json({ error: "MCP_GATEWAY_BLOCKED", reason: "gateway_credential_unconfigured", failClosed: true }, 503); headers.authorization = `Bearer ${credential}`; }
@@ -56,7 +56,19 @@ export async function POST(request: NextRequest) {
         try { response = await fetch(server.endpoint_url, { method: "POST", headers, body: JSON.stringify(body), cache: "no-store" }); } catch { return json({ error: "MCP_UPSTREAM_UNAVAILABLE", failClosed: true }, 502); }
         if (!response.ok) return json({ error: "MCP_UPSTREAM_UNAVAILABLE", server: server.name, status: response.status }, 502);
         const result = await response.json();
-        if (Array.isArray(result?.result?.tools)) for (const tool of result.result.tools) { await persistObservedTool(client, { tenantId: String(chain.tenant_id), serverId: String(server.id), serverName: String(server.name), toolName: typeof tool.name === "string" ? tool.name : "", toolDescription: typeof tool.description === "string" ? tool.description : "", inputSchema: tool.inputSchema ?? null }); }
+        if (Array.isArray(result?.result?.tools)) {
+          merged.push(...result.result.tools);
+          for (const tool of result.result.tools) {
+            await persistObservedTool(client, {
+              tenantId: String(chain.tenant_id),
+              serverId: String(server.id),
+              serverName: String(server.name),
+              tool: tool && typeof tool === "object" ? tool : {},
+              sourceRef: `mcp-gateway:${String(server.id)}:tools/list`,
+              observedAt: new Date(),
+            });
+          }
+        }
       }
       return json({ jsonrpc: "2.0", id: body.id ?? null, result: { tools: merged } });
     }
@@ -76,9 +88,28 @@ export async function POST(request: NextRequest) {
 
     const policiesResult = await client.query(`SELECT id, name, version, definition FROM security_policies WHERE tenant_id = $1 AND active = true AND (expires_at IS NULL OR expires_at > now()) ORDER BY priority DESC`, [chain.tenant_id]);
     const policies = policiesResult.rows.map((row: any) => ({ ...(row.definition as PolicyDocument), id: String(row.id), name: String(row.name), version: String(row.version), active: true }));
-    const policyMatch = evaluatePolicies(policies, { agentIdentityId: String(chain.agent_identity_id), agentName: String(chain.agent_name), humanOwnerId: String(chain.human_owner_id), toolName, requestedCapability: String(chain.requested_capability), approvalAuthorityId: String(chain.approval_authority_id), classification, resource, environment, purpose, impactLevel });
+    const policyMatch = evaluatePolicies(policies, {
+      agentIdentityId: String(chain.agent_identity_id),
+      agentName: String(chain.agent_name),
+      humanOwnerId: String(chain.human_owner_id),
+      tool: toolName,
+      action: toolName,
+      dataClassification: classification,
+      resource,
+      environment,
+      purpose,
+      impactLevel,
+    });
 
-    const fallback = evaluateMcpCall({ tenantId: String(chain.tenant_id), agentIdentityId: String(chain.agent_identity_id), gatewayServerId: String(server.id), toolName, action: toolName, dataClassification: classification, requestedCapability: String(chain.requested_capability), resource, environment, purpose, impactLevel });
+    const fallback = evaluateMcpCall({
+      tenantId: String(chain.tenant_id),
+      agentIdentityId: String(chain.agent_identity_id),
+      gatewayServerId: String(server.id),
+      toolName,
+      action: toolName,
+      dataClassification: classification,
+      purpose,
+    });
     const decision = mapDecision(policyMatch?.decision ?? fallback.decision);
     const reasons = policyMatch ? policyMatch.reasons : fallback.reasons;
     const policyVersion = policyMatch?.policyVersion ?? fallback.policyVersion;
