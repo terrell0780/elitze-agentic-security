@@ -37,7 +37,7 @@ export default function RoiPage() {
     <main className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <header className="border-b border-[var(--border)] bg-[var(--header)]">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
-          <div><div className="text-sm font-semibold tracking-wide text-[var(--text)]">ELITZE</div><div className="text-[10px] uppercase tracking-[0.22em] text-slate-500">Agentic Security · ROI</div></div>
+          <div><div className="text-sm font-semibold tracking-wide text-[var(--text)]">ELITZE</div><div className="text-[10px] uppercase tracking-[0.22em] text-slate-500">Agentic Security · RIO / ROI</div></div>
           <a href="/console" className="inline-flex items-center gap-2 text-xs text-slate-400 hover:text-[var(--text)]"><ArrowLeft className="h-3.5 w-3.5" />Console</a>
         </div>
       </header>
@@ -45,12 +45,12 @@ export default function RoiPage() {
       <div className="mx-auto max-w-6xl px-6 py-10">
         <div className="max-w-3xl"><div className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-slate-500"><CircleDollarSign className="h-4 w-4" />Business value</div><h1 className="mt-3 text-3xl font-semibold text-[var(--text)]">RIO / ROI without fabricated value.</h1><p className="mt-3 text-sm leading-6 text-slate-400">ELITZE separates observed security results from verified outcomes and customer-approved financial assumptions. Monetary value remains UNMEASURABLE until the underlying evidence and required inputs exist.</p></div><div className="mt-6 rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-4 text-sm text-[var(--muted-strong)]"><b className="text-[var(--text)]">Measurement state:</b> {roi.status === "MEASURABLE" ? "Observed security evidence exists; financial value still requires approved inputs." : roi.status === "INSUFFICIENT_EVIDENCE" ? "UNMEASURABLE — no observed security evidence is available." : "UNMEASURABLE — approved financial inputs are incomplete."}</div>
 
-        {!available && <div className="mt-6 rounded-xl border border-amber-500/20 bg-amber-500/[0.05] p-4 text-sm text-amber-200">The ELITZE ROI data plane is unavailable. Financial modeling remains available, but observed security signals cannot be loaded.</div>}
+        {!available && <div className="mt-6 rounded-xl border border-amber-500/20 bg-amber-500/[0.05] p-4 text-sm text-amber-200">The ELITZE ROI data plane is unavailable. No financial or security outcome is inferred from the missing source.</div>}
 
         <section className="mt-8 grid gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-[var(--border)] bg-white/[0.025] p-5"><div className="text-xs uppercase tracking-wider text-slate-500">Annual benefit</div><div className="mt-3 text-2xl font-semibold text-[var(--text)]">{money(roi.annualBenefit)}</div><div className="mt-2 text-xs text-slate-600">Only calculated after observed evidence and approved inputs exist.</div></div>
-          <div className="rounded-2xl border border-[var(--border)] bg-white/[0.025] p-5"><div className="text-xs uppercase tracking-wider text-slate-500">Net benefit</div><div className="mt-3 text-2xl font-semibold text-[var(--text)]">{money(roi.netBenefit)}</div><div className="mt-2 text-xs text-slate-600">Annual benefit minus ELITZE cost</div></div>
-          <div className="rounded-2xl border border-[var(--border)] bg-white/[0.025] p-5"><div className="text-xs uppercase tracking-wider text-slate-500">ROI</div><div className="mt-3 text-2xl font-semibold text-[var(--text)]">{roi.roiPercent === null ? "UNMEASURABLE" : `${roi.roiPercent.toFixed(1)}%`}</div><div className="mt-2 text-xs text-slate-600">Net benefit ÷ ELITZE cost</div></div>
+          <div className="rounded-2xl border border-[var(--border)] bg-white/[0.025] p-5"><div className="text-xs uppercase tracking-wider text-slate-500">Net benefit</div><div className="mt-3 text-2xl font-semibold text-[var(--text)]">{money(roi.netBenefit)}</div><div className="mt-2 text-xs text-slate-600">Annual benefit minus approved ELITZE cost</div></div>
+          <div className="rounded-2xl border border-[var(--border)] bg-white/[0.025] p-5"><div className="text-xs uppercase tracking-wider text-slate-500">ROI</div><div className="mt-3 text-2xl font-semibold text-[var(--text)]">{roi.roiPercent === null ? "UNMEASURABLE" : `${roi.roiPercent.toFixed(1)}%`}</div><div className="mt-2 text-xs text-slate-600">Net benefit ÷ approved ELITZE cost</div></div>
         </section>
 
         <div className="mt-8 grid gap-6 lg:grid-cols-[1fr_0.95fr]">
