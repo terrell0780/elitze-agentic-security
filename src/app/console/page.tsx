@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { Activity, Database, Network, Search, ShieldCheck, TriangleAlert, Users } from "lucide-react";
 import SmartChatHierarchy from "@/components/smart-chat-hierarchy";
 import SecurityRoleMap from "@/components/security-role-map";
@@ -26,6 +27,8 @@ function metricValue(metric?: { value: number | null; state: string }, suffix = 
 }
 
 export default function ConsolePage() {
+  const router = useRouter();
+  const [authorized, setAuthorized] = useState<boolean | null>(null);
   const [health, setHealth] = useState<Health | null>(null);
   const [market, setMarket] = useState<Market | null>(null);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
@@ -36,6 +39,23 @@ export default function ConsolePage() {
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
+    let active = true;
+    fetch("/api/auth/session", { cache: "no-store" })
+      .then((response) => response.json() as Promise<{ ok: boolean; user: unknown | null }>)
+      .then((session) => {
+        if (!active) return;
+        if (!session.ok || !session.user) {
+          router.replace("/login?next=%2Fconsole");
+          return;
+        }
+        setAuthorized(true);
+      })
+      .catch(() => router.replace("/login?next=%2Fconsole"));
+    return () => { active = false; };
+  }, [router]);
+
+  useEffect(() => {
+    if (authorized !== true) return;
     void Promise.all([
       fetch("/api/health", { cache: "no-store" }).then((r) => r.json() as Promise<Health>).catch(() => ({ ok: false })),
       fetch("/api/market", { cache: "no-store" }).then((r) => r.json() as Promise<Market>).catch(() => ({ ok: false })),
@@ -53,6 +73,10 @@ export default function ConsolePage() {
       setResults(payload.results ?? []);
     } catch { setSearchError("Search service unavailable"); }
     finally { setBusy(false); }
+  }
+
+  if (authorized === null) {
+    return <main className="flex min-h-screen items-center justify-center bg-[var(--bg)] px-6 text-[var(--text)]"><div className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-8 text-center"><div className="text-xs font-bold tracking-[.28em] text-[var(--accent)]">ELITZE</div><div className="mt-3 text-sm font-semibold">Checking secure session…</div></div></main>;
   }
 
   return (
