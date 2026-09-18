@@ -7,17 +7,17 @@ export const metadata = {
 
 export default function TermsPage() {
   return (
-    <main className="min-h-screen bg-[#07070a] px-6 py-16 text-zinc-100">
-      <article className="mx-auto max-w-4xl space-y-10">
-        <header className="space-y-3">
-          <p className="text-sm uppercase tracking-[0.24em] text-zinc-500">ELITZE Legal</p>
-          <h1 className="text-4xl font-semibold">Terms of Service</h1>
-          <p className="text-zinc-400">Version 2026.09 · Effective September 3, 2026</p>
+    <main className="min-h-screen bg-[var(--bg)] px-4 py-14 text-[var(--text)] sm:px-6 sm:py-20">
+      <article className="mx-auto max-w-4xl space-y-8">
+        <header className="rounded-[28px] border border-[var(--border)] bg-[var(--panel)] p-7 sm:p-9">
+          <Link href="/" className="text-xs font-bold uppercase tracking-[.22em] text-[var(--accent)]">ELITZE</Link>
+          <h1 className="mt-4 text-4xl font-black tracking-[-.04em] sm:text-5xl">Terms of Service</h1>
+          <p className="mt-3 text-sm text-[var(--muted)]">Version 2026.09 · Effective September 3, 2026</p>
         </header>
 
-        <section className="rounded-2xl border border-zinc-800 bg-zinc-950/60 p-6">
-          <h2 className="text-lg font-medium">AI-specific terms</h2>
-          <ul className="mt-4 list-disc space-y-2 pl-5 text-zinc-300">
+        <section className="rounded-[28px] border border-[var(--border)] bg-[var(--panel)] p-7 sm:p-9">
+          <div className="text-[10px] font-bold uppercase tracking-[.22em] text-[var(--accent)]">AI-specific terms</div>
+          <ul className="mt-5 space-y-3 text-sm leading-7 text-[var(--muted-strong)]">
             <li>AI outputs may be probabilistic and require independent validation for consequential decisions.</li>
             <li>Agentic actions require authorized scope, credentials, targets, and applicable approval controls.</li>
             <li>Customers remain responsible for required AI disclosures and labeling of generated or materially altered content.</li>
@@ -26,12 +26,12 @@ export default function TermsPage() {
           </ul>
         </section>
 
-        <nav className="flex flex-wrap gap-4 text-sm">
-          <Link className="underline underline-offset-4" href="/">Back to ELITZE</Link>
-          <Link className="underline underline-offset-4" href="/privacy">Privacy Notice</Link>
+        <nav className="flex flex-wrap gap-3 text-sm">
+          <Link className="rounded-xl border border-[var(--border)] px-4 py-2.5 font-semibold" href="/">Back to ELITZE</Link>
+          <Link className="rounded-xl border border-[var(--border)] px-4 py-2.5 font-semibold" href="/privacy">Privacy Notice</Link>
         </nav>
 
-        <p className="text-sm text-zinc-500">The published legal terms and applicable signed enterprise agreement control. This page does not constitute legal advice.</p>
+        <p className="text-xs leading-5 text-[var(--muted)]">The published legal terms and applicable signed enterprise agreement control. This page does not constitute legal advice.</p>
       </article>
     </main>
   );
