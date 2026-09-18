@@ -4,6 +4,7 @@ import PrivacyPreferences from "@/components/privacy-preferences";
 export const metadata = {
   title: "Privacy Notice | ELITZE",
   description: "ELITZE 2026 Privacy Notice.",
+  alternates: { canonical: "/privacy" },
 };
 
 export default function PrivacyPage() {
