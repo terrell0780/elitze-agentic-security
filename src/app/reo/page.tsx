@@ -3,6 +3,7 @@ import Link from "next/link";
 export const metadata = {
   title: "ELITZE REO | Search & Content Intelligence",
   description: "ELITZE REO unifies content integrity, search analytics, technical SEO, evidence and publishing governance.",
+  alternates: { canonical: "/reo" },
 };
 
 const controls = [
