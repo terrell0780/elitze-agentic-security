@@ -6,7 +6,7 @@ export default function PrivacyPreferences() {
   const [message, setMessage] = useState("");
 
   const reset = () => {
-    document.cookie = "elitze_consent=; Max-Age=0; Path=/; SameSite=Lax; Secure";
+    document.cookie = `elitze_consent=; Max-Age=0; Path=/; SameSite=Lax${location.protocol === "https:" ? "; Secure" : ""}`;
     setMessage("Preference reset. The optional measurement banner will appear again on the next page load.");
     window.dispatchEvent(new Event("elitze-consent-changed"));
   };
