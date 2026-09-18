@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, Check, Menu, ShieldCheck, X } from "lucide-react";
+import ElitzeControlSurface from "@/components/elitze-control-surface";
 
 const controls = [
   ["01", "Discover", "Find real agents, MCP servers, tools and workload identities from authorized sources."],
