@@ -10,7 +10,7 @@ export async function GET() {
   if (!auth) return NextResponse.json({ ok: false, error: "Team authentication required." }, { status: 401 });
   return NextResponse.json({
     ok: true,
-    enabled: process.env.ELITZE_DEBUGGER_ENABLED === "true" || process.env.NODE_ENV !== "production",
+    enabled: process.env.ELITZE_DEBUGGER_ENABLED === "true" || (process.env.NODE_ENV !== "production" && process.env.ELITZE_DEBUGGER_ENABLED !== "false"),
     sessions: listDebugSessions(auth.actorId),
   });
 }
