@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - main
+      - rehaul/2026-security-control-surface
   pull_request:
     branches:
       - main
+      - rehaul/2026-security-control-surface
 
 permissions:
   contents: read
@@ -30,7 +32,7 @@ jobs:
           node-version: 22
           cache: npm
 
-      - name: Install dependencies and create lockfile when absent
+      - name: Install dependencies
         run: npm install --no-audit --no-fund
 
       - name: Audit production dependencies
