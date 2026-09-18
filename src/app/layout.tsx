@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   creator: "ELITZE", publisher: "ELITZE", authors: [{ name: "ELITZE" }],
   ...(googleVerification ? { verification: { google: googleVerification } } : {}),
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
-  alternates: { canonical: siteUrl },\
+  alternates: { canonical: siteUrl },
   openGraph: { type: "website", url: siteUrl, siteName: "ELITZE Agentic Security", title: "ELITZE Agentic Security | Discover. Control. Prove.", description: "Evidence-backed security controls for agent identity, MCP runtime paths, policy enforcement and verification.", locale: "en_CA" },
   twitter: { card: "summary_large_image", title: "ELITZE Agentic Security | Discover. Control. Prove.", description: "Evidence-backed security controls for agent identity, MCP runtime paths, policy enforcement and verification." },
 };
