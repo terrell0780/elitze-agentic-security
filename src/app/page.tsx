@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { ArrowRight, Check, Menu, ShieldCheck, X } from "lucide-react";
 import ElitzeControlSurface from "@/components/elitze-control-surface";
+import AcquisitionCta from "@/components/acquisition-cta";
 
 const controls = [
   ["01", "Discover", "Find real agents, MCP servers, tools and workload identities from authorized sources."],
@@ -38,8 +39,8 @@ export default function HomePage() {
             <Link href="/faq" className="transition hover:text-[var(--text)]">FAQ</Link>
           </nav>
           <div className="flex items-center gap-2">
-            <Link href="/sales" className="hidden rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] px-4 py-2.5 text-sm font-semibold text-[var(--accent)] sm:inline-flex">Enterprise / Acquisition</Link>
-            <Link href="/console" className="hidden rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-slate-950 sm:inline-flex">Open Console</Link>
+            <AcquisitionCta href="/sales" event="sales_cta" className="hidden rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] px-4 py-2.5 text-sm font-semibold text-[var(--accent)] sm:inline-flex">Enterprise / Acquisition</AcquisitionCta>
+            <AcquisitionCta href="/console" event="console_open" className="hidden rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-slate-950 sm:inline-flex">Open Console</AcquisitionCta>
             <button type="button" onClick={() => setMobileOpen((v) => !v)} aria-label="Toggle menu" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--panel)] md:hidden">{mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}</button>
           </div>
         </div>
@@ -55,8 +56,8 @@ export default function HomePage() {
             <h1 className="mt-6 max-w-3xl text-[3.35rem] font-black leading-[.9] tracking-[-.07em] sm:text-6xl lg:text-7xl">Discover the agent.<br /><span className="text-[var(--accent)]">Control the path.</span><br />Prove the outcome.</h1>
             <p className="mt-7 max-w-2xl text-lg leading-8 text-[var(--muted-strong)]">ELITZE connects identity, reachability, policy enforcement, runtime observation and evidence around the actions agents actually take.</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link href="/console" className="group inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_16px_44px_rgba(34,211,238,.14)]">Open ELITZE <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></Link>
-              <Link href="/sales" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold">Enterprise / Acquisition <ArrowRight className="h-4 w-4" /></Link>
+              <AcquisitionCta href="/console" event="console_open" className="group inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_16px_44px_rgba(34,211,238,.14)]">Open ELITZE <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></AcquisitionCta>
+              <AcquisitionCta href="/sales" event="sales_cta" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold">Enterprise / Acquisition <ArrowRight className="h-4 w-4" /></AcquisitionCta>
             </div>
             <div className="mt-8 flex flex-wrap gap-2">{proofPoints.map((item) => <span key={item} className="rounded-full border border-[var(--border)] bg-[var(--panel)] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[.13em] text-[var(--muted)]">{item}</span>)}</div>
           </div>
@@ -90,7 +91,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="border-t border-[var(--border)]"><div className="mx-auto max-w-7xl px-4 py-16 text-center sm:px-6 sm:py-20"><div className="text-xs font-bold uppercase tracking-[.22em] text-[var(--accent)]">Initial commercial category</div><h2 className="mx-auto mt-3 max-w-4xl text-3xl font-black tracking-[-.04em] sm:text-5xl">Agent Identity and MCP Runtime Security.</h2><p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-[var(--muted-strong)]">One security promise, demonstrated end-to-end. Expand only when the next connected control path is actually verified.</p><div className="mt-7 flex flex-wrap justify-center gap-3"><Link href="/console" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-slate-950">Open Console <ArrowRight className="h-4 w-4" /></Link><Link href="/sales" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold">Enterprise / Acquisition</Link></div></div></section>
+      <section className="border-t border-[var(--border)]"><div className="mx-auto max-w-7xl px-4 py-16 text-center sm:px-6 sm:py-20"><div className="text-xs font-bold uppercase tracking-[.22em] text-[var(--accent)]">Initial commercial category</div><h2 className="mx-auto mt-3 max-w-4xl text-3xl font-black tracking-[-.04em] sm:text-5xl">Agent Identity and MCP Runtime Security.</h2><p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-[var(--muted-strong)]">One security promise, demonstrated end-to-end. Expand only when the next connected control path is actually verified.</p><div className="mt-7 flex flex-wrap justify-center gap-3"><AcquisitionCta href="/console" event="console_open" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-slate-950">Open Console <ArrowRight className="h-4 w-4" /></AcquisitionCta><AcquisitionCta href="/sales" event="sales_cta" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold">Enterprise / Acquisition</AcquisitionCta></div></div></section>
     </main>
   );
 }
