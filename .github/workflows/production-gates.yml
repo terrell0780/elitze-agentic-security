@@ -14,44 +14,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: 22
-
-      # 'npm ci' is strict, faster, and ensures exact dependency matches in CI pipelines
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Production security audit
-        run: npm audit --omit=dev --audit-level=high
-
-      - name: Run self-test gates
-        run: |
-          npm run security:self-test
-          npm run data-bridge:self-test
-          npm run mcp-workload-identity:self-test
-          npm run policy-evidence:self-test
-          npm run phase5-6:self-test
-
-      - name: Static analysis & linting
-        run: |
-          npm run typecheck
-          npm run lint
-
-      - name: Production build
-        run: npm run build
-
-      # Executes the formal CycloneDX CLI directly to safely export the JSON SBOM
+      - run: npm install
+      - run: npm audit --omit=dev --audit-level=high
+      - run: npm run security:self-test
+      - run: npm run data-bridge:self-test
+      - run: npm run mcp-workload-identity:self-test
+      - run: npm run policy-evidence:self-test
+      - run: npm run phase5-6:self-test
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run build
       - name: Generate SBOM
-        run: npx @cyclonedx/cyclonedx-npm --output-format JSON --output-file sbom.cdx.json
-
-      - name: Upload SBOM artifact
-        uses: actions/upload-artifact@v4
+        run: npm sbom --sbom-format cyclonedx > sbom.cdx.json
+      - uses: actions/upload-artifact@v4
         with:
           name: elitze-agentic-security-sbom
           path: sbom.cdx.json
-          if-no-files-found: error
