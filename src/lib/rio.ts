@@ -11,8 +11,16 @@ export type RioFinancialInputs = {
 
 export type RioStatus = "MEASURABLE" | "INSUFFICIENT_EVIDENCE" | "UNMEASURABLE";
 
-export function evaluateRio(observed: RioObserved, financial?: RioFinancialInputs) {
+function validNonNegative(value: number) {
+  return Number.isFinite(value) && value >= 0;
+}
+
+export function evaluateRio(observed: RioObserved | null | undefined, financial?: RioFinancialInputs) {
   const hasSecurityEvidence =
+    !!observed &&
+    validNonNegative(observed.resultSignals) &&
+    validNonNegative(observed.evidenceRecords) &&
+    validNonNegative(observed.verifiedOutcomes) &&
     observed.resultSignals > 0 &&
     observed.evidenceRecords > 0 &&
     observed.verifiedOutcomes > 0;
@@ -27,9 +35,15 @@ export function evaluateRio(observed: RioObserved, financial?: RioFinancialInput
     };
   }
 
-  if (!financial || financial.approvedImpactValue <= 0 || financial.approvedCostBasis <= 0) {
+  if (
+    !financial ||
+    !validNonNegative(financial.approvedImpactValue) ||
+    !validNonNegative(financial.approvedCostBasis) ||
+    financial.approvedImpactValue <= 0 ||
+    financial.approvedCostBasis <= 0
+  ) {
     return {
-      status: "MEASURABLE" as const,
+      status: "UNMEASURABLE" as const,
       impactValue: null,
       costBasis: null,
       netImpact: null,
