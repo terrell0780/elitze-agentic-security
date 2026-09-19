@@ -43,7 +43,7 @@ export default function SecurityPage() {
             <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--muted-strong)]">ELITZE connects identity, reachability, policy, authorized execution, runtime observation, adversarial validation and evidence without pretending missing telemetry is real.</p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link href="/console/pentesting" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950"><Crosshair className="h-4 w-4" /> Open security validation</Link>
-              <Link href="/control-room" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold">Attack-path lab <ArrowRight className="h-4 w-4" /></Link>
+              
             </div>
           </div>
           <div className="mt-10 overflow-hidden rounded-[30px] border border-[var(--accent-border)] bg-black/20 shadow-[0_30px_100px_rgba(0,0,0,.25)]">
