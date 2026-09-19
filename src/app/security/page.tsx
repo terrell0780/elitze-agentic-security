@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Crosshair, FileCheck2, Fingerprint, KeyRound, Lock, Power, Scale, ShieldCheck, Workflow } from "lucide-react";
