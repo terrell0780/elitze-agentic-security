@@ -16,7 +16,11 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: "too_many_attempts" }, { status: 429, headers: { "Retry-After": "3600" } });
     }
 
-    if (!process.env.RESEND_API_KEY?.trim() || !process.env.RESEND_FROM?.trim()) {\n      return Response.json({ error: "email_delivery_not_configured" }, { status: 503 });\n    }\n\n    const user = await registerUser(email, body.password, typeof body.displayName === "string" ? body.displayName : undefined);
+    if (!process.env.RESEND_API_KEY?.trim() || !process.env.RESEND_FROM?.trim()) {
+      return Response.json({ error: "email_delivery_not_configured" }, { status: 503 });
+    }
+
+    const user = await registerUser(email, body.password, typeof body.displayName === "string" ? body.displayName : undefined);
     const token = await issueEmailToken(user, "email_verification", 60);
     const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.ca").replace(/\/$/, "");
     await sendAuthEmail(user.email, "Verify your ELITZE Agentic Security email", `Verify your email: ${base}/auth/verify?token=${encodeURIComponent(token)}\n\nThis link expires in 60 minutes.`);
