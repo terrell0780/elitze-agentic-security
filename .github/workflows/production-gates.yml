@@ -55,6 +55,9 @@ jobs:
       - name: Phase 5-6 self-test
         run: npm run phase5-6:self-test
 
+      - name: Progressive proofing self-test
+        run: npm run progressive-proofing:self-test
+
       - name: Typecheck
         run: npm run typecheck
 
