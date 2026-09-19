@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { ArrowRight, Check, Menu, ShieldCheck, X } from "lucide-react";
+import Image from "next/image";
+import { ArrowRight, Check, Crosshair, Menu, ShieldCheck, X } from "lucide-react";
 import AcquisitionCta from "@/components/acquisition-cta";
 import LiveControlPlane from "@/components/live-control-plane";
 
@@ -69,6 +70,25 @@ export default function HomePage() {
       <section className="border-b border-[var(--border)] bg-[var(--section)]">
         <div className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-center gap-x-4 gap-y-2 px-4 py-5 sm:px-7 text-[9px] font-bold uppercase tracking-[.2em] text-[var(--muted)]">
           {["Discover","Connect","Collect","Protect","Govern","Enforce","Validate","Evidence"].map((x,i) => <span key={x} className={i === 0 || i === 7 ? "text-[var(--accent)]" : ""}>{i ? "→ " : ""}{x}</span>)}
+        </div>
+      </section>
+
+      <section className="border-y border-[var(--border)] bg-[var(--section)]">
+        <div className="mx-auto max-w-[1400px] px-4 py-16 sm:px-7 sm:py-24">
+          <div className="grid gap-8 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
+            <div>
+              <div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">Adversarial validation</div>
+              <h2 className="mt-3 text-3xl font-black tracking-[-.045em] sm:text-5xl">Pentest every release. Verify every fix.</h2>
+              <p className="mt-5 max-w-2xl text-base leading-7 text-[var(--muted-strong)]">ELITZE now exposes the security validation path as a first-class product surface: authorized scope, adversarial testing, policy enforcement, evidence and retest.</p>
+              <div className="mt-6 grid gap-2 sm:grid-cols-2">
+                {["Authorized pentest requests","Red-team release testing","Attack-path validation","Evidence + retest"].map((item) => <div key={item} className="rounded-xl border border-[var(--border)] bg-[var(--panel)] px-4 py-3 text-xs font-semibold">{item}</div>)}
+              </div>
+              <Link href="/console/pentesting" className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950"><Crosshair className="h-4 w-4" /> Open pentest workbench <ArrowRight className="h-4 w-4" /></Link>
+            </div>
+            <div className="overflow-hidden rounded-[28px] border border-[var(--accent-border)] bg-black/20 shadow-[0_30px_100px_rgba(0,0,0,.25)]">
+              <Image src="/elitze-security-validation.svg" alt="ELITZE security validation and authorized pentest lifecycle" width={1600} height={900} className="h-auto w-full" />
+            </div>
+          </div>
         </div>
       </section>
 
