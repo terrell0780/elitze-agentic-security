@@ -1,0 +1,62 @@
+# ELITZE Agentic Security — full stack (app + PostgreSQL + one-shot migrations)
+# Usage:
+#   cd deploy
+#   cp ../.env.example .env   # then fill it in
+#   docker compose up -d
+
+name: elitze
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-elitze}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-in-env}
+      POSTGRES_DB: ${POSTGRES_DB:-elitze}
+    volumes:
+      - elitze-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-elitze} -d ${POSTGRES_DB:-elitze}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  migrate:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+    env_file: .env
+    environment:
+      DATABASE_URL: ${DATABASE_URL:-postgresql://elitze:change-me-in-env@db:5432/elitze}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+    command: ["node", "scripts/migrate.mjs"]
+
+  app:
+    build:
+      context: ..
+      dockerfile: deploy/Dockerfile
+      args:
+        NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+    env_file: .env
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+      DATABASE_URL: ${DATABASE_URL:-postgresql://elitze:change-me-in-env@db:5432/elitze}
+    ports:
+      - "${APP_PORT:-3000}:3000"
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+volumes:
+  elitze-db:

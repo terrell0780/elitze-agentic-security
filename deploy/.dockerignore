@@ -1,0 +1,14 @@
+node_modules
+.next
+out
+coverage
+.git
+.github
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+.vscode
+.idea
+deploy/release

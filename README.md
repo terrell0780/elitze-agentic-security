@@ -93,6 +93,30 @@ The model or agent is not the security boundary. Identity, policy, authorization
 
 The repository does not seed synthetic records on startup. Empty or disconnected production state remains empty or explicitly unavailable.
 
+## Hosting
+
+Everything a host needs is in [`deploy/`](deploy/README.md).
+
+```bash
+bash deploy/build-release.sh
+```
+
+This produces `deploy/release/elitze-host/` (and `elitze-host.tar.gz`) — a single
+self-contained folder with the compiled application, static assets, runtime
+dependencies, SQL migrations, `.env.example`, `migrate.sh`, `start.sh`, a systemd
+unit, and an nginx TLS example. On the host, only Node.js 22+ and PostgreSQL 14+
+are required:
+
+```bash
+tar -xzf elitze-host.tar.gz && cd elitze-host
+cp .env.example .env && chmod 600 .env && $EDITOR .env
+./migrate.sh
+./start.sh
+```
+
+Container hosting: `deploy/Dockerfile` and `deploy/docker-compose.yml`.
+Full operator guide: [`deploy/host/HOSTING.md`](deploy/host/HOSTING.md).
+
 ## Core endpoints
 
 - `GET /api/health` — database readiness.

@@ -10,3 +10,10 @@ npm-debug.log*
 .DS_Store
 .vscode/
 .idea/
+
+# Generated hostable release bundle (rebuild with: bash deploy/build-release.sh)
+deploy/release/
+
+# TypeScript / Next generated
+next-env.d.ts
+*.tsbuildinfo

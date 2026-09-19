@@ -1,0 +1,28 @@
+[Unit]
+Description=ELITZE Agentic Security
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+# Adjust user and path to match the host.
+User=elitze
+Group=elitze
+WorkingDirectory=/opt/elitze-host
+EnvironmentFile=/opt/elitze-host/.env
+Environment=NODE_ENV=production
+Environment=NEXT_TELEMETRY_DISABLED=1
+Environment=HOSTNAME=0.0.0.0
+Environment=PORT=3000
+ExecStart=/usr/bin/node /opt/elitze-host/server.js
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/elitze-host
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target
