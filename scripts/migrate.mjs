@@ -30,7 +30,7 @@ try {
     "security_identities", "security_policies", "security_decisions", "attack_paths", "red_team_runs",
     "evidence_records", "security_approvals", "security_integration_events", "audit_ledger_events",
     "containment_actions", "decision_evidence", "analyst_feedback", "team_channels", "team_messages",
-    "team_channel_members", "data_bridge_sources", "data_bridge_events",
+    "team_channel_members", "data_bridge_sources", "data_bridge_events",\n    "auth_tenants", "auth_users", "auth_sessions", "auth_tokens", "auth_rate_limits",
   ];
   const tableCheck = await client.query("SELECT table_name FROM information_schema.tables WHERE table_schema = current_schema() AND table_name = ANY($1::text[])", [requiredTables]);
   const present = new Set(tableCheck.rows.map((row) => row.table_name));
