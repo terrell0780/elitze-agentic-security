@@ -1,16 +1,47 @@
+-- The tenant-scoped policy table supersedes the legacy, non-tenant-scoped
+-- security_policies created in 0001/0003 (serial id + policy_id/effect/scope/rules).
+-- That legacy shape is unreferenced by the application and is incompatible with the
+-- tenant boundary required by /api/security/policies and /api/mcp-gateway. A bare
+-- CREATE TABLE IF NOT EXISTS silently no-ops against it, so drop the legacy table
+-- first. Guarded on the legacy signature so this never destroys a migrated table.
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = current_schema()
+      AND table_name = 'security_policies'
+      AND column_name = 'policy_id'
+  ) AND NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = current_schema()
+      AND table_name = 'security_policies'
+      AND column_name = 'tenant_id'
+  ) THEN
+    DROP TABLE security_policies CASCADE;
+  END IF;
+END
+$$;
+
 CREATE TABLE IF NOT EXISTS security_policies (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   tenant_id uuid NOT NULL REFERENCES auth_tenants(id) ON DELETE CASCADE,
   name text NOT NULL,
   version text NOT NULL DEFAULT '1',
   definition jsonb NOT NULL,
+  priority integer NOT NULL DEFAULT 0,
   active boolean NOT NULL DEFAULT true,
   created_by text NOT NULL,
   expires_at timestamptz,
   created_at timestamptz NOT NULL DEFAULT now(),
   UNIQUE (tenant_id, name, version)
 );
+
+-- /api/mcp-gateway orders candidate policies by priority.
+ALTER TABLE security_policies
+  ADD COLUMN IF NOT EXISTS priority integer NOT NULL DEFAULT 0;
+
 CREATE INDEX IF NOT EXISTS security_policies_tenant_active_idx ON security_policies(tenant_id, active, created_at DESC);
+CREATE INDEX IF NOT EXISTS security_policies_tenant_priority_idx ON security_policies(tenant_id, active, priority DESC);
 
 ALTER TABLE mcp_gateway_decisions
   ADD COLUMN IF NOT EXISTS decision_ref text;

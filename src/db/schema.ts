@@ -7,6 +7,7 @@ import {
   serial,
   text,
   timestamp,
+  uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 
@@ -100,14 +101,22 @@ export const securityIdentities = pgTable("security_identities", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
+/**
+ * Tenant-scoped policy records. This matches the table created by
+ * drizzle/0016_policy_and_evidence_ledger.sql and used by
+ * /api/security/policies and /api/mcp-gateway. The earlier non-tenant-scoped
+ * shape (serial id + policy_id/effect/scope/rules) is dropped by 0016.
+ */
 export const securityPolicies = pgTable("security_policies", {
-  id: serial("id").primaryKey(),
-  policyId: varchar("policy_id", { length: 120 }).notNull().unique(),
-  version: varchar("version", { length: 40 }).notNull(),
-  effect: varchar("effect", { length: 20 }).notNull(),
-  scope: varchar("scope", { length: 120 }).notNull(),
-  rules: jsonb("rules").$type<Record<string, unknown>>().notNull(),
-  enabled: boolean("enabled").notNull().default(true),
+  id: uuid("id").primaryKey().defaultRandom(),
+  tenantId: uuid("tenant_id").notNull(),
+  name: text("name").notNull(),
+  version: text("version").notNull().default("1"),
+  definition: jsonb("definition").$type<Record<string, unknown>>().notNull(),
+  priority: integer("priority").notNull().default(0),
+  active: boolean("active").notNull().default(true),
+  createdBy: text("created_by").notNull(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
