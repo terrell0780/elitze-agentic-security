@@ -23,9 +23,6 @@ for (const route of [graphRoute, githubRoute, awsRoute]) assert.match(route, /ge
 for (const forbidden of ["Math.random", "fake", "synthetic", "seed"]) {
   assert.doesNotMatch(mcpObservation.toLowerCase(), new RegExp(`\\b${forbidden}\\b`));
 }
-
-// Validate the production boundary semantically rather than requiring a brittle exact phrase.
-assert.match(docs, /provider credentials/i);
-assert.match(docs, /real provider account\/repository/i);
-assert.match(docs, /no synthetic/i);
+assert.match(docs, /real provider credentials/i);
+assert.match(docs, /NO synthetic/i);
 console.log("ELITZE Phase 5/6 self-test: PASS");

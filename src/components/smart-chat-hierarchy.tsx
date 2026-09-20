@@ -60,8 +60,8 @@ const hierarchy = [
 ];
 
 function tierClass(tier: number) {
-  if (tier === 1) return "text-red-300 border-red-500/30 bg-red-500/10";
-  if (tier === 2) return "text-rose-300 border-rose-500/30 bg-rose-500/10";
+  if (tier === 1) return "text-[var(--accent)] border-[var(--accent-border)] bg-[var(--accent-soft)]";
+  if (tier === 2) return "text-violet-300 border-violet-500/30 bg-violet-500/10";
   if (tier === 3) return "text-violet-300 border-violet-500/30 bg-violet-500/10";
   return "text-cyan-300 border-cyan-500/30 bg-cyan-500/10";
 }
@@ -107,9 +107,9 @@ export default function SmartChatHierarchy() {
   const stateLabel = state === "live" ? "data connected" : state === "loading" ? "loading" : "data unavailable";
 
   return (
-    <section className="mt-8 rounded-2xl border border-red-900/40 bg-[#0c060c]">
+    <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--panel)]">
       <div className="flex items-center gap-2 border-b border-red-950/50 px-5 py-4">
-        <Layers className="h-4 w-4 text-red-300" />
+        <Layers className="h-4 w-4 text-[var(--accent)]" />
         <h2 className="text-sm font-semibold text-white">ELITZE Agent Operations — Hierarchy + CRM</h2>
         <span className="ml-auto text-[10px] text-slate-500">{agents.length} live agents · {hierarchy.length} governed roles · {stateLabel}</span>
       </div>
@@ -125,9 +125,9 @@ export default function SmartChatHierarchy() {
             const live = agents.some((agent) => agent.name === role.name);
 
             return (
-              <article key={role.name} className="rounded-xl border border-red-900/40 bg-black/30 p-4">
+              <article key={role.name} className="rounded-xl border border-[var(--border)] bg-black/30 p-4">
                 <div className="flex items-center gap-2">
-                  <Icon className="h-5 w-5 text-rose-400" />
+                  <Icon className="h-5 w-5 text-violet-300" />
                   <span className="text-sm font-semibold text-white">{role.name}</span>
                   <span className={`ml-auto rounded-full border px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider ${tierClass(role.tier)}`}>
                     Tier {role.tier}
@@ -151,9 +151,9 @@ export default function SmartChatHierarchy() {
           })}
         </div>
 
-        <div className="mt-6 rounded-xl border border-red-900/40 bg-[#06030a] p-4">
+        <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] p-4">
           <div className="flex items-center gap-2 text-sm font-medium text-white">
-            <User className="h-4 w-4 text-red-300" />
+            <User className="h-4 w-4 text-[var(--accent)]" />
             Security CRM — Contacts + Governed Actions
           </div>
 
@@ -182,7 +182,7 @@ export default function SmartChatHierarchy() {
                 {actions.slice(0, 10).map((action) => (
                   <li key={action.id} className="rounded bg-black/40 px-2.5 py-1.5 text-xs text-slate-300">
                     <div className="flex items-center gap-2">
-                      <span className={`h-1.5 w-1.5 rounded-full ${action.status === "blocked" || action.status === "denied" ? "bg-red-400" : action.status === "pending" ? "bg-amber-400" : "bg-emerald-400"}`} />
+                      <span className={`h-1.5 w-1.5 rounded-full ${action.status === "blocked" || action.status === "denied" ? "bg-amber-400" : action.status === "pending" ? "bg-amber-400" : "bg-emerald-400"}`} />
                       <span className="font-medium text-white">{action.actionType}</span>
                       <span className="ml-auto text-[10px] text-slate-600">{action.status}</span>
                     </div>

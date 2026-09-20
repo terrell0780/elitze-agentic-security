@@ -1,8 +1,18 @@
-# ELITZE ROI
+# ELITZE RIO / ROI
 
-ELITZE Agentic Security treats ROI as a measurable security outcome, not a marketing estimate.
+ELITZE Agentic Security treats RIO/ROI as evidence-gated measurement, not a marketing estimate.
 
-## Model
+## RIO model
+
+RIO means **Result / Impact / Outcome**:
+
+- **Result** — observed security decisions, enforcement activity, runtime results and evidence.
+- **Impact** — business/security significance supported by those observations and, for monetary impact, an approved financial assumption.
+- **Outcome** — verified post-control or post-remediation state.
+
+A result is not automatically an impact. An impact assumption is not automatically an outcome.
+
+## ROI model
 
 Annual benefit is calculated as:
 
@@ -22,11 +32,11 @@ Payback is:
 
 ## Evidence policy
 
-Observed ELITZE records provide the operational signals: security decisions, denied actions, high-impact enforcement events, resolved attack paths, completed red-team runs, evidence records and enforcement activity.
+Observed ELITZE records provide the operational signals: security decisions, denied actions, high-impact enforcement events, resolved attack paths, completed red-team runs, evidence records and enforcement activity. These signals establish measurement context; they do not, by themselves, establish monetary savings.
 
 Those records do **not** automatically become monetary savings. Customer-approved financial assumptions are required to assign dollar value.
 
-ELITZE must display `UNMEASURABLE` when the required observation or financial assumption is unavailable. It must not fabricate incident costs, prevented losses, engineering savings or ROI percentages.
+ELITZE must display `UNMEASURABLE` when the required security observation or financial assumption is unavailable. The implementation must not substitute zero, industry averages, projections, rankings or synthetic records for missing evidence. It must not fabricate incident costs, prevented losses, engineering savings or ROI percentages.
 
 ## Product surface
 

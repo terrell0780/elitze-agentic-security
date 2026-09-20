@@ -1,4 +1,10 @@
 import Link from "next/link";
+
+export const metadata = {
+  title: "FAQ | ELITZE Agentic Security",
+  description: "Answers about ELITZE Agentic Security identity, MCP runtime controls, evidence, authorization and production boundaries.",
+  alternates: { canonical: "/faq" },
+};
 import { ArrowRight, ChevronDown, ShieldCheck } from "lucide-react";
 
 const faq = [

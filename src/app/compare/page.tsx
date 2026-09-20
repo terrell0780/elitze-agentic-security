@@ -21,6 +21,7 @@ const dimensions = [
 export const metadata = {
   title: "Security Platform Benchmark",
   description: "A capability-based benchmark for the ELITZE Agentic Security operating model.",
+  alternates: { canonical: "/compare" },
 };
 
 export default function ComparePage() {

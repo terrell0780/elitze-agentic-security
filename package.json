@@ -18,7 +18,8 @@
     "brand:self-test": "node scripts/brand-self-test.mjs",
     "sale:readiness": "node scripts/sale-readiness.mjs && node scripts/brand-self-test.mjs",
     "db:migrate": "node scripts/migrate.mjs",
-    "mcp:github": "node src/lib/elitze-secure/github-control-mcp.mjs"
+    "mcp:github": "node src/lib/elitze-secure/github-control-mcp.mjs",
+    "progressive-proofing:self-test": "node --experimental-strip-types scripts/progressive-proofing-self-test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.0.0",
@@ -44,5 +45,9 @@
     "postcss": "8.5.8",
     "tailwindcss": "4.1.17",
     "typescript": "5.9.3"
+  },
+  "allowScripts": {
+    "esbuild": true,
+    "unrs-resolver": true
   }
 }

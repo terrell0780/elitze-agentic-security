@@ -1,78 +1,114 @@
 "use client";
 
 import Link from "next/link";
-import { useLayoutEffect, useState } from "react";
-import { ArrowRight, Bot, Check, Fingerprint, Globe2, LockKeyhole, Menu, Network, ShieldCheck, Sun, Workflow, X } from "lucide-react";
-import { ThreatSurface } from "@/components/threat-surface";
-import GodsEyeGlobe from "@/components/gods-eye-globe";
-import GlobalSecurityCommandLayer from "@/components/global-security-command-layer";
+import { useState } from "react";
+import Image from "next/image";
+import { ArrowRight, Check, Crosshair, Menu, ShieldCheck, X } from "lucide-react";
+import AcquisitionCta from "@/components/acquisition-cta";
+import LiveControlPlane from "@/components/live-control-plane";
 
-const cards = [
-  [Fingerprint, "Workload identity", "Bind agents, MCP servers and tools to tenant-scoped workload identities."],
-  [Bot, "Agent + MCP discovery", "Inventory real agents, MCP servers and tool identities from connected sources."],
-  [Network, "Reachability", "Map observed identity-to-tool, API, secret and data relationships."],
-  [LockKeyhole, "Policy before execution", "Evaluate sensitive tool actions before they reach the authorized execution path."],
-  [Workflow, "Tamper-evident evidence", "Preserve the request, decision, policy context and evidence chain."],
-  [Check, "Retest", "Validate the affected path again before treating a security condition as removed."],
+const lifecycle = [
+  ["01", "Discover", "Identify authorized agents, MCP surfaces, tools and workload identities."],
+  ["02", "Connect", "Bring approved security and runtime sources into the control plane."],
+  ["03", "Collect", "Capture source-bound inventory, decisions, runtime signals and provenance."],
+  ["04", "Protect", "Apply identity, credential, data and execution boundaries."],
+  ["05", "Govern", "Attach policy, ownership, approvals and operating constraints."],
+  ["06", "Enforce", "Evaluate sensitive actions at the authorized execution boundary."],
+  ["07", "Validate", "Retest affected paths and verify remediation rather than trusting status alone."],
+  ["08", "Evidence", "Preserve auditable records that show what was observed and when."],
 ] as const;
 
-const responseLoop = [
-  ["01", "Discover", "Record a real agent, MCP server, model or tool from an authorized source."],
-  ["02", "Identify", "Bind the workload to a verifiable identity and tenant scope."],
-  ["03", "Map reach", "Record observed tools, APIs, secrets and data the identity can reach."],
-  ["04", "Decide", "Evaluate the requested action against an enabled ELITZE policy."],
-  ["05", "Execute", "Allow only through a separately authorized gateway or enforcement point."],
-  ["06", "Prove", "Observe the result, retest the path and preserve evidence of the outcome."],
-];
-
-function ThemeToggle() {
-  const [light, setLight] = useState(false);
-  useLayoutEffect(() => {
-    const stored = localStorage.getItem("elitze-theme");
-    const next = stored ? stored === "light" : matchMedia("(prefers-color-scheme: light)").matches;
-    setLight(next); document.documentElement.dataset.theme = next ? "light" : "dark";
-  }, []);
-  const toggle = () => {
-    const next = !light; setLight(next); document.documentElement.dataset.theme = next ? "light" : "dark";
-    localStorage.setItem("elitze-theme", next ? "light" : "dark");
-  };
-  return <button type="button" onClick={toggle} aria-label="Toggle theme" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--panel)] text-[var(--muted-strong)] hover:border-[var(--accent-border)]"><Sun className="h-4 w-4" /></button>;
-}
+const pillars = [
+  ["Identity", "Who or what is acting?", "Tenant-scoped subjects and workload identity establish the security boundary."],
+  ["Reach", "What can it actually reach?", "Observed relationships connect agents to MCP, tools, APIs, secrets and protected data."],
+  ["Policy", "What is allowed?", "Sensitive actions are evaluated before crossing the execution boundary."],
+  ["Evidence", "What can be proven?", "Observed results and retest evidence determine what ELITZE can state as fact."],
+] as const;
 
 export default function HomePage() {
   const [mobileOpen, setMobileOpen] = useState(false);
-  return <main id="main-content" className="min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--text)]">
-    <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--header)] backdrop-blur-xl">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="flex items-center gap-3" aria-label="ELITZE Agentic Security home">
-          <span className="grid h-9 w-9 place-items-center rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent)]"><ShieldCheck className="h-5 w-5" /></span>
-          <span><b className="block text-sm">ELITZE</b><span className="block text-[9px] uppercase tracking-[.2em] text-[var(--accent)]">Agentic Security</span></span>
-        </Link>
-        <nav className="hidden items-center gap-6 text-sm text-[var(--muted)] md:flex" aria-label="Primary navigation">
-          <Link href="/platform">Platform</Link><Link href="/security">Security</Link><Link href="/compare">Compare</Link><Link href="/about">About</Link><Link href="/faq">FAQ</Link>
-        </nav>
-        <div className="flex items-center gap-2"><ThemeToggle/><Link href="/console" className="hidden rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-slate-950 sm:inline-flex">Open Console</Link><button type="button" onClick={() => setMobileOpen(!mobileOpen)} aria-label="Toggle menu" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--panel)] md:hidden">{mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}</button></div>
-      </div>
-      {mobileOpen && <nav className="border-t border-[var(--border)] px-4 py-3 md:hidden"><div className="mx-auto flex max-w-7xl flex-col gap-1">{[["Platform", "/platform"], ["Security", "/security"], ["Compare", "/compare"], ["About", "/about"], ["FAQ", "/faq"], ["Console", "/console"], ["Acquisition / Sales", "/sales"]].map(([label, href]) => <Link key={href} href={href} onClick={() => setMobileOpen(false)} className="rounded-lg px-3 py-3 text-sm text-[var(--muted)]">{label}</Link>)}</div></nav>}
-    </header>
+  return (
+    <main id="main-content" className="min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--text)]">
+      <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--header)]/90 backdrop-blur-2xl">
+        <div className="mx-auto flex h-[72px] max-w-[1400px] items-center justify-between px-4 sm:px-7">
+          <Link href="/" className="flex items-center gap-3" aria-label="ELITZE Agentic Security home">
+            <span className="grid h-9 w-9 place-items-center rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent)]"><ShieldCheck className="h-5 w-5" /></span>
+            <span><b className="block text-sm tracking-[.12em]">ELITZE</b><span className="block text-[8px] uppercase tracking-[.26em] text-[var(--muted)]">Agentic Security</span></span>
+          </Link>
+          <nav className="hidden items-center gap-7 text-[12px] font-semibold text-[var(--muted)] lg:flex" aria-label="Primary navigation">
+            {[[ "Platform","/platform" ],[ "Security","/security" ],[ "REO","/reo" ],[ "Search","/search" ],[ "FAQ","/faq" ]].map(([label,href]) => <Link key={href} href={href} className="transition hover:text-[var(--text)]">{label}</Link>)}
+          </nav>
+          <div className="flex items-center gap-2">
+            <Link href="/sales" className="hidden rounded-xl border border-[var(--border)] bg-[var(--panel)] px-4 py-2.5 text-xs font-semibold sm:inline-flex">Acquisition</Link>
+            <AcquisitionCta href="/console" event="console_open" className="hidden rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-slate-950 sm:inline-flex">Open Control Plane</AcquisitionCta>
+            <button type="button" onClick={() => setMobileOpen((v) => !v)} aria-label="Toggle menu" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--panel)] lg:hidden">{mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}</button>
+          </div>
+        </div>
+        {mobileOpen && <nav className="border-t border-[var(--border)] px-4 py-3 lg:hidden"><div className="mx-auto flex max-w-[1400px] flex-col gap-1">{[["Platform","/platform"],["Security","/security"],["REO","/reo"],["Search","/search"],["FAQ","/faq"],["Control Plane","/console"],["Acquisition","/sales"]].map(([label,href]) => <Link key={href} href={href} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-sm text-[var(--muted)] hover:bg-[var(--panel)] hover:text-[var(--text)]">{label}</Link>)}</div></nav>}
+      </header>
 
-    <section className="relative overflow-hidden border-b border-[var(--border)]"><div className="pointer-events-none absolute inset-0 hero-grid opacity-60" /><div className="pointer-events-none absolute left-1/2 top-[-220px] h-[700px] w-[1000px] -translate-x-1/2 rounded-full bg-[var(--accent-glow)] blur-3xl" /><div className="relative mx-auto grid max-w-7xl gap-10 px-4 py-12 sm:px-6 sm:py-16 lg:grid-cols-[.82fr_1.18fr] lg:items-center lg:py-20">
-      <div className="order-2 lg:order-1"><div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent-border)] bg-[var(--accent-soft)] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[.22em] text-[var(--accent)]"><span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] pulse-soft" /> Agent Identity + MCP Runtime Security</div><h1 className="mt-6 max-w-3xl text-[3.2rem] font-black leading-[.9] tracking-[-.07em] sm:text-6xl lg:text-7xl xl:text-[5.1rem]">Discover the agent.<br /><span className="text-[var(--accent)]">Control the path.</span><br />Prove the outcome.</h1><p className="mt-7 max-w-2xl text-lg leading-8 text-[var(--muted-strong)]">Discover every agent and MCP server, map what each identity can reach, enforce policy before sensitive tool execution, and preserve verifiable evidence of every decision.</p><div className="mt-8 flex flex-wrap gap-3"><Link href="/console" className="group inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_12px_38px_rgba(34,211,238,.16)]">Enter ELITZE <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" /></Link><Link href="/sales" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold">Acquire / Enterprise <ArrowRight className="h-4 w-4" /></Link></div><div className="mt-8 flex flex-wrap gap-2 text-[10px] font-semibold uppercase tracking-[.14em] text-[var(--muted)]"><span className="rounded-full border border-[var(--border)] px-3 py-1.5">Agent discovery</span><span className="rounded-full border border-[var(--border)] px-3 py-1.5">MCP runtime</span><span className="rounded-full border border-[var(--border)] px-3 py-1.5">Identity reach</span><span className="rounded-full border border-[var(--accent-border)] bg-[var(--accent-soft)] px-3 py-1.5 text-[var(--accent)]">Evidence-bound</span></div></div>
-      <div id="threat-surface" className="order-1 lg:order-2"><ThreatSurface /></div>
-    </div></section>
+      <section className="relative overflow-hidden border-b border-[var(--border)]">
+        <div className="pointer-events-none absolute inset-0 hero-grid opacity-70" />
+        <div className="pointer-events-none absolute left-[62%] top-[-220px] h-[650px] w-[650px] rounded-full bg-[var(--accent-glow)] blur-3xl" />
+        <div className="relative mx-auto grid max-w-[1400px] gap-12 px-4 py-16 sm:px-7 sm:py-24 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:py-28">
+          <div>
+            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent-border)] bg-[var(--accent-soft)] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]"><span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] pulse-soft" /> AI security control plane</div>
+            <h1 className="mt-7 max-w-3xl text-[3.7rem] font-black leading-[.88] tracking-[-.075em] sm:text-6xl lg:text-[5.7rem]">Control what<br /><span className="text-[var(--accent)]">agents can do.</span></h1>
+            <p className="mt-7 max-w-2xl text-lg leading-8 text-[var(--muted-strong)]">ELITZE connects discovery, identity, reachability, policy enforcement, runtime validation and evidence around the actions AI systems actually take.</p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <AcquisitionCta href="/console" event="console_open" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950">Open control plane <ArrowRight className="h-4 w-4" /></AcquisitionCta>
+              <AcquisitionCta href="/sales" event="sales_cta" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold">Enterprise / acquisition <ArrowRight className="h-4 w-4" /></AcquisitionCta>
+            </div>
+            <div className="mt-8 grid max-w-xl grid-cols-2 gap-x-6 gap-y-3 text-[10px] font-bold uppercase tracking-[.15em] text-[var(--muted)] sm:grid-cols-4">
+              {["Agent discovery","Workload identity","Policy enforcement","Evidence / retest"].map((x) => <div key={x} className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />{x}</div>)}
+            </div>
+          </div>
+          <LiveControlPlane />
+        </div>
+      </section>
 
-    <section className="border-b border-[var(--border)] bg-[var(--section)]"><div className="mx-auto max-w-7xl px-4 py-6 sm:px-6"><div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-[9px] font-bold uppercase tracking-[.18em] text-[var(--muted)]"><span className="text-[var(--accent)]">Discover</span><span>→</span><span>Identify</span><span>→</span><span>Map Reach</span><span>→</span><span>Decide</span><span>→</span><span>Execute</span><span>→</span><span className="text-[var(--accent)]">Prove</span></div></div></section>
+      <section className="border-b border-[var(--border)] bg-[var(--section)]">
+        <div className="mx-auto flex max-w-[1400px] flex-wrap items-center justify-center gap-x-4 gap-y-2 px-4 py-5 sm:px-7 text-[9px] font-bold uppercase tracking-[.2em] text-[var(--muted)]">
+          {["Discover","Connect","Collect","Protect","Govern","Enforce","Validate","Evidence"].map((x,i) => <span key={x} className={i === 0 || i === 7 ? "text-[var(--accent)]" : ""}>{i ? "→ " : ""}{x}</span>)}
+        </div>
+      </section>
 
-    <section id="global-security" className="border-b border-[var(--border)] bg-[var(--section)]"><div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20"><div className="mb-6 flex items-end justify-between gap-4"><div><div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.22em] text-[var(--accent)]"><Globe2 className="h-4 w-4" /> ELITZE Security View</div><h2 className="mt-3 text-3xl font-black tracking-[-.035em] sm:text-4xl">See identity, reach, policy and evidence in one control surface.</h2><p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--muted-strong)]">The visual layer reflects authorized security records. Missing telemetry remains missing rather than becoming an invented operational state.</p></div><Link href="/security" className="hidden shrink-0 items-center gap-2 text-sm font-semibold text-[var(--accent)] sm:inline-flex">How the controls work <ArrowRight className="h-4 w-4" /></Link></div><GodsEyeGlobe /><GlobalSecurityCommandLayer /></div></section>
+      <section className="border-y border-[var(--border)] bg-[var(--section)]">
+        <div className="mx-auto max-w-[1400px] px-4 py-16 sm:px-7 sm:py-24">
+          <div className="grid gap-8 lg:grid-cols-[.9fr_1.1fr] lg:items-center">
+            <div>
+              <div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">Adversarial validation</div>
+              <h2 className="mt-3 text-3xl font-black tracking-[-.045em] sm:text-5xl">Pentest every release. Verify every fix.</h2>
+              <p className="mt-5 max-w-2xl text-base leading-7 text-[var(--muted-strong)]">ELITZE now exposes the security validation path as a first-class product surface: authorized scope, adversarial testing, policy enforcement, evidence and retest.</p>
+              <div className="mt-6 grid gap-2 sm:grid-cols-2">
+                {["Authorized pentest requests","Red-team release testing","Attack-path validation","Evidence + retest"].map((item) => <div key={item} className="rounded-xl border border-[var(--border)] bg-[var(--panel)] px-4 py-3 text-xs font-semibold">{item}</div>)}
+              </div>
+              <Link href="/console/pentesting" className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950"><Crosshair className="h-4 w-4" /> Open pentest workbench <ArrowRight className="h-4 w-4" /></Link>
+            </div>
+            <div className="overflow-hidden rounded-[28px] border border-[var(--accent-border)] bg-black/20 shadow-[0_30px_100px_rgba(0,0,0,.25)]">
+              <Image src="/elitze-security-validation.svg" alt="ELITZE security validation and authorized pentest lifecycle" width={1600} height={900} className="h-auto w-full" />
+            </div>
+          </div>
+        </div>
+      </section>
 
-    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20"><div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{cards.map(([Icon, title, desc], i) => <article key={title} className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 transition duration-300 hover:-translate-y-1 hover:border-[var(--accent-border)]"><div className="absolute right-4 top-4 font-mono text-[9px] text-[var(--muted)]">0{i + 1}</div><div className="grid h-10 w-10 place-items-center rounded-xl bg-[var(--accent-soft)] text-[var(--accent)]"><Icon className="h-5 w-5" /></div><h2 className="mt-5 text-base font-bold">{title}</h2><p className="mt-1.5 text-xs leading-5 text-[var(--muted)]">{desc}</p><div className="mt-6 h-px w-10 bg-[var(--accent)] transition-all group-hover:w-20" /></article>)}</div></section>
+      <section className="mx-auto max-w-[1400px] px-4 py-16 sm:px-7 sm:py-24">
+        <div className="max-w-3xl"><div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">The operating model</div><h2 className="mt-3 text-3xl font-black tracking-[-.045em] sm:text-5xl">The model is not the security boundary.</h2><p className="mt-5 text-base leading-7 text-[var(--muted-strong)]">ELITZE places identity, authorization and evidence outside the model so sensitive agent actions can be governed at the control boundary.</p></div>
+        <div className="mt-10 grid gap-3 md:grid-cols-2 xl:grid-cols-4">{pillars.map(([title,q,a],i) => <article key={title} className="rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-6"><div className="font-mono text-[9px] text-[var(--accent)]">0{i+1}</div><h3 className="mt-5 text-xl font-black">{title}</h3><div className="mt-2 text-sm font-semibold">{q}</div><p className="mt-3 text-sm leading-6 text-[var(--muted)]">{a}</p></article>)}</div>
+      </section>
 
-    <section className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20"><div className="mb-8 max-w-3xl"><div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.22em] text-[var(--accent)]"><Workflow className="h-4 w-4" /> Real control path</div><h2 className="mt-3 text-3xl font-black tracking-[-.035em] sm:text-4xl">The same request must survive every security boundary.</h2><p className="mt-3 text-sm leading-6 text-[var(--muted-strong)]">Every step is expected to resolve to real tenant-scoped records, authorization, execution evidence, runtime observation and retest evidence.</p></div><div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">{responseLoop.map(([num, title, desc]) => <article key={num} className="relative rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5"><div className="font-mono text-[10px] text-[var(--accent)]">{num}</div><h3 className="mt-3 text-sm font-bold">{title}</h3><p className="mt-2 text-xs leading-5 text-[var(--muted)]">{desc}</p></article>)}</div></section>
+      <section className="border-y border-[var(--border)] bg-[var(--section)]">
+        <div className="mx-auto max-w-[1400px] px-4 py-16 sm:px-7 sm:py-24">
+          <div className="flex flex-wrap items-end justify-between gap-6"><div><div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">Lifecycle</div><h2 className="mt-3 text-3xl font-black tracking-[-.04em] sm:text-5xl">From discovery to proof.</h2></div><Link href="/platform" className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent)]">Inspect the platform <ArrowRight className="h-4 w-4" /></Link></div>
+          <div className="mt-10 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">{lifecycle.map(([n,t,d]) => <article key={n} className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5"><div className="font-mono text-[9px] text-[var(--accent)]">{n}</div><h3 className="mt-4 text-base font-bold">{t}</h3><p className="mt-2 text-xs leading-5 text-[var(--muted)]">{d}</p></article>)}</div>
+        </div>
+      </section>
 
-    <section className="border-y border-[var(--border)] bg-[var(--section)]"><div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20"><div className="grid gap-4 lg:grid-cols-[1.15fr_.85fr]"><div className="rounded-[28px] border border-[var(--border)] bg-[var(--panel)] p-6 sm:p-8"><div className="text-[10px] font-bold uppercase tracking-[.22em] text-[var(--accent)]">Production truth</div><h2 className="mt-4 max-w-2xl text-3xl font-black tracking-[-.035em] sm:text-4xl">No record. No claim.</h2><div className="mt-8 grid grid-cols-2 gap-2 sm:grid-cols-3">{["Observed", "Authorized", "Retested", "Evidence", "Tenant-bound", "Live-source"].map((step, i) => <div key={step} className={`rounded-xl border p-3 ${i === 5 ? "border-[var(--accent-border)] bg-[var(--accent-soft)]" : "border-[var(--border)] bg-[var(--panel-strong)]"}`}><div className="font-mono text-[9px] text-[var(--accent)]">0{i + 1}</div><div className="mt-2 text-xs font-semibold">{step}</div></div>)}</div></div><div className="rounded-[28px] border border-[var(--accent-border)] bg-[var(--accent-soft)] p-6 sm:p-8"><ShieldCheck className="h-6 w-6 text-[var(--accent)]" /><h2 className="mt-4 text-2xl font-bold">No synthetic operational state.</h2><p className="mt-3 text-sm leading-6 text-[var(--muted-strong)]">No mock records, fake telemetry, simulated events or invented metrics are valid production evidence. Missing data remains visibly missing.</p><div className="mt-7 space-y-2 text-xs font-semibold"><div className="flex items-center gap-2"><Check className="h-4 w-4 text-[var(--accent)]" /> Source-bound records</div><div className="flex items-center gap-2"><Check className="h-4 w-4 text-[var(--accent)]" /> Policy-bound execution</div><div className="flex items-center gap-2"><Check className="h-4 w-4 text-[var(--accent)]" /> Retest-backed closure</div></div></div></div></div></section>
+      <section className="mx-auto max-w-[1400px] px-4 py-16 sm:px-7 sm:py-24">
+        <div className="rounded-[32px] border border-[var(--accent-border)] bg-[var(--accent-soft)] p-7 sm:p-10 lg:flex lg:items-center lg:justify-between lg:gap-10"><div><div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">Evidence discipline</div><h2 className="mt-3 text-3xl font-black tracking-[-.04em] sm:text-4xl">No record. No claim.</h2><p className="mt-4 max-w-3xl text-sm leading-7 text-[var(--muted-strong)]">REO, RIO/ROI and security posture remain source-bound. When the underlying record is missing, ELITZE exposes the missing state instead of creating a number.</p></div><Link href="/security" className="mt-7 inline-flex shrink-0 items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950 lg:mt-0">Security architecture <ArrowRight className="h-4 w-4" /></Link></div>
+      </section>
 
-    <section className="border-t border-[var(--border)]"><div className="mx-auto max-w-7xl px-4 py-16 text-center sm:px-6 sm:py-20"><div className="text-xs font-bold uppercase tracking-[.22em] text-[var(--accent)]">Initial category</div><h2 className="mx-auto mt-3 max-w-4xl text-3xl font-black tracking-[-.04em] sm:text-5xl">Agent Identity and MCP Runtime Security.</h2><p className="mx-auto mt-4 max-w-2xl text-sm leading-6 text-[var(--muted-strong)]">Start with one security promise that can be demonstrated end-to-end. Expand only when the next control path is actually connected and verified.</p><div className="mt-7 flex flex-wrap justify-center gap-3"><Link href="/console" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-slate-950">Open Console <ArrowRight className="h-4 w-4" /></Link><Link href="/sales" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold">Acquisition / Enterprise sales</Link></div></div></section>
-
-    <footer className="border-t border-[var(--border)] bg-[var(--section)]"><div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-8 text-xs text-[var(--muted)] sm:flex-row sm:items-center sm:justify-between sm:px-6"><div>© 2026 ELITZE Agentic Security. All rights reserved.</div><nav className="flex flex-wrap gap-4"><Link href="/privacy">Privacy</Link><Link href="/terms">Terms</Link><Link href="/sales">Sales / Acquisition</Link><Link href="/security">Security</Link></nav></div></footer>
-  </main>;
+      <section className="border-t border-[var(--border)]"><div className="mx-auto max-w-[1400px] px-4 py-16 text-center sm:px-7 sm:py-24"><div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">Commercial path</div><h2 className="mx-auto mt-3 max-w-4xl text-3xl font-black tracking-[-.045em] sm:text-5xl">Built to operate. Structured to transfer.</h2><p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-[var(--muted-strong)]">The public surface explains the architecture. The acquisition surface documents what is included, what remains subject to diligence and how controlled source access works.</p><div className="mt-7 flex justify-center"><Link href="/sales" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950">Open acquisition surface <ArrowRight className="h-4 w-4" /></Link></div></div></section>
+    </main>
+  );
 }

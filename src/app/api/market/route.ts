@@ -8,15 +8,37 @@ export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
 function authorized(request: NextRequest) {
-  return authorizeInternalRequest(request.headers.get("x-elitze-api-key"), process.env.ELITZE_INTERNAL_API_KEY);
+  return authorizeInternalRequest(
+    request.headers.get("x-elitze-api-key"),
+    process.env.ELITZE_INTERNAL_API_KEY,
+  );
 }
 
 function databaseUnavailable() {
-  return NextResponse.json({ ok: false, error: "market_unavailable", reason: "DATABASE_URL is not configured" }, { status: 503 });
+  return NextResponse.json(
+    { ok: false, error: "market_unavailable", reason: "DATABASE_URL is not configured" },
+    { status: 503 },
+  );
 }
 
-export async function GET() {
+function protectedDatasetUnavailable() {
+  return NextResponse.json(
+    {
+      ok: false,
+      error: "market_unavailable",
+      reason: "tenant_scoped_browser_access_required",
+      evidenceState: "UNAVAILABLE",
+    },
+    { status: 503, headers: { "cache-control": "no-store" } },
+  );
+}
+
+export async function GET(request: NextRequest) {
+  // These legacy market tables are not tenant-scoped. Keep their full records
+  // off the browser/API surface until the tenant-scoped migration is complete.
+  if (!authorized(request)) return protectedDatasetUnavailable();
   if (!process.env.DATABASE_URL) return databaseUnavailable();
+
   try {
     const db = getDb();
     const [gapRows, agentRows, discoveryRows, approvalRows, asiRows, eventRows, stats] = await Promise.all([
@@ -37,6 +59,7 @@ export async function GET() {
           (SELECT count(*) FROM market_gaps WHERE differentiator = true) AS differentiators
       `),
     ]);
+
     const s = (stats.rows[0] ?? {}) as Record<string, string | number>;
     return NextResponse.json({
       ok: true,
@@ -59,7 +82,7 @@ export async function GET() {
         headline: "ELITZE operational intelligence is sourced from configured security records, not fabricated telemetry.",
         sources: ["OWASP", "NIST", "CISA", "CVE / NVD", "EPSS"],
       },
-    });
+    }, { headers: { "cache-control": "no-store" } });
   } catch (error) {
     console.error("ELITZE market intelligence load failed", error);
     return NextResponse.json({ ok: false, error: "market_unavailable" }, { status: 503 });
@@ -69,6 +92,7 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   if (!authorized(request)) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
   if (!process.env.DATABASE_URL) return databaseUnavailable();
+
   try {
     const db = getDb();
     const body = (await request.json()) as { action?: unknown; id?: unknown; decidedBy?: unknown };
@@ -76,13 +100,17 @@ export async function POST(request: NextRequest) {
     const decidedBy = typeof body.decidedBy === "string" && body.decidedBy.length <= 120 ? body.decidedBy : "operator";
 
     if ((body.action === "approve" || body.action === "deny") && id) {
-      await db.update(hitlApprovals).set({ status: body.action === "approve" ? "approved" : "denied", decidedAt: new Date(), decidedBy }).where(eq(hitlApprovals.id, id));
+      await db.update(hitlApprovals)
+        .set({ status: body.action === "approve" ? "approved" : "denied", decidedAt: new Date(), decidedBy })
+        .where(eq(hitlApprovals.id, id));
       return NextResponse.json({ ok: true });
     }
+
     if (body.action === "claim-discovery" && id) {
       await db.update(discoveries).set({ status: "claimed" }).where(eq(discoveries.id, id));
       return NextResponse.json({ ok: true });
     }
+
     return NextResponse.json({ ok: false, error: "invalid_action" }, { status: 400 });
   } catch (error) {
     console.error("ELITZE market mutation failed", error);

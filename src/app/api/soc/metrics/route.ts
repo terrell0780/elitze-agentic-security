@@ -1,13 +1,23 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { sql } from "drizzle-orm";
 import { getDb } from "@/db";
+import { authorizeInternalRequest } from "@/lib/security/policy";
 
 function ratioMetric(numerator: number, denominator: number) {
   if (denominator === 0) return { value: null, state: "UNMEASURABLE" } as const;
   return { value: Number(((numerator / denominator) * 100).toFixed(2)), state: "MEASURABLE" } as const;
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  // These aggregate tables are currently global rather than tenant-scoped.
+  // Do not expose cross-tenant aggregates through a browser endpoint.
+  if (!authorizeInternalRequest(request.headers.get("x-elitze-api-key"), process.env.ELITZE_INTERNAL_API_KEY)) {
+    return NextResponse.json(
+      { ok: false, error: "metrics_unavailable", reason: "tenant_scoped_browser_access_required", evidenceState: "UNAVAILABLE" },
+      { status: 503, headers: { "cache-control": "no-store" } },
+    );
+  }
+
   try {
     const db = getDb();
     const [events, decisions, feedback, approvals] = await Promise.all([
@@ -65,7 +75,7 @@ export async function GET() {
         decidedApprovals: Number(approval.decided ?? 0),
       },
       measurementPolicy: "Metrics with insufficient observations are returned as null with UNMEASURABLE; no synthetic values are generated.",
-    });
+    }, { headers: { "cache-control": "no-store" } });
   } catch {
     return NextResponse.json({ ok: false, error: "SOC metrics data plane unavailable." }, { status: 503 });
   }

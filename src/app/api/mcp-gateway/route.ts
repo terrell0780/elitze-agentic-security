@@ -54,11 +54,18 @@ export async function POST(request: NextRequest) {
         let response: Response;
         try { response = await fetch(server.endpoint_url, { method: "POST", headers, body: JSON.stringify(body), cache: "no-store" }); } catch { return json({ error: "MCP_UPSTREAM_UNAVAILABLE", failClosed: true }, 502); }
         if (!response.ok) return json({ error: "MCP_UPSTREAM_UNAVAILABLE", server: server.name, status: response.status }, 502);
-        const result: any = await response.json();
+        const result = await response.json();
         if (Array.isArray(result?.result?.tools)) {
+          merged.push(...result.result.tools);
           for (const tool of result.result.tools) {
-            merged.push(tool);
-            await persistObservedTool(client, { tenantId: String(chain.tenant_id), serverId: String(server.id), serverName: String(server.name), tool: { name: tool?.name, description: tool?.description, inputSchema: tool?.inputSchema }, sourceRef: `mcp-gateway:${server.id}`, observedAt: new Date() });
+            await persistObservedTool(client, {
+              tenantId: String(chain.tenant_id),
+              serverId: String(server.id),
+              serverName: String(server.name),
+              tool: tool && typeof tool === "object" ? tool : {},
+              sourceRef: `mcp-gateway:${String(server.id)}:tools/list`,
+              observedAt: new Date(),
+            });
           }
         }
       }

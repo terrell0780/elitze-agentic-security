@@ -18,7 +18,16 @@ const secretPatterns = [
   /postgres(?:ql)?:\/\/[^\s"']+:[^\s"']+@/i,
 ];
 
+const publicCodeExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".css"]);
 const textExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".json", ".md", ".yml", ".yaml", ".sql", ".css"]);
+const publicCodeForbidden = [
+  /God['’]s Eye/i,
+  /salts team/i,
+  /\btop[- ]?(?:1|3|5|five)\b/i,
+  /\b(?:#1|number one|best in class|industry[- ]leading)\b/i,
+  /fabricated (?:customer|review|statistic|benchmark)/i,
+];
+
 for (const rel of tracked) {
   if (!textExtensions.has(path.extname(rel))) continue;
   if (rel === ".env.example") continue;
@@ -29,10 +38,22 @@ for (const rel of tracked) {
       break;
     }
   }
+
+  if (rel.startsWith("src/app/") || rel.startsWith("src/components/")) {
+    if (publicCodeExtensions.has(path.extname(rel))) {
+      for (const pattern of publicCodeForbidden) {
+        if (pattern.test(file)) {
+          failures.push(`unsupported/obsolete public claim or branding in ${rel}: ${pattern}`);
+        }
+      }
+    }
+  }
 }
 
 for (const required of [
   "docs/ELITZE-ROI.md",
+  "docs/2026-ACQUISITION-MEASUREMENT.md",
+  "docs/2026-GOOGLE-REO-RIO-READINESS.md",
   "docs/ELITZE-SECURITY-SKILLS.md",
   "docs/ELITZE-BRAND-AND-IP-POLICY.md",
   "docs/SALE-READINESS.md",

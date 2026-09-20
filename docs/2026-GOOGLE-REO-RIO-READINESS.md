@@ -60,7 +60,7 @@ Do not imply Google affiliation, endorsement, partnership, preferred placement, 
 
 Recommended measurement events are business outcomes such as qualified demo requests, contact submissions and completed product-intent actions. Exact Google Ads conversion IDs and labels must be supplied from the real Google Ads account; the repository never invents them.
 
-## 5. Analytics contract
+## 5. Analytics and consent contract
 
 The application supports optional GA4 and Google Ads instrumentation through deployment environment variables:
 
@@ -69,7 +69,7 @@ The application supports optional GA4 and Google Ads instrumentation through dep
 - `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION`
 - `NEXT_PUBLIC_SITE_URL`
 
-When IDs are absent, no Google tracking script is emitted. This prevents the product from claiming that analytics are active when they are not configured.
+When IDs are absent, no Google tracking script is emitted. This prevents the product from claiming that analytics are active when they are not configured. The public banner uses a basic consent-gated model: Google tags do not load until the visitor grants optional measurement consent. The granted state is then communicated through the consent-mode API before measurement configuration runs.
 
 Authorized Search Console/GA4 API access remains server-side and must use real credentials outside source control. Missing authorization must produce an explicit no-data/configuration state, never a fabricated metric.
 
@@ -112,7 +112,13 @@ Before declaring ELITZE product/business ready, verify:
 
 No code change can guarantee a Google ranking, an AI citation, a top-five market position, an ad approval, or a particular traffic level. Those outcomes depend on Google's systems, competition, real-world demand, account history, content quality, external authority and measured user behavior. The correct product standard is to make the site technically eligible, trustworthy, measurable and commercially useful, then optimize from real evidence.
 
-## 9. Policy references
+## 9. Current 2026 policy basis
+
+Google's current Terms of Service are effective July 30, 2026. Current Google Ads guidance requires accurate business/product representation and prohibits misleading or unreliable claims. Current consent-mode guidance distinguishes basic and advanced implementations; ELITZE's public implementation intentionally uses the basic, tag-blocking model until consent is granted. Google Search policies also prohibit machine-generated traffic and scaled low-value content used to manipulate Search.
+
+The repository therefore treats search visibility, paid acquisition and business outcomes as measured evidence sources, not guarantees.
+
+## 10. Policy references
 
 - Google Search Essentials: https://developers.google.com/search/docs/essentials
 - Google helpful, reliable, people-first content: https://developers.google.com/search/docs/fundamentals/creating-helpful-content
@@ -121,3 +127,7 @@ No code change can guarantee a Google ranking, an AI citation, a top-five market
 - Google Ads policies: https://support.google.com/adspolicy/answer/6008942
 - Google Ads misrepresentation policy: https://support.google.com/adspolicy/answer/6020955
 - Google Ads trademark policy: https://support.google.com/adspolicy/answer/6118
+- Google Terms of Service (effective July 30, 2026): https://policies.google.com/terms
+- Google Ads consent mode: https://support.google.com/google-ads/answer/14009635
+- Google Ads misleading representation: https://support.google.com/adspolicy/answer/6020955
+- Google Search spam policies: https://developers.google.com/search/docs/essentials/spam-policies

@@ -71,12 +71,6 @@ body {
 
 button, a { -webkit-tap-highlight-color: transparent; }
 
-/* Dark-theme utility text used over near-black visual surfaces must remain WCAG-readable. */
-html.dark .text-slate-500,
-html:not([data-theme="light"]) .text-slate-500 { color: #94a3b8 !important; }
-html.dark .text-slate-600,
-html:not([data-theme="light"]) .text-slate-600 { color: #94a3b8 !important; }
-
 @keyframes pulse-soft { 0%,100% { opacity: 1; } 50% { opacity: .42; } }
 @keyframes drift { 0%,100% { transform: translate3d(0,0,0); } 50% { transform: translate3d(0,-5px,0); } }
 @keyframes signal { 0% { opacity: .2; transform: scale(.92); } 60% { opacity: .75; } 100% { opacity: 0; transform: scale(1.16); } }

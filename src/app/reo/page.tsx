@@ -3,6 +3,7 @@ import Link from "next/link";
 export const metadata = {
   title: "ELITZE REO | Search & Content Intelligence",
   description: "ELITZE REO unifies content integrity, search analytics, technical SEO, evidence and publishing governance.",
+  alternates: { canonical: "/reo" },
 };
 
 const controls = [
@@ -24,9 +25,9 @@ const seoSignals = [
 ];
 
 const connectors = [
-  ["Google Search Console", "Search Analytics API can provide clicks, impressions, CTR and average position when tenant authorization is configured."],
-  ["Google Analytics", "Can be correlated with Search Console while preserving the different measurement models and URL scopes."],
-  ["Bing Webmaster Tools", "Search performance, SEO/GEO reports, backlinks and keyword research are available when tenant access is configured."],
+  ["Search performance source", "Authorized search-performance data can provide clicks, impressions, CTR and average position when tenant access is configured."],
+  ["Web analytics source", "Authorized web analytics can be correlated with search data while preserving the different measurement models and URL scopes."],
+  ["Webmaster / authority source", "Authorized webmaster, backlink and keyword data can be used when the tenant has actually connected the source."],
 ];
 
 export default function ReoPage() {

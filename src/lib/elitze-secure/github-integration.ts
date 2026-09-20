@@ -48,7 +48,6 @@ export async function observeGitHub(repository: string): Promise<GitHubObservati
   ) {
     throw new Error("github_repository_invalid");
   }
-
   const [repositoryData, workflows, branchProtection, secretMetadata] = await Promise.all([
     github(`/repos/${repo}`),
     github(`/repos/${repo}/actions/workflows?per_page=100`),
@@ -74,6 +73,7 @@ export async function observeGitHub(repository: string): Promise<GitHubObservati
   return {
     repository: repositoryData as Record<string, unknown> | undefined,
     installations: installations as Record<string, unknown> | undefined,
+    auditEvents,
     workflows: Array.isArray((workflows as any)?.workflows) ? (workflows as any).workflows : [],
     branchProtections: Array.isArray(branchProtection)
       ? branchProtection.map((branch: any) => ({
@@ -89,6 +89,5 @@ export async function observeGitHub(repository: string): Promise<GitHubObservati
           created_at: secret.created_at,
         }))
       : [],
-    auditEvents,
   };
 }

@@ -50,4 +50,4 @@ Authenticated console users receive their own tenant's graph at `/api/console/se
 
 ## Production verification boundary
 
-Repository implementation is not the same as a live integration. End-to-end status remains `UNMEASURABLE` until the production database is migrated, provider credentials are configured, a real provider account/repository is reachable, and captured observations and evidence can be independently inspected.
+Repository implementation is not the same as a live integration. End-to-end status remains `UNMEASURABLE` until the production database is migrated, real provider credentials are configured, a real provider account/repository is reachable, and captured observations and evidence can be independently inspected.

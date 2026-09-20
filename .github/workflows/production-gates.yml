@@ -2,35 +2,76 @@ name: ELITZE production gates
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
+      - rehaul/2026-security-control-surface
   pull_request:
-    branches: [main]
+    branches:
+      - main
+      - rehaul/2026-security-control-surface
 
 permissions:
   contents: read
+
+concurrency:
+  group: elitze-production-gates-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   verify:
     runs-on: ubuntu-latest
     timeout-minutes: 20
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: npm install
-      - run: npm audit --omit=dev --audit-level=high
-      - run: npm run security:self-test
-      - run: npm run data-bridge:self-test
-      - run: npm run mcp-workload-identity:self-test
-      - run: npm run policy-evidence:self-test
-      - run: npm run phase5-6:self-test
-      - run: npm run typecheck
-      - run: npm run lint
-      - run: npm run build
+
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: Verify build-script allowlist manifest
+        run: node -e "const p=require('./package.json'); const required=['esbuild','unrs-resolver']; const missing=required.filter((name)=>p.allowScripts?.[name]!==true); if(missing.length){console.error('Missing allowScripts entries:',missing.join(', ')); process.exit(1)} console.log('Build-script allowlist verified:',required.join(', '));"
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: Security self-test
+        run: npm run security:self-test
+
+      - name: Data bridge self-test
+        run: npm run data-bridge:self-test
+
+      - name: MCP workload identity self-test
+        run: npm run mcp-workload-identity:self-test
+
+      - name: Policy evidence self-test
+        run: npm run policy-evidence:self-test
+
+      - name: Phase 5-6 self-test
+        run: npm run phase5-6:self-test
+
+      - name: Progressive proofing self-test
+        run: npm run progressive-proofing:self-test
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Build
+        run: npm run build
+
       - name: Generate SBOM
-        run: npm sbom --sbom-format cyclonedx > sbom.cdx.json
-      - uses: actions/upload-artifact@v4
+        run: npm sbom --sbom-format cyclonedx --sbom-type application --omit=dev > sbom.cdx.json
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v4
         with:
           name: elitze-agentic-security-sbom
           path: sbom.cdx.json
