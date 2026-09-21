@@ -20,6 +20,7 @@ export type AuthUser = {
   displayName: string | null;
   role: string;
   status: string;
+  sessionId?: string;
 };
 
 const normalizeEmail = (email: string) => email.trim().toLowerCase();
@@ -247,6 +248,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
       displayName: row.displayName,
       role: row.role,
       status: row.status,
+      sessionId: row.session_id,
     };
   }
 
@@ -283,6 +285,39 @@ export async function logout() {
     );
   }
   jar.delete(SESSION_COOKIE);
+}
+
+export async function issuePrivilegedReauthChallenge(user: AuthUser) {
+  if (!user.sessionId) throw new Error("session_required");
+  const raw = newToken();
+  const expires = new Date(Date.now() + 10 * 60_000);
+  await getPgPool().query(
+    `INSERT INTO auth_privileged_reauth (user_id,tenant_id,session_id,challenge_hash,expires_at)
+     VALUES ($1,$2,$3,$4,$5)`,
+    [user.id, user.tenantId, user.sessionId, digest(raw), expires.toISOString()],
+  );
+  (await cookies()).set("elitze_reauth", raw, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    expires,
+  });
+  return expires;
+}
+
+export async function consumePrivilegedReauth(user: AuthUser) {
+  const raw = (await cookies()).get("elitze_reauth")?.value;
+  if (!raw || !user.sessionId) return false;
+  const result = await getPgPool().query(
+    `UPDATE auth_privileged_reauth
+     SET satisfied_at=COALESCE(satisfied_at,now())
+     WHERE challenge_hash=$1 AND user_id=$2 AND tenant_id=$3 AND session_id=$4
+       AND satisfied_at IS NOT NULL AND expires_at>now()
+     RETURNING id`,
+    [digest(raw), user.id, user.tenantId, user.sessionId],
+  );
+  return result.rowCount === 1;
 }
 
 export async function registerUser(
