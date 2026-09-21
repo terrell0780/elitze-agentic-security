@@ -26,8 +26,8 @@ export async function POST(request: Request) {
     const verification = await verifyRegistrationResponse({
       response: body,
       expectedChallenge: async (candidate) => crypto.createHash("sha256").update(candidate).digest("hex") === expectedChallengeHash,
-      expectedOrigin: process.env.ELITZE_WEBAUTHN_ORIGIN || "https://www.elitze.info",
-      expectedRPID: process.env.ELITZE_WEBAUTHN_RP_ID || "www.elitze.info",
+      expectedOrigin: process.env.ELITZE_WEBAUTHN_ORIGIN || "https://elitze.ca",
+      expectedRPID: process.env.ELITZE_WEBAUTHN_RP_ID || "elitze.ca",
       requireUserVerification: true,
     });
     if (!verification.verified || !verification.registrationInfo) return Response.json({ error: "passkey_verification_failed" }, { status: 400 });
