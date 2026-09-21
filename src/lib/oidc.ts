@@ -1,5 +1,7 @@
 import * as oidc from "openid-client";
 
+const siteOrigin = () => process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://elitze.ca";
+
 export function oidcConfig() {
   const issuer = process.env.ELITZE_OIDC_ISSUER_URL?.trim();
   const clientId = process.env.ELITZE_OIDC_CLIENT_ID?.trim();
@@ -8,9 +10,8 @@ export function oidcConfig() {
   return { issuer, clientId, clientSecret };
 }
 
-export async function discoverOidc() {
-  const { issuer, clientId, clientSecret } = oidcConfig();
-  return oidc.discovery(new URL(issuer), clientId, clientSecret);
+export function oidcRedirectUri() {
+  return new URL("/api/auth/oidc/callback", siteOrigin()).toString();
 }
 
 export { oidc };
