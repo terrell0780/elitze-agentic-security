@@ -36,11 +36,21 @@ async function github(path: string): Promise<unknown> {
 export async function observeGitHub(repository: string): Promise<GitHubObservation> {
   const repo = repository.trim();
   if (!/^[^/\s]+\/[^/\s]+$/.test(repo)) throw new Error("github_repository_invalid");
-  const [repositoryData, workflows, branchProtection, secretMetadata] = await Promise.all([
+
+  const [orgName] = repo.split("/");
+
+  const [
+    repositoryData,
+    workflows,
+    branchProtection,
+    secretMetadata,
+    auditLogData,
+  ] = await Promise.all([
     github(`/repos/${repo}`),
     github(`/repos/${repo}/actions/workflows?per_page=100`),
     github(`/repos/${repo}/branches?protected=true&per_page=100`),
     github(`/repos/${repo}/actions/secrets?per_page=100`),
+    github(`/orgs/${encodeURIComponent(orgName)}/audit-log?per_page=100`).catch(() => []),
   ]);
 
   let installations: unknown = undefined;
@@ -68,5 +78,6 @@ export async function observeGitHub(repository: string): Promise<GitHubObservati
           created_at: secret.created_at,
         }))
       : [],
+    auditEvents: Array.isArray(auditLogData) ? auditLogData : [],
   };
 }
