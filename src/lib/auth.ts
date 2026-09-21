@@ -270,6 +270,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     displayName: row.displayName,
     role: row.role,
     status: row.status,
+    sessionId: row.session_id,
   };
 }
 
