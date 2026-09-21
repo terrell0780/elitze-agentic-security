@@ -10,6 +10,11 @@ export function oidcConfig() {
   return { issuer, clientId, clientSecret };
 }
 
+export async function discoverOidc() {
+  const { issuer, clientId, clientSecret } = oidcConfig();
+  return oidc.discovery(new URL(issuer), clientId, clientSecret);
+}
+
 export function oidcRedirectUri() {
   return new URL("/api/auth/oidc/callback", siteOrigin()).toString();
 }

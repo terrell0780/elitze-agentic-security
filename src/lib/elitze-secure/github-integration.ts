@@ -35,17 +35,6 @@ async function github(path: string): Promise<unknown> {
 
 export async function observeGitHub(repository: string): Promise<GitHubObservation> {
   const repo = repository.trim();
-  if (!/^[^/\s]+\/[^/\s]+$/.test(repo)) throw new Error("github_repository_invalid");
-
-  const [orgName] = repo.split("/");
-
-  const [
-    repositoryData,
-    workflows,
-    branchProtection,
-    secretMetadata,
-    auditLogData,
-  ] = await Promise.all([
   const parts = repo.split("/");
   const owner = parts[0]?.trim();
   const repositoryName = parts[1]?.trim();
@@ -59,12 +48,19 @@ export async function observeGitHub(repository: string): Promise<GitHubObservati
   ) {
     throw new Error("github_repository_invalid");
   }
-  const [repositoryData, workflows, branchProtection, secretMetadata] = await Promise.all([
+
+  const [
+    repositoryData,
+    workflows,
+    branchProtection,
+    secretMetadata,
+    auditLogData,
+  ] = await Promise.all([
     github(`/repos/${repo}`),
     github(`/repos/${repo}/actions/workflows?per_page=100`),
     github(`/repos/${repo}/branches?protected=true&per_page=100`),
     github(`/repos/${repo}/actions/secrets?per_page=100`),
-    github(`/orgs/${encodeURIComponent(orgName)}/audit-log?per_page=100`).catch(() => []),
+    github(`/orgs/${encodeURIComponent(owner)}/audit-log?per_page=100`).catch(() => []),
   ]);
 
   let installations: unknown = undefined;
@@ -74,28 +70,24 @@ export async function observeGitHub(repository: string): Promise<GitHubObservati
     installations = undefined;
   }
 
-  let auditEvents: unknown[] | undefined = undefined;
-  try {
-    const audit = await github(`/orgs/${encodeURIComponent(owner)}/audit-log?per_page=100`);
-    auditEvents = Array.isArray(audit) ? audit : undefined;
-  } catch {
-    auditEvents = undefined;
-  }
-
   return {
     repository: repositoryData as Record<string, unknown> | undefined,
     installations: installations as Record<string, unknown> | undefined,
-    auditEvents,
-    workflows: Array.isArray((workflows as any)?.workflows) ? (workflows as any).workflows : [],
-    branchProtections: Array.isArray(branchProtection)
-      ? branchProtection.map((branch: any) => ({
-          name: branch.name,
-          protected: branch.protected,
-          protection_url: `/repos/${repo}/branches/${encodeURIComponent(branch.name)}/protection`,
-        }))
+    workflows: Array.isArray((workflows as { workflows?: unknown[] })?.workflows)
+      ? (workflows as { workflows: unknown[] }).workflows
       : [],
-    secretMetadata: Array.isArray((secretMetadata as any)?.secrets)
-      ? (secretMetadata as any).secrets.map((secret: any) => ({
+    branchProtections: Array.isArray(branchProtection)
+      ? branchProtection.map((branch: unknown) => {
+          const value = branch as { name?: string; protected?: boolean };
+          return {
+            name: value.name,
+            protected: value.protected,
+            protection_url: `/repos/${repo}/branches/${encodeURIComponent(value.name ?? "")}/protection`,
+          };
+        })
+      : [],
+    secretMetadata: Array.isArray((secretMetadata as { secrets?: unknown[] })?.secrets)
+      ? (secretMetadata as { secrets: Array<{ name?: string; updated_at?: string; created_at?: string }> }).secrets.map((secret) => ({
           name: secret.name,
           updated_at: secret.updated_at,
           created_at: secret.created_at,
