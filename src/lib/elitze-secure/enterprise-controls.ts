@@ -71,10 +71,26 @@ export type AIAction = {
   dataClasses?: string[];
   riskSignals?: string[];
   approvedTools?: string[];
+  content?: string;
 };
+
+export function detectPromptInjection(content: string | undefined): string[] {
+  if (!content) return [];
+  const patterns: Array<[RegExp, string]> = [
+    [/ignore\\s+(all|any|the|previous)\\s+instructions/i, "instruction_override"],
+    [/system\\s+prompt|developer\\s+message/i, "prompt_boundary_probe"],
+    [/reveal|print|show|dump\\s+(the\\s+)?(system|developer)\\s+prompt/i, "prompt_exfiltration"],
+    [/bypass|disable|circumvent\\s+(security|policy|guardrail)/i, "control_bypass"],
+    [/send|upload|export|exfiltrate\\s+.*(secret|credential|customer|restricted|database)/i, "data_exfiltration"],
+    [/call\\s+(the\\s+)?tool|invoke\\s+.*tool\\s+without\\s+approval/i, "tool_authority_escalation"],
+  ];
+  return patterns.filter(([pattern]) => pattern.test(content)).map(([, signal]) => signal);
+}
 
 export function enforceAIAction(input: AIAction) {
   const reasons: string[] = [];
+  const promptSignals = detectPromptInjection(input.content);
+  if (promptSignals.length) reasons.push(`prompt_injection:${promptSignals.join(",")}`);
   if (!input.tenantId) reasons.push("tenant boundary missing");
   if (!input.actorId) reasons.push("actor identity missing");
   if (input.actorType === "AGENT" && input.channel === "A2A" && !input.approvedTools) {
