@@ -35,8 +35,8 @@ export async function POST(request: Request) {
     const verification = await verifyAuthenticationResponse({
       response: body,
       expectedChallenge: async (candidate) => crypto.createHash("sha256").update(candidate).digest("hex") === challengeHash,
-      expectedOrigin: process.env.ELITZE_WEBAUTHN_ORIGIN || "https://www.elitze.info",
-      expectedRPID: process.env.ELITZE_WEBAUTHN_RP_ID || "www.elitze.info",
+      expectedOrigin: process.env.ELITZE_WEBAUTHN_ORIGIN || "https://elitze.ca",
+      expectedRPID: process.env.ELITZE_WEBAUTHN_RP_ID || "elitze.ca",
       credential: {
         id: row.credential_id,
         publicKey: new Uint8Array(row.public_key),
