@@ -1,10 +1,13 @@
 import { NextRequest } from "next/server";
-import { authenticate, consumeRateLimit, createSession, getRateLimitKey } from "@/lib/auth";
+import { assertSameOrigin, authenticate, consumeRateLimit, createSession, getRateLimitKey } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {
+    if (!(await assertSameOrigin(request))) {
+      return Response.json({ error: "csrf_rejected" }, { status: 403 });
+    }
     const body = await request.json() as { email?: unknown; password?: unknown; persistent?: unknown };
     if (typeof body.email !== "string" || typeof body.password !== "string") {
       return Response.json({ error: "invalid_credentials" }, { status: 401 });
