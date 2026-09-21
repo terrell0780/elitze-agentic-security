@@ -470,4 +470,4 @@ export async function consumeToken(
   return result.rows[0] as { userId: string; tenantId: string } | undefined;
 }
 
-export { normalizeEmail, hashPassword, SESSION_COOKIE };
+export { normalizeEmail, hashPassword, verifyPassword, SESSION_COOKIE };
