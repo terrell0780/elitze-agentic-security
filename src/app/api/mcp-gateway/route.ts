@@ -16,7 +16,6 @@ function mapDecision(decision: string): "ALLOW" | "DENY" | "REQUIRE_APPROVAL" | 
 
 export async function POST(request: NextRequest) {
   if (!process.env.DATABASE_URL || !process.env.ELITZE_EVIDENCE_SIGNING_SECRET || !process.env.ELITZE_WORKLOAD_TOKEN_SIGNING_SECRET) return json({ error: "MCP_GATEWAY_BLOCKED", reason: "critical_dependency_unconfigured", failClosed: true }, 503);
-  // Authorization header with Bearer token verification
   const authorization = request.headers.get("Authorization") ?? request.headers.get("authorization") ?? "";
   const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
   if (!token) return json({ error: "UNAUTHENTICATED_WORKLOAD" }, 401);
@@ -88,28 +87,9 @@ export async function POST(request: NextRequest) {
 
     const policiesResult = await client.query(`SELECT id, name, version, definition FROM security_policies WHERE tenant_id = $1 AND active = true AND (expires_at IS NULL OR expires_at > now()) ORDER BY priority DESC`, [chain.tenant_id]);
     const policies = policiesResult.rows.map((row: any) => ({ ...(row.definition as PolicyDocument), id: String(row.id), name: String(row.name), version: String(row.version), active: true }));
-    const policyMatch = evaluatePolicies(policies, {
-      agentIdentityId: String(chain.agent_identity_id),
-      agentName: String(chain.agent_name),
-      humanOwnerId: String(chain.human_owner_id),
-      tool: toolName,
-      action: toolName,
-      dataClassification: classification,
-      resource,
-      environment,
-      purpose,
-      impactLevel,
-    });
+    const policyMatch = evaluatePolicies(policies, { agentIdentityId: String(chain.agent_identity_id), agentName: String(chain.agent_name), humanOwnerId: String(chain.human_owner_id), tool: toolName, action: toolName, dataClassification: classification === "STANDARD" ? undefined : classification, resource, environment, purpose, impactLevel: impactLevel as any });
 
-    const fallback = evaluateMcpCall({
-      tenantId: String(chain.tenant_id),
-      agentIdentityId: String(chain.agent_identity_id),
-      gatewayServerId: String(server.id),
-      toolName,
-      action: toolName,
-      dataClassification: classification,
-      purpose,
-    });
+    const fallback = evaluateMcpCall({ tenantId: String(chain.tenant_id), agentIdentityId: String(chain.agent_identity_id), gatewayServerId: String(server.id), toolName, action: toolName, dataClassification: classification === "STANDARD" ? undefined : classification, requestedCapability: String(chain.requested_capability), resource, environment, purpose, arguments: body?.params?.arguments, requestId });
     const decision = mapDecision(policyMatch?.decision ?? fallback.decision);
     const reasons = policyMatch ? policyMatch.reasons : fallback.reasons;
     const policyVersion = policyMatch?.policyVersion ?? fallback.policyVersion;

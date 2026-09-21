@@ -46,6 +46,20 @@ export async function observeGitHub(repository: string): Promise<GitHubObservati
     secretMetadata,
     auditLogData,
   ] = await Promise.all([
+  const parts = repo.split("/");
+  const owner = parts[0]?.trim();
+  const repositoryName = parts[1]?.trim();
+
+  if (
+    parts.length !== 2 ||
+    !owner ||
+    !repositoryName ||
+    owner.includes(" ") ||
+    repositoryName.includes(" ")
+  ) {
+    throw new Error("github_repository_invalid");
+  }
+  const [repositoryData, workflows, branchProtection, secretMetadata] = await Promise.all([
     github(`/repos/${repo}`),
     github(`/repos/${repo}/actions/workflows?per_page=100`),
     github(`/repos/${repo}/branches?protected=true&per_page=100`),
@@ -60,9 +74,18 @@ export async function observeGitHub(repository: string): Promise<GitHubObservati
     installations = undefined;
   }
 
+  let auditEvents: unknown[] | undefined = undefined;
+  try {
+    const audit = await github(`/orgs/${encodeURIComponent(owner)}/audit-log?per_page=100`);
+    auditEvents = Array.isArray(audit) ? audit : undefined;
+  } catch {
+    auditEvents = undefined;
+  }
+
   return {
     repository: repositoryData as Record<string, unknown> | undefined,
     installations: installations as Record<string, unknown> | undefined,
+    auditEvents,
     workflows: Array.isArray((workflows as any)?.workflows) ? (workflows as any).workflows : [],
     branchProtections: Array.isArray(branchProtection)
       ? branchProtection.map((branch: any) => ({

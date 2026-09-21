@@ -33,6 +33,8 @@ try {
     "team_channel_members", "data_bridge_sources", "data_bridge_events",\n    "auth_tenants", "auth_users", "auth_sessions", "auth_tokens", "auth_rate_limits",
     "auth_mfa_factors", "auth_recovery_codes", "auth_webauthn_credentials", "auth_challenges",
     "auth_refresh_tokens", "auth_api_keys", "auth_privileged_reauth",
+    "team_channel_members", "data_bridge_sources", "data_bridge_events",
+    "auth_tenants", "auth_users", "auth_sessions", "auth_tokens", "auth_rate_limits",
   ];
   const tableCheck = await client.query("SELECT table_name FROM information_schema.tables WHERE table_schema = current_schema() AND table_name = ANY($1::text[])", [requiredTables]);
   const present = new Set(tableCheck.rows.map((row) => row.table_name));
