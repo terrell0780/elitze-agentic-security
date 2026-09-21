@@ -11,7 +11,7 @@
  *
  * Example:
  *   const elitze = new ElitzeClient({
- *     baseUrl: process.env.ELITZE_URL ?? "https://elitze.ca",
+ *     baseUrl: process.env.ELITZE_URL ?? "https://elitze.info",
  *     apiKey: process.env.ELITZE_API_KEY,
  *   });
  *
@@ -25,7 +25,7 @@ export type ElitzeAgentRiskAction = "ALLOW" | "REVIEW" | "RESTRICT" | "BLOCK";
 export type ElitzeReoDecision = "APPROVE" | "REVIEW" | "QUEUE" | "BLOCK";
 
 export type ElitzeClientOptions = {
-  /** ELITZE deployment URL, for example https://elitze.ca. */
+  /** ELITZE deployment URL, for example https://elitze.info. */
   baseUrl?: string;
   /** API credential for protected ELITZE control-plane endpoints. Server-side only. */
   apiKey?: string;
@@ -183,7 +183,7 @@ export class ElitzeClient {
   private readonly fetchImpl: typeof globalThis.fetch;
 
   constructor(options: ElitzeClientOptions = {}) {
-    this.baseUrl = (options.baseUrl ?? "https://elitze.ca").replace(/\/$/, "");
+    this.baseUrl = (options.baseUrl ?? "https://elitze.info").replace(/\/$/, "");
     this.apiKey = options.apiKey;
     this.fetchImpl = options.fetch ?? globalThis.fetch.bind(globalThis);
   }

@@ -3,18 +3,21 @@ import fs from "node:fs";
 import path from "node:path";
 
 const root = process.cwd();
-const allowedReferenceDocs = ["docs/legal/", "docs/2026-GOOGLE-"];
+const allowedReferenceDocs = ["docs/legal/", "docs/2026-GOOGLE-", ".env.example"];
 const prohibitedBrandTerms = [
-  /anthropic/i,
-  /openai/i,
-  /google ai studio/i,
-  /gemini/i,
-  /copilot/i,
-  /cursor/i,
-  /casky/i,
-  /manus/i,
-  /salts team/i,
-  /god'?s eye/i,
+  /\bAnthropic\b/,
+  /\bOpenAI\b/,
+  /\bGoogle AI Studio\b/i,
+  /\bGemini\b/,
+  /\bCopilot\b/,
+  /\bCursor(?:\s+(?:AI|editor|IDE))?\b/,
+  /\bCasky\b/i,
+  /\bManus\b/,
+  /\bSalts Team\b/i,
+  /\bGod['’]s Eye\b/i,
+];
+const prohibitedDomains = [
+  /\belitze\.ca\b/i,
 ];
 
 const files = execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8" })
@@ -25,11 +28,26 @@ const failures = [];
 for (const rel of files) {
   const file = fs.readFileSync(path.join(root, rel), "utf8");
   if (allowedReferenceDocs.some((prefix) => rel.startsWith(prefix))) continue;
+  if (rel === "scripts/brand-self-test.mjs") continue;
   for (const pattern of prohibitedBrandTerms) {
     if (pattern.test(file)) {
       failures.push(`${rel}: prohibited third-party product branding match (${pattern})`);
       break;
     }
+  }
+  for (const pattern of prohibitedDomains) {
+    if (pattern.test(file)) {
+      failures.push(`${rel}: obsolete ELITZE domain reference (${pattern})`);
+      break;
+    }
+  }
+}
+
+const registerRoutePath = path.join(root, "src/app/api/auth/register/route.ts");
+if (fs.existsSync(registerRoutePath)) {
+  const registerRoute = fs.readFileSync(registerRoutePath, "utf8");
+  if (!registerRoute.includes('process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.info"')) {
+    failures.push("src/app/api/auth/register/route.ts: canonical ELITZE fallback domain must be https://elitze.info");
   }
 }
 

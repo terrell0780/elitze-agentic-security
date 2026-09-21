@@ -39,23 +39,11 @@ export async function observeGitHub(repository: string): Promise<GitHubObservati
   const owner = parts[0]?.trim();
   const repositoryName = parts[1]?.trim();
 
-  if (
-    parts.length !== 2 ||
-    !owner ||
-    !repositoryName ||
-    owner.includes(" ") ||
-    repositoryName.includes(" ")
-  ) {
+  if (parts.length !== 2 || !owner || !repositoryName || owner.includes(" ") || repositoryName.includes(" ")) {
     throw new Error("github_repository_invalid");
   }
 
-  const [
-    repositoryData,
-    workflows,
-    branchProtection,
-    secretMetadata,
-    auditLogData,
-  ] = await Promise.all([
+  const [repositoryData, workflows, branchProtection, secretMetadata, auditLogData] = await Promise.all([
     github(`/repos/${repo}`),
     github(`/repos/${repo}/actions/workflows?per_page=100`),
     github(`/repos/${repo}/branches?protected=true&per_page=100`),

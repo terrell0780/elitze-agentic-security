@@ -8,7 +8,7 @@ Start the ELITZE SOC 2 program with a controlled system scope, selected Trust Se
 
 The initial SOC 2 system scope covers, at minimum:
 
-1. **`elitze.ca`** — public application entry point and customer-facing service surface.
+1. **`elitze.info`** — public application entry point and customer-facing service surface.
 2. **ELITZE application and control plane** — application services, policy decisioning, enforcement paths, APIs, console, and security-control logic.
 3. **Production database** — production persistence, schema, access, backups, restoration, encryption, and administrative operations.
 4. **Authentication and authorization** — login/session controls, tenant boundaries, RBAC, privileged access, API authentication, and authorization decisions.
