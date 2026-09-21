@@ -97,3 +97,5 @@ CREATE INDEX IF NOT EXISTS auth_privileged_reauth_user_idx ON auth_privileged_re
 ALTER TABLE auth_users ADD COLUMN IF NOT EXISTS mfa_required boolean NOT NULL DEFAULT false;
 ALTER TABLE auth_users ADD COLUMN IF NOT EXISTS mfa_enrolled_at timestamptz;
 ALTER TABLE auth_users ADD COLUMN IF NOT EXISTS password_changed_at timestamptz;
+
+ALTER TABLE auth_challenges ADD COLUMN IF NOT EXISTS nonce_ciphertext text;
