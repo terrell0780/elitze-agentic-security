@@ -129,7 +129,7 @@ function cookieOptions(expires: Date) {
 export async function createSession(user: AuthUser, persistent = true) {
   const raw = newToken();
   const expires = new Date(
-    Date.now() + (persistent ? PERSISTENT_DAYS : 1) * 86_400_000,
+    Date.now() + (persistent ? PERSISTENT_DAYS : NON_PERSISTENT_DAYS) * 86_400_000,
   );
   const meta = await clientMeta();
 
@@ -166,6 +166,8 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
        u.status,
        s.id AS session_id,
        s.expires_at,
+       s.created_at,
+       s.last_seen_at,
        s.persistent
      FROM auth_sessions s
      JOIN auth_users u ON u.id=s.user_id
@@ -180,21 +182,54 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     | (AuthUser & {
         session_id: string;
         expires_at: string;
+        created_at: string;
+        last_seen_at: string;
         persistent: boolean;
       })
     | undefined;
 
   if (!row || row.status !== "active") return null;
 
-  if (row.persistent && new Date(row.expires_at).getTime() - Date.now() < 7 * 86_400_000) {
-    const next = new Date(Math.min(createdAt + absoluteLifetime, Date.now() + PERSISTENT_DAYS * 86_400_000));
+  const now = Date.now();
+  const absoluteLifetime = (row.persistent ? PERSISTENT_DAYS : NON_PERSISTENT_DAYS) * 86_400_000;
+  const createdAt = new Date(row.created_at).getTime();
+  const lastSeenAt = new Date(row.last_seen_at).getTime();
+
+  if (!Number.isFinite(createdAt) || !Number.isFinite(lastSeenAt) ||
+      now - createdAt >= absoluteLifetime || now - lastSeenAt >= SESSION_IDLE_HOURS * 3_600_000) {
+    await db.query(`UPDATE auth_sessions SET revoked_at=now() WHERE id=$1 AND revoked_at IS NULL`, [row.session_id]);
+    (await cookies()).delete(SESSION_COOKIE);
+    return null;
+  }
+
+  if (now - createdAt >= SESSION_ROTATION_HOURS * 3_600_000) {
+    const rotated = newToken();
+    const remaining = Math.max(1, createdAt + absoluteLifetime - now);
+    const next = new Date(now + remaining);
     await db.query(
-      `UPDATE auth_sessions SET expires_at=$1,last_seen_at=now() WHERE id=$2`,
+      `UPDATE auth_sessions SET token_hash=$1,last_seen_at=now(),expires_at=$2 WHERE id=$3 AND revoked_at IS NULL`,
+      [digest(rotated), next.toISOString(), row.session_id],
+    );
+    (await cookies()).set(SESSION_COOKIE, rotated, cookieOptions(next));
+    return {
+      id: row.id,
+      tenantId: row.tenantId,
+      email: row.email,
+      displayName: row.displayName,
+      role: row.role,
+      status: row.status,
+    };
+  }
+
+  if (row.persistent && new Date(row.expires_at).getTime() - now < 7 * 86_400_000) {
+    const next = new Date(Math.min(createdAt + absoluteLifetime, now + PERSISTENT_DAYS * 86_400_000));
+    await db.query(
+      `UPDATE auth_sessions SET expires_at=$1,last_seen_at=now() WHERE id=$2 AND revoked_at IS NULL`,
       [next.toISOString(), row.session_id],
     );
     (await cookies()).set(SESSION_COOKIE, raw, cookieOptions(next));
   } else {
-    await db.query(`UPDATE auth_sessions SET last_seen_at=now() WHERE id=$1`, [row.session_id]);
+    await db.query(`UPDATE auth_sessions SET last_seen_at=now() WHERE id=$1 AND revoked_at IS NULL`, [row.session_id]);
   }
 
   return {
