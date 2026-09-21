@@ -2,7 +2,7 @@ import { authorizationCodeGrant, fetchUserInfo } from "openid-client";
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { discoverOidc } from "@/lib/oidc";
-import { assertSameOrigin, createSession } from "@/lib/auth";
+import { createSession } from "@/lib/auth";
 import { decryptAuthSecret } from "@/lib/auth-mfa";
 import { getPgPool } from "@/db";
 import crypto from "node:crypto";
@@ -20,7 +20,7 @@ export async function GET(request: Request) {
     const config = await discoverOidc();
     const stateHash = crypto.createHash("sha256").update(state).digest("hex");
     const challenge = await getPgPool().query(
-      `SELECT id, state_hash, nonce_hash, code_verifier_ciphertext
+      `SELECT id, state_hash, nonce_hash, nonce_ciphertext, code_verifier_ciphertext
        FROM auth_challenges WHERE purpose='oidc_login' AND state_hash=$1
        AND consumed_at IS NULL AND expires_at>now() ORDER BY created_at DESC LIMIT 1`,
       [stateHash],
@@ -32,7 +32,7 @@ export async function GET(request: Request) {
     const redirectUri = new URL("/api/auth/oidc/callback", site).toString();
     const tokens = await authorizationCodeGrant(config, request, {
       expectedState: state,
-      expectedNonce: Buffer.from(row.nonce_hash).toString("hex") ? undefined : undefined,
+      expectedNonce: decryptAuthSecret(row.nonce_ciphertext),
       pkceCodeVerifier: decryptAuthSecret(row.code_verifier_ciphertext),
     });
 
