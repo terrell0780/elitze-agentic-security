@@ -18,7 +18,8 @@
     "brand:self-test": "node scripts/brand-self-test.mjs",
     "sale:readiness": "node scripts/sale-readiness.mjs && node scripts/brand-self-test.mjs",
     "db:migrate": "node scripts/migrate.mjs",
-    "mcp:github": "node src/lib/elitze-secure/github-control-mcp.mjs"
+    "mcp:github": "node src/lib/elitze-secure/github-control-mcp.mjs",
+    "auth:security-self-test": "node scripts/auth-security-self-test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.0.0",
