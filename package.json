@@ -30,7 +30,12 @@
     "pg": "8.20.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "zod": "4.5.4"
+    "zod": "4.5.4",
+    "@simplewebauthn/server": "14.0.2",
+    "@simplewebauthn/browser": "14.0.0",
+    "openid-client": "6.8.8",
+    "samlify": "2.13.1",
+    "@authenio/samlify-xmllint-wasm": "1.0.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.1.17",
