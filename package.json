@@ -15,6 +15,7 @@
     "policy-evidence:self-test": "node scripts/policy-evidence-self-test.mjs",
     "phase5-6:self-test": "node scripts/phase5-6-self-test.mjs",
     "global-compliance:self-test": "node scripts/global-compliance-self-test.mjs",
+    "legal:control-self-test": "node scripts/legal-control-self-test.mjs",
     "verify:evidence": "node scripts/verify-evidence.mjs",
     "brand:self-test": "node scripts/brand-self-test.mjs",
     "sale:readiness": "node scripts/sale-readiness.mjs && node scripts/brand-self-test.mjs",
