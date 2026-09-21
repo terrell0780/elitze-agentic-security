@@ -1,6 +1,5 @@
 import { authorizationCodeGrant, fetchUserInfo } from "openid-client";
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { discoverOidc } from "@/lib/oidc";
 import { createSession } from "@/lib/auth";
 import { decryptAuthSecret } from "@/lib/auth-mfa";
@@ -29,7 +28,6 @@ export async function GET(request: Request) {
     if (!row) return NextResponse.json({ error: "oidc_state_invalid" }, { status: 401 });
 
     const site = new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://www.elitze.info");
-    const redirectUri = new URL("/api/auth/oidc/callback", site).toString();
     const tokens = await authorizationCodeGrant(config, request, {
       expectedState: state,
       expectedNonce: decryptAuthSecret(row.nonce_ciphertext),
