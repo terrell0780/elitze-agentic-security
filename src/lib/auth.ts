@@ -84,7 +84,7 @@ async function clientMeta() {
 export async function assertSameOrigin(request: Request) {
   const origin = request.headers.get("origin");
   if (!origin) return false;
-  const configured = process.env.NEXT_PUBLIC_SITE_URL || "https://www.elitze.info";
+  const configured = process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.ca";
   let expected: URL;
   try {
     expected = new URL(configured);
@@ -303,6 +303,12 @@ export async function issuePrivilegedReauthChallenge(user: AuthUser) {
     `INSERT INTO auth_privileged_reauth (user_id,tenant_id,session_id,challenge_hash,expires_at)
      VALUES ($1,$2,$3,$4,$5)`,
     [user.id, user.tenantId, user.sessionId, digest(raw), expires.toISOString()],
+  );
+  await getPgPool().query(
+    `UPDATE auth_privileged_reauth
+     SET satisfied_at=now()
+     WHERE challenge_hash=$1 AND user_id=$2 AND tenant_id=$3 AND session_id=$4 AND satisfied_at IS NULL`,
+    [digest(raw), user.id, user.tenantId, user.sessionId],
   );
   (await cookies()).set("elitze_reauth", raw, {
     httpOnly: true,
