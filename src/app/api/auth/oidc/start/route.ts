@@ -19,12 +19,13 @@ export async function GET() {
     const redirectUri = new URL("/api/auth/oidc/callback", site).toString();
 
     await getPgPool().query(
-      `INSERT INTO auth_challenges (purpose,challenge_hash,state_hash,nonce_hash,code_verifier_ciphertext,expires_at)
+      `INSERT INTO auth_challenges (purpose,challenge_hash,state_hash,nonce_hash,nonce_ciphertext,code_verifier_ciphertext,expires_at)
        VALUES ('oidc_login',$1,$2,$3,$4,now()+interval '10 minutes')`,
       [
         crypto.createHash("sha256").update(state).digest("hex"),
         crypto.createHash("sha256").update(state).digest("hex"),
         crypto.createHash("sha256").update(nonce).digest("hex"),
+        encryptAuthSecret(nonce),
         encryptAuthSecret(codeVerifier),
       ],
     );
