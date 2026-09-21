@@ -37,7 +37,7 @@ jobs:
         run: npm install --no-audit --no-fund
 
       - name: Verify dependency install-script policy
-        run: npm install-scripts ls --json
+        run: npm approve-scripts ls --json
 
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
