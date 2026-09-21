@@ -58,7 +58,8 @@ export async function GET(request: Request) {
     const user = userResult.rows[0];
     if (!user) return NextResponse.json({ error: "oidc_account_not_provisioned" }, { status: 403 });
 
-    await getPgPool().query(`UPDATE auth_challenges SET consumed_at=now() WHERE id=$1 AND consumed_at IS NULL`, [row.id]);
+    const consumed = await getPgPool().query(`UPDATE auth_challenges SET consumed_at=now() WHERE id=$1 AND consumed_at IS NULL RETURNING id`, [row.id]);
+    if (!consumed.rowCount) return NextResponse.json({ error: "oidc_state_replayed" }, { status: 401 });
     (await cookies()).delete("elitze_oidc_state");
     await createSession(user, true);
     return NextResponse.redirect(new URL("/console", new URL(oidcRedirectUri()).origin));
