@@ -1,11 +1,12 @@
 import { NextRequest } from "next/server";
-import { consumeRateLimit, getRateLimitKey, issueEmailToken, registerUser } from "@/lib/auth";
+import { assertSameOrigin, consumeRateLimit, getRateLimitKey, issueEmailToken, registerUser } from "@/lib/auth";
 import { sendAuthEmail } from "@/lib/auth-email";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {
+    if (!(await assertSameOrigin(request))) return Response.json({ error: "csrf_rejected" }, { status: 403 });
     const body = await request.json() as { email?: unknown; password?: unknown; displayName?: unknown };
     if (typeof body.email !== "string" || typeof body.password !== "string") {
       return Response.json({ error: "email_and_password_required" }, { status: 400 });
