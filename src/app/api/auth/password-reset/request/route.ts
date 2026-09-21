@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     if (!user) return Response.json(generic);
 
     const token = await issueEmailToken(user, "password_reset", 30);
-    const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.elitze.info").replace(/\/$/, "");
+    const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.ca").replace(/\/$/, "");
     await sendAuthEmail(
       user.email,
       "Reset your ELITZE Agentic Security password",
