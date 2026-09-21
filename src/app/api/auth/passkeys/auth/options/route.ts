@@ -24,7 +24,7 @@ export async function POST(request: Request) {
       [user.id, user.tenantId],
     );
     const options = await generateAuthenticationOptions({
-      rpID: process.env.ELITZE_WEBAUTHN_RP_ID || "www.elitze.info",
+      rpID: process.env.ELITZE_WEBAUTHN_RP_ID || "elitze.ca",
       userVerification: "required",
       allowCredentials: credentials.rows.map((row) => ({ id: row.credential_id, transports: row.transports ?? [] })),
     });
