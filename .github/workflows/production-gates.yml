@@ -1,10 +1,12 @@
 name: ELITZE production gates
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
       - rehaul/2026-security-control-surface
+      - security/full-green-gate-2026
   pull_request:
     branches:
       - main
