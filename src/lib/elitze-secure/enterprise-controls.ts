@@ -77,12 +77,12 @@ export type AIAction = {
 export function detectPromptInjection(content: string | undefined): string[] {
   if (!content) return [];
   const patterns: Array<[RegExp, string]> = [
-    [/ignore\\s+(all|any|the|previous)\\s+instructions/i, "instruction_override"],
-    [/system\\s+prompt|developer\\s+message/i, "prompt_boundary_probe"],
-    [/reveal|print|show|dump\\s+(the\\s+)?(system|developer)\\s+prompt/i, "prompt_exfiltration"],
-    [/bypass|disable|circumvent\\s+(security|policy|guardrail)/i, "control_bypass"],
-    [/send|upload|export|exfiltrate\\s+.*(secret|credential|customer|restricted|database)/i, "data_exfiltration"],
-    [/call\\s+(the\\s+)?tool|invoke\\s+.*tool\\s+without\\s+approval/i, "tool_authority_escalation"],
+    [/ignore\s+(all|any|the|previous)\s+instructions/i, "instruction_override"],
+    [/system\s+prompt|developer\s+message/i, "prompt_boundary_probe"],
+    [/reveal|print|show|dump\s+(the\s+)?(system|developer)\s+prompt/i, "prompt_exfiltration"],
+    [/bypass|disable|circumvent\s+(security|policy|guardrail)/i, "control_bypass"],
+    [/send|upload|export|exfiltrate\s+.*(secret|credential|customer|restricted|database)/i, "data_exfiltration"],
+    [/call\s+(the\s+)?tool|invoke\s+.*tool\s+without\s+approval/i, "tool_authority_escalation"],
   ];
   return patterns.filter(([pattern]) => pattern.test(content)).map(([, signal]) => signal);
 }
