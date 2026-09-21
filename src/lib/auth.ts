@@ -83,14 +83,20 @@ async function clientMeta() {
 
 export async function assertSameOrigin(request: Request) {
   const origin = request.headers.get("origin");
+  if (!origin) return false;
   const configured = process.env.NEXT_PUBLIC_SITE_URL || "https://www.elitze.info";
-  let expected: string;
+  let expected: URL;
   try {
-    expected = new URL(configured).origin;
+    expected = new URL(configured);
   } catch {
     return false;
   }
-  return origin === expected;
+  if (origin === expected.origin) return true;
+  const allowedOrigins = (process.env.ELITZE_ALLOWED_ORIGINS || "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+  return allowedOrigins.includes(origin);
 }
 
 export async function getRateLimitKey(scope: string, identifier?: string) {
