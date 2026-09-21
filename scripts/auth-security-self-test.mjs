@@ -65,4 +65,4 @@ assert.match(samlMetadata, /generateServiceProviderMetadata|samlMetadata/);
 assert.match(packageJson, /"@node-saml\/node-saml":\s*"5\.1\.0"/);
 assert.doesNotMatch(packageJson, /"samlify"/);
 
-console.log("ELITZE authentication security static gate: PASS");
+console.log("ELITZE authentication security static gate: PASS — enterprise identity controls checked");
