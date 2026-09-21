@@ -6,7 +6,8 @@ on:
     branches:
       - main
       - rehaul/2026-security-control-surface
-      - security/full-green-gate-2026-09-21
+      - security/full-green-gate-2026
+      - security/enterprise-auth-green-2026-09-21
   pull_request:
     branches:
       - main
