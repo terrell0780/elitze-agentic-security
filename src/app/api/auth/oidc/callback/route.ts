@@ -29,9 +29,7 @@ export async function GET(request: Request) {
     const config = await discoverOidc();
     const stateHash = crypto.createHash("sha256").update(state).digest("hex");
     const challenge = await getPgPool().query(
-      `SELECT id, state_hash, nonce_hash, nonce_ciphertext, code_verifier_ciphertext
-       FROM auth_challenges WHERE purpose='oidc_login' AND state_hash=$1
-       AND consumed_at IS NULL AND expires_at>now() ORDER BY created_at DESC LIMIT 1`,
+      "SELECT id, state_hash, nonce_hash, nonce_ciphertext, code_verifier_ciphertext FROM auth_challenges WHERE purpose='oidc_login' AND state_hash=$1 AND consumed_at IS NULL AND expires_at>now() ORDER BY created_at DESC LIMIT 1",
       [stateHash],
     );
     const row = challenge.rows[0];
@@ -45,20 +43,22 @@ export async function GET(request: Request) {
 
     const claims = tokens.claims();
     const accessToken = tokens.access_token;
-    const userinfo = accessToken ? await fetchUserInfo(config, accessToken, claims?.sub) : undefined;
+    const subject = String(claims?.sub ?? "").trim();
+    if (!subject) return NextResponse.json({ error: "oidc_subject_missing" }, { status: 401 });
+
+    const userinfo = accessToken ? await fetchUserInfo(config, accessToken, subject) : undefined;
     const email = String(userinfo?.email ?? claims?.email ?? "").trim().toLowerCase();
     const emailVerified = Boolean(userinfo?.email_verified ?? claims?.email_verified);
     if (!email || !emailVerified) return NextResponse.json({ error: "oidc_identity_unverified" }, { status: 403 });
 
     const userResult = await getPgPool().query(
-      `SELECT id, tenant_id AS "tenantId", email, display_name AS "displayName", role, status
-       FROM auth_users WHERE email_normalized=$1 AND status='active' LIMIT 1`,
+      "SELECT id, tenant_id AS \"tenantId\", email, display_name AS \"displayName\", role, status FROM auth_users WHERE email_normalized=$1 AND status='active' LIMIT 1",
       [email],
     );
     const user = userResult.rows[0];
     if (!user) return NextResponse.json({ error: "oidc_account_not_provisioned" }, { status: 403 });
 
-    const consumed = await getPgPool().query(`UPDATE auth_challenges SET consumed_at=now() WHERE id=$1 AND consumed_at IS NULL RETURNING id`, [row.id]);
+    const consumed = await getPgPool().query("UPDATE auth_challenges SET consumed_at=now() WHERE id=$1 AND consumed_at IS NULL RETURNING id", [row.id]);
     if (!consumed.rowCount) return NextResponse.json({ error: "oidc_state_replayed" }, { status: 401 });
     (await cookies()).delete("elitze_oidc_state");
     await createSession(user, true);
