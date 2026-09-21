@@ -126,6 +126,35 @@ function cookieOptions(expires: Date) {
   };
 }
 
+export async function issueMfaLoginChallenge(user: AuthUser) {
+  const raw = newToken();
+  const expires = new Date(Date.now() + 5 * 60_000);
+  await getPgPool().query(
+    `INSERT INTO auth_challenges (user_id, tenant_id, purpose, challenge_hash, expires_at)
+     VALUES ($1,$2,'mfa_login',$3,$4)`,
+    [user.id, user.tenantId, digest(raw), expires.toISOString()],
+  );
+  (await cookies()).set("elitze_mfa_challenge", raw, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    expires,
+  });
+  return expires;
+}
+
+export async function consumeMfaLoginChallenge(raw: string) {
+  const result = await getPgPool().query(
+    `UPDATE auth_challenges
+     SET consumed_at=now()
+     WHERE challenge_hash=$1 AND purpose='mfa_login' AND consumed_at IS NULL AND expires_at>now()
+     RETURNING user_id AS "userId", tenant_id AS "tenantId"`,
+    [digest(raw)],
+  );
+  return result.rows[0] as { userId: string; tenantId: string } | undefined;
+}
+
 export async function createSession(user: AuthUser, persistent = true) {
   const raw = newToken();
   const expires = new Date(
