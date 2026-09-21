@@ -71,9 +71,10 @@ async function verifyPassword(password: string, encoded: string) {
 async function clientMeta() {
   const requestHeaders = await headers();
   const forwarded = requestHeaders.get("x-forwarded-for");
-  const ip = forwarded?.split(",").map((value) => value.trim()).filter(Boolean).at(-1)
-    ?? requestHeaders.get("x-real-ip")
-    ?? "unknown";
+  const trustProxy = process.env.ELITZE_TRUST_PROXY === "true";
+  const ip = trustProxy
+    ? (forwarded?.split(",").map((value) => value.trim()).filter(Boolean).at(-1) ?? requestHeaders.get("x-real-ip") ?? "unknown")
+    : "unknown";
   return {
     ip,
     ua: requestHeaders.get("user-agent") ?? "unknown",
