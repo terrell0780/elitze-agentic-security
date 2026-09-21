@@ -22,7 +22,7 @@ export async function GET(request: Request) {
     (await cookies()).set("elitze_saml_state", state, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       path: "/",
       maxAge: 600,
     });
