@@ -6,6 +6,9 @@ import crypto from "node:crypto";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
+const webAuthnOrigins = (process.env.ELITZE_WEBAUTHN_ORIGIN || "https://elitze.ca,https://www.elitze.ca")
+  .split(",").map((value) => value.trim()).filter(Boolean);
+
 export async function POST(request: Request) {
   try {
     if (!(await assertSameOrigin(request))) return Response.json({ error: "csrf_rejected" }, { status: 403 });
@@ -26,7 +29,7 @@ export async function POST(request: Request) {
     const verification = await verifyRegistrationResponse({
       response: body,
       expectedChallenge: async (candidate) => crypto.createHash("sha256").update(candidate).digest("hex") === expectedChallengeHash,
-      expectedOrigin: process.env.ELITZE_WEBAUTHN_ORIGIN || "https://elitze.ca",
+      expectedOrigin: webAuthnOrigins,
       expectedRPID: process.env.ELITZE_WEBAUTHN_RP_ID || "elitze.ca",
       requireUserVerification: true,
     });
