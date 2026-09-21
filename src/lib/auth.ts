@@ -4,6 +4,9 @@ import { getPgPool } from "@/db";
 
 const SESSION_COOKIE = "elitze_session";
 const PERSISTENT_DAYS = 30;
+const NON_PERSISTENT_DAYS = 1;
+const SESSION_IDLE_HOURS = 12;
+const SESSION_ROTATION_HOURS = 24;
 const PASSWORD_MIN = 12;
 const RATE_WINDOW_SECONDS = 15 * 60;
 const DUMMY_PASSWORD_HASH = "scrypt$16384$8$1$fixed-elitze-dummy-salt$1QW9Zfy7_xUt37q5OriffuvgMKnlAqlCu2b-M6LxnCBx82L5WdVeFJchv1_r9OBA1mc6CcPKXY03CwBE4qIdGw";
@@ -74,6 +77,18 @@ async function clientMeta() {
     ip,
     ua: requestHeaders.get("user-agent") ?? "unknown",
   };
+}
+
+export async function assertSameOrigin(request: Request) {
+  const origin = request.headers.get("origin");
+  const configured = process.env.NEXT_PUBLIC_SITE_URL || "https://www.elitze.info";
+  let expected: string;
+  try {
+    expected = new URL(configured).origin;
+  } catch {
+    return false;
+  }
+  return origin === expected;
 }
 
 export async function getRateLimitKey(scope: string, identifier?: string) {
@@ -172,7 +187,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
   if (!row || row.status !== "active") return null;
 
   if (row.persistent && new Date(row.expires_at).getTime() - Date.now() < 7 * 86_400_000) {
-    const next = new Date(Date.now() + PERSISTENT_DAYS * 86_400_000);
+    const next = new Date(Math.min(createdAt + absoluteLifetime, Date.now() + PERSISTENT_DAYS * 86_400_000));
     await db.query(
       `UPDATE auth_sessions SET expires_at=$1,last_seen_at=now() WHERE id=$2`,
       [next.toISOString(), row.session_id],
