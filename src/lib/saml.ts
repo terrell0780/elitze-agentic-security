@@ -1,4 +1,4 @@
-import { SAML } from "@node-saml/node-saml";
+import { SAML, ValidateInResponseTo } from "@node-saml/node-saml";
 
 const siteOrigin = () => process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://elitze.ca";
 
@@ -39,7 +39,7 @@ export function samlConfig() {
     digestAlgorithm: "sha256" as const,
     acceptedClockSkewMs: 5_000,
     maxAssertionAgeMs: 5 * 60_000,
-    validateInResponseTo: "never" as const,
+    validateInResponseTo: ValidateInResponseTo.never,
     ...(privateKey && publicCert
       ? { privateKey: normalizePem(privateKey), publicCert: normalizePem(publicCert) }
       : {}),
