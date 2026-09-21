@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
-import { assertSameOrigin, authenticate, consumeRateLimit, createSession, getRateLimitKey } from "@/lib/auth";
+import { getPgPool } from "@/db";
+import { assertSameOrigin, authenticate, consumeRateLimit, createSession, getRateLimitKey, issueMfaLoginChallenge } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 
@@ -22,6 +23,11 @@ export async function POST(request: NextRequest) {
     const user = await authenticate(email, body.password);
     if (!user) return Response.json({ error: "invalid_credentials" }, { status: 401 });
     if (user.status !== "active") return Response.json({ error: "email_verification_required" }, { status: 403 });
+    const security = await getPgPool().query(`SELECT mfa_required FROM auth_users WHERE id=$1 AND tenant_id=$2 LIMIT 1`, [user.id, user.tenantId]);
+    if (security.rows[0]?.mfa_required) {
+      await issueMfaLoginChallenge(user);
+      return Response.json({ ok: true, mfaRequired: true });
+    }
     await createSession(user, body.persistent !== false);
     return Response.json({ ok: true, user: { id: user.id, email: user.email, displayName: user.displayName, role: user.role } });
   } catch (error) {
