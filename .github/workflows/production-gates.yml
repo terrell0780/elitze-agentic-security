@@ -45,6 +45,9 @@ jobs:
       - name: Security self-test
         run: npm run security:self-test
 
+      - name: Authentication security self-test
+        run: npm run auth:security-self-test
+
       - name: Data bridge self-test
         run: npm run data-bridge:self-test
 
