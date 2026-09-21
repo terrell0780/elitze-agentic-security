@@ -3,10 +3,21 @@ import { getCurrentUser } from "@/lib/auth";
 import { getPgPool } from "@/db";
 import { verifyEvidenceReceipt } from "@/lib/elitze-secure/evidence-receipt";
 import { evaluateProgressiveProof } from "@/lib/elitze-secure/progressive-proofing";
-import { evaluateEvidenceExpression, type EvidenceExpressionRecord } from "@/lib/elitze-secure/evidence-expression";
+import { evaluateEvidenceExpression } from "@/lib/elitze-secure/evidence-expression.mjs";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+
+type EvidenceExpressionRecord = {
+  decisionRef: string;
+  requestId: string;
+  subject: string;
+  decision: string;
+  evidenceState: string;
+  stage: string;
+  nextAction: string;
+  observedAt: string | null;
+};
 
 type DecisionRow = {
   decision_ref: string;
