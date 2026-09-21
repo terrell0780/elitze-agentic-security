@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.ca";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.elitze.info";
 
 const routes = [
   "/",
