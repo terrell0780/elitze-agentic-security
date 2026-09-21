@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS auth_challenges (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id uuid REFERENCES auth_users(id) ON DELETE CASCADE,
   tenant_id uuid REFERENCES auth_tenants(id) ON DELETE CASCADE,
-  purpose text NOT NULL CHECK (purpose IN ('webauthn_registration','webauthn_authentication','oidc_login','saml_login','privileged_reauth')),
+  purpose text NOT NULL CHECK (purpose IN ('webauthn_registration','webauthn_authentication','oidc_login','saml_login','privileged_reauth','mfa_login')),
   challenge_hash text NOT NULL,
   state_hash text,
   nonce_hash text,
