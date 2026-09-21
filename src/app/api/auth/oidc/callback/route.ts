@@ -1,20 +1,30 @@
 import { authorizationCodeGrant, fetchUserInfo } from "openid-client";
 import { NextResponse } from "next/server";
-import { discoverOidc } from "@/lib/oidc";
+import { discoverOidc, oidcRedirectUri } from "@/lib/oidc";
 import { createSession } from "@/lib/auth";
 import { decryptAuthSecret } from "@/lib/auth-mfa";
 import { getPgPool } from "@/db";
 import crypto from "node:crypto";
+import { cookies } from "next/headers";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
+
+const equalToken = (left: string, right: string) => {
+  const a = Buffer.from(left);
+  const b = Buffer.from(right);
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+};
 
 export async function GET(request: Request) {
   try {
     const url = new URL(request.url);
     const state = url.searchParams.get("state");
     const error = url.searchParams.get("error");
-    if (error || !state) return NextResponse.json({ error: "oidc_login_failed" }, { status: 401 });
+    const browserState = (await cookies()).get("elitze_oidc_state")?.value;
+    if (error || !state || !browserState || !equalToken(state, browserState)) {
+      return NextResponse.json({ error: "oidc_login_failed" }, { status: 401 });
+    }
 
     const config = await discoverOidc();
     const stateHash = crypto.createHash("sha256").update(state).digest("hex");
@@ -27,7 +37,6 @@ export async function GET(request: Request) {
     const row = challenge.rows[0];
     if (!row) return NextResponse.json({ error: "oidc_state_invalid" }, { status: 401 });
 
-    const site = new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://www.elitze.info");
     const tokens = await authorizationCodeGrant(config, request, {
       expectedState: state,
       expectedNonce: decryptAuthSecret(row.nonce_ciphertext),
@@ -50,8 +59,9 @@ export async function GET(request: Request) {
     if (!user) return NextResponse.json({ error: "oidc_account_not_provisioned" }, { status: 403 });
 
     await getPgPool().query(`UPDATE auth_challenges SET consumed_at=now() WHERE id=$1 AND consumed_at IS NULL`, [row.id]);
+    (await cookies()).delete("elitze_oidc_state");
     await createSession(user, true);
-    return NextResponse.redirect(new URL("/console", site));
+    return NextResponse.redirect(new URL("/console", new URL(oidcRedirectUri()).origin));
   } catch (error) {
     console.error("ELITZE OIDC callback failed", error);
     return NextResponse.json({ error: "oidc_login_failed" }, { status: 401 });
