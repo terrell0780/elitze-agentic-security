@@ -14,12 +14,13 @@
     "mcp-workload-identity:self-test": "node scripts/mcp-workload-identity-self-test.mjs",
     "policy-evidence:self-test": "node scripts/policy-evidence-self-test.mjs",
     "phase5-6:self-test": "node scripts/phase5-6-self-test.mjs",
+    "global-compliance:self-test": "node scripts/global-compliance-self-test.mjs",
     "verify:evidence": "node scripts/verify-evidence.mjs",
     "brand:self-test": "node scripts/brand-self-test.mjs",
     "sale:readiness": "node scripts/sale-readiness.mjs && node scripts/brand-self-test.mjs",
     "db:migrate": "node scripts/migrate.mjs",
     "mcp:github": "node src/lib/elitze-secure/github-control-mcp.mjs",
-    "auth:security-self-test": "node scripts/auth-security-self-test.mjs"
+    "auth:security-self-test": "node scripts/auth-security-self-test.mjs",
     "progressive-proofing:self-test": "node --experimental-strip-types scripts/progressive-proofing-self-test.mjs"
   },
   "dependencies": {

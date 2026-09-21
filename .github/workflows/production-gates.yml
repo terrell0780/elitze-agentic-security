@@ -61,6 +61,12 @@ jobs:
       - name: Phase 5-6 self-test
         run: npm run phase5-6:self-test
 
+      - name: Global security and compliance catalog self-test
+        run: npm run global-compliance:self-test
+
+      - name: Legal control self-test
+        run: npm run legal:control-self-test
+
       - name: Progressive proofing self-test
         run: npm run progressive-proofing:self-test
 
