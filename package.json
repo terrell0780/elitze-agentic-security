@@ -19,15 +19,20 @@
     "sale:readiness": "node scripts/sale-readiness.mjs && node scripts/brand-self-test.mjs",
     "db:migrate": "node scripts/migrate.mjs",
     "mcp:github": "node src/lib/elitze-secure/github-control-mcp.mjs",
+    "auth:security-self-test": "node scripts/auth-security-self-test.mjs"
     "progressive-proofing:self-test": "node --experimental-strip-types scripts/progressive-proofing-self-test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.0.0",
+    "@node-saml/node-saml": "5.1.0",
+    "@simplewebauthn/browser": "14.0.0",
+    "@simplewebauthn/server": "14.0.2",
     "dotenv": "17.3.1",
     "drizzle-orm": "0.45.2",
     "duck-duck-scrape": "^2.2.7",
     "lucide-react": "^1.37.0",
     "next": "16.3.4",
+    "openid-client": "6.8.8",
     "pg": "8.20.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",

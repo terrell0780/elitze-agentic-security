@@ -30,6 +30,9 @@ try {
     "security_identities", "security_policies", "security_decisions", "attack_paths", "red_team_runs",
     "evidence_records", "security_approvals", "security_integration_events", "audit_ledger_events",
     "containment_actions", "decision_evidence", "analyst_feedback", "team_channels", "team_messages",
+    "team_channel_members", "data_bridge_sources", "data_bridge_events",\n    "auth_tenants", "auth_users", "auth_sessions", "auth_tokens", "auth_rate_limits",
+    "auth_mfa_factors", "auth_recovery_codes", "auth_webauthn_credentials", "auth_challenges",
+    "auth_refresh_tokens", "auth_api_keys", "auth_privileged_reauth",
     "team_channel_members", "data_bridge_sources", "data_bridge_events",
     "auth_tenants", "auth_users", "auth_sessions", "auth_tokens", "auth_rate_limits",
   ];

@@ -1,10 +1,13 @@
 name: ELITZE production gates
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
       - rehaul/2026-security-control-surface
+      - security/full-green-gate-2026
+      - security/enterprise-auth-green-2026-09-21
   pull_request:
     branches:
       - main
@@ -34,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
-      - name: Verify build-script allowlist manifest
+      - name: Verify dependency install-script policy
         run: node -e "const p=require('./package.json'); const required=['esbuild','unrs-resolver']; const missing=required.filter((name)=>p.allowScripts?.[name]!==true); if(missing.length){console.error('Missing allowScripts entries:',missing.join(', ')); process.exit(1)} console.log('Build-script allowlist verified:',required.join(', '));"
 
       - name: Audit production dependencies
@@ -42,6 +45,9 @@ jobs:
 
       - name: Security self-test
         run: npm run security:self-test
+
+      - name: Authentication security self-test
+        run: npm run auth:security-self-test
 
       - name: Data bridge self-test
         run: npm run data-bridge:self-test

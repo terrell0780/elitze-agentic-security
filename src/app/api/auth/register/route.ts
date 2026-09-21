@@ -1,18 +1,19 @@
 import { NextRequest } from "next/server";
-import { consumeRateLimit, getRateLimitKey, issueEmailToken, registerUser } from "@/lib/auth";
+import { assertSameOrigin, consumeRateLimit, getRateLimitKey, issueEmailToken, registerUser } from "@/lib/auth";
 import { sendAuthEmail } from "@/lib/auth-email";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: NextRequest) {
   try {
+    if (!(await assertSameOrigin(request))) return Response.json({ error: "csrf_rejected" }, { status: 403 });
     const body = await request.json() as { email?: unknown; password?: unknown; displayName?: unknown };
     if (typeof body.email !== "string" || typeof body.password !== "string") {
       return Response.json({ error: "email_and_password_required" }, { status: 400 });
     }
 
     const email = body.email.trim().toLowerCase();
-    if (!(await consumeRateLimit(await getRateLimitKey("register"), 5, 60 * 60))) {
+    if (!(await consumeRateLimit(await getRateLimitKey("register", email), 5, 60 * 60))) {
       return Response.json({ error: "too_many_attempts" }, { status: 429, headers: { "Retry-After": "3600" } });
     }
 
@@ -22,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     const user = await registerUser(email, body.password, typeof body.displayName === "string" ? body.displayName : undefined);
     const token = await issueEmailToken(user, "email_verification", 60);
-    const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.ca").replace(/\/$/, "");
+    const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.elitze.info").replace(/\/$/, "");
     await sendAuthEmail(user.email, "Verify your ELITZE Agentic Security email", `Verify your email: ${base}/auth/verify?token=${encodeURIComponent(token)}\n\nThis link expires in 60 minutes.`);
     return Response.json({ ok: true, verificationRequired: true });
   } catch (error) {

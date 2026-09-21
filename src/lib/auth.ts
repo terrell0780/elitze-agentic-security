@@ -4,6 +4,9 @@ import { getPgPool } from "@/db";
 
 const SESSION_COOKIE = "elitze_session";
 const PERSISTENT_DAYS = 30;
+const NON_PERSISTENT_DAYS = 1;
+const SESSION_IDLE_HOURS = 12;
+const SESSION_ROTATION_HOURS = 24;
 const PASSWORD_MIN = 12;
 const RATE_WINDOW_SECONDS = 15 * 60;
 const DUMMY_PASSWORD_HASH = "scrypt$16384$8$1$fixed-elitze-dummy-salt$1QW9Zfy7_xUt37q5OriffuvgMKnlAqlCu2b-M6LxnCBx82L5WdVeFJchv1_r9OBA1mc6CcPKXY03CwBE4qIdGw";
@@ -17,6 +20,7 @@ export type AuthUser = {
   displayName: string | null;
   role: string;
   status: string;
+  sessionId?: string;
 };
 
 const normalizeEmail = (email: string) => email.trim().toLowerCase();
@@ -67,13 +71,32 @@ async function verifyPassword(password: string, encoded: string) {
 async function clientMeta() {
   const requestHeaders = await headers();
   const forwarded = requestHeaders.get("x-forwarded-for");
-  const ip = forwarded?.split(",").map((value) => value.trim()).filter(Boolean).at(-1)
-    ?? requestHeaders.get("x-real-ip")
-    ?? "unknown";
+  const trustProxy = process.env.ELITZE_TRUST_PROXY === "true";
+  const ip = trustProxy
+    ? (forwarded?.split(",").map((value) => value.trim()).filter(Boolean).at(-1) ?? requestHeaders.get("x-real-ip") ?? "unknown")
+    : "unknown";
   return {
     ip,
     ua: requestHeaders.get("user-agent") ?? "unknown",
   };
+}
+
+export async function assertSameOrigin(request: Request) {
+  const origin = request.headers.get("origin");
+  if (!origin) return false;
+  const configured = process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.ca";
+  let expected: URL;
+  try {
+    expected = new URL(configured);
+  } catch {
+    return false;
+  }
+  if (origin === expected.origin) return true;
+  const allowedOrigins = (process.env.ELITZE_ALLOWED_ORIGINS || "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+  return allowedOrigins.includes(origin);
 }
 
 export async function getRateLimitKey(scope: string, identifier?: string) {
@@ -111,10 +134,39 @@ function cookieOptions(expires: Date) {
   };
 }
 
+export async function issueMfaLoginChallenge(user: AuthUser) {
+  const raw = newToken();
+  const expires = new Date(Date.now() + 5 * 60_000);
+  await getPgPool().query(
+    `INSERT INTO auth_challenges (user_id, tenant_id, purpose, challenge_hash, expires_at)
+     VALUES ($1,$2,'mfa_login',$3,$4)`,
+    [user.id, user.tenantId, digest(raw), expires.toISOString()],
+  );
+  (await cookies()).set("elitze_mfa_challenge", raw, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    expires,
+  });
+  return expires;
+}
+
+export async function consumeMfaLoginChallenge(raw: string) {
+  const result = await getPgPool().query(
+    `UPDATE auth_challenges
+     SET consumed_at=now()
+     WHERE challenge_hash=$1 AND purpose='mfa_login' AND consumed_at IS NULL AND expires_at>now()
+     RETURNING user_id AS "userId", tenant_id AS "tenantId"`,
+    [digest(raw)],
+  );
+  return result.rows[0] as { userId: string; tenantId: string } | undefined;
+}
+
 export async function createSession(user: AuthUser, persistent = true) {
   const raw = newToken();
   const expires = new Date(
-    Date.now() + (persistent ? PERSISTENT_DAYS : 1) * 86_400_000,
+    Date.now() + (persistent ? PERSISTENT_DAYS : NON_PERSISTENT_DAYS) * 86_400_000,
   );
   const meta = await clientMeta();
 
@@ -151,6 +203,8 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
        u.status,
        s.id AS session_id,
        s.expires_at,
+       s.created_at,
+       s.last_seen_at,
        s.persistent
      FROM auth_sessions s
      JOIN auth_users u ON u.id=s.user_id
@@ -165,21 +219,55 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     | (AuthUser & {
         session_id: string;
         expires_at: string;
+        created_at: string;
+        last_seen_at: string;
         persistent: boolean;
       })
     | undefined;
 
   if (!row || row.status !== "active") return null;
 
-  if (row.persistent && new Date(row.expires_at).getTime() - Date.now() < 7 * 86_400_000) {
-    const next = new Date(Date.now() + PERSISTENT_DAYS * 86_400_000);
+  const now = Date.now();
+  const absoluteLifetime = (row.persistent ? PERSISTENT_DAYS : NON_PERSISTENT_DAYS) * 86_400_000;
+  const createdAt = new Date(row.created_at).getTime();
+  const lastSeenAt = new Date(row.last_seen_at).getTime();
+
+  if (!Number.isFinite(createdAt) || !Number.isFinite(lastSeenAt) ||
+      now - createdAt >= absoluteLifetime || now - lastSeenAt >= SESSION_IDLE_HOURS * 3_600_000) {
+    await db.query(`UPDATE auth_sessions SET revoked_at=now() WHERE id=$1 AND revoked_at IS NULL`, [row.session_id]);
+    (await cookies()).delete(SESSION_COOKIE);
+    return null;
+  }
+
+  if (now - createdAt >= SESSION_ROTATION_HOURS * 3_600_000) {
+    const rotated = newToken();
+    const remaining = Math.max(1, createdAt + absoluteLifetime - now);
+    const next = new Date(now + remaining);
     await db.query(
-      `UPDATE auth_sessions SET expires_at=$1,last_seen_at=now() WHERE id=$2`,
+      `UPDATE auth_sessions SET token_hash=$1,last_seen_at=now(),expires_at=$2 WHERE id=$3 AND revoked_at IS NULL`,
+      [digest(rotated), next.toISOString(), row.session_id],
+    );
+    (await cookies()).set(SESSION_COOKIE, rotated, cookieOptions(next));
+    return {
+      id: row.id,
+      tenantId: row.tenantId,
+      email: row.email,
+      displayName: row.displayName,
+      role: row.role,
+      status: row.status,
+      sessionId: row.session_id,
+    };
+  }
+
+  if (row.persistent && new Date(row.expires_at).getTime() - now < 7 * 86_400_000) {
+    const next = new Date(Math.min(createdAt + absoluteLifetime, now + PERSISTENT_DAYS * 86_400_000));
+    await db.query(
+      `UPDATE auth_sessions SET expires_at=$1,last_seen_at=now() WHERE id=$2 AND revoked_at IS NULL`,
       [next.toISOString(), row.session_id],
     );
     (await cookies()).set(SESSION_COOKIE, raw, cookieOptions(next));
   } else {
-    await db.query(`UPDATE auth_sessions SET last_seen_at=now() WHERE id=$1`, [row.session_id]);
+    await db.query(`UPDATE auth_sessions SET last_seen_at=now() WHERE id=$1 AND revoked_at IS NULL`, [row.session_id]);
   }
 
   return {
@@ -189,6 +277,7 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     displayName: row.displayName,
     role: row.role,
     status: row.status,
+    sessionId: row.session_id,
   };
 }
 
@@ -204,6 +293,45 @@ export async function logout() {
     );
   }
   jar.delete(SESSION_COOKIE);
+}
+
+export async function issuePrivilegedReauthChallenge(user: AuthUser) {
+  if (!user.sessionId) throw new Error("session_required");
+  const raw = newToken();
+  const expires = new Date(Date.now() + 10 * 60_000);
+  await getPgPool().query(
+    `INSERT INTO auth_privileged_reauth (user_id,tenant_id,session_id,challenge_hash,expires_at)
+     VALUES ($1,$2,$3,$4,$5)`,
+    [user.id, user.tenantId, user.sessionId, digest(raw), expires.toISOString()],
+  );
+  await getPgPool().query(
+    `UPDATE auth_privileged_reauth
+     SET satisfied_at=now()
+     WHERE challenge_hash=$1 AND user_id=$2 AND tenant_id=$3 AND session_id=$4 AND satisfied_at IS NULL`,
+    [digest(raw), user.id, user.tenantId, user.sessionId],
+  );
+  (await cookies()).set("elitze_reauth", raw, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    expires,
+  });
+  return expires;
+}
+
+export async function consumePrivilegedReauth(user: AuthUser) {
+  const raw = (await cookies()).get("elitze_reauth")?.value;
+  if (!raw || !user.sessionId) return false;
+  const result = await getPgPool().query(
+    `UPDATE auth_privileged_reauth
+     SET satisfied_at=COALESCE(satisfied_at,now())
+     WHERE challenge_hash=$1 AND user_id=$2 AND tenant_id=$3 AND session_id=$4
+       AND satisfied_at IS NOT NULL AND expires_at>now()
+     RETURNING id`,
+    [digest(raw), user.id, user.tenantId, user.sessionId],
+  );
+  return result.rowCount === 1;
 }
 
 export async function registerUser(
@@ -356,4 +484,4 @@ export async function consumeToken(
   return result.rows[0] as { userId: string; tenantId: string } | undefined;
 }
 
-export { normalizeEmail, hashPassword, SESSION_COOKIE };
+export { normalizeEmail, hashPassword, verifyPassword, SESSION_COOKIE };
