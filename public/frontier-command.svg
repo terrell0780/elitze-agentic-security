@@ -36,9 +36,12 @@
     <path d="M770 560C900 500 1010 496 1190 560" stroke="#7BE7FF" stroke-width="2" stroke-opacity=".36"/>
     <circle cx="865" cy="330" r="3" fill="#E8FDFF"/><circle cx="1010" cy="300" r="4" fill="#E8FDFF"/><circle cx="1070" cy="430" r="3" fill="#E8FDFF"/><circle cx="900" cy="525" r="4" fill="#E8FDFF"/>
   </g>
-  <ellipse cx="930" cy="392" rx="250" ry="72" transform="rotate(-15 930 392)" stroke="url(#glow)" stroke-width="4" stroke-opacity=".8"/>
-  <ellipse cx="930" cy="392" rx="265" ry="108" transform="rotate(18 930 392)" stroke="#6EE7FF" stroke-opacity=".35" stroke-width="2"/>
-  <circle cx="930" cy="392" r="210" stroke="#8E7CFF" stroke-opacity=".3" stroke-dasharray="5 14" stroke-width="2"/>
+  <g>
+    <ellipse cx="930" cy="392" rx="250" ry="72" transform="rotate(-15 930 392)" stroke="url(#glow)" stroke-width="4" stroke-opacity=".8"/>
+    <ellipse cx="930" cy="392" rx="265" ry="108" transform="rotate(18 930 392)" stroke="#6EE7FF" stroke-opacity=".35" stroke-width="2"/>
+    <circle cx="930" cy="392" r="210" stroke="#8E7CFF" stroke-opacity=".3" stroke-dasharray="5 14" stroke-width="2"/>
+    <animateTransform attributeName="transform" type="rotate" from="0 930 392" to="360 930 392" dur="18s" repeatCount="indefinite"/>
+  </g>
 </g>
 <g fill="#0A1630" stroke="#78E9FF" stroke-opacity=".7" filter="url(#shadow)">
   <rect x="520" y="180" width="86" height="66" rx="16"/><rect x="1204" y="195" width="86" height="66" rx="16"/>
@@ -51,19 +54,14 @@
   <path d="M721 135c0-10 8-18 18-18s18 8 18 18-8 18-18 18-18-8-18-18z"/>
   <path d="M1108 136h34M1125 119v34"/>
 </g>
-<g opacity=".76">
-  <rect x="127" y="132" width="300" height="120" rx="22" fill="#051126" fill-opacity=".72" stroke="#4FC3FF" stroke-opacity=".22"/>
-  <path d="M160 216h95M160 196h180M160 176h128" stroke="#63DFFF" stroke-opacity=".45"/>
-  <path d="M280 214c40-55 60-18 96-56 25-27 49-5 72-25" stroke="#8C7CFF" stroke-width="3" stroke-opacity=".7"/>
-  <rect x="1240" y="648" width="250" height="122" rx="22" fill="#051126" fill-opacity=".72" stroke="#8C7CFF" stroke-opacity=".28"/>
-  <path d="M1270 723h155M1270 700h120M1270 678h84" stroke="#63DFFF" stroke-opacity=".45"/>
-  <circle cx="1415" cy="690" r="17" stroke="#7FE7FF" stroke-width="3"/><path d="M1415 678v24M1403 690h24" stroke="#7FE7FF" stroke-width="2"/>
-</g>
-<g fill="#0D1B3B" stroke="#8FEFFF" stroke-opacity=".42">
-  <circle cx="624" cy="300" r="10"/><circle cx="1188" cy="335" r="10"/><circle cx="640" cy="520" r="9"/><circle cx="1180" cy="520" r="9"/>
-</g>
-<g stroke="url(#glow)" stroke-width="2" stroke-opacity=".55">
-  <path d="M624 300L790 345"/><path d="M1188 335L1080 358"/><path d="M640 520L810 468"/><path d="M1180 520L1085 470"/>
+<g>
+  <g fill="#0D1B3B" stroke="#8FEFFF" stroke-opacity=".42">
+    <circle cx="624" cy="300" r="10"/><circle cx="1188" cy="335" r="10"/><circle cx="640" cy="520" r="9"/><circle cx="1180" cy="520" r="9"/>
+  </g>
+  <g stroke="url(#glow)" stroke-width="2" stroke-opacity=".55">
+    <path d="M624 300L790 345"/><path d="M1188 335L1080 358"/><path d="M640 520L810 468"/><path d="M1180 520L1085 470"/>
+  </g>
+  <animateTransform attributeName="transform" type="rotate" from="0 930 392" to="-360 930 392" dur="26s" repeatCount="indefinite"/>
 </g>
 <circle cx="930" cy="392" r="245" stroke="#38DDF4" stroke-opacity=".08" stroke-width="34" filter="url(#blur)"/>
 </svg>

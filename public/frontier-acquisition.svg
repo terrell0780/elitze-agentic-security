@@ -19,9 +19,10 @@
 </g>
 <g opacity=".82">
   <ellipse cx="805" cy="420" rx="350" ry="90" transform="rotate(-12 805 420)" stroke="#55E7FF" stroke-width="2" stroke-opacity=".48"/>
-  <ellipse cx="805" cy="420" rx="380" ry="130" transform="rotate(14 805 420)" stroke="#9D7BFF" stroke-width="2" stroke-opacity=".34"/>
+  <ellipse cx="805" cy="420" rx="380" cy="130" transform="rotate(14 805 420)" stroke="#9D7BFF" stroke-width="2" stroke-opacity=".34"/>
   <ellipse cx="805" cy="420" rx="300" ry="52" transform="rotate(29 805 420)" stroke="#55DFFF" stroke-opacity=".32" stroke-width="2"/>
   <circle cx="805" cy="420" r="206" stroke="#7FE8FF" stroke-opacity=".16" stroke-width="22"/>
+  <animateTransform attributeName="transform" type="rotate" from="0 805 420" to="360 805 420" dur="20s" repeatCount="indefinite"/>
 </g>
 <g filter="url(#shadow)">
   <path d="M805 178L1010 258V430C1010 572 920 665 805 720C690 665 600 572 600 430V258L805 178Z" fill="#09172D" fill-opacity=".82" stroke="url(#shield)" stroke-width="6"/>
@@ -45,10 +46,13 @@
   <circle cx="1398" cy="600" r="17"/><path d="M1388 600h20M1398 590v20"/>
 </g>
 <g opacity=".58">
-  <path d="M397 244C520 270 592 316 650 356" stroke="#5DE4FF" stroke-width="2"/>
-  <path d="M1195 244C1084 290 1024 332 962 372" stroke="#8D7CFF" stroke-width="2"/>
-  <path d="M390 602C520 575 592 533 658 490" stroke="#5DE4FF" stroke-width="2"/>
-  <path d="M1180 602C1086 567 1025 524 954 488" stroke="#8D7CFF" stroke-width="2"/>
+  <g>
+    <path d="M397 244C520 270 592 316 650 356" stroke="#5DE4FF" stroke-width="2"/>
+    <path d="M1195 244C1084 290 1024 332 962 372" stroke="#8D7CFF" stroke-width="2"/>
+    <path d="M390 602C520 575 592 533 658 490" stroke="#5DE4FF" stroke-width="2"/>
+    <path d="M1180 602C1086 567 1025 524 954 488" stroke="#8D7CFF" stroke-width="2"/>
+    <animateTransform attributeName="transform" type="rotate" from="0 805 420" to="-360 805 420" dur="28s" repeatCount="indefinite"/>
+  </g>
 </g>
 <g fill="#A7F4FF">
   <circle cx="460" cy="270" r="4"/><circle cx="1110" cy="290" r="4"/><circle cx="520" cy="548" r="4"/><circle cx="1070" cy="548" r="4"/>
