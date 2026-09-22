@@ -159,14 +159,14 @@ export default function AutonomousAnalystPage() {
         )}
 
         <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
-          {[
+          {([
             ["Active Threats",dashboard?.metrics.activeThreats ?? 0,Activity],
             ["Critical Assets",dashboard?.metrics.criticalAssets ?? 0,Target],
             ["KEV",dashboard?.metrics.kev ?? 0,Skull],
             ["EPSS",value(dashboard?.metrics.epss),CircleDot],
             ["VPR",value(dashboard?.metrics.vpr),Waypoints],
             ["Risk",value(dashboard?.metrics.exposure),AlertTriangle],
-          ].map(([label,metric,Icon]) => (
+          ] as Array<[string,string|number,LucideIcon]>).map(([label,metric,Icon]) => (
             <div key={String(label)} className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-4">
               <div className="flex items-center justify-between text-[9px] font-bold uppercase tracking-[.16em] text-[var(--muted)]">
                 <span>{String(label)}</span>

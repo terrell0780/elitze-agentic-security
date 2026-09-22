@@ -2,12 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { getPgPool } from "@/db";
 import { SECURITY_CONNECTORS, isSecurityConnectorId, probeSecurityConnector } from "@/lib/elitze-secure/security-source-fabric";
-import type { SecurityConnectorStatus } from "@/lib/elitze-secure/security-source-fabric-types";
+import type { SecurityConnectorDefinition, SecurityConnectorStatus } from "@/lib/elitze-secure/security-source-fabric-types";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-function isConfigured(definition: SecurityConnectorStatus) {
+function isConfigured(definition: SecurityConnectorDefinition) {
   return definition.credentialEnv.every((name) => Boolean(process.env[name]?.trim()))
     && (!definition.endpointEnv || Boolean(process.env[definition.endpointEnv]?.trim()));
 }
