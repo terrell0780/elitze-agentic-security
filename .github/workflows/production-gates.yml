@@ -70,6 +70,15 @@ jobs:
       - name: Progressive proofing self-test
         run: npm run progressive-proofing:self-test
 
+      - name: Evidence expression self-test
+        run: npm run evidence-expression:self-test
+
+      - name: Pentest request self-test
+        run: npm run pentest-request:self-test
+
+      - name: Sale readiness self-test
+        run: npm run sale:readiness
+
       - name: Typecheck
         run: npm run typecheck
 
