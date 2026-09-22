@@ -9,7 +9,7 @@ export const metadata = {
 };
 
 const assets = [
-  "ELITZE.ca public product surface",
+  "ELITZE.info public product surface",
   "Canonical private source repository and commit history",
   "Application interface and security console",
   "Authentication implementation",

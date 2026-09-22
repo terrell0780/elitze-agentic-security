@@ -23,7 +23,7 @@ function hasConsent() {
 export function trackElitzeEvent(name: ElitzeAnalyticsEvent, params: EventParams = {}) {
   if (typeof window === "undefined" || !hasConsent()) return false;
 
-  const payload = { ...params, source: "elitze.ca" };
+  const payload = { ...params, source: "elitze.info" };
 
   if (typeof window.gtag === "function") {
     window.gtag("event", name, payload);

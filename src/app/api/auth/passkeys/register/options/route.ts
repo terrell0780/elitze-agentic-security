@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     if (!(await assertSameOrigin(request))) return Response.json({ error: "csrf_rejected" }, { status: 403 });
     const user = await getCurrentUser();
     if (!user) return Response.json({ error: "unauthenticated" }, { status: 401 });
-    const rpID = process.env.ELITZE_WEBAUTHN_RP_ID || "elitze.ca";
+    const rpID = process.env.ELITZE_WEBAUTHN_RP_ID || "elitze.info";
     const rpName = process.env.ELITZE_WEBAUTHN_RP_NAME || "ELITZE Agentic Security";
     const existing = await getPgPool().query(
       `SELECT credential_id, transports FROM auth_webauthn_credentials
