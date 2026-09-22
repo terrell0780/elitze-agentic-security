@@ -8,9 +8,10 @@ const ignore = read(".dockerignore");
 const compose = read("compose.yaml");
 const enterprise = read("docker-compose.enterprise.yml");
 
-assert.match(dockerfile, /FROM node:22\.23\.2-alpine3\.24 AS deps/);
-assert.match(dockerfile, /FROM node:22\.23\.2-alpine3\.24 AS builder/);
-assert.match(dockerfile, /FROM node:22\.23\.2-alpine3\.24 AS runner/);
+assert.match(dockerfile, /ARG NODE_IMAGE=node:22\.23\.2-alpine3\.24/);
+assert.match(dockerfile, /FROM \$\{NODE_IMAGE\} AS deps/);
+assert.match(dockerfile, /FROM \$\{NODE_IMAGE\} AS builder/);
+assert.match(dockerfile, /FROM \$\{NODE_IMAGE\} AS runner/);
 assert.match(dockerfile, /npm run build/);
 assert.match(dockerfile, /USER nextjs/);
 assert.match(dockerfile, /HEALTHCHECK/);
