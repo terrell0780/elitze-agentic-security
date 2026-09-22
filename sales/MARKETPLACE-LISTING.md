@@ -30,7 +30,7 @@ The proposed acquisition package, subject to a definitive agreement and verifica
 - Application source, console, database schema/migrations, SDK, and documented architecture.
 - Product and security documentation.
 - Owned ELITZE brand and visual assets.
-- `elitze.ca`, if transferable under the transaction.
+- `elitze.info`, if transferable under the transaction.
 - Deployment configuration and documentation.
 - Sales/acquisition materials.
 - Transferable cloud, communications, analytics, and social accounts only where legally and contractually transferable.

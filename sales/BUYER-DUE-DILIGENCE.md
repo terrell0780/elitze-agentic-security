@@ -3,7 +3,7 @@
 ## 1. Product identity
 
 - Product: **ELITZE Agentic Security**
-- Canonical domain: `elitze.ca`
+- Canonical domain: `elitze.info`
 - Repository: private GitHub repository, disclosed to qualified buyers during diligence
 - Default repository branch: `main`
 - Commercial status: pre-revenue product asset unless separately verified
@@ -76,7 +76,7 @@ The proposed software/product asset package may include, subject to the definiti
 - Application and database migrations.
 - SDK and product/security documentation.
 - ELITZE brand and visual assets owned by the seller.
-- `elitze.ca` domain, if transferable under the transaction.
+- `elitze.info` domain, if transferable under the transaction.
 - Deployment configuration and documentation.
 - Sales and acquisition materials.
 - Transferable cloud, analytics, communications, and social accounts only where legally and contractually transferable.

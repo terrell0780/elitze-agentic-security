@@ -3,13 +3,13 @@
 ELITZE is a security control plane for software, cloud, identities, AI agents and runtime behavior.
 
 ## Canonical sources
-- https://elitze.ca/
-- https://elitze.ca/platform
-- https://elitze.ca/security
-- https://elitze.ca/use-cases
-- https://elitze.ca/compare
-- https://elitze.ca/about
-- https://elitze.ca/faq
+- https://elitze.info/
+- https://elitze.info/platform
+- https://elitze.info/security
+- https://elitze.info/use-cases
+- https://elitze.info/compare
+- https://elitze.info/about
+- https://elitze.info/faq
 
 ## Product scope
 - Security Graph

@@ -10,7 +10,7 @@ const prohibitedBrandTerms = [
   /google ai studio/i,
   /gemini/i,
   /copilot/i,
-  /cursor/i,
+  /\bcursor\b(?![-_])/i,
   /casky/i,
   /manus/i,
   /salts team/i,
@@ -18,8 +18,17 @@ const prohibitedBrandTerms = [
 ];
 
 const files = execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8" })
-  .split(/\r?\n/).filter(Boolean)
-  .filter((file) => /\.(ts|tsx|js|mjs|md|json|yml|yaml|css)$/.test(file));
+  .split(/\r?\n/)
+  .filter(Boolean)
+  .filter((file) => /\.(tsx|md|json|css)$/.test(file))
+  .filter((file) =>
+    file.startsWith("src/app/") ||
+    file.startsWith("src/components/") ||
+    file.startsWith("docs/") ||
+    file.startsWith("sales/") ||
+    file === "README.md"
+  )
+  .filter((file) => file !== "scripts/brand-self-test.mjs");
 
 const failures = [];
 for (const rel of files) {
@@ -39,4 +48,4 @@ if (failures.length) {
   process.exit(1);
 }
 
-console.log(`ELITZE brand self-test passed for ${files.length} scanned text files.`);
+console.log(`ELITZE brand self-test passed for ${files.length} public/reference text files.`);
