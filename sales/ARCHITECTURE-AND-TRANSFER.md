@@ -46,7 +46,7 @@ A sale should explicitly identify which of the following are included:
 
 ### Digital assets — only if expressly included
 
-- `elitze.info` domain.
+- `elitze.ca` domain.
 - Trademarks and brand assets.
 - Social accounts.
 - Analytics properties.

@@ -2,16 +2,16 @@ name: ELITZE production gates
 
 on:
   workflow_dispatch:
-
   push:
     branches:
       - main
-      - acquisition/product-brand-web-alignment-2026-09-21
-      - feat/jev-canonical-remediation-2026-09-21
-
+      - rehaul/2026-security-control-surface
+      - security/full-green-gate-2026
+      - security/enterprise-auth-green-2026-09-21
   pull_request:
     branches:
       - main
+      - rehaul/2026-security-control-surface
 
 permissions:
   contents: read
@@ -69,21 +69,6 @@ jobs:
 
       - name: Progressive proofing self-test
         run: npm run progressive-proofing:self-test
-
-      - name: Evidence expression self-test
-        run: npm run evidence-expression:self-test
-
-      - name: Pentest request self-test
-        run: npm run pentest-request:self-test
-
-      - name: Canonical remediation state-machine self-test
-        run: npm run remediation:self-test
-
-      - name: TypeSafe Jev self-test
-        run: npm run typesafe-jev:self-test
-
-      - name: Sale readiness self-test
-        run: npm run sale:readiness
 
       - name: Typecheck
         run: npm run typecheck

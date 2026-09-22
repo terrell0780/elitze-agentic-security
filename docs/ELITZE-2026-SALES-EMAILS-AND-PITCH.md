@@ -16,7 +16,7 @@ The goal is straightforward: control consequential agent actions and prove wheth
 
 If agent governance, SOC automation or non-human identity risk is on your 2026 roadmap, ELITZE is worth a technical review.
 
-**See the operating model:** https://elitze.info
+**See the operating model:** https://elitze.ca
 
 — ELITZE Agentic Security
 
@@ -42,7 +42,7 @@ Potential transaction paths:
 
 Repository and implementation diligence are available to qualified buyers under a controlled access process. No synthetic metrics or invented production claims are used as diligence evidence.
 
-**Product:** https://elitze.info
+**Product:** https://elitze.ca
 **Source access:** Request repository access through the sales process; the source repository is private.
 
 ## Email 3 — SOC / Security Operations
@@ -59,7 +59,7 @@ That gives the analyst one connected path from signal to verified result instead
 
 ELITZE is designed for solo operators, security teams and enterprise environments.
 
-**See the workflow:** https://elitze.info
+**See the workflow:** https://elitze.ca
 
 ## Short buyer pitch
 
@@ -81,7 +81,7 @@ The model is not the security boundary.
 
 Proposed scope, subject to definitive agreement and diligence:
 
-- `elitze.info`
+- `elitze.ca`
 - ELITZE source repository and commit history
 - owned ELITZE brand and visual assets
 - application, console, database migrations and SDK
@@ -121,7 +121,7 @@ ELITZE Agentic Security is built around that loop.
 
 **See the threat. Control the path. Prove the fix.**
 
-https://elitze.info
+https://elitze.ca
 
 ## Sales trust rule
 

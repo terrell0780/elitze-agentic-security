@@ -1,6 +1,6 @@
 import { SAML, ValidateInResponseTo } from "@node-saml/node-saml";
 
-const siteOrigin = () => process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://elitze.info";
+const siteOrigin = () => process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://elitze.ca";
 
 const required = (name: string) => {
   const value = process.env[name]?.trim();

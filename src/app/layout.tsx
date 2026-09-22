@@ -6,7 +6,7 @@ import Analytics from "@/components/analytics";
 import PrivacyConsent from "@/components/privacy-consent";
 import AccessibilityRepair from "@/components/accessibility-repair";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.info";
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.ca";
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 
 export const metadata: Metadata = {
