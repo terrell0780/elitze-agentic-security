@@ -47,9 +47,12 @@ assert.match(enterprise, /NEXT_PUBLIC_SITE_URL:\s*\$\{NEXT_PUBLIC_SITE_URL:\?Set
 assert.match(enterprise, /ELITZE_BIND_ADDRESS:-127\.0\.0\.1/);
 assert.match(enterprise, /ELITZE_AI_GATEWAY_URL/);
 assert.match(enterprise, /ELITZE_AI_MODEL/);
+assert.match(enterprise, /ELITZE_AI_GATEWAY_REQUIRE_AUTH/);
 assert.match(enterprise, /ELITZE_AI_GATEWAY_TOKEN_FILE: \/run\/secrets\/ai_gateway_token/);
 assert.match(enterprise, /ai_gateway_token:/);
 assert.match(chat, /ELITZE_AI_GATEWAY_TOKEN_FILE/);
+assert.match(chat, /ELITZE_AI_GATEWAY_REQUIRE_AUTH/);
+assert.match(chat, /GATEWAY_AUTH_NOT_CONFIGURED/);
 assert.match(chat, /\/run\/secrets\//);
 assert.match(chat, /requestedAction: "chat\.generate"/);
 assert.match(chat, /No model response was generated/);
