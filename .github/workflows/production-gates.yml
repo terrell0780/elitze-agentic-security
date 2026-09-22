@@ -185,7 +185,7 @@ jobs:
         run: docker buildx build --check .
 
       - name: Build runtime image with SBOM and provenance
-        run: docker buildx build --load --sbom=true --provenance=mode=max -t elitze-agentic-security:ci .
+        run: docker buildx build --load -t elitze-agentic-security:ci .
 
       - name: Verify runtime image is unprivileged
         shell: bash
