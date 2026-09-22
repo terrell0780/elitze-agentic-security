@@ -24,7 +24,9 @@
     "progressive-proofing:self-test": "node --experimental-strip-types scripts/progressive-proofing-self-test.mjs",
     "evidence-expression:self-test": "node --experimental-strip-types scripts/evidence-expression-self-test.mjs",
     "pentest-request:self-test": "node scripts/pentest-request-self-test.mjs",
-    "legal:control-self-test": "node scripts/legal-control-self-test.mjs"
+    "legal:control-self-test": "node scripts/legal-control-self-test.mjs",
+    "remediation:self-test": "node --experimental-strip-types scripts/remediation-state-machine-self-test.mjs",
+    "typesafe-jev:self-test": "node --experimental-strip-types scripts/typesafe-jev-self-test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.0.0",
@@ -40,7 +42,8 @@
     "pg": "8.20.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "zod": "4.5.4"
+    "zod": "4.5.4",
+    "@typesafe-ai/sdk": "0.6.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.1.17",

@@ -7,6 +7,7 @@ on:
     branches:
       - main
       - acquisition/product-brand-web-alignment-2026-09-21
+      - feat/jev-canonical-remediation-2026-09-21
 
   pull_request:
     branches:
@@ -74,6 +75,12 @@ jobs:
 
       - name: Pentest request self-test
         run: npm run pentest-request:self-test
+
+      - name: Canonical remediation state-machine self-test
+        run: npm run remediation:self-test
+
+      - name: TypeSafe Jev self-test
+        run: npm run typesafe-jev:self-test
 
       - name: Sale readiness self-test
         run: npm run sale:readiness
