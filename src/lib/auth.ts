@@ -84,7 +84,7 @@ async function clientMeta() {
 export async function assertSameOrigin(request: Request) {
   const origin = request.headers.get("origin");
   if (!origin) return false;
-  const configured = process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.info";
+  const configured = process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.ca";
   let expected: URL;
   try {
     expected = new URL(configured);

@@ -8,7 +8,6 @@ import SecurityRoleMap from "@/components/security-role-map";
 import TeamCollaboration from "@/components/team-collaboration";
 import GovernedChat from "@/components/governed-chat";
 import ProgressiveProofPanel from "@/components/progressive-proof-panel";
-import EvidenceExpressionDebugger from "@/components/evidence-expression-debugger";
 
 type Health = { ok: boolean };
 type Market = { ok: boolean; stats?: { agents: number; shadowAgents: number; openDiscoveries: number; pendingApprovals: number; asiAvg: number } };
@@ -97,8 +96,6 @@ export default function ConsolePage() {
         <section className="mt-8 rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-5 sm:p-7"><div className="flex items-center gap-2"><Network className="h-4 w-4 text-[var(--accent)]" /><h2 className="text-sm font-semibold">Security graph — observed records</h2></div>{graph?.ok ? <><div className="mt-3 text-xs text-[var(--muted)]">{graph.nodes?.length ?? 0} nodes · {graph.edges?.length ?? 0} edges. No risk score is calculated from missing evidence.</div><div className="mt-4 grid gap-3 lg:grid-cols-2"><div><div className="mb-2 text-[10px] uppercase tracking-wider text-[var(--muted)]">Observed nodes</div><div className="max-h-72 space-y-2 overflow-auto">{(graph.nodes ?? []).slice(0, 20).map((node, index) => <div key={`${node.nodeType}:${node.displayName}:${index}`} className="rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] p-3"><div className="text-xs font-medium">{node.displayName}</div><div className="mt-1 text-[10px] text-[var(--muted)]">{node.nodeType} · {node.source} · {node.evidenceState}</div></div>)}{(graph.nodes ?? []).length === 0 && <div className="rounded-xl border border-dashed border-[var(--border)] p-4 text-xs text-[var(--muted)]">UNKNOWN — no graph records are available.</div>}</div></div><div><div className="mb-2 text-[10px] uppercase tracking-wider text-[var(--muted)]">Observed relationships</div><div className="max-h-72 space-y-2 overflow-auto">{(graph.edges ?? []).slice(0, 20).map((edge, index) => <div key={`${edge.relation}:${edge.from}:${edge.to}:${index}`} className="rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] p-3"><div className="text-xs font-medium">{edge.from} → {edge.to}</div><div className="mt-1 text-[10px] text-[var(--muted)]">{edge.relation} · {edge.source} · {edge.evidenceState}</div></div>)}{(graph.edges ?? []).length === 0 && <div className="rounded-xl border border-dashed border-[var(--border)] p-4 text-xs text-[var(--muted)]">UNAVAILABLE — no observed relationships are available.</div>}</div></div></div></> : <div className="mt-4 rounded-xl border border-dashed border-[var(--border)] p-4 text-xs text-amber-300">{graph?.error ?? "UNAVAILABLE"}. The console will not substitute simulated graph data.</div>}</section>
 
         <ProgressiveProofPanel />
-
-        <EvidenceExpressionDebugger />
 
         <GovernedChat />
 

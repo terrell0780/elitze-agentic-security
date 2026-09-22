@@ -6,7 +6,7 @@ import crypto from "node:crypto";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const webAuthnOrigins = (process.env.ELITZE_WEBAUTHN_ORIGIN || "https://elitze.info,https://www.elitze.info")
+const webAuthnOrigins = (process.env.ELITZE_WEBAUTHN_ORIGIN || "https://elitze.ca,https://www.elitze.ca")
   .split(",").map((value) => value.trim()).filter(Boolean);
 
 export async function POST(request: Request) {
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
       response: body,
       expectedChallenge: async (candidate) => crypto.createHash("sha256").update(candidate).digest("hex") === challengeHash,
       expectedOrigin: webAuthnOrigins,
-      expectedRPID: process.env.ELITZE_WEBAUTHN_RP_ID || "elitze.info",
+      expectedRPID: process.env.ELITZE_WEBAUTHN_RP_ID || "elitze.ca",
       credential: {
         id: row.credential_id,
         publicKey: new Uint8Array(row.public_key),

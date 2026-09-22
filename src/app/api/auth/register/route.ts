@@ -23,7 +23,7 @@ export async function POST(request: NextRequest) {
 
     const user = await registerUser(email, body.password, typeof body.displayName === "string" ? body.displayName : undefined);
     const token = await issueEmailToken(user, "email_verification", 60);
-    const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.info").replace(/\/$/, "");
+    const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.elitze.info").replace(/\/$/, "");
     await sendAuthEmail(user.email, "Verify your ELITZE Agentic Security email", `Verify your email: ${base}/auth/verify?token=${encodeURIComponent(token)}\n\nThis link expires in 60 minutes.`);
     return Response.json({ ok: true, verificationRequired: true });
   } catch (error) {

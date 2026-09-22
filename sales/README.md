@@ -38,7 +38,7 @@ See `docs/ELITZE-CATEGORY-LEADER-MANIFEST.md` for the project's acceptance stand
 
 ## Acquisition scope
 
-The proposed asset package is **ELITZE Agentic Security — complete pre-revenue product asset acquisition**, subject to a definitive agreement and verification. Potential transfer items include the ELITZE product/source IP, owned brand/visual assets, `elitze.info` if transferable, application/database migrations/SDK/documentation, deployment configuration, sales materials, and other expressly listed transferable assets.
+The proposed asset package is **ELITZE Agentic Security — complete pre-revenue product asset acquisition**, subject to a definitive agreement and verification. Potential transfer items include the ELITZE product/source IP, owned brand/visual assets, `elitze.ca` if transferable, application/database migrations/SDK/documentation, deployment configuration, sales materials, and other expressly listed transferable assets.
 
 A proposed transition period is **30 days capped at 10 hours**, unless separately agreed in writing.
 
@@ -48,6 +48,6 @@ The seller's personal GitHub account, personal email and financial accounts, unr
 
 Canonical product name: **ELITZE Agentic Security**
 
-Product domain: `elitze.info`
+Product domain: `elitze.ca`
 
 Source access: **private / qualified buyer diligence only**
