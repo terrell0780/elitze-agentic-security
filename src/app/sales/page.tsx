@@ -353,7 +353,7 @@ export default function SalesPage() {
           <div className="mt-6 rounded-2xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-5 text-xs leading-6 text-[var(--muted-strong)]">
             Container security controls include non-root runtime execution, read-only root filesystems, dropped Linux
             capabilities, no-new-privileges, bounded resources, secret-file injection, migration/health ordering,
-            and CI image vulnerability scanning with SBOM/provenance build metadata.
+            and CI image vulnerability scanning; enterprise registry publishing can carry SBOM/provenance attestations.
           </div>
           <div className="mt-12 grid gap-4 lg:grid-cols-2">
             <div className="rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-7 sm:p-9">
