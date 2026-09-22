@@ -77,7 +77,7 @@ function toRecord(row: DecisionRow): EvidenceExpressionRecord {
 
 async function loadRecords(tenantId: string): Promise<EvidenceExpressionRecord[]> {
   const result = await getPgPool().query<DecisionRow>(
-    \`SELECT
+    `SELECT
       d.decision_ref,
       d.request_id,
       d.tool_name,
@@ -100,7 +100,7 @@ async function loadRecords(tenantId: string): Promise<EvidenceExpressionRecord[]
       AND r.tenant_id = d.tenant_id
      WHERE d.tenant_id = $1
      ORDER BY d.created_at DESC
-     LIMIT 50\`,
+     LIMIT 50`,
     [tenantId],
   );
   return result.rows.map(toRecord);
@@ -111,7 +111,14 @@ export async function GET() {
   if (!user) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
   try {
     const records = await loadRecords(user.tenantId);
-    return NextResponse.json({ ok: true, records, fieldSet: ["decisionRef", "requestId", "subject", "decision", "evidenceState", "stage", "nextAction", "observedAt"] }, { headers: { "cache-control": "no-store" } });
+    return NextResponse.json(
+      {
+        ok: true,
+        records,
+        fieldSet: ["decisionRef", "requestId", "subject", "decision", "evidenceState", "stage", "nextAction", "observedAt"],
+      },
+      { headers: { "cache-control": "no-store" } },
+    );
   } catch (error) {
     console.error("ELITZE evidence debugger load failed", error);
     return NextResponse.json({ ok: false, error: "evidence_expression_unavailable" }, { status: 503 });
@@ -122,7 +129,7 @@ export async function POST(request: Request) {
   const user = await getCurrentUser();
   if (!user) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
   try {
-    const body = await request.json() as { decisionRef?: unknown; expression?: unknown };
+    const body = (await request.json()) as { decisionRef?: unknown; expression?: unknown };
     const decisionRef = typeof body.decisionRef === "string" ? body.decisionRef.trim() : "";
     const expression = typeof body.expression === "string" ? body.expression.trim() : "";
     if (!decisionRef || !expression || expression.length > 500) {
