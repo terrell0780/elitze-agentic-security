@@ -30,6 +30,9 @@ for (const [name, text] of [["compose.yaml", compose], ["docker-compose.enterpri
   assert.match(text, /read_only:\s*true/);
   assert.match(text, /cap_drop:\s*\n\s+- ALL/);
   assert.match(text, /no-new-privileges:true/);
+  assert.match(text, /pids_limit:/);
+  assert.match(text, /mem_limit:/);
+  assert.match(text, /cpus:/);
   assert.match(text, /DATABASE_URL_FILE:\s*\/run\/secrets\/database_url/);
   assert.match(text, /secrets:/);
   assert.match(text, /healthcheck:/);
@@ -56,6 +59,7 @@ assert.match(chat, /GATEWAY_AUTH_NOT_CONFIGURED/);
 assert.match(chat, /\/run\/secrets\//);
 assert.match(chat, /requestedAction: "chat\.generate"/);
 assert.match(chat, /No model response was generated/);
+assert.match(chat, /decision\.decision !== "allow"/);
 
 
 
