@@ -10,7 +10,7 @@ ELITZE follows current Google Search Essentials and avoids tactics intended to m
 
 Required controls:
 
-- Canonical public origin: `https://elitze.ca`.
+- Canonical public origin: `https://elitze.info`.
 - `robots.txt` allows public pages and blocks application/API surfaces.
 - XML sitemap contains only intended public URLs.
 - Page metadata has a stable title, description, canonical URL and social metadata.
@@ -97,7 +97,7 @@ A higher-tier outcome cannot be inferred from a lower-tier metric. Impressions a
 
 Before declaring ELITZE product/business ready, verify:
 
-- `https://elitze.ca` resolves to the intended production experience.
+- `https://elitze.info` resolves to the intended production experience.
 - Canonical URLs point to the chosen production origin.
 - `/robots.txt` and `/sitemap.xml` are reachable.
 - Search Console property is verified and sitemap submitted.
