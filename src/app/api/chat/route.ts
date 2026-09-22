@@ -24,15 +24,75 @@ function gatewayToken() {
   if (!secretFile.startsWith("/run/secrets/")) return "";
 
   try {
-    const token = gatewayToken();
-    const requireGatewayAuth = process.env.ELITZE_AI_GATEWAY_REQUIRE_AUTH !== "false";
-    if (requireGatewayAuth && !token) {
-      return NextResponse.json(
-        { ok: false, state: "GATEWAY_AUTH_NOT_CONFIGURED", error: "Configured AI gateway requires an authorization secret. No model response was generated." },
-        { status: 503 },
-      );
-    }
+    return fs.readFileSync(secretFile, "utf8").trim();
+  } catch {
+    return "";
+  }
+}
 
+async function channelMembership(channelId: number, actorId: string) {
+  const db = getDb();
+  const rows = await db.select({ id: teamChannelMembers.id }).from(teamChannelMembers)
+    .where(and(eq(teamChannelMembers.channelId, channelId), eq(teamChannelMembers.actorId, actorId), isNull(teamChannelMembers.leftAt))).limit(1);
+  return rows.length > 0;
+}
+
+async function findOrCreateAssistantChannel(actorId: string) {
+  const db = getDb();
+  const existing = await db.select({ id: teamChannels.id }).from(teamChannels)
+    .innerJoin(teamChannelMembers, eq(teamChannelMembers.channelId, teamChannels.id))
+    .where(and(eq(teamChannelMembers.actorId, actorId), isNull(teamChannelMembers.leftAt), eq(teamChannels.channelType, "assistant"), isNull(teamChannels.archivedAt))).limit(1);
+  if (existing.length) return existing[0].id;
+
+  const slug = `assistant-${actorId.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 80)}-${Date.now().toString(36)}`;
+  const [channel] = await db.insert(teamChannels).values({
+    slug,
+    name: "ELITZE Chat",
+    description: "Governed AI conversation channel",
+    channelType: "assistant",
+    createdBy: actorId,
+  }).returning({ id: teamChannels.id });
+  await db.insert(teamChannelMembers).values({ channelId: channel.id, actorId, role: "owner" });
+  return channel.id;
+}
+
+export async function POST(request: NextRequest) {
+  const session = await getTeamSession();
+  if (!session) return NextResponse.json({ ok: false, error: "Team authentication required." }, { status: 401 });
+
+  const parsed = bodySchema.safeParse(await request.json().catch(() => null));
+  if (!parsed.success) return NextResponse.json({ ok: false, error: "Invalid chat payload." }, { status: 400 });
+
+  const db = getDb();
+  const channelId = parsed.data.channelId ?? await findOrCreateAssistantChannel(session.actorId);
+  if (parsed.data.channelId && !await channelMembership(channelId, session.actorId)) {
+    return NextResponse.json({ ok: false, error: "Channel membership required." }, { status: 403 });
+  }
+
+  const gatewayUrl = process.env.ELITZE_AI_GATEWAY_URL?.trim();
+  if (!gatewayUrl) {
+    return NextResponse.json({ ok: false, state: "UNAVAILABLE", error: "ELITZE_AI_GATEWAY_URL is not configured. No model response was generated." }, { status: 503 });
+  }
+
+  const decision = evaluatePolicy({
+    actorId: session.actorId,
+    actorType: "human",
+    requestedAction: "chat.generate",
+    purpose: "Security analysis and governed assistant response",
+    dataClass: parsed.data.dataClass,
+  });
+  if (decision.decision !== "allow") return NextResponse.json({ ok: false, state: "BLOCKED", decision }, { status: 403 });
+  const token = gatewayToken();
+  const requireGatewayAuth = process.env.ELITZE_AI_GATEWAY_REQUIRE_AUTH !== "false";
+  if (requireGatewayAuth && !token) {
+    return NextResponse.json(
+      { ok: false, state: "GATEWAY_AUTH_NOT_CONFIGURED", error: "Configured AI gateway requires an authorization secret. No model response was generated." },
+      { status: 503 },
+    );
+  }
+
+
+  try {
     const response = await fetch(`${gatewayUrl.replace(/\/$/, "")}/chat/completions`, {
       method: "POST",
       headers: {
