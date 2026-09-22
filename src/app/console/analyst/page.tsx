@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   Activity, AlertTriangle, Bot, ChevronRight, CircleDot, Database,
   Globe2, Layers3, RefreshCw, ShieldCheck, Skull, Target, Waypoints,
+  type LucideIcon,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
