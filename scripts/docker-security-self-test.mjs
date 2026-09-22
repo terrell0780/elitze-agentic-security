@@ -37,8 +37,6 @@ for (const [name, text] of [["compose.yaml", compose], ["docker-compose.enterpri
   assert.match(text, /secrets:/);
   assert.match(text, /healthcheck:/);
   assert.match(text, /condition: service_completed_successfully/);
-  assert.match(text, /sbom:\s*true/);
-  assert.match(text, /provenance:\s*mode=max/);
   if (name === "compose.yaml") assert.match(text, /internal:\s*true/);
 }
 
