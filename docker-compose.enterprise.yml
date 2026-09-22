@@ -31,8 +31,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      sbom: true
-      provenance: mode=max
     image: ${ELITZE_IMAGE:-elitze-agentic-security:enterprise}
     pull_policy: build
     restart: unless-stopped
