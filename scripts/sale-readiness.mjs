@@ -23,7 +23,7 @@ const textExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".json", ".md", ".
 const publicCodeForbidden = [
   /God['’]s Eye/i,
   /salts team/i,
-  /\btop[- ]?(?:1|3|5|five)\b/i,
+  /\btop[- ]?(?:1|3|5|five)(?![\/.0-9])\b/i,
   /\b(?:#1|number one|best in class|industry[- ]leading)\b/i,
   /fabricated (?:customer|review|statistic|benchmark)/i,
 ];
