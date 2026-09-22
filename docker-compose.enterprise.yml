@@ -45,6 +45,7 @@ services:
       ELITZE_TRUST_PROXY: ${ELITZE_TRUST_PROXY:-true}
       ELITZE_AI_GATEWAY_URL: ${ELITZE_AI_GATEWAY_URL:-}
       ELITZE_AI_MODEL: ${ELITZE_AI_MODEL:-}
+      ELITZE_AI_GATEWAY_REQUIRE_AUTH: ${ELITZE_AI_GATEWAY_REQUIRE_AUTH:-true}
       ELITZE_AI_GATEWAY_TOKEN_FILE: /run/secrets/ai_gateway_token
     secrets:
       - database_url
