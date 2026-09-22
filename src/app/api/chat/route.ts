@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import { NextRequest, NextResponse } from "next/server";
 import { and, eq, isNull } from "drizzle-orm";
 import { z } from "zod";
@@ -13,6 +14,21 @@ const bodySchema = z.object({
 });
 
 type ChatCompletion = { choices?: Array<{ message?: { content?: string } }> };
+
+function gatewayToken() {
+  const direct = process.env.ELITZE_AI_GATEWAY_TOKEN?.trim();
+  if (direct) return direct;
+
+  const secretFile = process.env.ELITZE_AI_GATEWAY_TOKEN_FILE?.trim();
+  if (!secretFile) return "";
+  if (!secretFile.startsWith("/run/secrets/")) return "";
+
+  try {
+    return fs.readFileSync(secretFile, "utf8").trim();
+  } catch {
+    return "";
+  }
+}
 
 async function channelMembership(channelId: number, actorId: string) {
   const db = getDb();
@@ -72,7 +88,7 @@ export async function POST(request: NextRequest) {
       method: "POST",
       headers: {
         "content-type": "application/json",
-        ...(process.env.ELITZE_AI_GATEWAY_TOKEN ? { authorization: `Bearer ${process.env.ELITZE_AI_GATEWAY_TOKEN}` } : {}),
+        ...(gatewayToken() ? { authorization: `Bearer ${gatewayToken()}` } : {}),
       },
       body: JSON.stringify({
         model: process.env.ELITZE_AI_MODEL || "default",
