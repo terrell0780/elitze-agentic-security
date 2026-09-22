@@ -14,6 +14,7 @@ assert.match(dockerfile, /FROM \$\{NODE_IMAGE\} AS deps/);
 assert.match(dockerfile, /FROM \$\{NODE_IMAGE\} AS builder/);
 assert.match(dockerfile, /FROM \$\{NODE_IMAGE\} AS runner/);
 assert.match(dockerfile, /npm run build/);
+assert.match(dockerfile, /rm -rf \/usr\/local\/lib\/node_modules\/npm/);
 assert.match(dockerfile, /USER nextjs/);
 assert.match(dockerfile, /HEALTHCHECK/);
 assert.doesNotMatch(dockerfile, /--privileged/);
