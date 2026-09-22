@@ -119,6 +119,9 @@ jobs:
       - name: Progressive proofing self-test
         run: npm run progressive-proofing:self-test
 
+      - name: Security fabric self-test
+        run: npm run security-fabric:self-test
+
       - name: Typecheck
         run: npm run typecheck
 

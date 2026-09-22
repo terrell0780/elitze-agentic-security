@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Activity, Database, Network, Search, ShieldCheck, TriangleAlert, Users } from "lucide-react";
 import SmartChatHierarchy from "@/components/smart-chat-hierarchy";
@@ -83,7 +84,7 @@ export default function ConsolePage() {
 
   return (
     <main className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
-      <header className="border-b border-[var(--border)] bg-[var(--header)]/95 backdrop-blur-xl"><div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6"><div><div className="text-sm font-bold tracking-wide">ELITZE</div><div className="text-[10px] uppercase tracking-[.22em] text-[var(--accent)]">Agentic Security Console</div></div><div className="flex items-center gap-2 text-xs"><span className={`h-2 w-2 rounded-full ${health?.ok ? "bg-emerald-400" : "bg-amber-400"}`} /><span className="text-[var(--muted)]">{health?.ok ? "Database connected" : "Database unavailable"}</span></div></div></header>
+      <header className="border-b border-[var(--border)] bg-[var(--header)]/95 backdrop-blur-xl"><div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6"><div><div className="text-sm font-bold tracking-wide">ELITZE</div><div className="text-[10px] uppercase tracking-[.22em] text-[var(--accent)]">Agentic Security Console</div></div><div className="flex items-center gap-2 text-xs"><span className={`h-2 w-2 rounded-full ${health?.ok ? "bg-emerald-400" : "bg-amber-400"}`} /><span className="text-[var(--muted)]">{health?.ok ? "Database connected" : "Database unavailable"}</span></div></div><Link href="/console/analyst" className="rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] px-3 py-2 text-xs font-semibold text-[var(--accent)]">Autonomous Analyst</Link></header>
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
         <div className="mb-7 flex flex-col gap-2"><div className="text-[10px] font-bold uppercase tracking-[.22em] text-[var(--accent)]">Live security state</div><h1 className="text-3xl font-black tracking-[-.04em] sm:text-4xl">Security Console</h1><p className="max-w-3xl text-sm leading-6 text-[var(--muted-strong)]">Live state comes only from configured ELITZE services and database. Empty means empty; unavailable means unavailable.</p></div>
