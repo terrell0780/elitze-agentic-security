@@ -43,8 +43,12 @@ services:
       NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:?Set NEXT_PUBLIC_SITE_URL to the customer deployment origin}
       DATABASE_URL_FILE: /run/secrets/database_url
       ELITZE_TRUST_PROXY: ${ELITZE_TRUST_PROXY:-true}
+      ELITZE_AI_GATEWAY_URL: ${ELITZE_AI_GATEWAY_URL:-}
+      ELITZE_AI_MODEL: ${ELITZE_AI_MODEL:-}
+      ELITZE_AI_GATEWAY_TOKEN_FILE: /run/secrets/ai_gateway_token
     secrets:
       - database_url
+      - ai_gateway_token
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -80,3 +84,5 @@ networks:
 secrets:
   database_url:
     environment: ELITZE_DATABASE_URL
+  ai_gateway_token:
+    environment: ELITZE_AI_GATEWAY_TOKEN
