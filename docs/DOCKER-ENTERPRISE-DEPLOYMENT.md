@@ -80,7 +80,7 @@ ELITZE_AI_MODEL
 ELITZE_AI_GATEWAY_TOKEN
 ```
 
-The model gateway must expose an authorized OpenAI-compatible `/chat/completions` endpoint. ELITZE evaluates its application policy before generating a response and returns an unavailable/blocked state rather than silently fabricating a model result. The enterprise Compose layer mounts the model credential as `/run/secrets/ai_gateway_token`; the token is not copied into the image.
+The model gateway must expose an authorized OpenAI-compatible `/chat/completions` endpoint. ELITZE evaluates its application policy before generating a response and returns an unavailable/blocked state rather than silently fabricating a model result. Gateway authentication is fail-closed by default when a gateway is configured; `ELITZE_AI_GATEWAY_REQUIRE_AUTH=false` is an explicit exception for a customer gateway that intentionally requires no bearer credential. The enterprise Compose layer mounts the model credential as `/run/secrets/ai_gateway_token`; the token is not copied into the image.
 
 Use the customer's secret manager to provide the values to the Compose environment rather than committing them.
 
