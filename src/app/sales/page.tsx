@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Check, FileCheck2, LockKeyhole, Network, ShieldCheck } from "lucide-react";
 import AcquisitionCta from "@/components/acquisition-cta";
+import FrontierHero from "@/components/frontier-hero";
 
 export const metadata = {
   title: "ELITZE Agentic Security — Acquisition",
@@ -141,6 +142,14 @@ export default function SalesPage() {
               The buyer surface separates implemented product structure, integration dependencies,
               evidence limitations and transaction scope instead of treating architecture as proof of production outcomes.
             </p>
+            <div className="mt-10">
+              <FrontierHero
+                src="/frontier-acquisition.svg"
+                alt="ELITZE acquisition visual showing a governed security core connected to cloud, code, identity, data and runtime systems."
+                eyebrow="ELITZE ASSET SURFACE"
+                label="ACQUISITION VIEW"
+              />
+            </div>
             <div className="mt-8 flex flex-wrap gap-3">
               <AcquisitionCta
                 href="mailto:tsh_cook@hotmail.com?subject=ELITZE%20Agentic%20Security%20-%20acquisition%20inquiry"

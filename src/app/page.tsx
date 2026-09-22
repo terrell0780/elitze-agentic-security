@@ -5,6 +5,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { ArrowRight, Check, Crosshair, Menu, ShieldCheck, X } from "lucide-react";
 import AcquisitionCta from "@/components/acquisition-cta";
+import FrontierHero from "@/components/frontier-hero";
 import LiveControlPlane from "@/components/live-control-plane";
 
 const lifecycle = [
@@ -63,7 +64,15 @@ export default function HomePage() {
               {["Agent discovery","Workload identity","Policy enforcement","Evidence / retest"].map((x) => <div key={x} className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />{x}</div>)}
             </div>
           </div>
-          <LiveControlPlane />
+          <div className="relative">
+            <FrontierHero
+              src="/frontier-command.svg"
+              alt="ELITZE interactive 3D security command visual showing agents, infrastructure, code, identity and global security relationships."
+              eyebrow="ELITZE COMMAND PLANE"
+              label="LIVE CONTROL SURFACE"
+            />
+            <div className="pointer-events-none absolute -bottom-3 left-8 right-8 h-16 rounded-full bg-cyan-300/15 blur-3xl" />
+          </div>
         </div>
       </section>
 
