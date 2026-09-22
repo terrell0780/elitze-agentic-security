@@ -1,6 +1,6 @@
 import * as oidc from "openid-client";
 
-const siteOrigin = () => process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://elitze.ca";
+const siteOrigin = () => process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://elitze.info";
 
 export function oidcConfig() {
   const issuer = process.env.ELITZE_OIDC_ISSUER_URL?.trim();
