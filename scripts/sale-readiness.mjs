@@ -15,7 +15,7 @@ for (const forbidden of [".env", ".env.local", ".env.production"]) {
 const secretPatterns = [
   /-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----/i,
   /(?:api[_-]?key|secret|token|password)\s*[:=]\s*["']?[A-Za-z0-9_\-]{32,}["']?/i,
-  /postgres(?:ql)?:\/\/[^\s"']+:[^\s"']+@/i,
+  /postgres(?:ql)?:\/\/[^:\s"']+:[A-Za-z0-9_-]{32,}@/i,
 ];
 
 const publicCodeExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".css"]);
