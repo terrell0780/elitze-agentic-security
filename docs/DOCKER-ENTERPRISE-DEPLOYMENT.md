@@ -35,9 +35,9 @@ Docker recommends rootless mode where the operational environment supports it. E
 
 ## Build integrity
 
-The Docker build uses a multi-stage build so build dependencies do not become part of the runtime image. The release workflow requests SBOM and provenance metadata during the BuildKit image build.
+The Docker build uses a multi-stage build so build dependencies do not become part of the runtime image. Enterprise registry publishing should use BuildKit SBOM and provenance attestations and retain those attestations with the published image.
 
-For enterprise registry workflows, publish the image with those attestations and pair them with the organization’s image admission policy. A registry admission process should reject unsigned, unscanned or stale images according to the buyer's controls.
+For enterprise registry workflows, pair the published attestations with the organization’s image admission policy. A registry admission process should reject unsigned, unscanned or stale images according to the buyer's controls.
 
 ## Enterprise deployment models
 
