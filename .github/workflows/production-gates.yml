@@ -137,3 +137,17 @@ jobs:
           name: elitze-agentic-security-sbom
           path: sbom.cdx.json
           if-no-files-found: error
+
+  release-green-light:
+    name: Final release green light
+    needs:
+      - code-review
+      - verify
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Confirm all release gates passed
+        run: |
+          echo "GREEN LIGHT — code review, security verification, sale readiness, typecheck, lint, build, dependency audit, and SBOM gates passed."
+          echo "This commit is eligible for merge evaluation and production promotion."
