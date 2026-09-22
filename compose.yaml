@@ -65,8 +65,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      sbom: true
-      provenance: mode=max
     image: elitze-agentic-security:local
     restart: unless-stopped
     environment:
