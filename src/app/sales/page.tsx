@@ -70,6 +70,7 @@ const assets = [
   "ELITZE SDK and implemented integration framework",
   "Security architecture, policy, evidence and validation documentation",
   "Pentest request workflow and evidence-expression tooling in the repository",
+  "Two Docker deployment layers with enterprise deployment documentation and security gates",
   "Owned ELITZE brand and visual assets, subject to ownership verification",
   "ELITZE.info domain, if transferable under the definitive agreement",
   "Acquisition, diligence, handoff and technical transfer materials",
@@ -82,10 +83,29 @@ const diligence = [
   "Authentication, session, RBAC, tenant isolation and authorization paths",
   "Database migrations, required environment variables and runtime dependencies",
   "Configured versus unavailable integrations and external executors",
+  "Container image, SBOM/provenance, runtime-hardening and deployment-network controls",
   "Security graph, policy enforcement, audit ledger and evidence state model",
   "Pentest / ROE boundaries, retesting controls and containment behavior",
   "Public-claim, IP, domain, brand and third-party rights review",
   "Buyer-controlled deployment verification before closing",
+];
+
+const deploymentModels = [
+  {
+    label: "PORTABLE EVALUATION",
+    body: "A bundled PostgreSQL deployment is available for local diligence and isolated evaluation, with migrations gated before the application starts.",
+    state: "compose.yaml",
+  },
+  {
+    label: "CUSTOMER-MANAGED",
+    body: "A hardened container layer runs against customer-managed PostgreSQL in AWS, Azure, GCP, private cloud or controlled VM infrastructure.",
+    state: "docker-compose.enterprise.yml",
+  },
+  {
+    label: "PRIVATE / ON-PREM",
+    body: "The same container boundary can sit behind a customer ingress, WAF and egress policy with approved model and security endpoints.",
+    state: "Customer network controls apply",
+  },
 ];
 
 const buyerFits = [
@@ -306,7 +326,36 @@ export default function SalesPage() {
 
       <section className="border-y border-[var(--border)] bg-[var(--section)]">
         <div className="mx-auto max-w-[1400px] px-4 py-14 sm:px-7 sm:py-20">
-          <div className="grid gap-4 lg:grid-cols-2">
+          <div className="max-w-4xl">
+            <div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">
+              Portable enterprise deployment
+            </div>
+            <h2 className="mt-3 text-3xl font-black tracking-[-.04em] sm:text-5xl">
+              The control plane can move with the buyer.
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-[var(--muted-strong)]">
+              The repository now includes two Docker deployment layers. The portable layer supports isolated evaluation with
+              a bundled database. The enterprise layer is designed for customer-managed PostgreSQL and controlled network
+              placement, while preserving ELITZE&apos;s application security boundary.
+            </p>
+          </div>
+          <div className="mt-10 grid gap-3 lg:grid-cols-3">
+            {deploymentModels.map((model) => (
+              <div key={model.label} className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-6">
+                <div className="font-mono text-[9px] tracking-[.16em] text-[var(--accent)]">{model.label}</div>
+                <div className="mt-3 text-sm font-semibold leading-6">{model.body}</div>
+                <div className="mt-4 text-[9px] font-bold uppercase tracking-[.14em] text-[var(--muted)]">
+                  {model.state}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 rounded-2xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-5 text-xs leading-6 text-[var(--muted-strong)]">
+            Container security controls include non-root runtime execution, read-only root filesystems, dropped Linux
+            capabilities, no-new-privileges, bounded resources, secret-file injection, migration/health ordering,
+            and CI image vulnerability scanning with SBOM/provenance build metadata.
+          </div>
+          <div className="mt-12 grid gap-4 lg:grid-cols-2">
             <div className="rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-7 sm:p-9">
               <h2 className="text-2xl font-black">Included asset set</h2>
               <div className="mt-6 grid gap-2">

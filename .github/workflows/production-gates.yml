@@ -57,6 +57,9 @@ jobs:
       - name: Sale readiness review
         run: npm run sale:readiness
 
+      - name: Docker security static gate
+        run: npm run docker:security-self-test
+
       - name: Typecheck
         run: npm run typecheck
 
@@ -67,12 +70,12 @@ jobs:
         run: npm run build
 
       - name: Code review green light
-        run: echo "GREEN LIGHT — review integrity, sale readiness, typecheck, lint, and production build passed."
+        run: echo "GREEN LIGHT — review integrity, sale readiness, Docker security policy, typecheck, lint, and production build passed."
 
   verify:
     needs: code-review
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
 
     steps:
       - name: Checkout
@@ -119,6 +122,15 @@ jobs:
       - name: Progressive proofing self-test
         run: npm run progressive-proofing:self-test
 
+      - name: Evidence expression self-test
+        run: npm run evidence-expression:self-test
+
+      - name: Pentest request self-test
+        run: npm run pentest-request:self-test
+
+      - name: Docker security static gate
+        run: npm run docker:security-self-test
+
       - name: Typecheck
         run: npm run typecheck
 
@@ -138,16 +150,70 @@ jobs:
           path: sbom.cdx.json
           if-no-files-found: error
 
+  container-security:
+    name: Container security gate
+    needs: code-review
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout exact review commit
+        uses: actions/checkout@v4
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Prepare ephemeral Compose validation environment
+        shell: bash
+        run: |
+          PASSWORD="$(openssl rand -hex 32)"
+          {
+            echo "ELITZE_POSTGRES_PASSWORD=$PASSWORD"
+            echo "ELITZE_DATABASE_URL=postgresql://elitze:$PASSWORD@postgres:5432/elitze"
+            echo "NEXT_PUBLIC_SITE_URL=http://localhost:3000"
+            echo "ELITZE_BIND_ADDRESS=127.0.0.1"
+          } > .env.ci
+
+      - name: Validate Compose configuration
+        run: |
+          docker compose --env-file .env.ci config --quiet
+          docker compose --env-file .env.ci -f docker-compose.enterprise.yml config --quiet
+
+      - name: Dockerfile build check
+        run: docker buildx build --check .
+
+      - name: Build runtime image with SBOM and provenance
+        run: docker buildx build --load --sbom=true --provenance=mode=max -t elitze-agentic-security:ci .
+
+      - name: Verify runtime image is unprivileged
+        shell: bash
+        run: |
+          USER_ID="$(docker image inspect elitze-agentic-security:ci --format '{{.Config.User}}')"
+          test "$USER_ID" = "nextjs"
+
+      - name: Scan image for critical and high vulnerabilities
+        uses: aquasecurity/trivy-action@v0.36.0
+        with:
+          image-ref: elitze-agentic-security:ci
+          format: table
+          exit-code: "1"
+          ignore-unfixed: true
+          vuln-type: os,library
+          severity: CRITICAL,HIGH
+
   release-green-light:
     name: Final release green light
     needs:
       - code-review
       - verify
+      - container-security
     runs-on: ubuntu-latest
     timeout-minutes: 5
 
     steps:
       - name: Confirm all release gates passed
         run: |
-          echo "GREEN LIGHT — code review, security verification, sale readiness, typecheck, lint, build, dependency audit, and SBOM gates passed."
+          echo "GREEN LIGHT — code review, security verification, Docker container security, sale readiness, typecheck, lint, build, dependency audit, and SBOM gates passed."
           echo "This commit is eligible for merge evaluation and production promotion."

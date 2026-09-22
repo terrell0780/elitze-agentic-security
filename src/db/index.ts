@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool } from "pg";
 
@@ -8,13 +9,32 @@ const globalForDb = globalThis as typeof globalThis & {
 let databasePool: Pool | undefined;
 let databaseClient: ReturnType<typeof drizzle> | undefined;
 
+function databaseConnectionString() {
+  const direct = process.env.DATABASE_URL?.trim();
+  if (direct) return direct;
+
+  const secretFile = process.env.DATABASE_URL_FILE?.trim();
+  if (!secretFile) {
+    throw new Error("DATABASE_URL is required");
+  }
+  if (!secretFile.startsWith("/run/secrets/")) {
+    throw new Error("DATABASE_URL_FILE must point to a Docker secret under /run/secrets");
+  }
+
+  let value = "";
+  try {
+    value = fs.readFileSync(secretFile, "utf8").trim();
+  } catch {
+    throw new Error("DATABASE_URL_FILE could not be read");
+  }
+  if (!value) throw new Error("DATABASE_URL_FILE is empty");
+  return value;
+}
+
 function getPool(): Pool {
   if (databasePool) return databasePool;
 
-  const databaseUrl = process.env.DATABASE_URL?.trim();
-  if (!databaseUrl) {
-    throw new Error("DATABASE_URL is required");
-  }
+  const databaseUrl = databaseConnectionString();
 
   databasePool =
     globalForDb.__elitzePostgresqlPool ??

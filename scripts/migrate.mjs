@@ -3,8 +3,23 @@ import path from "node:path";
 import process from "node:process";
 import pg from "pg";
 
-const databaseUrl = process.env.DATABASE_URL?.trim();
-if (!databaseUrl) throw new Error("DATABASE_URL is required");
+function databaseConnectionString() {
+  const direct = process.env.DATABASE_URL?.trim();
+  if (direct) return direct;
+
+  const secretFile = process.env.DATABASE_URL_FILE?.trim();
+  if (!secretFile) throw new Error("DATABASE_URL is required");
+  if (!secretFile.startsWith("/run/secrets/")) {
+    throw new Error("DATABASE_URL_FILE must point to a Docker secret under /run/secrets");
+  }
+  return fs.readFile(secretFile, "utf8").then((value) => {
+    const trimmed = value.trim();
+    if (!trimmed) throw new Error("DATABASE_URL_FILE is empty");
+    return trimmed;
+  });
+}
+
+const databaseUrl = await databaseConnectionString();
 const client = new pg.Client({ connectionString: databaseUrl });
 await client.connect();
 const migrationLock = "elitze:migrations";

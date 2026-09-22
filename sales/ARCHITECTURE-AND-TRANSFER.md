@@ -20,15 +20,26 @@ The documented security boundary is not the model or agent. Internal security-de
 - Environment-driven secret configuration.
 - Database-backed security and application APIs.
 - Git-based source repository.
+- Multi-stage Docker runtime image definition.
+- Portable Compose deployment with bundled PostgreSQL for isolated evaluation.
+- Hardened enterprise Compose deployment for customer-managed PostgreSQL.
+- Container security self-test and blocking CI image scan.
 
-## Production setup described by the repository
+## Deployment layers described by the repository
 
-- Copy `.env.example` into a secret-managed environment.
-- Configure `DATABASE_URL`.
-- Configure `ELITZE_INTERNAL_API_KEY`.
-- Run database migrations.
-- Run typecheck, lint, tests, and build.
-- Deploy with the matching runtime environment and database.
+### Portable evaluation
+
+`compose.yaml` runs ELITZE with PostgreSQL 18.6 on a private backend network. The migration service must complete before the application starts. The application has a read-only root filesystem, dropped capabilities, no-new-privileges, bounded resources and a container health check.
+
+### Enterprise
+
+`docker-compose.enterprise.yml` runs the same runtime image against customer-managed PostgreSQL. The database URL is provided as a Docker secret and the application is bound to a configurable local interface so a customer ingress, WAF or load balancer can sit in front of ELITZE.
+
+### Build and supply-chain controls
+
+The Dockerfile is multi-stage and runs the final image as the unprivileged `nextjs` user. Compose enables SBOM and provenance attestations. The production gates validate Compose configuration, build the image, verify the runtime user and run a blocking CRITICAL/HIGH Trivy image scan.
+
+The deployment documentation covers hosted SaaS, customer-managed cloud, private cloud/on-premises and controlled/isolated patterns. Customer network policy remains responsible for outbound database, model and security-integration access.
 
 ## Transfer package
 
