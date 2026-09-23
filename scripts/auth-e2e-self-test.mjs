@@ -84,6 +84,20 @@ async function waitForServer() {
   throw new Error(`Next server did not become ready. Logs:\\n${serverLogs.slice(-4000)}`);
 }
 
+async function jsonWithTimeout(path, cookie) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
+    return await fetch(`${origin}${path}`, {
+      headers: { cookie },
+      cache: "no-store",
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 async function jsonRequest(path, init = {}) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 15000);
@@ -246,7 +260,7 @@ try {
     assert(secondCookie.includes("elitze_session="), "second account did not receive a session cookie");
 
     const tenants = await db.query(
-      "SELECT id, email_normalized FROM auth_users WHERE email_normalized IN ($1,$2) ORDER BY email_normalized",
+      "SELECT id, email_normalized, tenant_id FROM auth_users WHERE email_normalized IN ($1,$2) ORDER BY email_normalized",
       [testEmail, secondEmail],
     );
     assert(tenants.rowCount === 2 && tenants.rows[0].tenant_id !== tenants.rows[1].tenant_id, "accounts did not receive isolated tenants");
@@ -295,25 +309,25 @@ try {
     const fixtureA = await seed({ tenantId: tenantA.tenant_id, suffix: "A" });
     const fixtureB = await seed({ tenantId: tenantB.tenant_id, suffix: "B" });
 
-    const graphA = await fetch(`${origin}/api/console/security-graph`, { headers: { cookie }, cache: "no-store" });
+    const graphA = await jsonWithTimeout("/api/console/security-graph", cookie);
     const graphABody = await graphA.json();
     assert(graphA.status === 200 && graphABody.ok === true, "tenant A security graph request failed");
     assert(graphABody.nodes.some((node) => node.subjectKey === fixtureA.nodeKey), "tenant A graph data missing");
     assert(!graphABody.nodes.some((node) => node.subjectKey === fixtureB.nodeKey), "tenant A graph exposed tenant B data");
 
-    const graphB = await fetch(`${origin}/api/console/security-graph`, { headers: { cookie: secondCookie }, cache: "no-store" });
+    const graphB = await jsonWithTimeout("/api/console/security-graph", secondCookie);
     const graphBBody = await graphB.json();
     assert(graphB.status === 200 && graphBBody.ok === true, "tenant B security graph request failed");
     assert(graphBBody.nodes.some((node) => node.subjectKey === fixtureB.nodeKey), "tenant B graph data missing");
     assert(!graphBBody.nodes.some((node) => node.subjectKey === fixtureA.nodeKey), "tenant B graph exposed tenant A data");
 
-    const evidenceA = await fetch(`${origin}/api/console/evidence-debugger`, { headers: { cookie }, cache: "no-store" });
+    const evidenceA = await jsonWithTimeout("/api/console/evidence-debugger", cookie);
     const evidenceABody = await evidenceA.json();
     assert(evidenceA.status === 200 && evidenceABody.ok === true, "tenant A evidence request failed");
     assert(evidenceABody.records.some((record) => record.decisionRef === fixtureA.decisionRef), "tenant A evidence missing");
     assert(!evidenceABody.records.some((record) => record.decisionRef === fixtureB.decisionRef), "tenant A evidence exposed tenant B data");
 
-    const evidenceB = await fetch(`${origin}/api/console/evidence-debugger`, { headers: { cookie: secondCookie }, cache: "no-store" });
+    const evidenceB = await jsonWithTimeout("/api/console/evidence-debugger", secondCookie);
     const evidenceBBody = await evidenceB.json();
     assert(evidenceB.status === 200 && evidenceBBody.ok === true, "tenant B evidence request failed");
     assert(evidenceBBody.records.some((record) => record.decisionRef === fixtureB.decisionRef), "tenant B evidence missing");
