@@ -25,7 +25,10 @@
   <animateTransform attributeName="transform" type="rotate" from="0 805 420" to="360 805 420" dur="20s" repeatCount="indefinite"/>
 </g>
 <g filter="url(#shadow)">
-  <path d="M805 178L1010 258V430C1010 572 920 665 805 720C690 665 600 572 600 430V258L805 178Z" fill="#09172D" fill-opacity=".82" stroke="url(#shield)" stroke-width="6"/>
+  <g>
+    <path d="M805 178L1010 258V430C1010 572 920 665 805 720C690 665 600 572 600 430V258L805 178Z" fill="#09172D" fill-opacity=".82" stroke="url(#shield)" stroke-width="6"/>
+    <animateTransform attributeName="transform" type="rotate" from="0 805 420" to="360 805 420" dur="48s" repeatCount="indefinite"/>
+  </g>
   <path d="M805 225L960 286V425C960 530 896 598 805 645C714 598 650 530 650 425V286L805 225Z" fill="#101D4C" fill-opacity=".78" stroke="#76E7FF" stroke-opacity=".65" stroke-width="3"/>
   <path d="M805 278L900 316V412C900 488 864 531 805 570C746 531 710 488 710 412V316L805 278Z" fill="url(#core)" stroke="#D0FFFF" stroke-opacity=".75" stroke-width="3"/>
   <path d="M805 308L850 336V424C850 462 832 490 805 510C778 490 760 462 760 424V336L805 308Z" fill="#07132A" fill-opacity=".55" stroke="#A9F4FF" stroke-width="2"/>
@@ -56,6 +59,11 @@
 </g>
 <g fill="#A7F4FF">
   <circle cx="460" cy="270" r="4"/><circle cx="1110" cy="290" r="4"/><circle cx="520" cy="548" r="4"/><circle cx="1070" cy="548" r="4"/>
+</g>
+<g opacity=".78">
+  <circle cx="805" cy="420" r="222" stroke="#73E8FF" stroke-opacity=".2" stroke-width="2" stroke-dasharray="3 17"/>
+  <circle cx="805" cy="420" r="244" stroke="#9A7BFF" stroke-opacity=".15" stroke-width="1.5" stroke-dasharray="26 26"/>
+  <animateTransform attributeName="transform" type="rotate" from="0 805 420" to="-360 805 420" dur="34s" repeatCount="indefinite"/>
 </g>
 <path d="M112 775H1490" stroke="#67E8F9" stroke-opacity=".18"/>
 <path d="M180 790H1410" stroke="#8B7CFB" stroke-opacity=".12"/>

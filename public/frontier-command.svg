@@ -30,6 +30,7 @@
   <circle cx="930" cy="392" r="190" stroke="#7FE7FF" stroke-opacity=".42" stroke-width="2"/>
   <circle cx="930" cy="392" r="170" fill="url(#earth)" stroke="#BEEFFF" stroke-opacity=".8" stroke-width="3"/>
   <g clip-path="url(#planet)" opacity=".58">
+    <animateTransform attributeName="transform" type="rotate" from="0 930 392" to="360 930 392" dur="42s" repeatCount="indefinite"/>
     <path d="M730 370C820 322 910 330 1025 358C1118 381 1175 423 1210 472" stroke="#B7F6FF" stroke-width="3" stroke-opacity=".6"/>
     <path d="M750 415C842 380 920 392 995 432C1070 473 1120 520 1140 600" stroke="#7F8FFF" stroke-width="4" stroke-opacity=".45"/>
     <path d="M790 250C824 335 910 402 1084 454" stroke="#70E4FF" stroke-width="2" stroke-opacity=".55"/>
@@ -62,6 +63,11 @@
     <path d="M624 300L790 345"/><path d="M1188 335L1080 358"/><path d="M640 520L810 468"/><path d="M1180 520L1085 470"/>
   </g>
   <animateTransform attributeName="transform" type="rotate" from="0 930 392" to="-360 930 392" dur="26s" repeatCount="indefinite"/>
+</g>
+<g opacity=".72">
+  <circle cx="930" cy="392" r="236" stroke="#6FE7FF" stroke-opacity=".2" stroke-width="2" stroke-dasharray="2 18"/>
+  <circle cx="930" cy="392" r="252" stroke="#9A7BFF" stroke-opacity=".14" stroke-width="1.5" stroke-dasharray="34 22"/>
+  <animateTransform attributeName="transform" type="rotate" from="0 930 392" to="-360 930 392" dur="32s" repeatCount="indefinite"/>
 </g>
 <circle cx="930" cy="392" r="245" stroke="#38DDF4" stroke-opacity=".08" stroke-width="34" filter="url(#blur)"/>
 </svg>
