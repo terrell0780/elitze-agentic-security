@@ -310,25 +310,25 @@ try {
 
     const graphA = await jsonWithTimeout("/api/console/security-graph", cookie);
     const graphABody = await graphA.json();
-    assert(graphA.status === 200 && graphABody.ok === true, "tenant A security graph request failed");
+    assert(graphA.status === 200 && graphABody.ok === true, `tenant A security graph request failed: ${graphA.status} ${JSON.stringify(graphABody)}`);
     assert(graphABody.nodes.some((node) => node.subjectKey === fixtureA.nodeKey), "tenant A graph data missing");
     assert(!graphABody.nodes.some((node) => node.subjectKey === fixtureB.nodeKey), "tenant A graph exposed tenant B data");
 
     const graphB = await jsonWithTimeout("/api/console/security-graph", secondCookie);
     const graphBBody = await graphB.json();
-    assert(graphB.status === 200 && graphBBody.ok === true, "tenant B security graph request failed");
+    assert(graphB.status === 200 && graphBBody.ok === true, `tenant B security graph request failed: ${graphB.status} ${JSON.stringify(graphBBody)}`);
     assert(graphBBody.nodes.some((node) => node.subjectKey === fixtureB.nodeKey), "tenant B graph data missing");
     assert(!graphBBody.nodes.some((node) => node.subjectKey === fixtureA.nodeKey), "tenant B graph exposed tenant A data");
 
     const evidenceA = await jsonWithTimeout("/api/console/evidence-debugger", cookie);
     const evidenceABody = await evidenceA.json();
-    assert(evidenceA.status === 200 && evidenceABody.ok === true, "tenant A evidence request failed");
+    assert(evidenceA.status === 200 && evidenceABody.ok === true, `tenant A evidence request failed: ${evidenceA.status} ${JSON.stringify(evidenceABody)}`);
     assert(evidenceABody.records.some((record) => record.decisionRef === fixtureA.decisionRef), "tenant A evidence missing");
     assert(!evidenceABody.records.some((record) => record.decisionRef === fixtureB.decisionRef), "tenant A evidence exposed tenant B data");
 
     const evidenceB = await jsonWithTimeout("/api/console/evidence-debugger", secondCookie);
     const evidenceBBody = await evidenceB.json();
-    assert(evidenceB.status === 200 && evidenceBBody.ok === true, "tenant B evidence request failed");
+    assert(evidenceB.status === 200 && evidenceBBody.ok === true, `tenant B evidence request failed: ${evidenceB.status} ${JSON.stringify(evidenceBBody)}`);
     assert(evidenceBBody.records.some((record) => record.decisionRef === fixtureB.decisionRef), "tenant B evidence missing");
     assert(!evidenceBBody.records.some((record) => record.decisionRef === fixtureA.decisionRef), "tenant B evidence exposed tenant A data");
 
