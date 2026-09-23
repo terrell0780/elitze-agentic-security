@@ -22,6 +22,7 @@
     "db:migrate": "node scripts/migrate.mjs",
     "mcp:github": "node src/lib/elitze-secure/github-control-mcp.mjs",
     "auth:security-self-test": "node scripts/auth-security-self-test.mjs",
+    "auth:e2e-self-test": "node scripts/auth-e2e-self-test.mjs",
     "progressive-proofing:self-test": "node --experimental-strip-types scripts/progressive-proofing-self-test.mjs",
     "evidence-expression:self-test": "node --experimental-strip-types scripts/evidence-expression-self-test.mjs",
     "pentest-request:self-test": "node scripts/pentest-request-self-test.mjs",

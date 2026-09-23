@@ -157,6 +157,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Real authentication DB E2E
+        run: npm run auth:e2e-self-test
+
       - name: Generate SBOM
         run: npm sbom --sbom-format cyclonedx --sbom-type application --omit=dev > sbom.cdx.json
 
