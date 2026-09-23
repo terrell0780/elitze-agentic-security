@@ -274,7 +274,7 @@ try {
       await db.query(
         `INSERT INTO security_graph_nodes
           (tenant_id,node_type,subject_key,display_name,source,evidence_state,source_ref,observed_at,metadata,content_hash)
-         VALUES ($1,'EVIDENCE_RECORD',$2,$3,'ci-tenant-isolation','SIMULATED','ci:tenant-isolation:${suffix}',now(),'{}'::jsonb,$4)
+         VALUES ($1,'EVIDENCE_RECORD',$2,$3,'ci-tenant-isolation','UNKNOWN','ci:tenant-isolation:${suffix}',now(),'{}'::jsonb,$4)
          ON CONFLICT (tenant_id,node_type,subject_key) DO UPDATE SET display_name=EXCLUDED.display_name, content_hash=EXCLUDED.content_hash`,
         [tenantId, `ci-only:${suffix}`, `CI-only tenant record ${suffix}`, nodeHash],
       );
