@@ -63,6 +63,8 @@ jobs:
 
       - name: Security fabric self-test
         run: npm run security-fabric:self-test
+      - name: Contact and acquisition routing self-test
+        run: npm run contact-acquisition:self-test
 
       - name: Typecheck
         run: npm run typecheck
@@ -80,6 +82,26 @@ jobs:
     needs: code-review
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: elitze
+          POSTGRES_PASSWORD: elitze
+          POSTGRES_DB: elitze_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U elitze -d elitze_ci"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=10
+    env:
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: elitze
+      PGPASSWORD: elitze
+      PGDATABASE: elitze_ci
 
     steps:
       - name: Checkout
@@ -93,6 +115,9 @@ jobs:
       - name: Install dependencies
         run: npm install --no-audit --no-fund
 
+      - name: Clean database migration
+        run: npm run db:migrate
+
       - name: Verify dependency install-script policy
         run: |
           node -e "const p=require('./package.json'); const required=['esbuild','unrs-resolver']; const missing=required.filter((name)=>p.allowScripts?.[name]!==true); if(missing.length){console.error('Missing allowScripts entries:',missing.join(', ')); process.exit(1)} console.log('Build-script allowlist verified:',required.join(', '));"
@@ -102,6 +127,9 @@ jobs:
 
       - name: Security self-test
         run: npm run security:self-test
+
+      - name: Contact and acquisition routing self-test
+        run: npm run contact-acquisition:self-test
 
       - name: Authentication security self-test
         run: npm run auth:security-self-test
@@ -144,6 +172,9 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Real authentication DB E2E
+        run: npm run auth:e2e-self-test
 
       - name: Generate SBOM
         run: npm sbom --sbom-format cyclonedx --sbom-type application --omit=dev > sbom.cdx.json

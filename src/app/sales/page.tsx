@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight, Check, FileCheck2, LockKeyhole, Network, ShieldCheck } from "lucide-react";
 import AcquisitionCta from "@/components/acquisition-cta";
+import AcquisitionContactForm from "@/components/acquisition-contact-form";
 
 export const metadata = {
   title: "ELITZE Agentic Security — Acquisition",
@@ -143,8 +144,8 @@ export default function SalesPage() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <AcquisitionCta
-                href="mailto:tsh_cook@hotmail.com?subject=ELITZE%20Agentic%20Security%20-%20acquisition%20inquiry"
-                event="acquisition_inquiry"
+                href="#contact"
+                event="sales_cta"
                 className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950"
               >
                 Discuss acquisition <ArrowRight className="h-4 w-4" />
@@ -375,14 +376,22 @@ export default function SalesPage() {
               Request controlled access <ArrowRight className="h-4 w-4" />
             </AcquisitionCta>
             <AcquisitionCta
-              href="mailto:tsh_cook@hotmail.com?subject=ELITZE%20Agentic%20Security%20-%20acquisition%20inquiry"
-              event="acquisition_inquiry"
+              href="#contact"
+              event="sales_cta"
               className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold"
             >
-              Email acquisition inquiry
+              Send acquisition inquiry
             </AcquisitionCta>
           </div>
         </div>
+      </section>
+
+      <section id="contact" className="mx-auto max-w-[1400px] px-4 pb-14 sm:px-7 sm:pb-20">
+        <AcquisitionContactForm
+          requestType="acquisition"
+          title="Send the acquisition inquiry directly."
+          description="Acquisition and repository questions are routed to tsh_cook@hotmail.com. The form keeps the inquiry on the site and gives you a direct-email fallback."
+        />
       </section>
 
       <footer className="border-t border-[var(--border)]">

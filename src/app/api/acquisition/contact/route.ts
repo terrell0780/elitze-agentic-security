@@ -1,0 +1,141 @@
+import { NextRequest } from "next/server";
+import { sendEmail } from "@/lib/auth-email";
+
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
+type RequestType = "acquisition" | "repository" | "general";
+
+const DESTINATION = () => process.env.ELITZE_CONTACT_EMAIL?.trim() || "tsh_cook@hotmail.com";
+const MAX_NAME = 120;
+const MAX_ORGANIZATION = 160;
+const MAX_EMAIL = 254;
+const MAX_MESSAGE = 4000;
+const WINDOW_MS = 60 * 60 * 1000;
+const MAX_REQUESTS = 5;
+
+const buckets = new Map<string, { count: number; resetAt: number }>();
+
+function clientIp(request: Request) {
+  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
+    || request.headers.get("x-real-ip")?.trim()
+    || "unknown";
+}
+
+function consumeLocalRateLimit(key: string) {
+  const now = Date.now();
+  const current = buckets.get(key);
+  if (!current || now >= current.resetAt) {
+    buckets.set(key, { count: 1, resetAt: now + WINDOW_MS });
+    return true;
+  }
+  current.count += 1;
+  if (current.count > MAX_REQUESTS) return false;
+  return true;
+}
+
+function normalize(value: unknown, max: number) {
+  return typeof value === "string"
+    ? value.replace(/[\u0000-\u001f\u007f]/g, "").trim().slice(0, max)
+    : "";
+}
+
+function validEmail(value: string) {
+  return value.length <= MAX_EMAIL && /^\S+@\S+\.\S+$/.test(value);
+}
+
+function subjectFor(requestType: RequestType) {
+  switch (requestType) {
+    case "acquisition":
+      return "ELITZE Agentic Security — Acquisition Inquiry";
+    case "repository":
+      return "ELITZE Agentic Security — Repository Access Request";
+    default:
+      return "ELITZE Agentic Security — Contact Request";
+  }
+}
+
+function labelFor(requestType: RequestType) {
+  switch (requestType) {
+    case "acquisition":
+      return "Acquisition inquiry";
+    case "repository":
+      return "Repository access request";
+    default:
+      return "General contact";
+  }
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const origin = request.headers.get("origin");
+    const expectedOrigin = new URL(
+      process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://elitze.info",
+    ).origin;
+    const allowedOrigins = (process.env.ELITZE_ALLOWED_ORIGINS || "")
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean);
+
+    if (!origin || (origin !== expectedOrigin && !allowedOrigins.includes(origin))) {
+      return Response.json({ error: "csrf_rejected" }, { status: 403 });
+    }
+
+    const body = await request.json().catch(() => null) as Record<string, unknown> | null;
+    if (!body) return Response.json({ error: "invalid_request" }, { status: 400 });
+
+    const honeypot = normalize(body.website, 200);
+    if (honeypot) return Response.json({ ok: true });
+
+    const requestTypeRaw = normalize(body.requestType, 20) as RequestType;
+    const requestType: RequestType = ["acquisition", "repository", "general"].includes(requestTypeRaw)
+      ? requestTypeRaw
+      : "general";
+    const name = normalize(body.name, MAX_NAME);
+    const organization = normalize(body.organization, MAX_ORGANIZATION);
+    const email = normalize(body.email, MAX_EMAIL).toLowerCase();
+    const message = normalize(body.message, MAX_MESSAGE);
+
+    if (!name || !email || !message || !validEmail(email)) {
+      return Response.json({ error: "name_email_message_required" }, { status: 400 });
+    }
+
+    const key = `contact:${clientIp(request)}:${email}`;
+    if (!consumeLocalRateLimit(key)) {
+      return Response.json({ error: "too_many_requests" }, {
+        status: 429,
+        headers: { "Retry-After": "3600" },
+      });
+    }
+
+    if (!process.env.RESEND_API_KEY?.trim() || !process.env.RESEND_FROM?.trim()) {
+      return Response.json({ error: "email_delivery_not_configured" }, { status: 503 });
+    }
+
+    const submittedAt = new Date().toISOString();
+    const text = [
+      `ELITZE contact type: ${labelFor(requestType)}`,
+      `Submitted: ${submittedAt}`,
+      "",
+      `Name: ${name}`,
+      `Organization: ${organization || "Not provided"}`,
+      `Email: ${email}`,
+      "",
+      "Message:",
+      message,
+      "",
+      "Source: https://elitze.info",
+    ].join("\n");
+
+    await sendEmail({
+      to: DESTINATION(),
+      subject: subjectFor(requestType),
+      text,
+    });
+
+    return Response.json({ ok: true });
+  } catch (error) {
+    console.error("ELITZE contact delivery failed", error);
+    return Response.json({ error: "email_delivery_failed" }, { status: 503 });
+  }
+}

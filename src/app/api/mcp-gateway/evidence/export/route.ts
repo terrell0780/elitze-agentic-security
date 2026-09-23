@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
     const result = await client.query(
       `SELECT decision_ref, request_id, tenant_id, human_owner_id, application_id, agent_identity_id, workload_session_id,
               delegation_source, purpose, requested_capability, tool_name, action, resource_type, resource_id,
-              decision, policy_id, policy_version, constraints, approval_reference, requested_at, evidence_source,
+              decision, policy_id, policy_version, constraints, approval_reference, observed_at AS requested_at, evidence_source,
               evidence_state, source_ref, freshness_at, observed_at, previous_evidence_hash, evidence_hash,
               evidence_signature, upstream_status, upstream_result_hash, evidence_event
        FROM mcp_gateway_decisions
