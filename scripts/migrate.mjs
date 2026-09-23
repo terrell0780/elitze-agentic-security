@@ -46,6 +46,31 @@ try {
     "security_test_requests",
   ];
 
+  const requiredColumns = [
+    ["security_policies", "id", "int4"],
+    ["security_policies", "tenant_id", "uuid"],
+    ["security_policies", "name", "text"],
+    ["security_policies", "definition", "jsonb"],
+    ["security_policies", "active", "bool"],
+    ["security_policies", "created_by", "text"],
+    ["security_policies", "expires_at", "timestamptz"],
+    ["mcp_gateway_decisions", "policy_id", "int4"],
+  ];
+  const columnCheck = await client.query(
+    `SELECT table_name, column_name, udt_name
+     FROM information_schema.columns
+     WHERE table_schema = current_schema()
+       AND (table_name, column_name) IN (${requiredColumns.map((_, index) => `($${index * 2 + 1}, $${index * 2 + 2})`).join(", ")})`,
+    requiredColumns.flatMap(([table, column]) => [table, column]),
+  );
+  const columns = new Map(columnCheck.rows.map((row) => [`${row.table_name}.${row.column_name}`, row.udt_name]));
+  for (const [table, column, expectedType] of requiredColumns) {
+    const actualType = columns.get(`${table}.${column}`);
+    if (actualType !== expectedType) {
+      throw new Error(`ELITZE migration verification failed; ${table}.${column} expected ${expectedType}, found ${actualType ?? "missing"}`);
+    }
+  }
+
   const tableCheck = await client.query(
     "SELECT table_name FROM information_schema.tables WHERE table_schema = current_schema() AND table_name = ANY($1::text[])",
     [requiredTables],
