@@ -1,0 +1,44 @@
+import { createHash } from "node:crypto";
+
+export type GoogleAdsComplianceStatus = "PASS" | "REVIEW" | "FAIL" | "NOT_ASSESSED" | "INSUFFICIENT_EVIDENCE";
+export type GoogleAdsComplianceInput = {
+  businessName?: string; advertisedBusinessName?: string; productDescription?: string; destinationDescription?: string;
+  claims?: string[]; claimEvidence?: Record<string, boolean>; price?: string; destinationPrice?: string;
+  destinationReachable?: boolean; privacyNoticePresent?: boolean; secureCollection?: boolean;
+  consentRequired?: boolean; consentImplemented?: boolean; personalizedAdvertising?: boolean; sensitiveCategory?: boolean;
+  audienceType?: "PREDEFINED_GOOGLE" | "CUSTOMER_MATCH" | "YOUR_DATA" | "CUSTOM_SEGMENT" | "LOOKALIKE" | "UNKNOWN";
+  customerMatchEligible?: boolean; customerDataConsent?: boolean; preciseLocationSent?: boolean; adDestinationConsistent?: boolean;
+};
+export type GoogleAdsControl = { id:string; name:string; status:GoogleAdsComplianceStatus; reason:string; policyRefs:string[] };
+export type GoogleAdsComplianceResult = { policyVersion:"2026"; checkedAt:string; status:GoogleAdsComplianceStatus; controls:GoogleAdsControl[]; evidenceHash:string };
+const refs={misrepresentation:"Google Ads Misrepresentation",claims:"Google Ads False, Misleading, or Unrealistic Claims",data:"Google Ads Data Collection and Use",personalized:"Google Ads Restricted Targeting in Personalized Advertising",customerMatch:"Google Ads Customer Match Policy"} as const;
+const control=(id:string,name:string,status:GoogleAdsComplianceStatus,reason:string,policyRefs:string[]):GoogleAdsControl=>({id,name,status,reason,policyRefs});
+const boolControl=(id:string,name:string,value:boolean|undefined,missingReason:string,refs:string[]):GoogleAdsControl=>value===true?control(id,name,"PASS","Observed input satisfies this control.",refs):value===false?control(id,name,"FAIL",missingReason,refs):control(id,name,"NOT_ASSESSED","No authoritative input was supplied; ELITZE will not infer compliance.",refs);
+export function evaluateGoogleAdsCompliance(input:GoogleAdsComplianceInput):GoogleAdsComplianceResult{
+ const controls:GoogleAdsControl[]=[];
+ const identityKnown=Boolean(input.businessName?.trim()&&input.advertisedBusinessName?.trim());
+ controls.push(identityKnown?control("identity.truthful","Truthful business identity",input.businessName!.trim()===input.advertisedBusinessName!.trim()?"PASS":"REVIEW",input.businessName!.trim()===input.advertisedBusinessName!.trim()?"Advertised identity matches the supplied business identity.":"Business and advertised names differ; verify that the distinction is accurate and not misleading.",[refs.misrepresentation]):control("identity.truthful","Truthful business identity","NOT_ASSESSED","Business identity evidence is missing.",[refs.misrepresentation]));
+ const descriptionsKnown=Boolean(input.productDescription?.trim()&&input.destinationDescription?.trim());
+ controls.push(descriptionsKnown?control("description.accuracy","Accurate product/service description",input.productDescription!.trim()===input.destinationDescription!.trim()?"PASS":"REVIEW",input.productDescription!.trim()===input.destinationDescription!.trim()?"Supplied product/service description matches the destination description.":"The supplied ad and destination descriptions differ; verify that the difference is not material or misleading.",[refs.misrepresentation]):control("description.accuracy","Accurate product/service description","NOT_ASSESSED","Ad and destination descriptions are incomplete.",[refs.misrepresentation]));
+ const claims=input.claims??[],unsupported=claims.filter(c=>input.claimEvidence?.[c]!==true);
+ controls.push(claims.length===0?control("claims.supported","No unsupported claims","PASS","No advertising claims were supplied for evaluation.",[refs.claims]):unsupported.length===0?control("claims.supported","No unsupported claims","PASS","Every supplied claim has explicit evidence.",[refs.claims]):control("claims.supported","No unsupported claims","FAIL",String(unsupported.length)+" supplied claim(s) lack explicit evidence.",[refs.claims]));
+ const pricingKnown=Boolean(input.price?.trim()&&input.destinationPrice?.trim());
+ controls.push(pricingKnown?control("offer.transparency","Transparent pricing and offer information",input.price!.trim()===input.destinationPrice!.trim()?"PASS":"REVIEW",input.price!.trim()===input.destinationPrice!.trim()?"Supplied price matches the destination price.":"Price differs between ad input and destination; verify material terms.",[refs.misrepresentation]):control("offer.transparency","Transparent pricing and offer information","NOT_ASSESSED","Price/offer evidence is incomplete.",[refs.misrepresentation]));
+ controls.push(boolControl("destination.consistency","Ad-to-destination consistency",input.adDestinationConsistent,"Ad and destination are not consistent.",[refs.misrepresentation]));
+ controls.push(boolControl("destination.reachable","Landing-page reachability",input.destinationReachable,"The destination is not reachable.",[refs.misrepresentation]));
+ if(input.privacyNoticePresent===false||input.secureCollection===false)controls.push(control("privacy.collection","Privacy and data-collection requirements","FAIL","Required privacy/security condition is explicitly false.",[refs.data]));
+ else if(input.privacyNoticePresent===true&&input.secureCollection===true)controls.push(control("privacy.collection","Privacy and data-collection requirements","PASS","Privacy notice and secure collection are explicitly present.",[refs.data]));
+ else controls.push(control("privacy.collection","Privacy and data-collection requirements","NOT_ASSESSED","Privacy/data-collection evidence is incomplete.",[refs.data]));
+ if(input.consentRequired===true)controls.push(boolControl("privacy.consent","Consent/privacy controls",input.consentImplemented,"Consent is required but is not implemented.",[refs.data,refs.personalized]));
+ else if(input.consentRequired===false)controls.push(control("privacy.consent","Consent/privacy controls","PASS","Input states that consent is not required for this flow.",[refs.data]));
+ else controls.push(control("privacy.consent","Consent/privacy controls","NOT_ASSESSED","Consent applicability has not been established.",[refs.data,refs.personalized]));
+ if(input.personalizedAdvertising!==true)controls.push(control("targeting.personalized","Personalized advertising restrictions","PASS","No personalized advertising was declared in the supplied input.",[refs.personalized]));
+ else if(input.sensitiveCategory===true)controls.push(control("targeting.sensitive","Sensitive-category restrictions","FAIL","Sensitive-category advertising cannot use restricted advertiser-curated targeting paths.",[refs.personalized]));
+ else controls.push(control("targeting.personalized","Personalized advertising restrictions","REVIEW","Personalized advertising is enabled; targeting configuration requires policy review.",[refs.personalized]));
+ if(input.audienceType==="CUSTOMER_MATCH"){if(input.customerMatchEligible===false||input.customerDataConsent===false)controls.push(control("audience.customer_match","Audience / Customer Match controls","FAIL","Customer Match eligibility or customer-data consent is explicitly false.",[refs.customerMatch]));else if(input.customerMatchEligible===true&&input.customerDataConsent===true)controls.push(control("audience.customer_match","Audience / Customer Match controls","PASS","Eligibility and customer-data consent are explicitly established.",[refs.customerMatch]));else controls.push(control("audience.customer_match","Audience / Customer Match controls","NOT_ASSESSED","Customer Match evidence is incomplete.",[refs.customerMatch]));}else controls.push(control("audience.customer_match","Audience / Customer Match controls","PASS","Customer Match is not declared for this submission.",[refs.customerMatch]));
+ controls.push(input.preciseLocationSent===true&&input.customerDataConsent!==true?control("privacy.precise_location","Precise-location privacy control","FAIL","Precise location is declared as sent without explicit consent evidence.",[refs.personalized]):control("privacy.precise_location","Precise-location privacy control","PASS","No unsupported precise-location transfer was identified from supplied inputs.",[refs.personalized]));
+ const hasFail=controls.some(i=>i.status==="FAIL"),hasReview=controls.some(i=>i.status==="REVIEW"),hasUnassessed=controls.some(i=>i.status==="NOT_ASSESSED"||i.status==="INSUFFICIENT_EVIDENCE");
+ const status:GoogleAdsComplianceStatus=hasFail?"FAIL":hasReview?"REVIEW":hasUnassessed?"NOT_ASSESSED":"PASS";
+ const evidenceHash=createHash("sha256").update(JSON.stringify({policyVersion:"2026",controls})).digest("hex");
+ return {policyVersion:"2026",checkedAt:new Date().toISOString(),status,controls,evidenceHash};
+}
