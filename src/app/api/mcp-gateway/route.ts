@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
     if (decision !== "ALLOW" && decision !== "ALLOW_WITH_CONSTRAINTS") {
       const signed = signGatewayEvidence({ ...baseEvent, approvalReference }, previousHash);
       const inserted = await client.query(
-        `INSERT INTO mcp_gateway_decisions (tenant_id, request_id, agent_identity_id, gateway_server_id, tool_name, action, decision, policy_version, policy_id, constraints, approval_reference, evidence_hash, signature, previous_hash, requested_at, created_at)
+        `INSERT INTO mcp_gateway_decisions (tenant_id, request_id, agent_identity_id, gateway_server_id, tool_name, action, decision, policy_version, policy_id, constraints, approval_reference, evidence_hash, evidence_signature, previous_evidence_hash, observed_at, created_at)
          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16) RETURNING decision_ref`,
         [chain.tenant_id, requestId, chain.agent_identity_id, server.id, toolName, toolName, decision, policyVersion, policyId, constraints, approvalReference, signed.evidenceHash, signed.signature, previousHash, requestedAt, new Date().toISOString()],
       );
@@ -122,7 +122,7 @@ export async function POST(request: NextRequest) {
     const upstreamResultHash = crypto.createHash("sha256").update(raw).digest("hex");
     const signed = signGatewayEvidence({ ...baseEvent, upstreamStatus: upstream.status, upstreamResultHash }, previousHash);
     const inserted = await client.query(
-      `INSERT INTO mcp_gateway_decisions (tenant_id, request_id, agent_identity_id, gateway_server_id, tool_name, action, decision, policy_version, policy_id, constraints, upstream_status, upstream_result_hash, evidence_hash, signature, previous_hash, requested_at, created_at)
+      `INSERT INTO mcp_gateway_decisions (tenant_id, request_id, agent_identity_id, gateway_server_id, tool_name, action, decision, policy_version, policy_id, constraints, upstream_status, upstream_result_hash, evidence_hash, evidence_signature, previous_evidence_hash, observed_at, created_at)
        VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17) RETURNING decision_ref`,
       [chain.tenant_id, requestId, chain.agent_identity_id, server.id, toolName, toolName, decision, policyVersion, policyId, constraints, upstream.status, upstreamResultHash, signed.evidenceHash, signed.signature, previousHash, requestedAt, new Date().toISOString()],
     );

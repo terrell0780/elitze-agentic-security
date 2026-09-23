@@ -1,21 +1,33 @@
-CREATE TABLE IF NOT EXISTS security_policies (
-  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  tenant_id uuid NOT NULL REFERENCES auth_tenants(id) ON DELETE CASCADE,
-  name text NOT NULL,
-  version text NOT NULL DEFAULT '1',
-  definition jsonb NOT NULL,
-  active boolean NOT NULL DEFAULT true,
-  created_by text NOT NULL,
-  expires_at timestamptz,
-  created_at timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (tenant_id, name, version)
-);
+ALTER TABLE security_policies
+  ADD COLUMN IF NOT EXISTS tenant_id uuid REFERENCES auth_tenants(id) ON DELETE CASCADE;
+ALTER TABLE security_policies
+  ADD COLUMN IF NOT EXISTS name text;
+ALTER TABLE security_policies
+  ADD COLUMN IF NOT EXISTS definition jsonb DEFAULT '{}'::jsonb;
+ALTER TABLE security_policies
+  ADD COLUMN IF NOT EXISTS active boolean NOT NULL DEFAULT true;
+ALTER TABLE security_policies
+  ADD COLUMN IF NOT EXISTS created_by text;
+ALTER TABLE security_policies
+  ADD COLUMN IF NOT EXISTS expires_at timestamptz;
+
+ALTER TABLE security_policies
+  ALTER COLUMN policy_id SET DEFAULT ('pol_' || gen_random_uuid()::text);
+ALTER TABLE security_policies
+  ALTER COLUMN effect SET DEFAULT 'ALLOW';
+ALTER TABLE security_policies
+  ALTER COLUMN scope SET DEFAULT '*';
+ALTER TABLE security_policies
+  ALTER COLUMN rules SET DEFAULT '{}'::jsonb;
+
+CREATE UNIQUE INDEX IF NOT EXISTS security_policies_tenant_name_version_uq
+  ON security_policies(tenant_id, name, version);
 CREATE INDEX IF NOT EXISTS security_policies_tenant_active_idx ON security_policies(tenant_id, active, created_at DESC);
 
 ALTER TABLE mcp_gateway_decisions
   ADD COLUMN IF NOT EXISTS decision_ref text;
 ALTER TABLE mcp_gateway_decisions
-  ADD COLUMN IF NOT EXISTS policy_id uuid REFERENCES security_policies(id) ON DELETE RESTRICT;
+  ADD COLUMN IF NOT EXISTS policy_id integer REFERENCES security_policies(id) ON DELETE RESTRICT;
 ALTER TABLE mcp_gateway_decisions
   ADD COLUMN IF NOT EXISTS evidence_source text NOT NULL DEFAULT 'mcp-gateway';
 ALTER TABLE mcp_gateway_decisions
