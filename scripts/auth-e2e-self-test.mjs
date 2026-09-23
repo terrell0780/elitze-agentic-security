@@ -221,7 +221,105 @@ try {
     });
     assert(newLogin.response.status === 200 && newLogin.body.ok === true, "new password did not authenticate");
 
-    console.log("ELITZE real-auth E2E: PASS — clean PostgreSQL account creation, verification email contract, verification, login, database session creation, password reset, and session revocation verified");
+    const secondEmail = `e2e-auth-second-${Date.now()}@example.invalid`;
+    const secondPassword = ["E2EAuthSecond", Date.now().toString(), "PrimaryPass12"].join("-");
+    const secondRegistration = await jsonRequest("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ email: secondEmail, password: secondPassword, displayName: "ELITZE E2E Second" }),
+    });
+    assert(secondRegistration.response.status === 200 && secondRegistration.body.ok === true, `second registration failed: ${secondRegistration.response.status}`);
+    assert(deliveredEmail?.to?.includes(secondEmail), "second verification email recipient mismatch");
+    const secondVerificationMatch = String(deliveredEmail.text ?? "").match(/\/auth\/verify\?token=([A-Za-z0-9_-]+)/);
+    assert(secondVerificationMatch?.[1], "second verification token was not delivered");
+    const secondVerification = await jsonRequest(`/api/auth/verify?token=${encodeURIComponent(secondVerificationMatch[1])}`, {
+      method: "POST",
+      body: "{}",
+    });
+    assert(secondVerification.response.status === 200, "second account verification failed");
+
+    const secondLogin = await jsonRequest("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email: secondEmail, password: secondPassword, persistent: true }),
+    });
+    assert(secondLogin.response.status === 200 && secondLogin.body.ok === true, "second account login failed");
+    const secondCookie = sessionCookie(secondLogin.response);
+    assert(secondCookie.includes("elitze_session="), "second account did not receive a session cookie");
+
+    const tenants = await db.query(
+      "SELECT id, email_normalized FROM auth_users WHERE email_normalized IN ($1,$2) ORDER BY email_normalized",
+      [testEmail, secondEmail],
+    );
+    assert(tenants.rowCount === 2 && tenants.rows[0].tenant_id !== tenants.rows[1].tenant_id, "accounts did not receive isolated tenants");
+
+    const tenantA = tenants.rows.find((row) => row.email_normalized === testEmail);
+    const tenantB = tenants.rows.find((row) => row.email_normalized === secondEmail);
+    assert(tenantA?.tenant_id && tenantB?.tenant_id, "tenant ids missing");
+
+    const seed = async ({ tenantId, suffix }) => {
+      const nodeHash = createHash("sha256").update(`ci:tenant-isolation-node:${suffix}`).digest("hex");
+      await db.query(
+        `INSERT INTO security_graph_nodes
+          (tenant_id,node_type,subject_key,display_name,source,evidence_state,source_ref,observed_at,metadata,content_hash)
+         VALUES ($1,'EVIDENCE_RECORD',$2,$3,'ci-tenant-isolation','SIMULATED','ci:tenant-isolation:${suffix}',now(),'{}'::jsonb,$4)
+         ON CONFLICT (tenant_id,node_type,subject_key) DO UPDATE SET display_name=EXCLUDED.display_name, content_hash=EXCLUDED.content_hash`,
+        [tenantId, `ci-only:${suffix}`, `CI-only tenant record ${suffix}`, nodeHash],
+      );
+
+      const agent = await db.query(
+        `INSERT INTO agent_identities
+          (tenant_id,name,kind,identity_fingerprint,token_hash,token_prefix)
+         VALUES ($1,$2,'AGENT',$3,$4,$5)
+         ON CONFLICT (tenant_id,identity_fingerprint) DO UPDATE SET name=EXCLUDED.name
+         RETURNING id`,
+        [tenantId, `ci-agent-${suffix}`, `ci-fingerprint-${suffix}`, `ci-token-${suffix}-${tenantId}`, `ci-${suffix}`],
+      );
+      const server = await db.query(
+        `INSERT INTO mcp_gateway_servers
+          (tenant_id,agent_identity_id,name,endpoint_url)
+         VALUES ($1,$2,$3,$4)
+         ON CONFLICT (tenant_id,name) DO UPDATE SET endpoint_url=EXCLUDED.endpoint_url
+         RETURNING id`,
+        [tenantId, agent.rows[0].id, `ci-server-${suffix}`, "https://example.invalid/e2e"],
+      );
+      const evidenceHash = createHash("sha256").update(`ci:tenant-isolation-evidence:${suffix}`).digest("hex");
+      await db.query(
+        `INSERT INTO mcp_gateway_decisions
+          (tenant_id,request_id,agent_identity_id,gateway_server_id,tool_name,action,decision,policy_version,evidence_hash,evidence_signature,previous_evidence_hash,decision_ref,evidence_source,evidence_state,source_ref,observed_at,requested_at,evidence_event,verification_status)
+         VALUES ($1,$2,$3,$4,'ci.test','ci.test','DENY','ci-e2e',$5,'ci-signature',NULL,$6,'ci-tenant-isolation','SIMULATED',$7,now(),now(),'{}'::jsonb,'FAILED')
+         ON CONFLICT (tenant_id,request_id) DO UPDATE SET evidence_state='SIMULATED',source_ref=EXCLUDED.source_ref`,
+        [tenantId, `ci-request-${suffix}`, agent.rows[0].id, server.rows[0].id, evidenceHash, `ci-decision-${suffix}`, `ci:tenant-isolation-evidence:${suffix}`],
+      );
+      return { nodeKey: `ci-only:${suffix}`, decisionRef: `ci-decision-${suffix}` };
+    };
+
+    const fixtureA = await seed({ tenantId: tenantA.tenant_id, suffix: "A" });
+    const fixtureB = await seed({ tenantId: tenantB.tenant_id, suffix: "B" });
+
+    const graphA = await fetch(`${origin}/api/console/security-graph`, { headers: { cookie }, cache: "no-store" });
+    const graphABody = await graphA.json();
+    assert(graphA.status === 200 && graphABody.ok === true, "tenant A security graph request failed");
+    assert(graphABody.nodes.some((node) => node.subjectKey === fixtureA.nodeKey), "tenant A graph data missing");
+    assert(!graphABody.nodes.some((node) => node.subjectKey === fixtureB.nodeKey), "tenant A graph exposed tenant B data");
+
+    const graphB = await fetch(`${origin}/api/console/security-graph`, { headers: { cookie: secondCookie }, cache: "no-store" });
+    const graphBBody = await graphB.json();
+    assert(graphB.status === 200 && graphBBody.ok === true, "tenant B security graph request failed");
+    assert(graphBBody.nodes.some((node) => node.subjectKey === fixtureB.nodeKey), "tenant B graph data missing");
+    assert(!graphBBody.nodes.some((node) => node.subjectKey === fixtureA.nodeKey), "tenant B graph exposed tenant A data");
+
+    const evidenceA = await fetch(`${origin}/api/console/evidence-debugger`, { headers: { cookie }, cache: "no-store" });
+    const evidenceABody = await evidenceA.json();
+    assert(evidenceA.status === 200 && evidenceABody.ok === true, "tenant A evidence request failed");
+    assert(evidenceABody.records.some((record) => record.decisionRef === fixtureA.decisionRef), "tenant A evidence missing");
+    assert(!evidenceABody.records.some((record) => record.decisionRef === fixtureB.decisionRef), "tenant A evidence exposed tenant B data");
+
+    const evidenceB = await fetch(`${origin}/api/console/evidence-debugger`, { headers: { cookie: secondCookie }, cache: "no-store" });
+    const evidenceBBody = await evidenceB.json();
+    assert(evidenceB.status === 200 && evidenceBBody.ok === true, "tenant B evidence request failed");
+    assert(evidenceBBody.records.some((record) => record.decisionRef === fixtureB.decisionRef), "tenant B evidence missing");
+    assert(!evidenceBBody.records.some((record) => record.decisionRef === fixtureA.decisionRef), "tenant B evidence exposed tenant A data");
+
+    console.log("ELITZE real-auth E2E: PASS — clean PostgreSQL account creation, verification email contract, verification, login, database session creation, password reset, session revocation, and cross-tenant graph/evidence isolation verified");
   } finally {
     await db.end();
   }
