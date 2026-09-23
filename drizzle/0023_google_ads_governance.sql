@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS google_ads_compliance_checks (
  id uuid PRIMARY KEY DEFAULT gen_random_uuid(), tenant_id uuid NOT NULL REFERENCES auth_tenants(id) ON DELETE CASCADE,
  policy_version text NOT NULL DEFAULT '2026', status text NOT NULL CHECK(status IN ('PASS','REVIEW','FAIL','NOT_ASSESSED','INSUFFICIENT_EVIDENCE')),
- controls jsonb NOT NULL,input_hash text NOT NULL,evidence_hash text NOT NULL,source text NOT NULL DEFAULT 'elitze-google-ads-governance',
+ controls jsonb NOT NULL,input jsonb NOT NULL DEFAULT '{}'::jsonb,input_hash text NOT NULL,evidence_hash text NOT NULL,source text NOT NULL DEFAULT 'elitze-google-ads-governance',
  checked_at timestamptz NOT NULL DEFAULT now(),created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS google_ads_compliance_tenant_checked_idx ON google_ads_compliance_checks(tenant_id,checked_at DESC);
