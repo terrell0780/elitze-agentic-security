@@ -91,7 +91,11 @@ jobs:
           --health-timeout=5s
           --health-retries=10
     env:
-      DATABASE_URL: postgresql://elitze:elitze@127.0.0.1:5432/elitze_ci
+      PGHOST: 127.0.0.1
+      PGPORT: 5432
+      PGUSER: elitze
+      PGPASSWORD: elitze
+      PGDATABASE: elitze_ci
 
     steps:
       - name: Checkout

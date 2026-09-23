@@ -4,8 +4,19 @@ import process from "node:process";
 import pg from "pg";
 
 const databaseUrl = process.env.DATABASE_URL?.trim();
-if (!databaseUrl) throw new Error("DATABASE_URL is required");
-const client = new pg.Client({ connectionString: databaseUrl });
+const connectionConfig = databaseUrl
+  ? { connectionString: databaseUrl }
+  : {
+      host: process.env.PGHOST,
+      port: Number(process.env.PGPORT ?? 5432),
+      user: process.env.PGUSER,
+      password: process.env.PGPASSWORD,
+      database: process.env.PGDATABASE,
+    };
+if (!databaseUrl && (!connectionConfig.host || !connectionConfig.user || !connectionConfig.password || !connectionConfig.database)) {
+  throw new Error("DATABASE_URL or PGHOST/PGPORT/PGUSER/PGPASSWORD/PGDATABASE is required");
+}
+const client = new pg.Client(connectionConfig);
 await client.connect();
 const migrationLock = "elitze:migrations";
 let lockAcquired = false;
