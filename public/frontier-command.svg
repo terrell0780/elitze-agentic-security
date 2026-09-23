@@ -29,6 +29,15 @@
   <circle cx="930" cy="392" r="208" stroke="#7FE7FF" stroke-opacity=".16" stroke-width="18"/>
   <circle cx="930" cy="392" r="190" stroke="#7FE7FF" stroke-opacity=".42" stroke-width="2"/>
   <circle cx="930" cy="392" r="170" fill="url(#earth)" stroke="#BEEFFF" stroke-opacity=".8" stroke-width="3"/>
+  <circle cx="930" cy="392" r="158" stroke="#B8FBFF" stroke-opacity=".18" stroke-width="2" stroke-dasharray="6 18">
+    <animate attributeName="stroke-dashoffset" from="0" to="-480" dur="6s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="1088" cy="392" r="5" fill="#D6FFFF">
+    <animateTransform attributeName="transform" type="rotate" from="0 930 392" to="360 930 392" dur="7s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="1088" cy="392" r="11" fill="#63E7FF" fill-opacity=".16">
+    <animateTransform attributeName="transform" type="rotate" from="0 930 392" to="360 930 392" dur="7s" repeatCount="indefinite"/>
+  </circle>
   <g clip-path="url(#planet)" opacity=".58">
     <animateTransform attributeName="transform" type="rotate" from="0 930 392" to="360 930 392" dur="42s" repeatCount="indefinite"/>
     <path d="M730 370C820 322 910 330 1025 358C1118 381 1175 423 1210 472" stroke="#B7F6FF" stroke-width="3" stroke-opacity=".6"/>
@@ -38,7 +47,9 @@
     <circle cx="865" cy="330" r="3" fill="#E8FDFF"/><circle cx="1010" cy="300" r="4" fill="#E8FDFF"/><circle cx="1070" cy="430" r="3" fill="#E8FDFF"/><circle cx="900" cy="525" r="4" fill="#E8FDFF"/>
   </g>
   <g>
-    <ellipse cx="930" cy="392" rx="250" ry="72" transform="rotate(-15 930 392)" stroke="url(#glow)" stroke-width="4" stroke-opacity=".8"/>
+    <ellipse cx="930" cy="392" rx="250" ry="72" transform="rotate(-15 930 392)" stroke="url(#glow)" stroke-width="4" stroke-opacity=".8" stroke-dasharray="120 56">
+      <animate attributeName="stroke-dashoffset" from="0" to="-704" dur="5s" repeatCount="indefinite"/>
+    </ellipse>
     <ellipse cx="930" cy="392" rx="265" ry="108" transform="rotate(18 930 392)" stroke="#6EE7FF" stroke-opacity=".35" stroke-width="2"/>
     <circle cx="930" cy="392" r="210" stroke="#8E7CFF" stroke-opacity=".3" stroke-dasharray="5 14" stroke-width="2"/>
     <animateTransform attributeName="transform" type="rotate" from="0 930 392" to="360 930 392" dur="18s" repeatCount="indefinite"/>
