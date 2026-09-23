@@ -51,3 +51,7 @@ Canonical product name: **ELITZE Agentic Security**
 Product domain: `elitze.info`
 
 Source access: **private / qualified buyer diligence only**
+
+
+## Contact
+Acquisition, repository-access, and general product inquiries: `tsh_cook@hotmail.com`.

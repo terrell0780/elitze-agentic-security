@@ -138,3 +138,7 @@ This 2026 version adds or clarifies:
 8. Security-testing authorization requirements for agentic security operations.
 9. Privacy, retention, incident, and data-processing language suitable for enterprise contracting.
 10. A framework for ongoing updates as AI regulation and provider requirements change.
+
+
+## 23.1 Contact channel
+Legal, contractual, privacy, security, and service questions may be sent to `tsh_cook@hotmail.com` until separate enterprise contact information is provided in a signed agreement.

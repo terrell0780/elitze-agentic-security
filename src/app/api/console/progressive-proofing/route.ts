@@ -61,7 +61,7 @@ export async function GET() {
         d.evidence_state,
         d.source_ref,
         d.observed_at,
-        d.requested_at,
+        d.observed_at AS requested_at,
         d.previous_evidence_hash,
         d.evidence_hash,
         d.evidence_signature,
