@@ -16,18 +16,36 @@ const staleDomainFiles = tracked.filter((file) => publicTextExtensions.has(path.
 
 assert.equal(staleDomainFiles.length, 0, `stale domain reference found: ${staleDomainFiles.join(", ")}`);
 
-const mailtoFiles = tracked
-  .filter((file) => publicTextExtensions.has(path.extname(file)))
-  .filter((file) => file !== "scripts/contact-acquisition-self-test.mjs")
-  .filter((file) => /mailto:\s*[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}/i.test(read(file)));
-for (const file of mailtoFiles) {
-  const targets = [...read(file).matchAll(/mailto:\s*([^"')\s>]+@[^\"')\s>]+)/gi)].map((match) => match[1]);
-  assert.ok(targets.length > 0, `mailto marker found without a target in ${file}`);
+const mailtoTargets = new Map();
+for (const file of tracked.filter((file) => publicTextExtensions.has(path.extname(file)))) {
+  if (file === "scripts/contact-acquisition-self-test.mjs") continue;
+  const source = read(file);
+  const lower = source.toLowerCase();
+  const targets = [];
+  let offset = 0;
+  while (true) {
+    const marker = lower.indexOf("mailto:", offset);
+    if (marker === -1) break;
+    const rest = source.slice(marker + 7);
+    const delimiters = ['"', "'", " ", "\n", "\r", ">"]
+      .map((delimiter) => rest.indexOf(delimiter))
+      .filter((index) => index >= 0);
+    const endIndex = delimiters.length ? Math.min(...delimiters) : rest.length;
+    const target = rest.slice(0, endIndex).trim();
+    if (target.includes("@")) targets.push(target);
+    offset = marker + 7;
+  }
+  if (targets.length) mailtoTargets.set(file, targets);
+}
+
+for (const [file, targets] of mailtoTargets) {
   assert.ok(
     targets.every((target) => target.toLowerCase() === "tsh_cook@hotmail.com"),
     `non-canonical contact mailto in ${file}: ${targets.join(", ")}`,
   );
 }
+
+const mailtoFiles = [...mailtoTargets.keys()];
 
 const env = read(".env.example");
 const contactRoute = read("src/app/api/acquisition/contact/route.ts");
