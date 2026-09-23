@@ -1,3 +1,4 @@
+import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
@@ -20,13 +21,17 @@ const secretPatterns = [
 
 const publicCodeExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".css"]);
 const textExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".json", ".md", ".yml", ".yaml", ".sql", ".css"]);
+const topMarketingClaimPattern = /((?<!-)\btop[- ]?(?:1|3|5|five)\b)(?![./\d])/i;
 const publicCodeForbidden = [
   /God['’]s Eye/i,
   /salts team/i,
-  /((?<!-)\btop[- ]?(?:1|3|5|five)\b)(?![./\d])/i,
+  topMarketingClaimPattern,
   /\b(?:#1|number one|best in class|industry[- ]leading)\b/i,
   /fabricated (?:customer|review|statistic|benchmark)/i,
 ];
+
+assert.doesNotMatch("className=\"top-1/2\"", topMarketingClaimPattern);
+assert.match("Top 5 attack paths", topMarketingClaimPattern);
 
 for (const rel of tracked) {
   if (!textExtensions.has(path.extname(rel))) continue;
