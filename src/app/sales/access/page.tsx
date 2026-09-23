@@ -1,5 +1,5 @@
 import Link from "next/link";
-import AcquisitionCta from "@/components/acquisition-cta";
+import AcquisitionContactForm from "@/components/acquisition-contact-form";
 
 export const metadata = {
   title: "Request ELITZE Repository Access",
@@ -24,8 +24,12 @@ export default function SalesAccessPage() {
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--panel-strong)] p-4">3. Confirm the diligence scope and access requirements.</div>
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--panel-strong)] p-4">4. Source access is granted separately and can be time- and scope-limited.</div>
           </div>
-          <div className="mt-8 flex flex-wrap gap-3">
-            <AcquisitionCta href="mailto:tsh_cook@hotmail.com?subject=ELITZE%20Agentic%20Security%20-%20Repository%20Access%20Request" event="repository_access_request" className="rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950">Email access request</AcquisitionCta>
+          <div className="mt-8 grid gap-4">
+            <AcquisitionContactForm
+              requestType="repository"
+              title="Send the repository question directly."
+              description="Repository-access questions are routed to tsh_cook@hotmail.com. This form avoids relying on a visitor's local mail application."
+            />
             <Link href="/sales" className="rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] px-5 py-3 text-sm font-semibold">Return to acquisition</Link>
           </div>
           <p className="mt-6 text-xs leading-5 text-[var(--muted)]">The repository was previously public. That history is disclosed for diligence; making it private does not represent that no historical third-party copies exist.</p>

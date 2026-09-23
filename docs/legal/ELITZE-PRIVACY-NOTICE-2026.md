@@ -36,3 +36,7 @@ Where applicable law grants rights concerning personal information, requests may
 
 ## 10. Changes
 This Notice may be updated to reflect changes in law, regulation, technology, Services, or data practices. The effective date will identify the current version.
+
+
+## Contact
+Privacy and data-protection questions: `tsh_cook@hotmail.com`.

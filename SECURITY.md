@@ -31,3 +31,7 @@ npm run db:migrate
 ## Integrity rule
 
 Never place fabricated counts, percentages, CVE totals, detections, latency claims, or “live” security status in the UI. Operational metrics must come from a real source and identify their source/time window.
+
+
+## Contact
+Public security and operational contact: `tsh_cook@hotmail.com`.
