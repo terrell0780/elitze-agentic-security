@@ -118,8 +118,17 @@ try {
     );
     assert(beforeVerify.rowCount === 1 && beforeVerify.rows[0].status !== "active", "new account was active before verification");
 
-    const verification = await fetch(`${origin}/api/auth/verify?token=${encodeURIComponent(verificationMatch[1])}`, { cache: "no-store" });
-    assert(verification.status === 200, `verification failed: ${verification.status}`);
+    const blockedLogin = await jsonRequest("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email: testEmail, password: primaryPassword }),
+    });
+    assert(blockedLogin.response.status === 403 && blockedLogin.body.error === "email_verification_required", "unverified account was allowed to log in");
+
+    const verification = await jsonRequest(`/api/auth/verify?token=${encodeURIComponent(verificationMatch[1])}`, {
+      method: "POST",
+      body: "{}",
+    });
+    assert(verification.response.status === 200, `verification failed: ${verification.response.status}`);
     const afterVerify = await db.query(
       "SELECT status, email_verified_at, tenant_id FROM auth_users WHERE email_normalized=$1",
       [testEmail],
