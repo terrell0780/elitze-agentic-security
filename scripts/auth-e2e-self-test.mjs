@@ -61,14 +61,26 @@ const stop = () => {
 process.on("exit", stop);
 
 async function waitForServer() {
+  let exited = false;
+  let exitCode = null;
+  server.once("exit", (code) => {
+    exited = true;
+    exitCode = code;
+  });
   for (let attempt = 0; attempt < 60; attempt += 1) {
+    if (exited) throw new Error(`Next server exited before readiness (code ${exitCode}). Logs:\\n${serverLogs.slice(-4000)}`);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 2000);
     try {
-      const response = await fetch(`${origin}/api/health`, { cache: "no-store" });
+      const response = await fetch(`${origin}/login`, { cache: "no-store", signal: controller.signal });
       if (response.ok) return;
     } catch {}
+    finally {
+      clearTimeout(timeout);
+    }
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
-  throw new Error(`Next server did not become ready. Logs:\n${serverLogs.slice(-4000)}`);
+  throw new Error(`Next server did not become ready. Logs:\\n${serverLogs.slice(-4000)}`);
 }
 
 async function jsonRequest(path, init = {}) {
