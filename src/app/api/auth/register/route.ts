@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { assertSameOrigin, consumeRateLimit, getPgPool, getRateLimitKey, issueEmailToken, registerUser } from "@/lib/auth";
+import { assertSameOrigin, consumeRateLimit, getRateLimitKey, issueEmailToken, registerUser } from "@/lib/auth";
 import { sendAuthEmail } from "@/lib/auth-email";
 
 export const dynamic = "force-dynamic";
