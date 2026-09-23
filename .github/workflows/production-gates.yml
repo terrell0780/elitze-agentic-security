@@ -48,9 +48,6 @@ jobs:
             git diff --check "origin/main...HEAD"
           fi
 
-      - name: Clean database migration
-        run: npm run db:migrate
-
       - name: Verify dependency install-script policy
         run: node -e "const p=require('./package.json'); const required=['esbuild','unrs-resolver']; const missing=required.filter((name)=>p.allowScripts?.[name]!==true); if(missing.length){console.error('Missing allowScripts entries:',missing.join(', ')); process.exit(1)} console.log('Build-script allowlist verified:',required.join(', '));"
 
@@ -107,6 +104,9 @@ jobs:
 
       - name: Install dependencies
         run: npm install --no-audit --no-fund
+
+      - name: Clean database migration
+        run: npm run db:migrate
 
       - name: Verify dependency install-script policy
         run: node -e "const p=require('./package.json'); const required=['esbuild','unrs-resolver']; const missing=required.filter((name)=>p.allowScripts?.[name]!==true); if(missing.length){console.error('Missing allowScripts entries:',missing.join(', ')); process.exit(1)} console.log('Build-script allowlist verified:',required.join(', '));"
