@@ -163,10 +163,19 @@ try {
     const cookie = sessionCookie(login.response);
     assert(cookie.includes("elitze_session="), "login did not issue an ELITZE session cookie");
 
-    const session = await fetch(`${origin}/api/auth/session`, {
-      headers: { cookie },
-      cache: "no-store",
-    });
+    const session = await (async () => {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 15000);
+      try {
+        return await fetch(`${origin}/api/auth/session`, {
+          headers: { cookie },
+          cache: "no-store",
+          signal: controller.signal,
+        });
+      } finally {
+        clearTimeout(timeout);
+      }
+    })();
     const sessionBody = await session.json();
     assert(session.status === 200 && sessionBody.ok === true && sessionBody.user?.email === testEmail, "session lookup failed after login");
 
