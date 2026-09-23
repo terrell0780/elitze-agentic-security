@@ -298,7 +298,7 @@ try {
       const evidenceHash = createHash("sha256").update(`ci:tenant-isolation-evidence:${suffix}`).digest("hex");
       await db.query(
         `INSERT INTO mcp_gateway_decisions
-          (tenant_id,request_id,agent_identity_id,gateway_server_id,tool_name,action,decision,policy_version,evidence_hash,evidence_signature,previous_evidence_hash,decision_ref,evidence_source,evidence_state,source_ref,observed_at,requested_at,evidence_event,verification_status)
+          (tenant_id,request_id,agent_identity_id,gateway_server_id,tool_name,action,decision,policy_version,evidence_hash,evidence_signature,previous_evidence_hash,decision_ref,evidence_source,evidence_state,source_ref,observed_at,evidence_event,verification_status)
          VALUES ($1,$2,$3,$4,'ci.test','ci.test','DENY','ci-e2e',$5,'ci-signature',NULL,$6,'ci-tenant-isolation','SIMULATED',$7,now(),now(),'{}'::jsonb,'FAILED')
          ON CONFLICT (tenant_id,request_id) DO UPDATE SET evidence_state='SIMULATED',source_ref=EXCLUDED.source_ref`,
         [tenantId, `ci-request-${suffix}`, agent.rows[0].id, server.rows[0].id, evidenceHash, `ci-decision-${suffix}`, `ci:tenant-isolation-evidence:${suffix}`],
