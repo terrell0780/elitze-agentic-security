@@ -19,7 +19,12 @@ assert.equal(staleDomainFiles.length, 0, `stale domain reference found: ${staleD
 const mailtoFiles = tracked.filter((file) => publicTextExtensions.has(path.extname(file)))
   .filter((file) => /mailto:/i.test(read(file)));
 for (const file of mailtoFiles) {
-  assert.doesNotMatch(read(file), /mailto:(?!tsh_cook@hotmail\.com)/i, `non-canonical contact mailto in ${file}`);
+  const targets = [...read(file).matchAll(/mailto:([^"')\\s>]+)/gi)].map((match) => match[1]);
+  assert.ok(targets.length > 0, `mailto marker found without a target in ${file}`);
+  assert.ok(
+    targets.every((target) => target.toLowerCase() === "tsh_cook@hotmail.com"),
+    `non-canonical contact mailto in ${file}: ${targets.join(", ")}`,
+  );
 }
 
 const env = read(".env.example");
