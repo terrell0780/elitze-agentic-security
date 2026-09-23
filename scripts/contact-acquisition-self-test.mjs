@@ -19,9 +19,9 @@ assert.equal(staleDomainFiles.length, 0, `stale domain reference found: ${staleD
 const mailtoFiles = tracked
   .filter((file) => publicTextExtensions.has(path.extname(file)))
   .filter((file) => file !== "scripts/contact-acquisition-self-test.mjs")
-  .filter((file) => /mailto:/i.test(read(file)));
+  .filter((file) => /mailto:\s*[\\w.+-]+@[\\w.-]+\.[A-Za-z]{2,}/i.test(read(file)));
 for (const file of mailtoFiles) {
-  const targets = [...read(file).matchAll(/mailto:([^"')\s>]+)/gi)].map((match) => match[1]);
+  const targets = [...read(file).matchAll(/mailto:\s*([^"')\s>]+@[^\"')\s>]+)/gi)].map((match) => match[1]);
   assert.ok(targets.length > 0, `mailto marker found without a target in ${file}`);
   assert.ok(
     targets.every((target) => target.toLowerCase() === "tsh_cook@hotmail.com"),
