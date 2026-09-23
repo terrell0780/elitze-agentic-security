@@ -16,7 +16,9 @@ const staleDomainFiles = tracked.filter((file) => publicTextExtensions.has(path.
 
 assert.equal(staleDomainFiles.length, 0, `stale domain reference found: ${staleDomainFiles.join(", ")}`);
 
-const mailtoFiles = tracked.filter((file) => publicTextExtensions.has(path.extname(file)))
+const mailtoFiles = tracked
+  .filter((file) => publicTextExtensions.has(path.extname(file)))
+  .filter((file) => file !== "scripts/contact-acquisition-self-test.mjs")
   .filter((file) => /mailto:/i.test(read(file)));
 for (const file of mailtoFiles) {
   const targets = [...read(file).matchAll(/mailto:([^"')\\s>]+)/gi)].map((match) => match[1]);
