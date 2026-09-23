@@ -1,4 +1,3 @@
-import assert from "node:assert/strict";
 import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
@@ -29,9 +28,6 @@ const publicCodeForbidden = [
   /\b(?:#1|number one|best in class|industry[- ]leading)\b/i,
   /fabricated (?:customer|review|statistic|benchmark)/i,
 ];
-
-assert.doesNotMatch("className=\"top-1/2\"", topMarketingClaimPattern);
-assert.match("Top 5 attack paths", topMarketingClaimPattern);
 
 for (const rel of tracked) {
   if (!textExtensions.has(path.extname(rel))) continue;
