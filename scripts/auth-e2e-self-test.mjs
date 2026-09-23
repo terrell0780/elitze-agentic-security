@@ -50,6 +50,7 @@ const server = spawn("npm", ["run", "start", "--", "--hostname", host, "--port",
   env,
   stdio: ["ignore", "pipe", "pipe"],
 });
+server.unref();
 let serverLogs = "";
 server.stdout.on("data", (chunk) => { serverLogs += chunk.toString(); });
 server.stderr.on("data", (chunk) => { serverLogs += chunk.toString(); });
@@ -84,16 +85,23 @@ async function waitForServer() {
 }
 
 async function jsonRequest(path, init = {}) {
-  const response = await fetch(`${origin}${path}`, {
-    ...init,
-    headers: {
-      origin,
-      "content-type": "application/json",
-      ...(init.headers ?? {}),
-    },
-  });
-  const body = await response.json().catch(() => ({}));
-  return { response, body };
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch(`${origin}${path}`, {
+      ...init,
+      headers: {
+        origin,
+        "content-type": "application/json",
+        ...(init.headers ?? {}),
+      },
+      signal: controller.signal,
+    });
+    const body = await response.json().catch(() => ({}));
+    return { response, body };
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 function assert(condition, message) {
