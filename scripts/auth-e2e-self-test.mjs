@@ -174,7 +174,7 @@ try {
       body: JSON.stringify({ email: testEmail, password: primaryPassword, persistent: true }),
     });
     assert(login.response.status === 200 && login.body.ok === true, `login failed: ${login.response.status} ${JSON.stringify(login.body)}`);
-    const cookie = sessionCookie(login.response);
+    let cookie = sessionCookie(login.response);
     assert(cookie.includes("elitze_session="), "login did not issue an ELITZE session cookie");
 
     const session = await (async () => {
@@ -234,6 +234,8 @@ try {
       body: JSON.stringify({ email: testEmail, password: resetPassword }),
     });
     assert(newLogin.response.status === 200 && newLogin.body.ok === true, "new password did not authenticate");
+    cookie = sessionCookie(newLogin.response);
+    assert(cookie.includes("elitze_session="), "post-reset login did not issue a fresh ELITZE session cookie");
 
     const secondEmail = `e2e-auth-second-${Date.now()}@example.invalid`;
     const secondPassword = ["E2EAuthSecond", Date.now().toString(), "PrimaryPass12"].join("-");
