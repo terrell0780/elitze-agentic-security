@@ -4,7 +4,7 @@ import { cookies } from "next/headers";
 const COOKIE_NAME = "elitze_team_session";
 const MAX_AGE = 60 * 60 * 12;
 
-type TeamSession = { actorId: string; issuedAt: number };
+type TeamSession = { actorId: string; tenantId: string; issuedAt: number };
 
 function secret() {
   const value = process.env.ELITZE_TEAM_SESSION_SECRET?.trim();
@@ -16,8 +16,8 @@ function sign(payload: string) {
   return createHmac("sha256", secret()).update(payload).digest("base64url");
 }
 
-export function encodeTeamSession(actorId: string) {
-  const payload = Buffer.from(JSON.stringify({ actorId, issuedAt: Date.now() })).toString("base64url");
+export function encodeTeamSession(actorId: string, tenantId: string) {
+  const payload = Buffer.from(JSON.stringify({ actorId, tenantId, issuedAt: Date.now() })).toString("base64url");
   return `${payload}.${sign(payload)}`;
 }
 
@@ -31,7 +31,7 @@ export function decodeTeamSession(value: string | undefined): TeamSession | null
   if (left.length !== right.length || !timingSafeEqual(left, right)) return null;
   try {
     const parsed = JSON.parse(Buffer.from(payload, "base64url").toString("utf8")) as TeamSession;
-    if (!parsed.actorId || typeof parsed.actorId !== "string" || typeof parsed.issuedAt !== "number") return null;
+    if (!parsed.actorId || typeof parsed.actorId !== "string" || !parsed.tenantId || typeof parsed.tenantId !== "string" || typeof parsed.issuedAt !== "number") return null;
     if (Date.now() - parsed.issuedAt > MAX_AGE * 1000) return null;
     return parsed;
   } catch {
