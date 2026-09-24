@@ -15,7 +15,7 @@ export async function GET() {
   try {
     const db = getPgPool();
     const tenantId = user.tenantId;
-    const [agents, mcpServers, policies, approvals, decisions, graph, tests, evidence] = await Promise.all([
+    const [agents, mcpServers, policies, approvals, decisions, graph, tests] = await Promise.all([
       db.query(`SELECT COUNT(*)::int AS count FROM agent_identities WHERE tenant_id=$1 AND active=true`, [tenantId]),
       db.query(`SELECT COUNT(*)::int AS count FROM mcp_gateway_servers WHERE tenant_id=$1 AND active=true`, [tenantId]),
       db.query(`SELECT COUNT(*)::int AS count FROM security_policies WHERE tenant_id=$1 AND active=true AND (expires_at IS NULL OR expires_at>now())`, [tenantId]),
@@ -41,10 +41,6 @@ export async function GET() {
           COUNT(*) FILTER (WHERE status='FAILED')::int AS failed,
           MAX(updated_at) AS latest_at
         FROM security_test_requests WHERE tenant_id=$1`, [tenantId]),
-      db.query(`SELECT
-          COUNT(*)::int AS total,
-          MAX(created_at) AS latest_at
-        FROM evidence_records WHERE tenant_id=$1`, [tenantId]),
     ]);
 
     const row = <T>(result: { rows: unknown[] }) => (result.rows[0] ?? {}) as T;
@@ -55,7 +51,6 @@ export async function GET() {
     const d = row<{ total:number; denied:number; approval_required:number; latest_at:string|null }>(decisions);
     const g = row<{ nodes:number; edges:number; evidence:number }>(graph);
     const t = row<{ total:number; queued:number; running:number; completed:number; failed:number; latest_at:string|null }>(tests);
-    const e = row<{ total:number; latest_at:string|null }>(evidence);
 
     return NextResponse.json({
       ok: true,
@@ -79,10 +74,8 @@ export async function GET() {
         runningTests: Number(t.running ?? 0),
         completedTests: Number(t.completed ?? 0),
         failedTests: Number(t.failed ?? 0),
-        evidenceRecords: Number(e.total ?? 0),
         latestDecisionAt: d.latest_at ?? null,
         latestTestAt: t.latest_at ?? null,
-        latestEvidenceAt: e.latest_at ?? null,
       },
       measurementPolicy: "All values come from the authenticated tenant PostgreSQL boundary. Empty counts are real zero-record states; unavailable measurements are not substituted with synthetic values.",
     }, { headers: { "cache-control": "no-store" } });

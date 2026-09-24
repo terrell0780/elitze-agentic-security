@@ -180,10 +180,10 @@ export default function ElitzeGlobalSecurityView() {
         </div>
 
         <aside className="rounded-[28px] border border-white/10 bg-white/[.025] p-5">
-          <div className="text-[10px] font-semibold uppercase tracking-[.22em] text-slate-500">2026 SYSTEM STATUS</div>
+          <div className="text-[10px] font-semibold uppercase tracking-[.22em] text-slate-500">TENANT SYSTEM STATUS</div>
           <div className="mt-4 grid gap-3">
-            <div className="rounded-2xl border border-white/8 bg-black/20 p-4"><div className="text-[9px] uppercase tracking-[.16em] text-slate-600">Agent identities</div><div className="mt-2 font-mono text-xl">{overview?.ok && market.stats?.agents !== undefined ? market.stats.agents : "UNKNOWN"}</div></div>
-            <div className="rounded-2xl border border-white/8 bg-black/20 p-4"><div className="text-[9px] uppercase tracking-[.16em] text-slate-600">Approval queue</div><div className="mt-2 font-mono text-xl">{overview?.ok && market.stats?.pendingApprovals !== undefined ? market.stats.pendingApprovals : "UNKNOWN"}</div></div>
+            <div className="rounded-2xl border border-white/8 bg-black/20 p-4"><div className="text-[9px] uppercase tracking-[.16em] text-slate-600">Agent identities</div><div className="mt-2 font-mono text-xl">{overview?.ok && overview.metrics?.agentIdentities !== undefined ? overview.metrics.agentIdentities : "UNMEASURABLE"}</div></div>
+            <div className="rounded-2xl border border-white/8 bg-black/20 p-4"><div className="text-[9px] uppercase tracking-[.16em] text-slate-600">Approval queue</div><div className="mt-2 font-mono text-xl">{overview?.ok && overview.metrics?.pendingApprovals !== undefined ? overview.metrics.pendingApprovals : "UNKNOWN"}</div></div>
             <div className="rounded-2xl border border-white/8 bg-black/20 p-4"><div className="text-[9px] uppercase tracking-[.16em] text-slate-600">Graph reachability</div><div className="mt-2 font-mono text-xl">UNMEASURABLE</div></div>
           </div>
           <div className="mt-6 border-t border-white/8 pt-5">

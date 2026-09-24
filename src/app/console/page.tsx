@@ -13,7 +13,6 @@ import EvidenceExpressionDebugger from "@/components/evidence-expression-debugge
 type Health = { ok: boolean; checks?: { database?: string; schema?: string } };
 type Overview = { ok: boolean; metrics?: { agentIdentities: number; activeMcpServers: number; activePolicies: number; pendingApprovals: number; approvalRequests: number; gatewayDecisions: number; deniedGatewayDecisions: number; approvalRequiredDecisions: number; graphNodes: number; graphEdges: number; graphEvidence: number; securityTests: number; queuedTests: number; runningTests: number; completedTests: number; failedTests: number; evidenceRecords: number; latestDecisionAt: string | null; latestTestAt: string | null; latestEvidenceAt: string | null }; error?: string };
 type SearchResult = { title: string; url: string; description: string; untrusted: true };
-type Metrics = { ok: boolean; metrics?: { averageEnforcementLatencyMs: number | null; intentMismatches: number; autonomousDecisionRate: { value: number | null; state: string }; analystCoverage: { value: number | null; state: string } } };
 type Graph = { ok: boolean; nodes?: Array<{ nodeType: string; displayName: string; evidenceState: string; source: string; observedAt: string | null }>; edges?: Array<{ relation: string; from: string; to: string; evidenceState: string; source: string }>; error?: string };
 
 const cards = [
@@ -22,11 +21,6 @@ const cards = [
   [Users, "Pending approvals", (d: Overview) => d.metrics ? String(d.metrics.pendingApprovals) : "UNMEASURABLE"],
   [ShieldCheck, "Active policies", (d: Overview) => d.metrics ? String(d.metrics.activePolicies) : "UNMEASURABLE"],
 ] as const;
-
-function metricValue(metric?: { value: number | null; state: string }, suffix = "") {
-  if (!metric || metric.state !== "MEASURABLE" || metric.value === null) return "UNMEASURABLE";
-  return `${metric.value}${suffix}`;
-}
 
 export default function ConsolePage() {
   const router = useRouter();
@@ -96,7 +90,7 @@ export default function ConsolePage() {
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--panel-strong)] p-4"><div className="font-mono text-xl font-semibold">{overview?.metrics ? String(overview.metrics.gatewayDecisions) : "UNMEASURABLE"}</div><div className="mt-1 text-[10px] uppercase tracking-wider text-[var(--muted)]">Gateway decisions</div></div>
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--panel-strong)] p-4"><div className="font-mono text-xl font-semibold">{overview?.metrics ? String(overview.metrics.deniedGatewayDecisions) : "UNMEASURABLE"}</div><div className="mt-1 text-[10px] uppercase tracking-wider text-[var(--muted)]">Denied decisions</div></div>
             <div className="rounded-2xl border border-[var(--border)] bg-[var(--panel-strong)] p-4"><div className="font-mono text-xl font-semibold">{overview?.metrics ? String(overview.metrics.securityTests) : "UNMEASURABLE"}</div><div className="mt-1 text-[10px] uppercase tracking-wider text-[var(--muted)]">Security test requests</div></div>
-            <div className="rounded-2xl border border-[var(--border)] bg-[var(--panel-strong)] p-4"><div className="font-mono text-xl font-semibold">{overview?.metrics ? String(overview.metrics.evidenceRecords + overview.metrics.graphEvidence) : "UNMEASURABLE"}</div><div className="mt-1 text-[10px] uppercase tracking-wider text-[var(--muted)]">Evidence records</div></div>
+            <div className="rounded-2xl border border-[var(--border)] bg-[var(--panel-strong)] p-4"><div className="font-mono text-xl font-semibold">{overview?.metrics ? String(overview.metrics.graphEvidence) : "UNMEASURABLE"}</div><div className="mt-1 text-[10px] uppercase tracking-wider text-[var(--muted)]">Evidence records</div></div>
           </div>
           <p className="mt-4 text-[10px] text-[var(--muted)]">All values are derived from authenticated records belonging to the current tenant. No cross-tenant aggregate or synthetic metric is rendered.</p>
         </section>
