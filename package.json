@@ -26,7 +26,7 @@
     "progressive-proofing:self-test": "node --experimental-strip-types scripts/progressive-proofing-self-test.mjs",
     "evidence-expression:self-test": "node --experimental-strip-types scripts/evidence-expression-self-test.mjs",
     "pentest-request:self-test": "node scripts/pentest-request-self-test.mjs",
-    "security-fabric:self-test": "node scripts/security-fabric-self-test.mjs"
+    "security-fabric:self-test": "node scripts/security-fabric-self-test.mjs",
     "contact-acquisition:self-test": "node scripts/contact-acquisition-self-test.mjs"
   },
   "dependencies": {
