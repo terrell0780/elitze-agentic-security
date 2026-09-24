@@ -1,4 +1,4 @@
-import { index, integer, pgTable, serial, text, timestamp, uniqueIndex, varchar } from "drizzle-orm/pg-core";
+import { index, integer, pgTable, serial, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 
 export const teamChannels = pgTable(
   "team_channels",
@@ -14,7 +14,7 @@ export const teamChannels = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
     archivedAt: timestamp("archived_at", { withTimezone: true }),
   },
-  (table) => [uniqueIndex("team_channels_slug_uq").on(table.slug), index("team_channels_type_idx").on(table.channelType)],
+  (table) => [uniqueIndex("team_channels_slug_uq").on(table.slug), index("team_channels_type_idx").on(table.channelType), index("team_channels_tenant_idx").on(table.tenantId)],
 );
 
 export const teamMessages = pgTable(
