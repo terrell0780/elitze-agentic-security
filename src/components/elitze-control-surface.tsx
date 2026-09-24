@@ -40,23 +40,6 @@ const modes: ReadonlyArray<{ id: ViewMode; label: string; detail: string }> = [
   { id: "EVIDENCE", label: "Evidence", detail: "Decision, provenance and verification context" },
 ];
 
-function decodeMarket(value: unknown): Market {
-  if (typeof value !== "object" || value === null) return { ok: false };
-  const record = value as Record<string, unknown>;
-  const rawStats = record.stats;
-  if (typeof rawStats !== "object" || rawStats === null) return { ok: record.ok === true };
-  const stats = rawStats as Record<string, unknown>;
-  const numberOrUndefined = (entry: unknown): number | undefined => typeof entry === "number" && Number.isFinite(entry) ? entry : undefined;
-  return {
-    ok: record.ok === true,
-    stats: {
-      agents: numberOrUndefined(stats.agents),
-      pendingApprovals: numberOrUndefined(stats.pendingApprovals),
-      openDiscoveries: numberOrUndefined(stats.openDiscoveries),
-    },
-  };
-}
-
 export default function ElitzeControlSurface() {
   const [active, setActive] = useState<DomainId>("agents");
   const [mode, setMode] = useState<ViewMode>("GRAPH");

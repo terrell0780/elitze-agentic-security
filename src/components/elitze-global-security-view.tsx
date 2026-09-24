@@ -24,9 +24,9 @@ const layers: Array<{ id: LayerId; label: string; detail: string }> = [
   { id: "evidence", label: "EVIDENCE", detail: "Signed decisions, provenance and verification state." },
 ];
 
-function stateLabel(market: Market | null) {
-  if (!market) return "CONNECTING";
-  return market.ok ? "LIVE DATA" : "UNAVAILABLE";
+function stateLabel(overview: Overview | null) {
+  if (!overview) return "CONNECTING";
+  return overview.ok ? "TENANT DATA" : "UNAVAILABLE";
 }
 
 export default function ElitzeGlobalSecurityView() {
@@ -96,7 +96,7 @@ export default function ElitzeGlobalSecurityView() {
         </div>
         <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[.035] px-3 py-2 text-[10px] font-semibold uppercase tracking-[.18em] text-slate-400">
           <span className={`h-1.5 w-1.5 rounded-full ${overview?.ok ? "bg-cyan-300" : "bg-amber-300"}`} />
-          {stateLabel(market)}
+          {stateLabel(overview)}
         </div>
       </div>
 
