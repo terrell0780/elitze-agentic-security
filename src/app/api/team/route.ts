@@ -33,7 +33,8 @@ export async function GET(request: NextRequest) {
 
     if (channelId) {
       const membership = await db.select({ id: teamChannelMembers.id }).from(teamChannelMembers)
-        .where(and(eq(teamChannelMembers.channelId, channelId), eq(teamChannelMembers.actorId, session.actorId), isNull(teamChannelMembers.leftAt))).limit(1);
+        .innerJoin(teamChannels, eq(teamChannels.id, teamChannelMembers.channelId))
+        .where(and(eq(teamChannelMembers.channelId, channelId), eq(teamChannelMembers.actorId, session.actorId), eq(teamChannels.tenantId, session.tenantId), isNull(teamChannelMembers.leftAt), isNull(teamChannels.archivedAt))).limit(1);
       if (!membership.length) return NextResponse.json({ ok: false, error: "Channel membership required." }, { status: 403 });
 
       const messages = await db.select({
@@ -46,7 +47,10 @@ export async function GET(request: NextRequest) {
         linkedEvidenceId: teamMessages.linkedEvidenceId,
         createdAt: teamMessages.createdAt,
         editedAt: teamMessages.editedAt,
-      }).from(teamMessages).where(and(eq(teamMessages.channelId, channelId), isNull(teamMessages.deletedAt))).orderBy(desc(teamMessages.createdAt)).limit(200);
+      }).from(teamMessages)
+        .innerJoin(teamChannels, eq(teamChannels.id, teamMessages.channelId))
+        .where(and(eq(teamMessages.channelId, channelId), eq(teamChannels.tenantId, session.tenantId), isNull(teamMessages.deletedAt)))
+        .orderBy(desc(teamMessages.createdAt)).limit(200);
       return NextResponse.json({ ok: true, channelId, messages: messages.reverse() });
     }
 
@@ -63,7 +67,7 @@ export async function GET(request: NextRequest) {
       createdAt: teamChannels.createdAt,
     }).from(teamChannels)
       .innerJoin(teamChannelMembers, eq(teamChannelMembers.channelId, teamChannels.id))
-      .where(and(eq(teamChannelMembers.actorId, session.actorId), isNull(teamChannelMembers.leftAt), isNull(teamChannels.archivedAt)))
+      .where(and(eq(teamChannelMembers.actorId, session.actorId), eq(teamChannels.tenantId, session.tenantId), isNull(teamChannelMembers.leftAt), isNull(teamChannels.archivedAt)))
       .orderBy(asc(teamChannels.name));
 
     return NextResponse.json({ ok: true, actorId: session.actorId, channels });
@@ -90,6 +94,7 @@ export async function POST(request: NextRequest) {
     }
 
     const [channel] = await db.insert(teamChannels).values({
+      tenantId: session.tenantId,
       slug,
       name: input.data.name,
       description: input.data.description || null,
@@ -114,7 +119,8 @@ export async function PATCH(request: NextRequest) {
   try {
     const db = getDb();
     const membership = await db.select({ id: teamChannelMembers.id }).from(teamChannelMembers)
-      .where(and(eq(teamChannelMembers.channelId, input.data.channelId), eq(teamChannelMembers.actorId, session.actorId), isNull(teamChannelMembers.leftAt))).limit(1);
+      .innerJoin(teamChannels, eq(teamChannels.id, teamChannelMembers.channelId))
+      .where(and(eq(teamChannelMembers.channelId, input.data.channelId), eq(teamChannelMembers.actorId, session.actorId), eq(teamChannels.tenantId, session.tenantId), isNull(teamChannelMembers.leftAt), isNull(teamChannels.archivedAt))).limit(1);
     if (!membership.length) return NextResponse.json({ ok: false, error: "Channel membership required." }, { status: 403 });
 
     const [message] = await db.insert(teamMessages).values({
