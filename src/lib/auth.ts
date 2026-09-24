@@ -81,15 +81,31 @@ async function clientMeta() {
   };
 }
 
+function normalizeHostHeader(value: string | null) {
+  const host = value?.split(",")[0]?.trim().toLowerCase();
+  if (!host || /[\s/\\@]/.test(host)) return "";
+  try {
+    return new URL(`https://${host}`).host;
+  } catch {
+    return "";
+  }
+}
+
 function requestHeadersHost(request: Request) {
-  const host = request.headers.get("host")?.trim().toLowerCase();
-  if (host) return host;
-  return request.headers.get("x-forwarded-host")?.split(",")[0]?.trim().toLowerCase() ?? "";
+  return normalizeHostHeader(request.headers.get("x-forwarded-host"))
+    || normalizeHostHeader(request.headers.get("host"));
 }
 
 export async function assertSameOrigin(request: Request) {
   const origin = request.headers.get("origin");
   if (!origin) return false;
+  let requestOrigin: URL;
+  try {
+    requestOrigin = new URL(origin);
+  } catch {
+    return false;
+  }
+  if (requestOrigin.protocol !== "http:" && requestOrigin.protocol !== "https:") return false;
   const configured = process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.info";
   let expected: URL;
   try {
@@ -97,24 +113,27 @@ export async function assertSameOrigin(request: Request) {
   } catch {
     return false;
   }
-  if (origin === expected.origin) return true;
+  if (requestOrigin.origin === expected.origin) return true;
 
   // Preview/custom-host deployments must still enforce same-origin protection.
   // Compare the browser Origin to the request Host instead of requiring the
   // canonical site URL to be the active deployment hostname.
-  try {
-    const requestOrigin = new URL(origin);
-    const requestHost = requestHeadersHost(request);
-    if (requestHost && requestOrigin.host === requestHost) return true;
-  } catch {
-    return false;
-  }
+  const requestHost = requestHeadersHost(request);
+  if (requestHost && requestOrigin.host === requestHost) return true;
 
   const allowedOrigins = (process.env.ELITZE_ALLOWED_ORIGINS || "")
     .split(",")
     .map((value) => value.trim())
     .filter(Boolean);
-  return allowedOrigins.includes(origin);
+  return allowedOrigins.some((allowedOrigin) => {
+    try {
+      const parsed = new URL(allowedOrigin);
+      if (parsed.protocol !== "http:" && parsed.protocol !== "https:") return false;
+      return requestOrigin.origin === parsed.origin;
+    } catch {
+      return false;
+    }
+  });
 }
 
 export async function getRateLimitKey(scope: string, identifier?: string) {
