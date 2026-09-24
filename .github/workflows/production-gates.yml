@@ -2,12 +2,15 @@ name: ELITZE production gates
 
 on:
   workflow_dispatch:
+
   push:
     branches:
       - main
       - rehaul/2026-security-control-surface
       - security/full-green-gate-2026
       - security/enterprise-auth-green-2026-09-21
+      - feat/autonomous-analyst-threat-fabric-2026-09-22
+
   pull_request:
     branches:
       - main
@@ -56,14 +59,17 @@ jobs:
           fi
 
       - name: Verify dependency install-script policy
-        run: node -e "const p=require('./package.json'); const required=['esbuild','unrs-resolver']; const missing=required.filter((name)=>p.allowScripts?.[name]!==true); if(missing.length){console.error('Missing allowScripts entries:',missing.join(', ')); process.exit(1)} console.log('Build-script allowlist verified:',required.join(', '));"
+        run: |
+          node -e "const p=require('./package.json'); const required=['esbuild','unrs-resolver']; const missing=required.filter((name)=>p.allowScripts?.[name]!==true); if(missing.length){console.error('Missing allowScripts entries:',missing.join(', ')); process.exit(1)} console.log('Build-script allowlist verified:',required.join(', '));"
 
-      - name: Production dependency audit
+      - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
 
       - name: Sale readiness review
         run: npm run sale:readiness
 
+      - name: Security fabric self-test
+        run: npm run security-fabric:self-test
       - name: Contact and acquisition routing self-test
         run: npm run contact-acquisition:self-test
 
@@ -77,7 +83,7 @@ jobs:
         run: npm run build
 
       - name: Code review green light
-        run: echo "GREEN LIGHT — review integrity, sale readiness, typecheck, lint, and production build passed."
+        run: echo "GREEN LIGHT — review integrity, sale readiness, security fabric, typecheck, lint, and production build passed."
 
   verify:
     needs: code-review
@@ -121,7 +127,8 @@ jobs:
         run: npm run db:migrate
 
       - name: Verify dependency install-script policy
-        run: node -e "const p=require('./package.json'); const required=['esbuild','unrs-resolver']; const missing=required.filter((name)=>p.allowScripts?.[name]!==true); if(missing.length){console.error('Missing allowScripts entries:',missing.join(', ')); process.exit(1)} console.log('Build-script allowlist verified:',required.join(', '));"
+        run: |
+          node -e "const p=require('./package.json'); const required=['esbuild','unrs-resolver']; const missing=required.filter((name)=>p.allowScripts?.[name]!==true); if(missing.length){console.error('Missing allowScripts entries:',missing.join(', ')); process.exit(1)} console.log('Build-script allowlist verified:',required.join(', '));"
 
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
@@ -155,6 +162,15 @@ jobs:
 
       - name: Progressive proofing self-test
         run: npm run progressive-proofing:self-test
+
+      - name: Security fabric self-test
+        run: npm run security-fabric:self-test
+
+      - name: Evidence expression self-test
+        run: npm run evidence-expression:self-test
+
+      - name: Pentest request self-test
+        run: npm run pentest-request:self-test
 
       - name: Typecheck
         run: npm run typecheck
@@ -190,5 +206,5 @@ jobs:
     steps:
       - name: Confirm all release gates passed
         run: |
-          echo "GREEN LIGHT — code review, security verification, sale readiness, typecheck, lint, build, dependency audit, and SBOM gates passed."
+          echo "GREEN LIGHT — code review, security verification, sale readiness, security fabric, typecheck, lint, build, dependency audit, and SBOM gates passed."
           echo "This commit is eligible for merge evaluation and production promotion."

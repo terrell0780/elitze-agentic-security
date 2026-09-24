@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Activity, Database, Network, Search, ShieldCheck, TriangleAlert, Users } from "lucide-react";
@@ -76,6 +77,7 @@ export default function ConsolePage() {
 
   return (
     <main className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+      <header className="border-b border-[var(--border)] bg-[var(--header)]/95 backdrop-blur-xl"><div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6"><div><div className="text-sm font-bold tracking-wide">ELITZE</div><div className="text-[10px] uppercase tracking-[.22em] text-[var(--accent)]">Agentic Security Console</div></div><div className="flex items-center gap-2 text-xs"><span className={`h-2 w-2 rounded-full ${health?.ok ? "bg-emerald-400" : "bg-amber-400"}`} /><span className="text-[var(--muted)]">{health?.ok ? "Database connected" : "Database unavailable"}</span></div></div><Link href="/console/analyst" className="rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] px-3 py-2 text-xs font-semibold text-[var(--accent)]">Autonomous Analyst</Link></header>
       <header className="border-b border-[var(--border)] bg-[var(--header)]/95 backdrop-blur-xl"><div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6"><div><div className="text-sm font-bold tracking-wide">ELITZE</div><div className="text-[10px] uppercase tracking-[.22em] text-[var(--accent)]">Agentic Security Console</div></div><div className="flex items-center gap-2 text-xs"><Link href="/console/readiness" className="hidden rounded-lg border border-[var(--border)] px-3 py-2 text-[10px] font-semibold text-[var(--muted)] hover:text-[var(--text)] sm:inline-flex">Readiness</Link><span className={`h-2 w-2 rounded-full ${health?.ok ? "bg-emerald-400" : "bg-amber-400"}`} /><span className="text-[var(--muted)]">{health?.ok ? "Database connected" : "Database unavailable"}</span></div></div></header>
 
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-10">
