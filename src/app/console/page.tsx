@@ -64,7 +64,7 @@ export default function ConsolePage() {
       fetch("/api/soc/metrics", { cache: "no-store" }).then((r) => r.json() as Promise<Metrics>).catch(() => ({ ok: false })),
       fetch("/api/console/security-graph", { cache: "no-store" }).then((r) => r.json() as Promise<Graph>).catch(() => ({ ok: false, error: "security_graph_unavailable" })),
     ]).then(([h, m, s, g]) => { setHealth(h); setMarket(m); setMetrics(s); setGraph(g); });
-  }, []);
+  }, [authorized]);
 
   async function runSearch(event: FormEvent) {
     event.preventDefault(); setSearchError(null); setResults([]); if (!query.trim()) return; setBusy(true);
