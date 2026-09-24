@@ -44,6 +44,9 @@ jobs:
       - name: Database configuration contract
         run: npm run db:config-self-test
 
+      - name: Tenant overview data boundary
+        run: npm run tenant-overview:self-test
+
       - name: Diff and whitespace review
         run: |
           git diff --check
