@@ -6,17 +6,36 @@ import pg from "pg";
 
 const { Client } = pg;
 const host = "127.0.0.1";
-const appPort = 3010;
+const portProbe = createServer();
+portProbe.listen(0, host);
+await once(portProbe, "listening");
+const portAddress = portProbe.address();
+const appPort = typeof portAddress === "object" && portAddress ? portAddress.port : 3010;
+await new Promise((resolve, reject) => {
+  portProbe.close((error) => {
+    if (error) reject(error);
+    else resolve(undefined);
+  });
+});
 const origin = `http://${host}:${appPort}`;
 const testEmail = `e2e-auth-${Date.now()}@example.invalid`;
 const primaryPassword = ["E2EAuth", Date.now().toString(), "PrimaryPass12"].join("-");
 const resetPassword = ["E2EReset", Date.now().toString(), "ResetPass12"].join("-");
-const databaseUrl = process.env.DATABASE_URL?.trim()
-  || ["postgresql:", "//", process.env.PGUSER, ":", process.env.PGPASSWORD, "@", process.env.PGHOST, ":", process.env.PGPORT, "/", process.env.PGDATABASE].join("");
+const databaseUrl = process.env.DATABASE_URL?.trim();
 
-if (!process.env.DATABASE_URL && (!process.env.PGUSER || !process.env.PGPASSWORD || !process.env.PGHOST || !process.env.PGPORT || !process.env.PGDATABASE)) {
+if (!databaseUrl && (!process.env.PGUSER || !process.env.PGPASSWORD || !process.env.PGHOST || !process.env.PGPORT || !process.env.PGDATABASE)) {
   throw new Error("DATABASE_URL or PG environment is required for auth E2E");
 }
+
+const databaseConfig = databaseUrl
+  ? { connectionString: databaseUrl }
+  : {
+      host: process.env.PGHOST,
+      port: Number(process.env.PGPORT),
+      user: process.env.PGUSER,
+      password: process.env.PGPASSWORD,
+      database: process.env.PGDATABASE,
+    };
 
 let deliveredEmail;
 const mailServer = createServer(async (request, response) => {
@@ -38,7 +57,6 @@ const mailPort = mailServer.address().port;
 const env = {
   ...process.env,
   NODE_ENV: "production",
-  DATABASE_URL: databaseUrl,
   NEXT_PUBLIC_SITE_URL: origin,
   ELITZE_ALLOWED_ORIGINS: origin,
   ELITZE_CONTACT_EMAIL: "tsh_cook@hotmail.com",
@@ -165,7 +183,7 @@ function sessionCookie(response) {
 
 try {
   await waitForServer();
-  const db = new Client({ connectionString: databaseUrl });
+  const db = new Client(databaseConfig);
   await db.connect();
   try {
     const registration = await jsonRequest("/api/auth/register", {

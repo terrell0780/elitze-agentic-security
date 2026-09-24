@@ -82,7 +82,7 @@ export async function POST(request: NextRequest) {
     const token = await issueEmailToken(user, "email_verification", 60);
     const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://www.elitze.info").replace(/\/$/, "");
     await sendAuthEmail(user.email, "Verify your ELITZE Agentic Security email", `Verify your email: ${base}/auth/verify?token=${encodeURIComponent(token)}\n\nThis link expires in 60 minutes.`);
-    return Response.json({ ok: true, verificationRequired: true });
+    return Response.json({ ok: true, verificationRequired: true, alreadyRegistered: false });
   } catch (error) {
     const message = error instanceof Error ? error.message : "registration_failed";
     if (message === "email_delivery_not_configured") return Response.json({ error: "email_delivery_not_configured" }, { status: 503 });
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: message }, { status: 400 });
     }
     if (duplicateRegistration(error)) {
-      return Response.json({ ok: true, verificationRequired: true });
+      return Response.json({ ok: true, verificationRequired: true, alreadyRegistered: true });
     }
     if (databaseUnavailable(error)) {
       logRegistrationFailure("database", error);

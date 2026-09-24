@@ -41,6 +41,7 @@ assert.match(register, /assertSameOrigin/);
 assert.match(register, /database_unavailable/);
 assert.match(register, /email_delivery_not_configured/);
 assert.match(register, /too_many_attempts/);
+assert.match(register, /alreadyRegistered/);
 assert.match(reset, /UPDATE auth_sessions SET revoked_at=now\(\)/);
 assert.match(mfa, /consumeMfaLoginChallenge/);
 assert.match(mfa, /verifyTotp/);

@@ -32,12 +32,12 @@ export default function RegisterPage() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ displayName, email, password }),
       });
-      const payload = await response.json() as { error?: string };
+      const payload = await response.json() as { error?: string; alreadyRegistered?: boolean };
       if (!response.ok) {
         setError(messageFor(payload.error ?? ""));
         return;
       }
-      router.replace("/login?registered=1");
+      router.replace(payload.alreadyRegistered ? "/login" : "/login?registered=1");
     } catch {
       setError("Authentication is temporarily unavailable.");
     } finally {
