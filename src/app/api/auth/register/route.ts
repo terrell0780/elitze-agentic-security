@@ -27,9 +27,7 @@ function databaseUnavailable(error: unknown) {
     code === "57P01" ||
     code === "08001" ||
     code === "08006" ||
-    code === "3D000" ||
-    code === "42P01" ||
-    code === "42703";
+    code === "3D000";
 }
 
 function logRegistrationFailure(stage: string, error: unknown) {
