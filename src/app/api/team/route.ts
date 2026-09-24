@@ -52,7 +52,9 @@ export async function GET(request: NextRequest) {
 
     const channels = await db.select({
       id: teamChannels.id,
-      slug: teamChannels.slug,
+      slug: teamChannels.tenantId: session.tenantId,
+      tenantId: session.tenantId,
+      slug,
       name: teamChannels.name,
       description: teamChannels.description,
       channelType: teamChannels.channelType,
