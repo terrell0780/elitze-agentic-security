@@ -20,6 +20,7 @@ const samlStart = read("src/app/api/auth/saml/start/route.ts");
 const samlCallback = read("src/app/api/auth/saml/callback/route.ts");
 const samlMetadata = read("src/app/api/auth/saml/metadata/route.ts");
 const packageJson = read("package.json");
+const loginPage = read("src/app/login/page.tsx");
 
 assert.match(auth, /httpOnly:\s*true/);
 assert.match(auth, /secure:\s*process\.env\.NODE_ENV === "production"/);
@@ -32,6 +33,9 @@ assert.match(auth, /issueMfaLoginChallenge/);
 assert.match(auth, /issuePrivilegedReauthChallenge/);
 assert.match(login, /assertSameOrigin/);
 assert.match(login, /mfaRequired/);
+assert.match(loginPage, /\/api\/auth\/mfa\/login/);
+assert.match(loginPage, /Verify and sign in/);
+assert.match(loginPage, /registered/);
 assert.match(register, /assertSameOrigin/);
 assert.match(reset, /UPDATE auth_sessions SET revoked_at=now\(\)/);
 assert.match(mfa, /consumeMfaLoginChallenge/);
