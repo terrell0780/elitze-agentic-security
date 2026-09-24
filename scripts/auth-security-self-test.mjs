@@ -14,6 +14,7 @@ const oidc = read("src/app/api/auth/oidc/callback/route.ts");
 const passkey = read("src/app/api/auth/passkeys/auth/verify/route.ts");
 const keys = read("src/app/api/auth/api-keys/route.ts");
 const gateway = read("src/app/api/mcp-gateway/route.ts");
+const decision = read("src/app/api/security/decision/route.ts");
 const migration = read("drizzle/0020_enterprise_auth_security.sql");
 const saml = read("src/lib/saml.ts");
 const samlStart = read("src/app/api/auth/saml/start/route.ts");
