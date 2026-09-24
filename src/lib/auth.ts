@@ -81,6 +81,12 @@ async function clientMeta() {
   };
 }
 
+function requestHeadersHost(request: Request) {
+  const host = request.headers.get("host")?.trim().toLowerCase();
+  if (host) return host;
+  return request.headers.get("x-forwarded-host")?.split(",")[0]?.trim().toLowerCase() ?? "";
+}
+
 export async function assertSameOrigin(request: Request) {
   const origin = request.headers.get("origin");
   if (!origin) return false;
@@ -92,6 +98,18 @@ export async function assertSameOrigin(request: Request) {
     return false;
   }
   if (origin === expected.origin) return true;
+
+  // Preview/custom-host deployments must still enforce same-origin protection.
+  // Compare the browser Origin to the request Host instead of requiring the
+  // canonical site URL to be the active deployment hostname.
+  try {
+    const requestOrigin = new URL(origin);
+    const requestHost = requestHeadersHost(request);
+    if (requestHost && requestOrigin.host === requestHost) return true;
+  } catch {
+    return false;
+  }
+
   const allowedOrigins = (process.env.ELITZE_ALLOWED_ORIGINS || "")
     .split(",")
     .map((value) => value.trim())
