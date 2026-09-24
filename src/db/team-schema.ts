@@ -4,6 +4,7 @@ export const teamChannels = pgTable(
   "team_channels",
   {
     id: serial("id").primaryKey(),
+    tenantId: uuid("tenant_id"),
     slug: varchar("slug", { length: 120 }).notNull(),
     name: varchar("name", { length: 160 }).notNull(),
     description: text("description"),
