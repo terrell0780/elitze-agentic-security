@@ -43,7 +43,7 @@ export default function HomePage() {
             <Link href="/sales" className="hidden rounded-xl border border-[var(--border)] bg-[var(--panel)] px-4 py-2.5 text-xs font-semibold sm:inline-flex">Acquisition</Link>
             <AcquisitionCta href="/console" event="console_open" className="hidden rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-slate-950 sm:inline-flex">Open Control Plane</AcquisitionCta>
             <button type="button" onClick={() => setMobileOpen((v) => !v)} aria-label="Toggle menu" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--panel)] lg:hidden">{mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}</button>
-            <GlobalThemeToggle />
+            <GlobalThemeToggle embedded />
           </div>
         </div>
         {mobileOpen && <nav className="border-t border-[var(--border)] px-4 py-3 lg:hidden"><div className="mx-auto flex max-w-[1400px] flex-col gap-1">{[["Platform","/platform"],["Security","/security"],["REO","/reo"],["Search","/search"],["FAQ","/faq"],["Control Plane","/console"],["Acquisition","/sales"]].map(([label,href]) => <Link key={href} href={href} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-sm text-[var(--muted)] hover:bg-[var(--panel)] hover:text-[var(--text)]">{label}</Link>)}</div></nav>}
