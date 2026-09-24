@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
 import { usePathname } from "next/navigation";
 
@@ -8,21 +8,26 @@ export default function GlobalThemeToggle() {
   const pathname = usePathname();
   const [light, setLight] = useState(false);
 
-  useLayoutEffect(() => {
-    const stored = window.localStorage.getItem("elitze-theme");
-    const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
-    const nextLight = stored ? stored === "light" : prefersLight;
-    setLight(nextLight);
-    document.documentElement.dataset.theme = nextLight ? "light" : "dark";
+  useEffect(() => {
+    const initial = window.setTimeout(() => {
+      const stored = window.localStorage.getItem("elitze-theme");
+      const nextLight = stored ? stored === "light" : window.matchMedia("(prefers-color-scheme: light)").matches;
+      setLight(nextLight);
+      document.documentElement.dataset.theme = nextLight ? "light" : "dark";
+      window.localStorage.setItem("elitze-theme", nextLight ? "light" : "dark");
+    }, 0);
+    return () => window.clearTimeout(initial);
   }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = light ? "light" : "dark";
+    window.localStorage.setItem("elitze-theme", light ? "light" : "dark");
+  }, [light]);
 
   if (pathname === "/") return null;
 
   function toggle() {
-    const nextLight = !light;
-    setLight(nextLight);
-    document.documentElement.dataset.theme = nextLight ? "light" : "dark";
-    window.localStorage.setItem("elitze-theme", nextLight ? "light" : "dark");
+    setLight((current) => !current);
   }
 
   return (

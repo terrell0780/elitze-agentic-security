@@ -43,7 +43,10 @@ export default function LiveControlPlane() {
     }
   }, []);
 
-  useEffect(() => { void refresh(); }, [refresh]);
+  useEffect(() => {
+    const initial = window.setTimeout(() => { void refresh(); }, 0);
+    return () => window.clearTimeout(initial);
+  }, [refresh]);
 
   const nodeCount = graph?.nodes?.length ?? 0;
   const edgeCount = graph?.edges?.length ?? 0;

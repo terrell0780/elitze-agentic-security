@@ -35,7 +35,10 @@ export default function TeamCollaboration() {
 
   useEffect(() => {
     if (!selected) return;
-    void loadMessages(selected).catch((error) => setStatus(error instanceof Error ? error.message : "Messages unavailable"));
+    const initial = window.setTimeout(() => {
+      void loadMessages(selected).catch((error) => setStatus(error instanceof Error ? error.message : "Messages unavailable"));
+    }, 0);
+    return () => window.clearTimeout(initial);
   }, [selected]);
 
   async function bootstrap(event: FormEvent) {

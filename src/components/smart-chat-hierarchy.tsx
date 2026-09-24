@@ -101,7 +101,8 @@ export default function SmartChatHierarchy() {
   }, []);
 
   useEffect(() => {
-    void load();
+    const initial = window.setTimeout(() => { void load(); }, 0);
+    return () => window.clearTimeout(initial);
   }, [load]);
 
   const stateLabel = state === "live" ? "data connected" : state === "loading" ? "loading" : "data unavailable";

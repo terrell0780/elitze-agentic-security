@@ -21,7 +21,10 @@ function writeConsent(value: Exclude<ConsentState, "unknown">) {
 export default function PrivacyConsent() {
   const [consent, setConsent] = useState<ConsentState>("unknown");
 
-  useEffect(() => setConsent(readConsent()), []);
+  useEffect(() => {
+    const initial = window.setTimeout(() => setConsent(readConsent()), 0);
+    return () => window.clearTimeout(initial);
+  }, []);
 
   if (consent !== "unknown") return null;
 
