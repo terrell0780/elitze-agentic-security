@@ -7,15 +7,14 @@ import { Activity, ArrowUpRight, Database, FileSearch, Fingerprint, Layers3, Rad
 type DomainId = "agents" | "identity" | "mcp" | "tools" | "apis" | "data";
 type ViewMode = "GRAPH" | "SCAN" | "MAP" | "EVIDENCE";
 
-type MarketStats = {
-  agents?: number;
-  pendingApprovals?: number;
-  openDiscoveries?: number;
-};
-
-type Market = {
+type Overview = {
   ok: boolean;
-  stats?: MarketStats;
+  metrics?: {
+    agentIdentities: number;
+    pendingApprovals: number;
+    graphNodes: number;
+    securityTests: number;
+  };
 };
 
 const domains: ReadonlyArray<{
@@ -62,17 +61,17 @@ export default function ElitzeControlSurface() {
   const [active, setActive] = useState<DomainId>("agents");
   const [mode, setMode] = useState<ViewMode>("GRAPH");
   const [zoom, setZoom] = useState(1);
-  const [market, setMarket] = useState<Market | null>(null);
+  const [overview, setOverview] = useState<Overview | null>(null);
 
   useEffect(() => {
     let mounted = true;
     const load = async (): Promise<void> => {
       try {
-        const response = await fetch("/api/market", { cache: "no-store" });
-        const payload = decodeMarket(await response.json());
-        if (mounted) setMarket(payload);
+        const response = await fetch("/api/console/overview", { cache: "no-store" });
+        const payload = (await response.json()) as Overview;
+        if (mounted) setOverview(payload);
       } catch {
-        if (mounted) setMarket({ ok: false });
+        if (mounted) setOverview({ ok: false });
       }
     };
     void load();
@@ -88,10 +87,10 @@ export default function ElitzeControlSurface() {
     [active],
   );
 
-  const status = market?.ok ? "OBSERVED DATA" : "UNAVAILABLE DATA";
-  const agents = market?.stats?.agents;
-  const approvals = market?.stats?.pendingApprovals;
-  const discoveries = market?.stats?.openDiscoveries;
+  const status = overview?.ok ? "OBSERVED DATA" : "UNAVAILABLE DATA";
+  const agents = overview?.metrics?.agentIdentities;
+  const approvals = overview?.metrics?.pendingApprovals;
+  const discoveries = overview?.metrics?.securityTests;
 
   return (
     <section className="relative overflow-hidden rounded-[32px] border border-white/10 bg-[#05080d] p-4 text-white shadow-[0_36px_120px_rgba(0,0,0,.42)] sm:p-6 lg:p-8">
@@ -105,7 +104,7 @@ export default function ElitzeControlSurface() {
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">An interactive 3D security model built to expose real control relationships without inventing runtime state.</p>
         </div>
         <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[.035] px-3 py-2 text-[10px] font-bold uppercase tracking-[.16em] text-slate-400">
-          <span className={`h-1.5 w-1.5 rounded-full ${market?.ok ? "bg-cyan-300" : "bg-amber-300"}`} />
+          <span className={`h-1.5 w-1.5 rounded-full ${overview?.ok ? "bg-cyan-300" : "bg-amber-300"}`} />
           {status}
         </div>
       </div>
@@ -174,7 +173,7 @@ export default function ElitzeControlSurface() {
 
           <div className="absolute bottom-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/45 px-4 py-3 text-[9px] uppercase tracking-[.16em] text-slate-500 backdrop-blur-xl">
             <span>{mode === "SCAN" ? "LIVE SCAN SURFACE · NO FINDINGS IMPLIED" : "SELECT OBJECT · INSPECT PATH · FOLLOW EVIDENCE"}</span>
-            <span>{market?.ok ? "SOURCE-BOUND" : "NO RECORD. NO CLAIM."}</span>
+            <span>{overview?.ok ? "TENANT-SCOPED" : "NO RECORD. NO CLAIM."}</span>
           </div>
         </div>
 
@@ -182,9 +181,9 @@ export default function ElitzeControlSurface() {
           <div className="text-[10px] font-bold uppercase tracking-[.22em] text-slate-500">CONTROL STATUS</div>
           <div className="mt-4 grid gap-3">
             {[
-              ["Agents observed", agents],
+              ["Agent identities", agents],
               ["Pending approvals", approvals],
-              ["Open discoveries", discoveries],
+              ["Security test requests", discoveries],
             ].map(([label, value]) => (
               <div key={label} className="rounded-2xl border border-white/8 bg-black/20 p-4">
                 <div className="text-[9px] uppercase tracking-[.16em] text-slate-600">{label}</div>
