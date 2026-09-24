@@ -67,6 +67,7 @@ try {
     "auth_mfa_factors", "auth_recovery_codes", "auth_webauthn_credentials", "auth_challenges",
     "auth_refresh_tokens", "auth_api_keys", "auth_privileged_reauth",
     "security_test_requests",
+    "production_readiness_evidence",
   ];
 
   const requiredColumns = [
