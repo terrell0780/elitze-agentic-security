@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) return NextResponse.json({ ok: false, error: "Invalid message payload." }, { status: 400 });
 
   try {
-    if (!await authorizedChannel(parsed.data.channelId, session.actorId)) return NextResponse.json({ ok: false, error: "Channel membership required." }, { status: 403 });
+    if (!await authorizedChannel(parsed.data.channelId, session.actorId, session.tenantId)) return NextResponse.json({ ok: false, error: "Channel membership required." }, { status: 403 });
     const db = getDb();
     const [message] = await db.insert(teamMessages).values({
       channelId: parsed.data.channelId,

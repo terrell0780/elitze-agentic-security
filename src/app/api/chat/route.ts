@@ -31,6 +31,7 @@ async function findOrCreateAssistantChannel(actorId: string, tenantId: string) {
 
   const slug = `assistant-${actorId.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 80)}-${Date.now().toString(36)}`;
   const [channel] = await db.insert(teamChannels).values({
+    tenantId,
     slug,
     name: "ELITZE Chat",
     description: "Governed AI conversation channel",
