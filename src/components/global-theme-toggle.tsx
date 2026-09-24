@@ -12,7 +12,7 @@ export default function GlobalThemeToggle() {
     const stored = window.localStorage.getItem("elitze-theme");
     const prefersLight = window.matchMedia("(prefers-color-scheme: light)").matches;
     const nextLight = stored ? stored === "light" : prefersLight;
-    setLight(nextLight);
+    queueMicrotask(() => setLight(nextLight));
     document.documentElement.dataset.theme = nextLight ? "light" : "dark";
   }, []);
 
