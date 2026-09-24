@@ -2,6 +2,7 @@ import { createHash, randomBytes } from "node:crypto";
 import { createServer } from "node:http";
 import { once } from "node:events";
 import { spawn } from "node:child_process";
+import path from "node:path";
 import pg from "pg";
 
 const { Client } = pg;
@@ -46,20 +47,65 @@ const env = {
   RESEND_API_URL: `http://${host}:${mailPort}/emails`,
 };
 
-const server = spawn("npm", ["run", "start", "--", "--hostname", host, "--port", String(appPort)], {
+const nextCli = path.resolve(process.cwd(), "node_modules/next/dist/bin/next");
+const server = spawn(process.execPath, [nextCli, "start", "--hostname", host, "--port", String(appPort)], {
   env,
+  detached: process.platform !== "win32",
   stdio: ["ignore", "pipe", "pipe"],
 });
 server.unref();
 let serverLogs = "";
+let serverExited = false;
 server.stdout.on("data", (chunk) => { serverLogs += chunk.toString(); });
 server.stderr.on("data", (chunk) => { serverLogs += chunk.toString(); });
+server.once("exit", () => { serverExited = true; });
 
-const stop = () => {
-  if (!server.killed) server.kill("SIGTERM");
-  if (mailServer.listening) mailServer.close();
+const stop = async () => {
+  if (!serverExited && server.pid) {
+    try {
+      if (process.platform === "win32") {
+        server.kill("SIGTERM");
+      } else {
+        process.kill(-server.pid, "SIGTERM");
+      }
+    } catch {
+      try { server.kill("SIGTERM"); } catch {}
+    }
+
+    await Promise.race([
+      new Promise((resolve) => server.once("exit", resolve)),
+      new Promise((resolve) => setTimeout(resolve, 3000)),
+    ]);
+
+    if (!serverExited && server.pid) {
+      try {
+        if (process.platform === "win32") {
+          server.kill("SIGKILL");
+        } else {
+          process.kill(-server.pid, "SIGKILL");
+        }
+      } catch {
+        try { server.kill("SIGKILL"); } catch {}
+      }
+    }
+  }
+
+  if (mailServer.listening) {
+    await new Promise((resolve) => mailServer.close(() => resolve()));
+  }
 };
-process.on("exit", stop);
+const hardStop = () => {
+  if (!serverExited && server.pid) {
+    try {
+      if (process.platform === "win32") server.kill("SIGTERM");
+      else process.kill(-server.pid, "SIGTERM");
+    } catch {}
+  }
+  if (mailServer.listening) {
+    try { mailServer.close(); } catch {}
+  }
+};
+process.once("exit", hardStop);
 
 async function waitForServer() {
   let exited = false;
@@ -339,5 +385,6 @@ try {
     await db.end();
   }
 } finally {
-  stop();
+  await stop();
+  process.off("exit", hardStop);
 }

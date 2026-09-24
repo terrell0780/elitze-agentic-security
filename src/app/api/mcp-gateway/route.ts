@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
-import { Pool } from "pg";
+import { getPgPool, isDatabaseConfigured } from "@/db";
 import { evaluateMcpCall, signGatewayEvidence } from "@/lib/elitze-secure/mcp-gateway";
 import { hashWorkloadToken, verifyWorkloadToken } from "@/lib/elitze-secure/workload-identity";
 import { evaluatePolicies, type PolicyDocument } from "@/lib/elitze-secure/deterministic-policy";
@@ -8,14 +8,14 @@ import { persistObservedTool } from "@/lib/elitze-secure/mcp-observation";
 
 export const runtime = "nodejs";
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: Number(process.env.DATABASE_POOL_MAX ?? 10), idleTimeoutMillis: Number(process.env.DATABASE_IDLE_TIMEOUT_MS ?? 30000), connectionTimeoutMillis: 5000 });
+const pool = { connect: () => getPgPool().connect() };
 function json(body: unknown, status = 200) { return NextResponse.json(body, { status, headers: { "cache-control": "no-store" } }); }
 function requestBodyId(body: any): string | undefined { return typeof body?.id === "string" || typeof body?.id === "number" ? String(body.id) : undefined; }
 function capabilityAllows(requestedCapability: string, toolName: string) { const capability = requestedCapability.trim().toLowerCase(); const tool = toolName.trim().toLowerCase(); return capability === "*" || capability === tool || capability.includes(tool); }
 function mapDecision(decision: string): "ALLOW" | "DENY" | "REQUIRE_APPROVAL" | "ALLOW_WITH_CONSTRAINTS" { if (decision === "ALLOW" || decision === "DENY" || decision === "REQUIRE_APPROVAL" || decision === "ALLOW_WITH_CONSTRAINTS") return decision; return "DENY"; }
 
 export async function POST(request: NextRequest) {
-  if (!process.env.DATABASE_URL || !process.env.ELITZE_EVIDENCE_SIGNING_SECRET || !process.env.ELITZE_WORKLOAD_TOKEN_SIGNING_SECRET) return json({ error: "MCP_GATEWAY_BLOCKED", reason: "critical_dependency_unconfigured", failClosed: true }, 503);
+  if (!isDatabaseConfigured() || !process.env.ELITZE_EVIDENCE_SIGNING_SECRET || !process.env.ELITZE_WORKLOAD_TOKEN_SIGNING_SECRET) return json({ error: "MCP_GATEWAY_BLOCKED", reason: "critical_dependency_unconfigured", failClosed: true }, 503);
   const authorization = request.headers.get("Authorization") ?? request.headers.get("authorization") ?? "";
   const token = authorization.startsWith("Bearer ") ? authorization.slice(7).trim() : "";
   if (!token) return json({ error: "UNAUTHENTICATED_WORKLOAD" }, 401);

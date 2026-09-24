@@ -26,22 +26,29 @@ concurrency:
 jobs:
   code-review:
     name: Code review gate
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 25
 
     steps:
       - name: Checkout exact review commit
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
+          package-manager-cache: false
 
       - name: Install dependencies
         run: npm install --no-audit --no-fund
+
+      - name: Database configuration contract
+        run: npm run db:config-self-test
+
+      - name: Tenant overview data boundary
+        run: npm run tenant-overview:self-test
 
       - name: Diff and whitespace review
         run: |
@@ -80,7 +87,7 @@ jobs:
 
   verify:
     needs: code-review
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     services:
       postgres:
@@ -105,12 +112,13 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 22
+          package-manager-cache: false
 
       - name: Install dependencies
         run: npm install --no-audit --no-fund
@@ -174,13 +182,14 @@ jobs:
         run: npm run build
 
       - name: Real authentication DB E2E
+        timeout-minutes: 5
         run: npm run auth:e2e-self-test
 
       - name: Generate SBOM
         run: npm sbom --sbom-format cyclonedx --sbom-type application --omit=dev > sbom.cdx.json
 
       - name: Upload SBOM
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: elitze-agentic-security-sbom
           path: sbom.cdx.json
@@ -191,7 +200,7 @@ jobs:
     needs:
       - code-review
       - verify
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 5
 
     steps:

@@ -6,10 +6,7 @@ import { Activity, Crosshair, Database, Fingerprint, Layers3, Maximize2, RotateC
 type DomainId = "agents" | "identity" | "mcp" | "github" | "aws" | "data";
 type LayerId = "graph" | "reach" | "policy" | "evidence";
 
-type Market = {
-  ok: boolean;
-  stats?: { agents?: number; pendingApprovals?: number; openDiscoveries?: number };
-};
+type Overview = { ok: boolean; metrics?: { agentIdentities: number; pendingApprovals: number; graphNodes: number; securityTests: number } };
 
 const domains: Array<{ id: DomainId; label: string; x: number; y: number; icon: typeof Activity }> = [
   { id: "agents", label: "AGENTS", x: 50, y: 25, icon: Activity },
@@ -27,9 +24,9 @@ const layers: Array<{ id: LayerId; label: string; detail: string }> = [
   { id: "evidence", label: "EVIDENCE", detail: "Signed decisions, provenance and verification state." },
 ];
 
-function stateLabel(market: Market | null) {
-  if (!market) return "CONNECTING";
-  return market.ok ? "LIVE DATA" : "UNAVAILABLE";
+function stateLabel(overview: Overview | null) {
+  if (!overview) return "CONNECTING";
+  return overview.ok ? "TENANT DATA" : "UNAVAILABLE";
 }
 
 export default function ElitzeGlobalSecurityView() {
@@ -37,7 +34,7 @@ export default function ElitzeGlobalSecurityView() {
   const [layer, setLayer] = useState<LayerId>("graph");
   const [rotation, setRotation] = useState(-7);
   const [scale, setScale] = useState(1);
-  const [market, setMarket] = useState<Market | null>(null);
+  const [overview, setOverview] = useState<Overview | null>(null);
   const [dragging, setDragging] = useState(false);
   const dragStart = useRef<{ x: number; rotation: number } | null>(null);
 
@@ -48,11 +45,11 @@ export default function ElitzeGlobalSecurityView() {
     let mounted = true;
     const load = async () => {
       try {
-        const response = await fetch("/api/market", { cache: "no-store" });
-        const payload = (await response.json()) as Market;
-        if (mounted) setMarket(payload);
+        const response = await fetch("/api/console/overview", { cache: "no-store" });
+        const payload = (await response.json()) as Overview;
+        if (mounted) setOverview(payload);
       } catch {
-        if (mounted) setMarket({ ok: false });
+        if (mounted) setOverview({ ok: false });
       }
     };
     void load();
@@ -94,12 +91,12 @@ export default function ElitzeGlobalSecurityView() {
       <div className="relative z-10 flex flex-wrap items-end justify-between gap-5">
         <div>
           <div className="text-[10px] font-semibold uppercase tracking-[.28em] text-cyan-300/80">ELITZE // CONTROL PLANE</div>
-          <h2 className="mt-2 max-w-3xl text-2xl font-semibold tracking-tight sm:text-3xl">Global Security View</h2>
+          <h2 className="mt-2 max-w-3xl text-2xl font-semibold tracking-tight sm:text-3xl">Tenant Security View</h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">A spatial 2026 interface for real identity, reachability, policy enforcement and signed evidence. No fabricated posture is rendered.</p>
         </div>
         <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/[.035] px-3 py-2 text-[10px] font-semibold uppercase tracking-[.18em] text-slate-400">
-          <span className={`h-1.5 w-1.5 rounded-full ${market?.ok ? "bg-cyan-300" : "bg-amber-300"}`} />
-          {stateLabel(market)}
+          <span className={`h-1.5 w-1.5 rounded-full ${overview?.ok ? "bg-cyan-300" : "bg-amber-300"}`} />
+          {stateLabel(overview)}
         </div>
       </div>
 
@@ -178,15 +175,15 @@ export default function ElitzeGlobalSecurityView() {
 
           <div className="absolute inset-x-4 bottom-4 z-20 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-[9px] uppercase tracking-[.16em] text-slate-500 backdrop-blur-xl">
             <span>DRAG · WHEEL · SELECT DOMAIN</span>
-            <span>Evidence state: {market?.ok ? "OBSERVED RECORDS" : "UNAVAILABLE"}</span>
+            <span>Evidence state: {overview?.ok ? "OBSERVED RECORDS" : "UNAVAILABLE"}</span>
           </div>
         </div>
 
         <aside className="rounded-[28px] border border-white/10 bg-white/[.025] p-5">
-          <div className="text-[10px] font-semibold uppercase tracking-[.22em] text-slate-500">2026 SYSTEM STATUS</div>
+          <div className="text-[10px] font-semibold uppercase tracking-[.22em] text-slate-500">TENANT SYSTEM STATUS</div>
           <div className="mt-4 grid gap-3">
-            <div className="rounded-2xl border border-white/8 bg-black/20 p-4"><div className="text-[9px] uppercase tracking-[.16em] text-slate-600">Agents observed</div><div className="mt-2 font-mono text-xl">{market?.ok && market.stats?.agents !== undefined ? market.stats.agents : "UNKNOWN"}</div></div>
-            <div className="rounded-2xl border border-white/8 bg-black/20 p-4"><div className="text-[9px] uppercase tracking-[.16em] text-slate-600">Approval queue</div><div className="mt-2 font-mono text-xl">{market?.ok && market.stats?.pendingApprovals !== undefined ? market.stats.pendingApprovals : "UNKNOWN"}</div></div>
+            <div className="rounded-2xl border border-white/8 bg-black/20 p-4"><div className="text-[9px] uppercase tracking-[.16em] text-slate-600">Agent identities</div><div className="mt-2 font-mono text-xl">{overview?.ok && overview.metrics?.agentIdentities !== undefined ? overview.metrics.agentIdentities : "UNMEASURABLE"}</div></div>
+            <div className="rounded-2xl border border-white/8 bg-black/20 p-4"><div className="text-[9px] uppercase tracking-[.16em] text-slate-600">Approval queue</div><div className="mt-2 font-mono text-xl">{overview?.ok && overview.metrics?.pendingApprovals !== undefined ? overview.metrics.pendingApprovals : "UNKNOWN"}</div></div>
             <div className="rounded-2xl border border-white/8 bg-black/20 p-4"><div className="text-[9px] uppercase tracking-[.16em] text-slate-600">Graph reachability</div><div className="mt-2 font-mono text-xl">UNMEASURABLE</div></div>
           </div>
           <div className="mt-6 border-t border-white/8 pt-5">

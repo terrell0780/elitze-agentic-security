@@ -4,18 +4,30 @@ import process from "node:process";
 import pg from "pg";
 
 const databaseUrl = process.env.DATABASE_URL?.trim();
+const explicitSsl = (() => {
+  const raw = process.env.DATABASE_SSL?.trim().toLowerCase();
+  if (raw === "disable" || raw === "false" || raw === "0") return false;
+  if (raw === "require" || raw === "true" || raw === "1") return true;
+  return undefined;
+})();
+
 const connectionConfig = databaseUrl
   ? { connectionString: databaseUrl }
-  : {
-      host: process.env.PGHOST,
-      port: Number(process.env.PGPORT ?? 5432),
-      user: process.env.PGUSER,
-      password: process.env.PGPASSWORD,
-      database: process.env.PGDATABASE,
-    };
-if (!databaseUrl && (!connectionConfig.host || !connectionConfig.user || !connectionConfig.password || !connectionConfig.database)) {
-  throw new Error("DATABASE_URL or PGHOST/PGPORT/PGUSER/PGPASSWORD/PGDATABASE is required");
-}
+  : (() => {
+      const host = process.env.PGHOST?.trim();
+      const user = process.env.PGUSER?.trim();
+      const password = process.env.PGPASSWORD ?? "";
+      const database = process.env.PGDATABASE?.trim();
+      const port = Number(process.env.PGPORT ?? 5432);
+      if (!host || !user || !password || !database) {
+        throw new Error("DATABASE_URL or PGHOST/PGPORT/PGUSER/PGPASSWORD/PGDATABASE is required");
+      }
+      if (!Number.isInteger(port) || port < 1 || port > 65535) {
+        throw new Error("PGPORT must be a valid TCP port");
+      }
+      const ssl = explicitSsl ?? (/\.neon\.tech$/i.test(host) ? true : undefined);
+      return { host, port, user, password, database, ...(ssl === undefined ? {} : { ssl }) };
+    })();
 const client = new pg.Client(connectionConfig);
 await client.connect();
 const migrationLock = "elitze:migrations";
@@ -56,6 +68,7 @@ try {
     "auth_refresh_tokens", "auth_api_keys", "auth_privileged_reauth",
     "security_test_requests",
     "security_fabric_sources", "security_fabric_events", "autonomous_analyst_runs", "autonomous_analyst_findings",
+    "production_readiness_evidence",
   ];
 
   const requiredColumns = [

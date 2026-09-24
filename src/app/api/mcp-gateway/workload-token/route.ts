@@ -1,25 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "node:crypto";
-import { Pool } from "pg";
+import { getPgPool, isDatabaseConfigured } from "@/db";
 import { authorizeInternalRequest } from "@/lib/security/policy";
 import { hashWorkloadToken, issueWorkloadToken } from "@/lib/elitze-secure/workload-identity";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  max: Number(process.env.DATABASE_POOL_MAX ?? 10),
-  idleTimeoutMillis: Number(process.env.DATABASE_IDLE_TIMEOUT_MS ?? 30000),
-  connectionTimeoutMillis: Number(process.env.DATABASE_CONNECTION_TIMEOUT_MS ?? 10000),
-});
+const pool = { connect: () => getPgPool().connect() };
 
 function json(body: unknown, status = 200) {
   return NextResponse.json(body, { status, headers: { "cache-control": "no-store" } });
 }
 
 export async function POST(request: NextRequest) {
-  if (!process.env.DATABASE_URL || !process.env.ELITZE_WORKLOAD_TOKEN_SIGNING_SECRET) {
+  if (!isDatabaseConfigured() || !process.env.ELITZE_WORKLOAD_TOKEN_SIGNING_SECRET) {
     return json({ ok: false, error: "WORKLOAD_IDENTITY_BLOCKED", reason: "critical_dependency_unconfigured" }, 503);
   }
   if (!authorizeInternalRequest(request.headers.get("x-elitze-api-key"), process.env.ELITZE_INTERNAL_API_KEY)) {

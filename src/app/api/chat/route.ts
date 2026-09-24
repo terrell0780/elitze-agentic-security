@@ -14,22 +14,24 @@ const bodySchema = z.object({
 
 type ChatCompletion = { choices?: Array<{ message?: { content?: string } }> };
 
-async function channelMembership(channelId: number, actorId: string) {
+async function channelMembership(channelId: number, actorId: string, tenantId: string) {
   const db = getDb();
   const rows = await db.select({ id: teamChannelMembers.id }).from(teamChannelMembers)
-    .where(and(eq(teamChannelMembers.channelId, channelId), eq(teamChannelMembers.actorId, actorId), isNull(teamChannelMembers.leftAt))).limit(1);
+    .innerJoin(teamChannels, eq(teamChannels.id, teamChannelMembers.channelId))
+    .where(and(eq(teamChannelMembers.channelId, channelId), eq(teamChannelMembers.actorId, actorId), eq(teamChannels.tenantId, tenantId), isNull(teamChannelMembers.leftAt), isNull(teamChannels.archivedAt))).limit(1);
   return rows.length > 0;
 }
 
-async function findOrCreateAssistantChannel(actorId: string) {
+async function findOrCreateAssistantChannel(actorId: string, tenantId: string) {
   const db = getDb();
   const existing = await db.select({ id: teamChannels.id }).from(teamChannels)
     .innerJoin(teamChannelMembers, eq(teamChannelMembers.channelId, teamChannels.id))
-    .where(and(eq(teamChannelMembers.actorId, actorId), isNull(teamChannelMembers.leftAt), eq(teamChannels.channelType, "assistant"), isNull(teamChannels.archivedAt))).limit(1);
+    .where(and(eq(teamChannelMembers.actorId, actorId), eq(teamChannels.tenantId, tenantId), isNull(teamChannelMembers.leftAt), eq(teamChannels.channelType, "assistant"), isNull(teamChannels.archivedAt))).limit(1);
   if (existing.length) return existing[0].id;
 
   const slug = `assistant-${actorId.toLowerCase().replace(/[^a-z0-9]+/g, "-").slice(0, 80)}-${Date.now().toString(36)}`;
   const [channel] = await db.insert(teamChannels).values({
+    tenantId,
     slug,
     name: "ELITZE Chat",
     description: "Governed AI conversation channel",
@@ -48,8 +50,8 @@ export async function POST(request: NextRequest) {
   if (!parsed.success) return NextResponse.json({ ok: false, error: "Invalid chat payload." }, { status: 400 });
 
   const db = getDb();
-  const channelId = parsed.data.channelId ?? await findOrCreateAssistantChannel(session.actorId);
-  if (parsed.data.channelId && !await channelMembership(channelId, session.actorId)) {
+  const channelId = parsed.data.channelId ?? await findOrCreateAssistantChannel(session.actorId, session.tenantId);
+  if (parsed.data.channelId && !await channelMembership(channelId, session.actorId, session.tenantId)) {
     return NextResponse.json({ ok: false, error: "Channel membership required." }, { status: 403 });
   }
 

@@ -21,7 +21,9 @@ function writeConsent(value: Exclude<ConsentState, "unknown">) {
 export default function PrivacyConsent() {
   const [consent, setConsent] = useState<ConsentState>("unknown");
 
-  useEffect(() => setConsent(readConsent()), []);
+  useEffect(() => {
+    queueMicrotask(() => setConsent(readConsent()));
+  }, []);
 
   if (consent !== "unknown") return null;
 

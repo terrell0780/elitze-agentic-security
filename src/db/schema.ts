@@ -7,6 +7,7 @@ import {
   serial,
   text,
   timestamp,
+  uuid,
   varchar,
 } from "drizzle-orm/pg-core";
 
@@ -69,6 +70,7 @@ export const asiControls = pgTable("asi_controls", {
 
 export const enforcementEvents = pgTable("enforcement_events", {
   id: serial("id").primaryKey(),
+  tenantId: uuid("tenant_id"),
   agentSlug: varchar("agent_slug", { length: 160 }).notNull(),
   eventType: varchar("event_type", { length: 80 }).notNull(),
   severity: varchar("severity", { length: 20 }).notNull(),
@@ -113,6 +115,7 @@ export const securityPolicies = pgTable("security_policies", {
 
 export const securityDecisions = pgTable("security_decisions", {
   id: serial("id").primaryKey(),
+  tenantId: uuid("tenant_id"),
   requestHash: varchar("request_hash", { length: 64 }).notNull().unique(),
   actorId: varchar("actor_id", { length: 200 }).notNull(),
   agentId: varchar("agent_id", { length: 200 }),
@@ -125,6 +128,7 @@ export const securityDecisions = pgTable("security_decisions", {
 
 export const attackPaths = pgTable("attack_paths", {
   id: serial("id").primaryKey(),
+  tenantId: uuid("tenant_id"),
   name: varchar("name", { length: 200 }).notNull(),
   severity: varchar("severity", { length: 20 }).notNull(),
   status: varchar("status", { length: 40 }).notNull().default("open"),
@@ -136,6 +140,7 @@ export const attackPaths = pgTable("attack_paths", {
 
 export const redTeamRuns = pgTable("red_team_runs", {
   id: serial("id").primaryKey(),
+  tenantId: uuid("tenant_id"),
   target: varchar("target", { length: 240 }).notNull(),
   campaign: varchar("campaign", { length: 160 }).notNull(),
   mode: varchar("mode", { length: 40 }).notNull().default("authorized"),
@@ -147,6 +152,7 @@ export const redTeamRuns = pgTable("red_team_runs", {
 
 export const evidenceRecords = pgTable("evidence_records", {
   id: serial("id").primaryKey(),
+  tenantId: uuid("tenant_id"),
   eventType: varchar("event_type", { length: 100 }).notNull(),
   subject: varchar("subject", { length: 240 }).notNull(),
   contentHash: varchar("content_hash", { length: 64 }).notNull(),

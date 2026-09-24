@@ -17,6 +17,7 @@ const groups = [
       { href: "/#global-security", label: "Global Security View", icon: Globe2, description: "Interactive security graph" },
       { href: "/console/skills", label: "Security Skills", icon: ShieldCheck, description: "Governed security capabilities" },
       { href: "/console/roi", label: "Security Value", icon: Radar, description: "Evidence-backed value" },
+      { href: "/console/google-ads", label: "Google Ads Governance", icon: ShieldCheck, description: "Policy-gated advertising" },
       { href: "/security", label: "Security Model", icon: FileSearch, description: "Controls and boundaries" },
     ],
   },
