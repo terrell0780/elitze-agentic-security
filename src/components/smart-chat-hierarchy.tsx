@@ -17,34 +17,43 @@ import {
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
-type Agent = {
-  id: number;
+type Identity = {
+  id: string;
   name: string;
-  slug: string;
-  framework: string;
-  status: string;
-  purpose: string;
-  riskScore: number;
+  kind: string;
+  active: boolean;
+  created_at: string;
 };
 
-type Contact = {
-  id: number;
-  name: string;
-  role: string;
-  organization: string;
-  associatedAgents: string[];
-  tags: string[];
-  riskTier: string;
+type Reachability = {
+  id: string;
+  agent_id: string;
+  resource_type: string;
+  resource_id: string;
+  resource_name: string | null;
+  access_mode: string;
+  evidence_state: string;
+  source: string;
+  observed_at: string;
 };
 
 type Action = {
-  id: number;
-  contactId: number;
-  agentSlug: string | null;
-  actionType: string;
-  status: string;
-  createdAt: string;
-  result: string | null;
+  id: string;
+  agent_id: string;
+  action: string;
+  decision: string;
+  approval_required: boolean;
+  result_status: string | null;
+  evidence_state: string;
+  requested_at: string;
+  completed_at: string | null;
+  retest_status: string | null;
+};
+
+type ControlPlaneSnapshot = {
+  identities?: Identity[];
+  reachability?: Reachability[];
+  actions?: Action[];
 };
 
 const hierarchy = [
@@ -61,145 +70,126 @@ const hierarchy = [
 
 function tierClass(tier: number) {
   if (tier === 1) return "text-[var(--accent)] border-[var(--accent-border)] bg-[var(--accent-soft)]";
-  if (tier === 2) return "text-violet-300 border-violet-500/30 bg-violet-500/10";
-  if (tier === 3) return "text-violet-300 border-violet-500/30 bg-violet-500/10";
+  if (tier === 2 || tier === 3) return "text-violet-300 border-violet-500/30 bg-violet-500/10";
   return "text-cyan-300 border-cyan-500/30 bg-cyan-500/10";
 }
 
 function actionLabel(action: Action) {
-  if (action.status === "approved" || action.status === "completed") return "Governed action completed";
-  if (action.status === "pending") return "Awaiting approval";
-  if (action.status === "blocked" || action.status === "denied") return "Action blocked";
-  return action.status || "Unknown status";
+  if (action.result_status === "EXECUTED") return "Execution recorded";
+  if (action.result_status === "DENIED" || action.decision === "DENY") return "Action denied";
+  if (action.approval_required) return "Approval boundary recorded";
+  if (action.retest_status) return `Retest: ${action.retest_status}`;
+  return action.evidence_state || "Evidence state unavailable";
 }
 
 export default function SmartChatHierarchy() {
-  const [contacts, setContacts] = useState<Contact[]>([]);
-  const [actions, setActions] = useState<Action[]>([]);
-  const [agents, setAgents] = useState<Agent[]>([]);
+  const [snapshot, setSnapshot] = useState<ControlPlaneSnapshot | null>(null);
   const [state, setState] = useState<"loading" | "live" | "unavailable">("loading");
 
   const load = useCallback(async () => {
     setState("loading");
     try {
-      const response = await fetch("/api/crm", { cache: "no-store" });
-      const payload = (await response.json()) as {
-        ok?: boolean;
-        contacts?: Contact[];
-        actions?: Action[];
-        agents?: Agent[];
-      };
-      if (!response.ok || !payload.ok) throw new Error("crm_unavailable");
-
-      setContacts(payload.contacts ?? []);
-      setActions(payload.actions ?? []);
-      setAgents(payload.agents ?? []);
+      const response = await fetch("/api/control-plane", { cache: "no-store" });
+      const payload = (await response.json()) as ControlPlaneSnapshot & { ok?: boolean };
+      if (!response.ok || payload.ok === false) throw new Error("control_plane_unavailable");
+      setSnapshot(payload);
       setState("live");
     } catch {
+      setSnapshot(null);
       setState("unavailable");
     }
   }, []);
 
   useEffect(() => {
     const initial = window.setTimeout(() => void load(), 0);
-    return () => window.clearTimeout(initial);
+    const timer = window.setInterval(() => void load(), 15000);
+    return () => {
+      window.clearTimeout(initial);
+      window.clearInterval(timer);
+    };
   }, [load]);
 
-  const stateLabel = state === "live" ? "data connected" : state === "loading" ? "loading" : "data unavailable";
+  const identities = snapshot?.identities ?? [];
+  const reachability = snapshot?.reachability ?? [];
+  const actions = snapshot?.actions ?? [];
 
   return (
     <section className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--panel)]">
-      <div className="flex items-center gap-2 border-b border-red-950/50 px-5 py-4">
+      <div className="flex flex-wrap items-center gap-2 border-b border-[var(--border)] px-5 py-4">
         <Layers className="h-4 w-4 text-[var(--accent)]" />
-        <h2 className="text-sm font-semibold text-white">ELITZE Agent Operations — Hierarchy + CRM</h2>
-        <span className="ml-auto text-[10px] text-slate-500">{agents.length} live agents · {hierarchy.length} governed roles · {stateLabel}</span>
+        <h2 className="text-sm font-semibold">ELITZE Agent Operations — Governed Runtime</h2>
+        <span className="ml-auto text-[10px] text-slate-500">
+          {state === "live" ? `${identities.length} identities · ${reachability.length} reach observations · ${actions.length} action records` : state === "loading" ? "loading" : "data unavailable"}
+        </span>
       </div>
 
       <div className="p-5">
         <p className="text-sm leading-relaxed text-slate-400">
-          Agent capabilities are presented as governed roles. Runtime state comes only from the connected CRM API; empty and unavailable states are not replaced with synthetic activity.
+          Governed role definitions are static architecture. Runtime identity, reachability and action state come only from the authenticated tenant control plane.
         </p>
 
         <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {hierarchy.map((role) => {
             const Icon = role.icon;
-            const live = agents.some((agent) => agent.name === role.name);
-
             return (
               <article key={role.name} className="rounded-xl border border-[var(--border)] bg-black/30 p-4">
                 <div className="flex items-center gap-2">
                   <Icon className="h-5 w-5 text-violet-300" />
                   <span className="text-sm font-semibold text-white">{role.name}</span>
-                  <span className={`ml-auto rounded-full border px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider ${tierClass(role.tier)}`}>
-                    Tier {role.tier}
-                  </span>
+                  <span className={`ml-auto rounded-full border px-2 py-0.5 text-[9px] font-semibold uppercase tracking-wider ${tierClass(role.tier)}`}>Tier {role.tier}</span>
                 </div>
-
                 <div className="mt-3 flex flex-wrap gap-1">
-                  {role.skills.map((skill) => (
-                    <span key={skill} className="rounded border border-white/10 bg-white/[0.03] px-1.5 py-0.5 text-[9px] text-slate-300">
-                      {skill}
-                    </span>
-                  ))}
+                  {role.skills.map((skill) => <span key={skill} className="rounded border border-white/10 bg-white/[0.03] px-1.5 py-0.5 text-[9px] text-slate-300">{skill}</span>)}
                 </div>
-
                 <div className="mt-3 flex items-center gap-2 text-[10px] text-slate-500">
-                  {live ? <CheckCircle2 className="h-3 w-3 text-emerald-400" /> : <Activity className="h-3 w-3" />}
-                  {live ? "Live record present" : "No live runtime record"}
+                  <Activity className="h-3 w-3" />
+                  Architecture role definition
                 </div>
               </article>
             );
           })}
         </div>
 
-        <div className="mt-6 rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] p-4">
-          <div className="flex items-center gap-2 text-sm font-medium text-white">
-            <User className="h-4 w-4 text-[var(--accent)]" />
-            Security CRM — Contacts + Governed Actions
+        <div className="mt-6 grid gap-4 lg:grid-cols-2">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] p-4">
+            <div className="flex items-center gap-2 text-sm font-medium text-white"><User className="h-4 w-4 text-[var(--accent)]" />Observed agent identities</div>
+            <ul className="mt-3 max-h-64 space-y-1.5 overflow-auto">
+              {identities.slice(0, 20).map((identity) => (
+                <li key={identity.id} className="rounded bg-black/40 px-2.5 py-2 text-xs text-slate-300">
+                  <div className="flex items-center gap-2">
+                    <span className={`h-1.5 w-1.5 rounded-full ${identity.active ? "bg-emerald-400/80" : "bg-slate-600"}`} />
+                    <span className="font-medium text-white">{identity.name}</span>
+                    <span className="ml-auto text-[10px] text-slate-600">{identity.kind}</span>
+                  </div>
+                </li>
+              ))}
+              {state === "live" && identities.length === 0 && <li className="py-6 text-center text-xs text-slate-600">No agent identities recorded for this tenant.</li>}
+              {state === "unavailable" && <li className="py-6 text-center text-xs text-amber-300">Control-plane data unavailable.</li>}
+            </ul>
           </div>
 
-          <div className="mt-3 grid gap-3 md:grid-cols-2">
-            <div>
-              <div className="mb-2 text-[10px] uppercase tracking-widest text-slate-500">Contacts ({contacts.length})</div>
-              <ul className="max-h-44 space-y-1.5 overflow-auto">
-                {contacts.slice(0, 10).map((contact) => (
-                  <li key={contact.id} className="rounded bg-black/40 px-2.5 py-1.5 text-xs text-slate-300">
-                    <div className="flex items-center gap-2">
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400/70" />
-                      <span className="font-medium text-white">{contact.name}</span>
-                      <span className="ml-auto text-[10px] text-slate-600">{contact.riskTier}</span>
-                    </div>
-                    <div className="mt-1 pl-3.5 text-[10px] text-slate-500">{contact.role} · {contact.organization}</div>
-                  </li>
-                ))}
-                {state === "live" && contacts.length === 0 && <li className="py-6 text-center text-xs text-slate-600">No CRM contacts recorded.</li>}
-                {state === "unavailable" && <li className="py-6 text-center text-xs text-amber-300">CRM unavailable or requires authenticated access.</li>}
-              </ul>
-            </div>
-
-            <div>
-              <div className="mb-2 text-[10px] uppercase tracking-widest text-slate-500">Actions ({actions.length})</div>
-              <ul className="max-h-44 space-y-1.5 overflow-auto">
-                {actions.slice(0, 10).map((action) => (
-                  <li key={action.id} className="rounded bg-black/40 px-2.5 py-1.5 text-xs text-slate-300">
-                    <div className="flex items-center gap-2">
-                      <span className={`h-1.5 w-1.5 rounded-full ${action.status === "blocked" || action.status === "denied" ? "bg-amber-400" : action.status === "pending" ? "bg-amber-400" : "bg-emerald-400"}`} />
-                      <span className="font-medium text-white">{action.actionType}</span>
-                      <span className="ml-auto text-[10px] text-slate-600">{action.status}</span>
-                    </div>
-                    <div className="mt-1 pl-3.5 text-[10px] text-slate-500">{actionLabel(action)}</div>
-                  </li>
-                ))}
-                {state === "live" && actions.length === 0 && <li className="py-6 text-center text-xs text-slate-600">No governed actions recorded.</li>}
-                {state === "unavailable" && <li className="py-6 text-center text-xs text-amber-300">No action feed available.</li>}
-              </ul>
-            </div>
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] p-4">
+            <div className="flex items-center gap-2 text-sm font-medium text-white"><Database className="h-4 w-4 text-[var(--accent)]" />Governed runtime actions</div>
+            <ul className="mt-3 max-h-64 space-y-1.5 overflow-auto">
+              {actions.slice(0, 20).map((action) => (
+                <li key={action.id} className="rounded bg-black/40 px-2.5 py-2 text-xs text-slate-300">
+                  <div className="flex items-center gap-2">
+                    <span className={`h-1.5 w-1.5 rounded-full ${action.result_status === "DENIED" || action.decision === "DENY" ? "bg-amber-400" : action.result_status === "EXECUTED" ? "bg-emerald-400" : "bg-slate-500"}`} />
+                    <span className="truncate font-medium text-white">{action.action}</span>
+                    <span className="ml-auto text-[10px] text-slate-600">{action.decision}</span>
+                  </div>
+                  <div className="mt-1 pl-3.5 text-[10px] text-slate-500">{actionLabel(action)}</div>
+                </li>
+              ))}
+              {state === "live" && actions.length === 0 && <li className="py-6 text-center text-xs text-slate-600">No runtime action records for this tenant.</li>}
+              {state === "unavailable" && <li className="py-6 text-center text-xs text-amber-300">Control-plane data unavailable.</li>}
+            </ul>
           </div>
+        </div>
 
-          <div className="mt-3 flex items-center gap-2 text-[11px] text-slate-500">
-            <Database className="h-3 w-3" />
-            CRM state is API-backed. No synthetic contacts or actions are rendered as live data.
-          </div>
+        <div className="mt-3 flex items-center gap-2 text-[11px] text-slate-500">
+          <CheckCircle2 className="h-3 w-3" />
+          No synthetic identities, contacts, actions or runtime events are rendered as live telemetry.
         </div>
       </div>
     </section>

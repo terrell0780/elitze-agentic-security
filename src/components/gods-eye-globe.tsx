@@ -67,12 +67,12 @@ export default function GodsEyeGlobe() {
       <div className="relative z-10 flex flex-wrap items-end justify-between gap-5">
         <div>
           <div className="text-[10px] font-semibold uppercase tracking-[.28em] text-cyan-200/75">ELITZE // COMMAND SURFACE</div>
-          <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">Global Security View</h2>
+          <h2 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">Tenant Security View</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">A spatial interface for security graph context, agent reach, policy enforcement, runtime boundaries and evidence.</p>
         </div>
         <div className="rounded-full border border-white/10 bg-white/[.035] px-3 py-2 text-[10px] font-semibold uppercase tracking-[.18em] text-slate-400">
           <span className={`mr-2 inline-block h-1.5 w-1.5 rounded-full ${overview?.ok ? "bg-cyan-300" : "bg-amber-300"}`} />
-          {overview?.ok ? "LIVE DATA" : "UNAVAILABLE"}
+          {overview?.ok ? "TENANT DATA" : "UNAVAILABLE"}
         </div>
       </div>
 
