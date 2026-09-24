@@ -11,16 +11,16 @@ import ProgressiveProofPanel from "@/components/progressive-proof-panel";
 import EvidenceExpressionDebugger from "@/components/evidence-expression-debugger";
 
 type Health = { ok: boolean };
-type Market = { ok: boolean; stats?: { agents: number; shadowAgents: number; openDiscoveries: number; pendingApprovals: number; asiAvg: number } };
+type Market = { ok: boolean; stats?: { agents: number; shadowAgents: number; openDiscoveries: number; pendingApprovals: number; asiAvg: number | null } };
 type SearchResult = { title: string; url: string; description: string; untrusted: true };
 type Metrics = { ok: boolean; metrics?: { averageEnforcementLatencyMs: number | null; intentMismatches: number; autonomousDecisionRate: { value: number | null; state: string }; analystCoverage: { value: number | null; state: string } } };
 type Graph = { ok: boolean; nodes?: Array<{ nodeType: string; displayName: string; evidenceState: string; source: string; observedAt: string | null }>; edges?: Array<{ relation: string; from: string; to: string; evidenceState: string; source: string }>; error?: string };
 
 const cards = [
-  [Activity, "Agents", (d: Market) => d.stats?.agents ?? 0],
-  [TriangleAlert, "Open discoveries", (d: Market) => d.stats?.openDiscoveries ?? 0],
-  [Users, "Pending approvals", (d: Market) => d.stats?.pendingApprovals ?? 0],
-  [ShieldCheck, "ASI coverage", (d: Market) => `${d.stats?.asiAvg ?? 0}%`],
+  [Activity, "Agents", (d: Market) => d.stats ? String(d.stats.agents) : "UNMEASURABLE"],
+  [TriangleAlert, "Open discoveries", (d: Market) => d.stats ? String(d.stats.openDiscoveries) : "UNMEASURABLE"],
+  [Users, "Pending approvals", (d: Market) => d.stats ? String(d.stats.pendingApprovals) : "UNMEASURABLE"],
+  [ShieldCheck, "ASI coverage", (d: Market) => d.stats && d.stats.asiAvg !== null ? `${d.stats.asiAvg}%` : "UNMEASURABLE"],
 ] as const;
 
 function metricValue(metric?: { value: number | null; state: string }, suffix = "") {

@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Pool } from "pg";
+import { getPgPool, isDatabaseConfigured } from "@/db";
 import { authorizeInternalRequest } from "@/lib/security/policy";
 import { parsePolicyDocument } from "@/lib/elitze-secure/deterministic-policy";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: Number(process.env.DATABASE_POOL_MAX ?? 10) });
+const pool = { connect: () => getPgPool().connect() };
 function authorized(request: NextRequest) {
   return authorizeInternalRequest(request.headers.get("x-elitze-api-key"), process.env.ELITZE_INTERNAL_API_KEY);
 }
@@ -29,7 +29,7 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   if (!authorized(request)) return json({ ok: false, error: "unauthorized" }, 401);
-  if (!process.env.DATABASE_URL) return json({ ok: false, error: "database_unconfigured" }, 503);
+  if (!isDatabaseConfigured()) return json({ ok: false, error: "database_unconfigured" }, 503);
   const body = await request.json().catch(() => null) as { tenantId?: string; createdBy?: string; policy?: string | Record<string, unknown> } | null;
   if (!body?.tenantId || !body?.createdBy || !body.policy) return json({ ok: false, error: "tenantId_createdBy_policy_required" }, 400);
   let parsed;

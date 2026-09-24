@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
           (SELECT count(*) FROM agents WHERE status = 'shadow') AS shadow_agents,
           (SELECT count(*) FROM discoveries WHERE status = 'open') AS open_discoveries,
           (SELECT count(*) FROM hitl_approvals WHERE status = 'pending') AS pending_approvals,
-          (SELECT coalesce(avg(coverage), 0) FROM asi_controls) AS asi_avg,
+          (SELECT avg(coverage) FROM asi_controls) AS asi_avg,
           (SELECT count(*) FROM market_gaps WHERE elitze_status = 'shipped') AS shipped_gaps,
           (SELECT count(*) FROM market_gaps WHERE differentiator = true) AS differentiators
       `),
@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
         shadowAgents: Number(s.shadow_agents ?? 0),
         openDiscoveries: Number(s.open_discoveries ?? 0),
         pendingApprovals: Number(s.pending_approvals ?? 0),
-        asiAvg: Math.round(Number(s.asi_avg ?? 0)),
+        asiAvg: s.asi_avg == null ? null : Math.round(Number(s.asi_avg)),
         shippedGaps: Number(s.shipped_gaps ?? 0),
         differentiators: Number(s.differentiators ?? 0),
       },

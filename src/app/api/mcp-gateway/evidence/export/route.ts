@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Pool } from "pg";
+import { getPgPool, isDatabaseConfigured } from "@/db";
 import { authorizeInternalRequest } from "@/lib/security/policy";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL, max: Number(process.env.DATABASE_POOL_MAX ?? 10) });
+const pool = { connect: () => getPgPool().connect() };
 function authorized(request: NextRequest) { return authorizeInternalRequest(request.headers.get("x-elitze-api-key"), process.env.ELITZE_INTERNAL_API_KEY); }
 function pdfEscape(value: string) { return value.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)").replace(/\r?\n/g, " "); }
 function buildPdf(lines: string[]) {
@@ -35,6 +35,7 @@ export async function GET(request: NextRequest) {
   const decisionId = request.nextUrl.searchParams.get("decisionId")?.trim();
   const format = (request.nextUrl.searchParams.get("format") ?? "json").toLowerCase();
   if (!tenantId) return NextResponse.json({ ok: false, error: "tenant_id_required" }, { status: 400 });
+  if (!isDatabaseConfigured()) return NextResponse.json({ ok: false, error: "database_unconfigured" }, { status: 503, headers: { "cache-control": "no-store" } });
   if (format !== "json" && format !== "pdf") return NextResponse.json({ ok: false, error: "format_must_be_json_or_pdf" }, { status: 400 });
 
   const client = await pool.connect();
