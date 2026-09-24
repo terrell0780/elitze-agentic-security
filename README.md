@@ -85,11 +85,12 @@ The model or agent is not the security boundary. Identity, policy, authorization
 
 ## Production path
 
-1. Provide `DATABASE_URL` and required internal authentication secrets through the deployment environment.
-2. Run the database migrations against the production database.
-3. Verify the connected tenant and identity path.
-4. Run typecheck, lint, tests, Data Bridge self-test, build, and sale-readiness checks.
-5. Deploy the application with the same database and secret configuration.
+1. Provide the production Postgres connection as either `DATABASE_URL` or the full `PGHOST` / `PGPORT` / `PGUSER` / `PGPASSWORD` / `PGDATABASE` set.
+2. Provide the authentication email variables `RESEND_API_KEY` and `RESEND_FROM` before enabling self-service registration or password reset.
+3. Run `npm run db:migrate` against the target database before deploying or promoting a build that serves `/register`, `/login`, `/api/auth/*`, or tenant-scoped console routes.
+4. Verify the connected tenant and identity path, then confirm registration can issue a verification email with the deployed auth/database configuration.
+5. Run typecheck, lint, tests, Data Bridge self-test, build, and sale-readiness checks.
+6. Deploy the application with the same database and secret configuration.
 
 The repository does not seed synthetic records on startup. Empty or disconnected production state remains empty or explicitly unavailable.
 

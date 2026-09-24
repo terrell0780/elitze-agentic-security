@@ -8,18 +8,56 @@ const globalForDb = globalThis as typeof globalThis & {
 let databasePool: Pool | undefined;
 let databaseClient: ReturnType<typeof drizzle> | undefined;
 
+type DatabaseConfigStatus =
+  | { configured: true; source: "DATABASE_URL" | "PG*" }
+  | { configured: false; missing: string[] };
+
+function getDatabaseConfigStatus(): DatabaseConfigStatus {
+  const databaseUrl = process.env.DATABASE_URL?.trim();
+  if (databaseUrl) return { configured: true, source: "DATABASE_URL" };
+
+  const required = {
+    PGHOST: process.env.PGHOST?.trim(),
+    PGUSER: process.env.PGUSER?.trim(),
+    PGPASSWORD: process.env.PGPASSWORD?.trim(),
+    PGDATABASE: process.env.PGDATABASE?.trim(),
+  };
+  const missing = Object.entries(required)
+    .filter(([, value]) => !value)
+    .map(([key]) => key);
+
+  return missing.length === 0
+    ? { configured: true, source: "PG*" }
+    : { configured: false, missing };
+}
+
+function databaseConfigError(missing: string[]) {
+  const error = new Error("database_unconfigured") as Error & { code?: string; missing?: string[] };
+  error.code = "database_unconfigured";
+  error.missing = missing;
+  return error;
+}
+
 function getPool(): Pool {
   if (databasePool) return databasePool;
 
-  const databaseUrl = process.env.DATABASE_URL?.trim();
-  if (!databaseUrl) {
-    throw new Error("DATABASE_URL is required");
+  const configStatus = getDatabaseConfigStatus();
+  if (!configStatus.configured) {
+    throw databaseConfigError(configStatus.missing);
   }
 
   databasePool =
     globalForDb.__elitzePostgresqlPool ??
     new Pool({
-      connectionString: databaseUrl,
+      ...(configStatus.source === "DATABASE_URL"
+        ? { connectionString: process.env.DATABASE_URL?.trim() }
+        : {
+            host: process.env.PGHOST?.trim(),
+            port: Number(process.env.PGPORT ?? 5432),
+            user: process.env.PGUSER?.trim(),
+            password: process.env.PGPASSWORD?.trim(),
+            database: process.env.PGDATABASE?.trim(),
+          }),
       max: Number(process.env.DATABASE_POOL_MAX ?? 10),
       idleTimeoutMillis: Number(process.env.DATABASE_IDLE_TIMEOUT_MS ?? 30_000),
       connectionTimeoutMillis: Number(process.env.DATABASE_CONNECTION_TIMEOUT_MS ?? 10_000),
@@ -41,6 +79,8 @@ export function getDb() {
   databaseClient ??= drizzle(getPool());
   return databaseClient;
 }
+
+export { getDatabaseConfigStatus };
 
 export async function closeDb() {
   if (!databasePool) return;

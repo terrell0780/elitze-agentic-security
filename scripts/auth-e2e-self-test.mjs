@@ -11,10 +11,11 @@ const origin = `http://${host}:${appPort}`;
 const testEmail = `e2e-auth-${Date.now()}@example.invalid`;
 const primaryPassword = ["E2EAuth", Date.now().toString(), "PrimaryPass12"].join("-");
 const resetPassword = ["E2EReset", Date.now().toString(), "ResetPass12"].join("-");
-const databaseUrl = ["postgresql:", "//", process.env.PGUSER, ":", process.env.PGPASSWORD, "@", process.env.PGHOST, ":", process.env.PGPORT, "/", process.env.PGDATABASE].join("");
+const databaseUrl = process.env.DATABASE_URL?.trim()
+  || ["postgresql:", "//", process.env.PGUSER, ":", process.env.PGPASSWORD, "@", process.env.PGHOST, ":", process.env.PGPORT, "/", process.env.PGDATABASE].join("");
 
-if (!process.env.PGUSER || !process.env.PGPASSWORD || !process.env.PGHOST || !process.env.PGPORT || !process.env.PGDATABASE) {
-  throw new Error("PG environment is required for auth E2E");
+if (!process.env.DATABASE_URL && (!process.env.PGUSER || !process.env.PGPASSWORD || !process.env.PGHOST || !process.env.PGPORT || !process.env.PGDATABASE)) {
+  throw new Error("DATABASE_URL or PG environment is required for auth E2E");
 }
 
 let deliveredEmail;
@@ -55,11 +56,44 @@ let serverLogs = "";
 server.stdout.on("data", (chunk) => { serverLogs += chunk.toString(); });
 server.stderr.on("data", (chunk) => { serverLogs += chunk.toString(); });
 
-const stop = () => {
-  if (!server.killed) server.kill("SIGTERM");
-  if (mailServer.listening) mailServer.close();
+const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function stopServer() {
+  if (server.exitCode !== null || server.signalCode !== null) return;
+
+  const exited = once(server, "exit");
+  server.kill("SIGTERM");
+  const forced = await Promise.race([
+    exited.then(() => false),
+    delay(5000).then(() => true),
+  ]);
+  if (!forced) return;
+
+  server.kill("SIGKILL");
+  await Promise.race([
+    exited,
+    delay(5000),
+  ]);
+}
+
+async function stopMailServer() {
+  if (!mailServer.listening) return;
+  await new Promise((resolve, reject) => {
+    mailServer.close((error) => {
+      if (error) reject(error);
+      else resolve(undefined);
+    });
+  });
+}
+
+async function stop() {
+  await Promise.allSettled([
+    stopServer(),
+    stopMailServer(),
+  ]);
+  server.stdout.destroy();
+  server.stderr.destroy();
 };
-process.on("exit", stop);
 
 async function waitForServer() {
   let exited = false;
@@ -339,5 +373,5 @@ try {
     await db.end();
   }
 } finally {
-  stop();
+  await stop();
 }

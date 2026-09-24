@@ -158,6 +158,7 @@ jobs:
         run: npm run build
 
       - name: Real authentication DB E2E
+        timeout-minutes: 5
         run: npm run auth:e2e-self-test
 
       - name: Generate SBOM
