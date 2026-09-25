@@ -6,7 +6,7 @@ import crypto from "node:crypto";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-const webAuthnOrigins = (process.env.ELITZE_WEBAUTHN_ORIGIN || "https://elitze.info,https://www.elitze.info")
+const webAuthnOrigins = (process.env.ELITZE_WEBAUTHN_ORIGIN || "https://elitze.info")
   .split(",").map((value) => value.trim()).filter(Boolean);
 
 export async function POST(request: Request) {
