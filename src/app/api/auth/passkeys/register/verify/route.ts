@@ -1,13 +1,11 @@
 import { verifyRegistrationResponse } from "@simplewebauthn/server";
 import { assertSameOrigin, getCurrentUser } from "@/lib/auth";
 import { getPgPool } from "@/db";
+import { webAuthnOrigins, webAuthnRpId } from "@/lib/webauthn";
 import crypto from "node:crypto";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-
-const webAuthnOrigins = (process.env.ELITZE_WEBAUTHN_ORIGIN || "https://elitze.info")
-  .split(",").map((value) => value.trim()).filter(Boolean);
 
 export async function POST(request: Request) {
   try {
@@ -29,8 +27,8 @@ export async function POST(request: Request) {
     const verification = await verifyRegistrationResponse({
       response: body,
       expectedChallenge: async (candidate) => crypto.createHash("sha256").update(candidate).digest("hex") === expectedChallengeHash,
-      expectedOrigin: webAuthnOrigins,
-      expectedRPID: process.env.ELITZE_WEBAUTHN_RP_ID || "elitze.info",
+      expectedOrigin: webAuthnOrigins(),
+      expectedRPID: webAuthnRpId(),
       requireUserVerification: true,
     });
     if (!verification.verified || !verification.registrationInfo) return Response.json({ error: "passkey_verification_failed" }, { status: 400 });

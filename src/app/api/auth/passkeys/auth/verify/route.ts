@@ -1,13 +1,11 @@
 import { verifyAuthenticationResponse } from "@simplewebauthn/server";
 import { assertSameOrigin, createSession } from "@/lib/auth";
 import { getPgPool } from "@/db";
+import { webAuthnOrigins, webAuthnRpId } from "@/lib/webauthn";
 import crypto from "node:crypto";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
-
-const webAuthnOrigins = (process.env.ELITZE_WEBAUTHN_ORIGIN || "https://elitze.info")
-  .split(",").map((value) => value.trim()).filter(Boolean);
 
 export async function POST(request: Request) {
   try {
@@ -38,8 +36,8 @@ export async function POST(request: Request) {
     const verification = await verifyAuthenticationResponse({
       response: body,
       expectedChallenge: async (candidate) => crypto.createHash("sha256").update(candidate).digest("hex") === challengeHash,
-      expectedOrigin: webAuthnOrigins,
-      expectedRPID: process.env.ELITZE_WEBAUTHN_RP_ID || "elitze.info",
+      expectedOrigin: webAuthnOrigins(),
+      expectedRPID: webAuthnRpId(),
       credential: {
         id: row.credential_id,
         publicKey: new Uint8Array(row.public_key),

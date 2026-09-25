@@ -1,6 +1,7 @@
 import { generateRegistrationOptions } from "@simplewebauthn/server";
 import { assertSameOrigin, getCurrentUser } from "@/lib/auth";
 import { getPgPool } from "@/db";
+import { webAuthnRpId } from "@/lib/webauthn";
 import crypto from "node:crypto";
 
 export const dynamic = "force-dynamic";
@@ -11,7 +12,7 @@ export async function GET(request: Request) {
     if (!(await assertSameOrigin(request))) return Response.json({ error: "csrf_rejected" }, { status: 403 });
     const user = await getCurrentUser();
     if (!user) return Response.json({ error: "unauthenticated" }, { status: 401 });
-    const rpID = process.env.ELITZE_WEBAUTHN_RP_ID || "elitze.info";
+    const rpID = webAuthnRpId();
     const rpName = process.env.ELITZE_WEBAUTHN_RP_NAME || "ELITZE Agentic Security";
     const existing = await getPgPool().query(
       `SELECT credential_id, transports FROM auth_webauthn_credentials

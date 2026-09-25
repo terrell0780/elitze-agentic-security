@@ -1,6 +1,7 @@
 import { generateAuthenticationOptions } from "@simplewebauthn/server";
 import { assertSameOrigin } from "@/lib/auth";
 import { getPgPool } from "@/db";
+import { webAuthnRpId } from "@/lib/webauthn";
 import crypto from "node:crypto";
 
 export const dynamic = "force-dynamic";
@@ -24,7 +25,7 @@ export async function POST(request: Request) {
       [user.id, user.tenantId],
     );
     const options = await generateAuthenticationOptions({
-      rpID: process.env.ELITZE_WEBAUTHN_RP_ID || "elitze.info",
+      rpID: webAuthnRpId(),
       userVerification: "required",
       allowCredentials: credentials.rows.map((row) => ({ id: row.credential_id, transports: row.transports ?? [] })),
     });
