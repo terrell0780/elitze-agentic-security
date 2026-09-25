@@ -8,6 +8,8 @@ function messageFor(error: string) {
   if (error === "email_verification_required") return "Verify your email before signing in.";
   if (error === "invalid_credentials") return "Email or password is incorrect.";
   if (error === "too_many_attempts") return "Too many attempts. Wait before trying again.";
+  if (error === "database_not_configured") return "Sign in is temporarily unavailable because the production database is not configured.";
+
   return "Authentication is temporarily unavailable.";
 }
 
