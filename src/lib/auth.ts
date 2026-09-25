@@ -2,7 +2,7 @@ import { createHash, randomBytes, scrypt as scryptCallback, timingSafeEqual, typ
 import { cookies, headers } from "next/headers";
 import { getPgPool } from "@/db";
 
-const SESSION_COOKIE = "elitze_session";
+const SESSION_COOKIE = "elitze_session_v2";
 const PERSISTENT_DAYS = 30;
 const NON_PERSISTENT_DAYS = 1;
 const SESSION_IDLE_HOURS = 12;
