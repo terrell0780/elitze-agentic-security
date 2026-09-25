@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { getPgPool } from "@/db";
+import { getPgPool, isDatabaseConfigured } from "@/db";
 import { assertSameOrigin, authenticate, consumeRateLimit, createSession, getRateLimitKey, issueMfaLoginChallenge } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -9,6 +9,7 @@ export async function POST(request: NextRequest) {
     if (!(await assertSameOrigin(request))) {
       return Response.json({ error: "csrf_rejected" }, { status: 403 });
     }
+    if (!isDatabaseConfigured()) return Response.json({ error: "database_not_configured" }, { status: 503 });
     const body = await request.json() as { email?: unknown; password?: unknown; persistent?: unknown };
     if (typeof body.email !== "string" || typeof body.password !== "string") {
       return Response.json({ error: "invalid_credentials" }, { status: 401 });
