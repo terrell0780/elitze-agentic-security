@@ -26,6 +26,12 @@ const pillars = [
   ["Evidence", "What can be proven?", "Observed results and retest evidence determine what ELITZE can state as fact."],
 ] as const;
 
+const xdrLanes = [
+  ["CORTEX XSIAM", "Palo Alto Networks", "Incident ingestion + security evidence normalization", "API key + API key ID"],
+  ["FALCON XDR", "CrowdStrike", "Incident queries + governed security evidence ingestion", "OAuth client credentials / scoped bearer"],
+  ["DEFENDER + ENTRA", "Microsoft", "Defender incidents + tenant identity context via Graph", "Entra application token + least privilege"],
+] as const;
+
 export default function HomePage() {
   const [mobileOpen, setMobileOpen] = useState(false);
   return (
@@ -95,8 +101,35 @@ export default function HomePage() {
               <Link href="/console/pentesting" className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950"><Crosshair className="h-4 w-4" /> Open pentest workbench <ArrowRight className="h-4 w-4" /></Link>
             </div>
             <div className="overflow-hidden rounded-[28px] border border-[var(--accent-border)] bg-black/20 shadow-[0_30px_100px_rgba(0,0,0,.25)]">
-              <Image src="/elitze-security-validation.svg" alt="ELITZE security validation and authorized pentest lifecycle" width={1600} height={900} className="h-auto w-full" />
+              <Image src="/elitze-security-validation.svg" alt="ELITZE animated continuous pentest control loop showing authorization, adversarial testing, policy enforcement, evidence and retest" width={1600} height={900} className="h-auto w-full" />
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-b border-[var(--border)] bg-[var(--section)]">
+        <div className="mx-auto max-w-[1400px] px-4 py-16 sm:px-7 sm:py-24">
+          <div className="flex flex-wrap items-end justify-between gap-5">
+            <div>
+              <div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">Enterprise XDR + identity lanes</div>
+              <h2 className="mt-3 text-3xl font-black tracking-[-.045em] sm:text-5xl">Connect the security systems buyers already run.</h2>
+              <p className="mt-4 max-w-3xl text-sm leading-7 text-[var(--muted-strong)]">ELITZE is vendor-neutral at the control boundary. These three enterprise paths feed source-bound incident and identity evidence into the same security graph, policy layer and validation loop.</p>
+            </div>
+            <div className="rounded-full border border-[var(--accent-border)] bg-[var(--accent-soft)] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[.18em] text-[var(--accent)]">Read-only evidence lanes</div>
+          </div>
+          <div className="mt-10 grid gap-3 lg:grid-cols-3">
+            {xdrLanes.map(([name,vendor,capability,auth], index) => <article key={name} className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-6">
+              <div className="absolute right-5 top-5 h-2 w-2 rounded-full bg-[var(--accent)] pulse-soft" />
+              <div className="font-mono text-[9px] text-[var(--accent)]">0{index + 1} · XDR / IDENTITY</div>
+              <h3 className="mt-5 text-xl font-black">{name}</h3>
+              <div className="mt-1 text-xs font-semibold text-[var(--muted)]">{vendor}</div>
+              <p className="mt-4 text-sm leading-6 text-[var(--muted-strong)]">{capability}</p>
+              <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] px-3 py-2 text-[9px] font-bold uppercase tracking-[.12em] text-[var(--muted)]">Auth: {auth}</div>
+              <div className="mt-4 text-[9px] font-bold uppercase tracking-[.14em] text-[var(--accent)]">Source → graph → policy → evidence</div>
+            </article>)}
+          </div>
+          <div className="mt-5 rounded-2xl border border-[var(--border)] bg-[var(--panel)] px-5 py-4 text-[10px] leading-5 text-[var(--muted)]">
+            Integration status is evidence-gated: no tenant connection, incident count or detection result is displayed publicly until an authorized customer connector is configured and observed.
           </div>
         </div>
       </section>
