@@ -391,6 +391,18 @@ export async function registerUser(
   return result.rows[0] as AuthUser;
 }
 
+export async function findUserByEmail(email: string): Promise<AuthUser | undefined> {
+  const result = await getPgPool().query(
+    `SELECT id, tenant_id AS "tenantId", email, display_name AS "displayName", role, status
+     FROM auth_users
+     WHERE email_normalized=$1
+     ORDER BY created_at DESC
+     LIMIT 1`,
+    [normalizeEmail(email)],
+  );
+  return result.rows[0] as AuthUser | undefined;
+}
+
 export async function authenticate(email: string, password: string) {
   const normalized = normalizeEmail(email);
   const db = getPgPool();
