@@ -15,6 +15,14 @@ type AwsDataBridgeConnectionConfig = DataBridgeConnectionConfig & {
   region?: string;
   sessionToken?: string;
 };
+type CortexXsiamDataBridgeConnectionConfig = DataBridgeConnectionConfig & {
+  apiKey?: string;
+  apiKeyId?: string;
+};
+type CrowdStrikeFalconDataBridgeConnectionConfig = DataBridgeConnectionConfig & {
+  clientId?: string;
+  clientSecret?: string;
+};
 
 function isJson(value: unknown): value is Json {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -73,6 +81,154 @@ const githubConnector: DataBridgeConnector = {
     const runs = payload.workflow_runs;
     if (Array.isArray(runs)) for (const [index, run] of runs.entries()) records.push(event(context.sourceId, `${context.sourceId}:run:${String((isJson(run) && (run.id ?? index)) ?? index)}`, "github.actions.run", "Observed GitHub Actions workflow run", run));
     return records.length ? records : [event(context.sourceId, `${context.sourceId}:github:event`, "github.event", "Observed GitHub event", payload)];
+  },
+};
+
+async function connectCortexXsiam(config: DataBridgeConnectionConfig): Promise<DataBridgeConnectionResult> {
+  const cortex = config as CortexXsiamDataBridgeConnectionConfig;
+  if (!cortex.endpoint || !/^https:\/\//i.test(cortex.endpoint)) return { ok: false, status: "INVALID_CONFIG", detail: "cortex_xsiam_https_endpoint_required" };
+  if (!cortex.apiKey || !cortex.apiKeyId) return { ok: false, status: "INVALID_CONFIG", detail: "cortex_xsiam_api_key_and_id_required" };
+  const base = cortex.endpoint.replace(/\/$/, "");
+  const headers = {
+    Authorization: cortex.apiKey,
+    "x-xdr-auth-id": cortex.apiKeyId,
+    Accept: "application/json",
+    "content-type": "application/json",
+    ...(cortex.headers ?? {}),
+  };
+  const response = await fetchJson(
+    `${base}/public_api/v1/incidents/get_incidents`,
+    {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        request_data: {
+          filters: [],
+          search_from: 0,
+          search_to: 1,
+          sort: { field: "creation_time", keyword: "desc" },
+        },
+      }),
+    },
+    cortex.timeoutMs,
+  );
+  if (response.status !== 200) return authFailure(response.status, "cortex_xsiam");
+  return { ok: true, status: "CONNECTED", detail: "cortex_xsiam_incident_api_observed" };
+}
+
+const cortexXsiamConnector: DataBridgeConnector = {
+  id: "cortex-xsiam",
+  displayName: "Palo Alto Networks Cortex XSIAM / XDR",
+  version: "1",
+  transports: ["REST_PULL", "WEBHOOK"],
+  capabilities: ["INGEST", "HEALTH", "DISCOVERY", "NORMALIZE"],
+  connect: async (config) => connectCortexXsiam(config),
+  health: async (config) => connectCortexXsiam(config),
+  normalize(payload, context) {
+    const reply = isJson(payload) && isJson(payload.reply) ? payload.reply : null;
+    const items = reply && Array.isArray(reply.incidents)
+      ? reply.incidents
+      : isJson(payload) && Array.isArray(payload.incidents)
+        ? payload.incidents
+        : [payload];
+    return items.map((item, index) => event(
+      context.sourceId,
+      `${context.sourceId}:cortex-xsiam:${String((isJson(item) && (item.incident_id ?? item.id ?? index)) ?? index)}`,
+      "xdr.cortex_xsiam.incident",
+      "Observed Cortex XSIAM / XDR incident",
+      item,
+    ));
+  },
+};
+
+async function crowdStrikeAccessToken(config: CrowdStrikeFalconDataBridgeConnectionConfig): Promise<string> {
+  if (config.token?.trim()) return config.token.trim();
+  if (!config.clientId || !config.clientSecret) return "";
+  const base = (config.endpoint || "https://api.crowdstrike.com").replace(/\/$/, "");
+  const basic = Buffer.from(`${config.clientId}:${config.clientSecret}`, "utf8").toString("base64");
+  const tokenResponse = await fetchJson(
+    `${base}/oauth2/token`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${basic}`,
+        "content-type": "application/x-www-form-urlencoded",
+        Accept: "application/json",
+        ...(config.headers ?? {}),
+      },
+      body: "grant_type=client_credentials",
+    },
+    config.timeoutMs,
+  );
+  if (tokenResponse.status !== 200) return "";
+  const payload = isJson(tokenResponse.body) ? tokenResponse.body : {};
+  return typeof payload.access_token === "string" ? payload.access_token.trim() : "";
+}
+
+async function connectCrowdStrikeFalcon(config: DataBridgeConnectionConfig): Promise<DataBridgeConnectionResult> {
+  const falcon = config as CrowdStrikeFalconDataBridgeConnectionConfig;
+  const base = (falcon.endpoint || "https://api.crowdstrike.com").replace(/\/$/, "");
+  if (!/^https:\/\//i.test(base)) return { ok: false, status: "INVALID_CONFIG", detail: "crowdstrike_https_endpoint_required" };
+  const accessToken = await crowdStrikeAccessToken(falcon);
+  if (!accessToken) return { ok: false, status: "INVALID_CONFIG", detail: "crowdstrike_oauth_client_or_bearer_token_required" };
+  const incidents = await fetchJson(
+    `${base}/incidents/queries/incidents/v1?limit=1&sort=modified_timestamp.desc`,
+    { headers: { Authorization: `Bearer ${accessToken}`, Accept: "application/json" } },
+    falcon.timeoutMs,
+  );
+  if (incidents.status !== 200) return authFailure(incidents.status, "crowdstrike_falcon");
+  return { ok: true, status: "CONNECTED", detail: "crowdstrike_falcon_incident_api_observed" };
+}
+
+const crowdStrikeFalconConnector: DataBridgeConnector = {
+  id: "crowdstrike-falcon-xdr",
+  displayName: "CrowdStrike Falcon XDR",
+  version: "1",
+  transports: ["REST_PULL", "EVENT_STREAM"],
+  capabilities: ["INGEST", "HEALTH", "DISCOVERY", "NORMALIZE"],
+  connect: async (config) => connectCrowdStrikeFalcon(config),
+  health: async (config) => connectCrowdStrikeFalcon(config),
+  normalize(payload, context) {
+    const items = isJson(payload) && Array.isArray(payload.resources) ? payload.resources : [payload];
+    return items.map((item, index) => event(
+      context.sourceId,
+      `${context.sourceId}:crowdstrike:${String((isJson(item) && (item.incident_id ?? item.id ?? index)) ?? index)}`,
+      "xdr.crowdstrike.incident",
+      "Observed CrowdStrike Falcon incident",
+      item,
+    ));
+  },
+};
+
+async function connectMicrosoftDefenderEntra(config: DataBridgeConnectionConfig): Promise<DataBridgeConnectionResult> {
+  if (!config.token) return { ok: false, status: "INVALID_CONFIG", detail: "microsoft_graph_bearer_token_required" };
+  const base = (config.endpoint || "https://graph.microsoft.com/v1.0").replace(/\/$/, "");
+  if (!/^https:\/\//i.test(base)) return { ok: false, status: "INVALID_CONFIG", detail: "microsoft_graph_https_endpoint_required" };
+  const headers = { Authorization: `Bearer ${config.token}`, Accept: "application/json", ...(config.headers ?? {}) };
+  const org = await fetchJson(`${base}/organization?$select=id,displayName`, { headers }, config.timeoutMs);
+  if (org.status !== 200) return authFailure(org.status, "microsoft_entra");
+  const incidents = await fetchJson(`${base}/security/incidents?$top=1`, { headers }, config.timeoutMs);
+  if (incidents.status !== 200) return authFailure(incidents.status, "microsoft_defender");
+  return { ok: true, status: "CONNECTED", detail: "microsoft_defender_and_entra_observed" };
+}
+
+const microsoftDefenderEntraConnector: DataBridgeConnector = {
+  id: "microsoft-defender-entra",
+  displayName: "Microsoft Defender XDR + Entra ID",
+  version: "1",
+  transports: ["REST_PULL", "EVENT_STREAM"],
+  capabilities: ["INGEST", "HEALTH", "DISCOVERY", "NORMALIZE"],
+  connect: async (config) => connectMicrosoftDefenderEntra(config),
+  health: async (config) => connectMicrosoftDefenderEntra(config),
+  normalize(payload, context) {
+    const items = isJson(payload) && Array.isArray(payload.value) ? payload.value : [payload];
+    return items.map((item, index) => event(
+      context.sourceId,
+      `${context.sourceId}:microsoft-defender-entra:${String((isJson(item) && (item.incidentId ?? item.id ?? index)) ?? index)}`,
+      "xdr.microsoft_defender.incident",
+      "Observed Microsoft Defender / Entra security event",
+      item,
+    ));
   },
 };
 
@@ -205,12 +361,24 @@ const kubernetesConnector: DataBridgeConnector = {
 };
 
 export function getProductionIntegrationConnectors(): DataBridgeConnector[] {
-  return [mcpConnector, githubConnector, awsConnector, azureConnector, kubernetesConnector];
+  return [
+    mcpConnector,
+    githubConnector,
+    cortexXsiamConnector,
+    crowdStrikeFalconConnector,
+    microsoftDefenderEntraConnector,
+    awsConnector,
+    azureConnector,
+    kubernetesConnector,
+  ];
 }
 
 export const PRODUCTION_INTEGRATION_SCOPE = [
   { id: "mcp-gateway", title: "MCP Gateway / Server", value: "discover servers/tools, authorize sensitive calls, preserve decision evidence, observe execution" },
   { id: "github-actions", title: "GitHub + GitHub Actions", value: "discover repositories/workflows, map workload identity, observe runs/releases, verify deployment evidence" },
+  { id: "cortex-xsiam", title: "Palo Alto Networks Cortex XSIAM / XDR", value: "read incidents and normalize security evidence into the ELITZE security graph", auth: "API key + API key ID" },
+  { id: "crowdstrike-falcon-xdr", title: "CrowdStrike Falcon XDR", value: "read Falcon incidents through the current OAuth/API surface and normalize evidence", auth: "OAuth client credentials or scoped bearer token" },
+  { id: "microsoft-defender-entra", title: "Microsoft Defender XDR + Entra ID", value: "read Defender incidents and Entra organization context through Microsoft Graph", auth: "Entra application token with required permissions" },
   { id: "aws-iam-cloudtrail", title: "AWS IAM + CloudTrail", value: "discover IAM principals and CloudTrail activity, correlate reachability and identity, preserve API evidence" },
   { id: "microsoft-entra-azure", title: "Microsoft Entra ID + Azure", value: "discover identities/apps and Azure activity, correlate authorization and runtime evidence" },
   { id: "kubernetes", title: "Kubernetes", value: "discover workloads/RBAC/API resources, map workload identity and reachable execution surfaces, verify runtime events" },
