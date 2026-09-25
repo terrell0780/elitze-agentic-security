@@ -18,12 +18,21 @@ export function webAuthnOrigins() {
       .filter(Boolean);
   }
   const origin = configuredSiteOrigin();
-  if (new URL(origin).hostname === "elitze.info") return [origin, "https://www.elitze.info"];
-  return [origin];
+  return canonicalWebAuthnOrigins(origin);
 }
 
 export function webAuthnRpId() {
   const configured = process.env.ELITZE_WEBAUTHN_RP_ID?.trim();
   if (configured) return configured;
-  return new URL(configuredSiteOrigin()).hostname;
+  const hostname = new URL(configuredSiteOrigin()).hostname;
+  if (hostname === "elitze.info" || hostname === "www.elitze.info") return "elitze.info";
+  return hostname;
+}
+
+function canonicalWebAuthnOrigins(origin: string) {
+  const hostname = new URL(origin).hostname;
+  if (hostname === "elitze.info" || hostname === "www.elitze.info") {
+    return ["https://elitze.info", "https://www.elitze.info"];
+  }
+  return [origin];
 }
