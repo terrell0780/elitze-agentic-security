@@ -10,10 +10,16 @@ function configuredSiteOrigin() {
 }
 
 export function webAuthnOrigins() {
-  return (process.env.ELITZE_WEBAUTHN_ORIGIN?.trim() || configuredSiteOrigin())
-    .split(",")
-    .map((value) => value.trim())
-    .filter(Boolean);
+  const configured = process.env.ELITZE_WEBAUTHN_ORIGIN?.trim();
+  if (configured) {
+    return configured
+      .split(",")
+      .map((value) => value.trim())
+      .filter(Boolean);
+  }
+  const origin = configuredSiteOrigin();
+  if (new URL(origin).hostname === "elitze.info") return [origin, "https://www.elitze.info"];
+  return [origin];
 }
 
 export function webAuthnRpId() {
