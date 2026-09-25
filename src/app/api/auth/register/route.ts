@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { assertSameOrigin, consumeRateLimit, getRateLimitKey, issueEmailToken, registerUser } from "@/lib/auth";
+import { isDatabaseConfigured } from "@/db";
 import { sendAuthEmail } from "@/lib/auth-email";
 
 export const dynamic = "force-dynamic";
@@ -7,6 +8,7 @@ export const dynamic = "force-dynamic";
 export async function POST(request: NextRequest) {
   try {
     if (!(await assertSameOrigin(request))) return Response.json({ error: "csrf_rejected" }, { status: 403 });
+    if (!isDatabaseConfigured()) return Response.json({ error: "database_not_configured" }, { status: 503 });
     const body = await request.json() as { email?: unknown; password?: unknown; displayName?: unknown };
     if (typeof body.email !== "string" || typeof body.password !== "string") {
       return Response.json({ error: "email_and_password_required" }, { status: 400 });
