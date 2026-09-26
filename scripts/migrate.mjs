@@ -3,7 +3,10 @@ import path from "node:path";
 import process from "node:process";
 import pg from "pg";
 
-const databaseUrl = process.env.DATABASE_URL?.trim();
+const databaseUrl =
+  process.env.DATABASE_URL?.trim() ||
+  process.env.POSTGRES_URL?.trim() ||
+  process.env.POSTGRES_URL_NON_POOLING?.trim();
 const explicitSsl = (() => {
   const raw = process.env.DATABASE_SSL?.trim().toLowerCase();
   if (raw === "disable" || raw === "false" || raw === "0") return false;
