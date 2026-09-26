@@ -8,7 +8,7 @@ const globalForDb = globalThis as typeof globalThis & {
 let databasePool: Pool | undefined;
 let databaseClient: ReturnType<typeof drizzle> | undefined;
 
-export type DatabaseSource = "DATABASE_URL" | "PG_VARS" | "NONE";
+export type DatabaseSource = "DATABASE_URL" | "POSTGRES_URL" | "PG_VARS" | "NONE";
 
 function parseSslSetting(): boolean | undefined {
   const raw = process.env.DATABASE_SSL?.trim().toLowerCase();
@@ -18,7 +18,10 @@ function parseSslSetting(): boolean | undefined {
 }
 
 function connectionConfig(): PoolConfig {
-  const databaseUrl = process.env.DATABASE_URL?.trim();
+  const databaseUrl =
+    process.env.DATABASE_URL?.trim() ||
+    process.env.POSTGRES_URL?.trim() ||
+    process.env.POSTGRES_URL_NON_POOLING?.trim();
   if (databaseUrl) return { connectionString: databaseUrl };
 
   const host = process.env.PGHOST?.trim();
@@ -58,6 +61,7 @@ export function isDatabaseConfigured(): boolean {
 
 export function databaseConfigurationSource(): DatabaseSource {
   if (process.env.DATABASE_URL?.trim()) return "DATABASE_URL";
+  if (process.env.POSTGRES_URL?.trim()) return "POSTGRES_URL";
   if (process.env.PGHOST?.trim() && process.env.PGUSER?.trim() && process.env.PGPASSWORD && process.env.PGDATABASE?.trim()) {
     return "PG_VARS";
   }
