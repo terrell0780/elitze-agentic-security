@@ -1,6 +1,7 @@
 import { createHash, randomBytes, scrypt as scryptCallback, timingSafeEqual, type ScryptOptions } from "node:crypto";
 import { cookies, headers } from "next/headers";
 import { getPgPool } from "@/db";
+import { productionConfig } from "@/config/production";
 
 const SESSION_COOKIE = "elitze_session";
 const PERSISTENT_DAYS = 30;
@@ -81,40 +82,46 @@ async function clientMeta() {
   };
 }
 
+function normalizeHostHeader(value: string | null) {
+  const host = value?.split(",")[0]?.trim().toLowerCase();
+  if (!host || /[\s/\\@]/.test(host)) return "";
+  try {
+    return new URL(`https://${host}`).host;
+  } catch {
+    return "";
+  }
+}
+
 function requestHeadersHost(request: Request) {
-  const host = request.headers.get("host")?.trim().toLowerCase();
-  if (host) return host;
-  return request.headers.get("x-forwarded-host")?.split(",")[0]?.trim().toLowerCase() ?? "";
+  return normalizeHostHeader(request.headers.get("x-forwarded-host"))
+    || normalizeHostHeader(request.headers.get("host"));
 }
 
 export async function assertSameOrigin(request: Request) {
   const origin = request.headers.get("origin");
   if (!origin) return false;
-  const configured = process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.info";
-  let expected: URL;
-  try {
-    expected = new URL(configured);
-  } catch {
-    return false;
-  }
-  if (origin === expected.origin) return true;
 
-  // Preview/custom-host deployments must still enforce same-origin protection.
-  // Compare the browser Origin to the request Host instead of requiring the
-  // canonical site URL to be the active deployment hostname.
+  let requestOrigin: URL;
   try {
-    const requestOrigin = new URL(origin);
-    const requestHost = requestHeadersHost(request);
-    if (requestHost && requestOrigin.host === requestHost) return true;
+    requestOrigin = new URL(origin);
   } catch {
     return false;
   }
 
-  const allowedOrigins = (process.env.ELITZE_ALLOWED_ORIGINS || "")
-    .split(",")
-    .map((value) => value.trim())
-    .filter(Boolean);
-  return allowedOrigins.includes(origin);
+  if (requestOrigin.protocol !== "http:" && requestOrigin.protocol !== "https:") return false;
+
+  if (requestOrigin.origin === productionConfig.canonicalOrigin) return true;
+
+  const requestHost = requestHeadersHost(request);
+  if (requestHost && requestOrigin.host === requestHost) return true;
+
+  return productionConfig.allowedOrigins.some((allowedOrigin) => {
+    try {
+      return requestOrigin.origin === new URL(allowedOrigin).origin;
+    } catch {
+      return false;
+    }
+  });
 }
 
 export async function getRateLimitKey(scope: string, identifier?: string) {
