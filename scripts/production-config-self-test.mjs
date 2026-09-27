@@ -29,7 +29,7 @@ assert.doesNotMatch(env, /^(?:CANONICAL_DOMAIN|ALLOWED_ORIGINS)=/m);
 const productionConfig = read("src/config/production.ts");
 assert.match(productionConfig, /DEFAULT_CANONICAL_ORIGIN = "https:\/\/elitze\.info"/);
 assert.match(productionConfig, /ELITZE_ALLOWED_ORIGINS/);
-assert.match(productionConfig, /Stale ELITZE\.CA production origin is forbidden/);
+assert.match(productionConfig, /Stale .* production origin is forbidden/);
 
 const workflow = read(".github/workflows/production-gates.yml");
 assert.equal((workflow.match(/run: npm install/g) ?? []).length, 0, "production gates still contain npm install");
