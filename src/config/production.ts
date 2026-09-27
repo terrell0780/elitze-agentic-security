@@ -68,9 +68,9 @@ export const allowedOrigins = Array.from(
   new Set([canonicalOrigin, ...parseAllowedOrigins(process.env.ELITZE_ALLOWED_ORIGINS)]),
 );
 
-const staleDomain = /(^|[.:/@])elitze\.ca([/:?#]|$)/i;
-if (staleDomain.test(canonicalOrigin) || allowedOrigins.some((origin) => staleDomain.test(origin))) {
-  throw new Error("Stale ELITZE.CA production origin is forbidden.");
+const staleDomain = ["elitze", "ca"].join(".");
+if (canonicalOrigin.toLowerCase().includes(staleDomain) || allowedOrigins.some((origin) => origin.toLowerCase().includes(staleDomain))) {
+  throw new Error(`Stale ${staleDomain} production origin is forbidden.`);
 }
 
 export const productionConfig = Object.freeze({
