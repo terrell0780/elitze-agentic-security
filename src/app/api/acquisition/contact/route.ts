@@ -1,6 +1,7 @@
 import { NextRequest } from "next/server";
 import { sendEmail } from "@/lib/auth-email";
 import { productionConfig } from "@/config/production";
+import { consumeRateLimit, getRateLimitKey } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -12,28 +13,6 @@ const MAX_NAME = 120;
 const MAX_ORGANIZATION = 160;
 const MAX_EMAIL = 254;
 const MAX_MESSAGE = 4000;
-const WINDOW_MS = 60 * 60 * 1000;
-const MAX_REQUESTS = 5;
-
-const buckets = new Map<string, { count: number; resetAt: number }>();
-
-function clientIp(request: Request) {
-  return request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()
-    || request.headers.get("x-real-ip")?.trim()
-    || "unknown";
-}
-
-function consumeLocalRateLimit(key: string) {
-  const now = Date.now();
-  const current = buckets.get(key);
-  if (!current || now >= current.resetAt) {
-    buckets.set(key, { count: 1, resetAt: now + WINDOW_MS });
-    return true;
-  }
-  current.count += 1;
-  if (current.count > MAX_REQUESTS) return false;
-  return true;
-}
 
 function normalize(value: unknown, max: number) {
   return typeof value === "string"
@@ -104,8 +83,8 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: "name_email_message_required" }, { status: 400 });
     }
 
-    const key = `contact:${clientIp(request)}:${email}`;
-    if (!consumeLocalRateLimit(key)) {
+    const key = await getRateLimitKey("acquisition-contact", email);
+    if (!(await consumeRateLimit(key, 5, 60 * 60))) {
       return Response.json({ error: "too_many_requests" }, {
         status: 429,
         headers: { "Retry-After": "3600" },
