@@ -346,16 +346,17 @@ export async function issuePrivilegedReauthChallenge(user: AuthUser) {
 }
 
 export async function consumePrivilegedReauth(user: AuthUser) {
-  const raw = (await cookies()).get("elitze_reauth")?.value;
+  const jar = await cookies();
+  const raw = jar.get("elitze_reauth")?.value;
   if (!raw || !user.sessionId) return false;
   const result = await getPgPool().query(
-    `UPDATE auth_privileged_reauth
-     SET satisfied_at=COALESCE(satisfied_at,now())
+    `DELETE FROM auth_privileged_reauth
      WHERE challenge_hash=$1 AND user_id=$2 AND tenant_id=$3 AND session_id=$4
        AND satisfied_at IS NOT NULL AND expires_at>now()
      RETURNING id`,
     [digest(raw), user.id, user.tenantId, user.sessionId],
   );
+  if (result.rowCount === 1) jar.delete("elitze_reauth");
   return result.rowCount === 1;
 }
 
