@@ -48,7 +48,7 @@ export default function OrchestrationPage() {
 
         <section className="mt-8 grid gap-4 lg:grid-cols-2">
           <div className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-7"><p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">Current production boundary</p><p className="mt-3 text-sm leading-6 text-[var(--muted-strong)]">The orchestration engine, task routing, policy gates, approval boundaries and audit records are implemented. External telemetry, response and persistent intelligence systems remain connector-bound until authorized production integrations are configured.</p></div>
-          <div className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-7"><p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">API</p><code className="mt-3 block rounded-lg border border-[var(--border)] bg-[var(--panel-strong)] p-4 text-sm text-[var(--accent)]">POST /api/mythos</code><p className="mt-3 text-sm leading-6 text-[var(--muted)]">The underlying API remains compatibility-stable while the public product language uses ELITZE branding.</p></div>
+          <div className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-7"><p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--muted)]">API</p><code className="mt-3 block rounded-lg border border-[var(--border)] bg-[var(--panel-strong)] p-4 text-sm text-[var(--accent)]">POST /api/elitze</code><p className="mt-3 text-sm leading-6 text-[var(--muted)]">The underlying API remains compatibility-stable while the public product language uses ELITZE branding.</p></div>
         </section>
       </div>
     </main>
