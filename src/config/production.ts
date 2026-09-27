@@ -49,9 +49,20 @@ function parseAllowedOrigins(value: string | undefined): string[] {
     .map((origin) => originSchema.parse(origin));
 }
 
-export const canonicalOrigin = originSchema.parse(
+const configuredCanonicalOrigin = originSchema.parse(
   process.env.NEXT_PUBLIC_SITE_URL?.trim() || DEFAULT_CANONICAL_ORIGIN,
 );
+
+const canonicalOrigin =
+  configuredCanonicalOrigin.startsWith("http://127.0.0.1")
+  || configuredCanonicalOrigin.startsWith("http://localhost")
+  || configuredCanonicalOrigin.startsWith("http://[::1]")
+    ? configuredCanonicalOrigin
+    : configuredCanonicalOrigin === DEFAULT_CANONICAL_ORIGIN
+      ? configuredCanonicalOrigin
+      : (() => {
+          throw new Error("ELITZE canonical production origin must be https://elitze.info.");
+        })();
 
 export const allowedOrigins = Array.from(
   new Set([canonicalOrigin, ...parseAllowedOrigins(process.env.ELITZE_ALLOWED_ORIGINS)]),
