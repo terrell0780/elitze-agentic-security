@@ -1,5 +1,5 @@
 import { NextRequest } from "next/server";
-import { createMythosAgent } from "@/lib/elitze-secure/mythos-agent";
+import { createElitzeAgent } from "@/lib/elitze-secure/elitze-agent";
 import { authorizeInternalRequest } from "@/lib/security/policy";
 
 export const runtime = "nodejs";
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
   }
 
   const query = request.nextUrl.searchParams.get("q") ?? undefined;
-  const signals = await createMythosAgent().observe(tenantId, query);
+  const signals = await createElitzeAgent().observe(tenantId, query);
   return Response.json(
     { ok: true, tenantId, count: signals.length, signals },
     { headers: { "cache-control": "no-store" } },
