@@ -10,9 +10,10 @@ const tracked = execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8" 
   .filter(Boolean);
 
 const textFiles = tracked.filter((file) => /\.(ts|tsx|js|mjs|json|md|yml|yaml|sql|css|txt)$/.test(file));
-const staleCa = textFiles.filter((file) => /(^|[^a-z0-9])elitze\.ca([^a-z0-9]|$)/i.test(read(file)));
+const staleDomain = ["elitze", "ca"].join(".");
+const staleCa = textFiles.filter((file) => read(file).toLowerCase().includes(staleDomain));
 
-assert.equal(staleCa.length, 0, `stale ELITZE.CA references remain: ${staleCa.join(", ")}`);
+assert.equal(staleCa.length, 0, `stale domain references remain: ${staleCa.join(", ")}`);
 assert.equal(fs.existsSync(path.join(root, "src/config/production.ts")), true);
 assert.equal(fs.existsSync(path.join(root, "src/config/secrets-assert.ts")), true);
 assert.equal(fs.existsSync(path.join(root, "src/lib/database-verify.ts")), true);
