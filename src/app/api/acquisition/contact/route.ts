@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
 import { sendEmail } from "@/lib/auth-email";
+import { productionConfig } from "@/config/production";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -69,15 +70,18 @@ function labelFor(requestType: RequestType) {
 export async function POST(request: NextRequest) {
   try {
     const origin = request.headers.get("origin");
-    const expectedOrigin = new URL(
-      process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://elitze.info",
-    ).origin;
-    const allowedOrigins = (process.env.ELITZE_ALLOWED_ORIGINS || "")
-      .split(",")
-      .map((value) => value.trim())
-      .filter(Boolean);
+    if (!origin) {
+      return Response.json({ error: "csrf_rejected" }, { status: 403 });
+    }
 
-    if (!origin || (origin !== expectedOrigin && !allowedOrigins.includes(origin))) {
+    let requestOrigin: URL;
+    try {
+      requestOrigin = new URL(origin);
+    } catch {
+      return Response.json({ error: "csrf_rejected" }, { status: 403 });
+    }
+
+    if (!productionConfig.allowedOrigins.includes(requestOrigin.origin)) {
       return Response.json({ error: "csrf_rejected" }, { status: 403 });
     }
 
@@ -124,7 +128,7 @@ export async function POST(request: NextRequest) {
       "Message:",
       message,
       "",
-      "Source: https://elitze.info",
+      `Source: ${productionConfig.canonicalOrigin}`,
     ].join("\n");
 
     await sendEmail({
