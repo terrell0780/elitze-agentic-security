@@ -53,10 +53,16 @@ const configuredCanonicalOrigin = originSchema.parse(
   process.env.NEXT_PUBLIC_SITE_URL?.trim() || DEFAULT_CANONICAL_ORIGIN,
 );
 
+function isLoopbackOrigin(value: string) {
+  const url = new URL(value);
+  return (
+    url.protocol === "http:" &&
+    (url.hostname === "127.0.0.1" || url.hostname === "localhost" || url.hostname === "::1")
+  );
+}
+
 const canonicalOrigin =
-  configuredCanonicalOrigin.startsWith("http://127.0.0.1")
-  || configuredCanonicalOrigin.startsWith("http://localhost")
-  || configuredCanonicalOrigin.startsWith("http://[::1]")
+  isLoopbackOrigin(configuredCanonicalOrigin)
     ? configuredCanonicalOrigin
     : configuredCanonicalOrigin === DEFAULT_CANONICAL_ORIGIN
       ? configuredCanonicalOrigin
