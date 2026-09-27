@@ -21,6 +21,7 @@
     "sale:readiness": "node scripts/sale-readiness-self-test.mjs && node scripts/sale-readiness.mjs && node scripts/brand-self-test.mjs",
     "db:migrate": "node scripts/migrate.mjs",
     "db:config-self-test": "node scripts/db-config-self-test.mjs",
+    "production-config:self-test": "node scripts/production-config-self-test.mjs",
     "tenant-overview:self-test": "node scripts/tenant-overview-self-test.mjs",
     "mcp:github": "node src/lib/elitze-secure/github-control-mcp.mjs",
     "auth:security-self-test": "node scripts/auth-security-self-test.mjs",
@@ -64,5 +65,6 @@
   "allowScripts": {
     "esbuild": true,
     "unrs-resolver": true
-  }
+  },
+  "buildName": "Elitze-Agentic-Security"
 }

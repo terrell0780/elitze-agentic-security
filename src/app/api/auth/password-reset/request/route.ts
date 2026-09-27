@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { assertSameOrigin, consumeRateLimit, getRateLimitKey, issueEmailToken, normalizeEmail } from "@/lib/auth";
 import { getPgPool } from "@/db";
 import { sendAuthEmail } from "@/lib/auth-email";
+import { productionConfig } from "@/config/production";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,7 @@ export async function POST(request: NextRequest) {
     if (!user) return Response.json(generic);
 
     const token = await issueEmailToken(user, "password_reset", 30);
-    const base = (process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.info").replace(/\/$/, "");
+    const base = productionConfig.canonicalOrigin.replace(/\/$/, "");
     await sendAuthEmail(
       user.email,
       "Reset your ELITZE Agentic Security password",

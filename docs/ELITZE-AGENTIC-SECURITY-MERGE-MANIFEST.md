@@ -1,4 +1,4 @@
-# ELITZE SECURE → ELITZE AGENTIC SECURITY MERGE
+# ELITZE AGENTIC SECURITY — Merge Manifest
 
 Canonical repository: `terrell0780/elitze-agentic-security`.
 

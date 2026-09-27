@@ -1,6 +1,5 @@
 import type { MetadataRoute } from "next";
-
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.info";
+import { productionConfig } from "@/config/production";
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -11,6 +10,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/console/", "/login", "/register", "/forgot-password", "/reset-password", "/auth/", "/sales/access"],
       },
     ],
-    sitemap: `${siteUrl}/sitemap.xml`,
+    sitemap: `${productionConfig.canonicalOrigin}/sitemap.xml`,
   };
 }

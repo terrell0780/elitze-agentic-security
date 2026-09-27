@@ -6,15 +6,10 @@ on:
   push:
     branches:
       - main
-      - rehaul/2026-security-control-surface
-      - security/full-green-gate-2026
-      - security/enterprise-auth-green-2026-09-21
-      - feat/autonomous-analyst-threat-fabric-2026-09-22
 
   pull_request:
     branches:
       - main
-      - rehaul/2026-security-control-surface
 
 permissions:
   contents: read
@@ -42,10 +37,13 @@ jobs:
           package-manager-cache: false
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci
 
       - name: Database configuration contract
         run: npm run db:config-self-test
+
+      - name: Production configuration contract
+        run: npm run production-config:self-test
 
       - name: Tenant overview data boundary
         run: npm run tenant-overview:self-test
@@ -121,7 +119,7 @@ jobs:
           package-manager-cache: false
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci
 
       - name: Clean database migration
         run: npm run db:migrate
@@ -138,6 +136,9 @@ jobs:
 
       - name: Contact and acquisition routing self-test
         run: npm run contact-acquisition:self-test
+
+      - name: Production configuration contract
+        run: npm run production-config:self-test
 
       - name: Authentication security self-test
         run: npm run auth:security-self-test

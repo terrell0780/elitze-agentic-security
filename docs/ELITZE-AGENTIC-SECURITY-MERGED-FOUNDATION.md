@@ -1,4 +1,4 @@
-# ELITZE SECURE — Canonical Enterprise Build
+# ELITZE AGENTIC SECURITY — Canonical Enterprise Build
 
 ## Product principle
 
@@ -7,7 +7,7 @@
 ## Command architecture
 
 ```
-ELITZE SECURE
+ELITZE AGENTIC SECURITY
 ├── COMMAND PLANE
 ├── AI SECURITY
 │   ├── Models, Agents, MCP, Tools, Memory, RAG

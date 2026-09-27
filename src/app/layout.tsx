@@ -4,8 +4,9 @@ import "./globals.css";
 import GlobalThemeToggle from "@/components/global-theme-toggle";
 import Analytics from "@/components/analytics";
 import AccessibilityRepair from "@/components/accessibility-repair";
+import { productionConfig } from "@/config/production";
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://elitze.info";
+const siteUrl = productionConfig.canonicalOrigin;
 const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 
 export const metadata: Metadata = {
