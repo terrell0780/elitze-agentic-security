@@ -1,6 +1,6 @@
 # ELITZE Enterprise Readiness
 
-ELITZE is now structured around a single defense control plane: Mythos plans and coordinates work, the ELITZE Defense Fabric normalizes connected security data and response actions, policy/gateway controls authorize activity, and the audit/evidence layer records the result.
+ELITZE is now structured around a single defense control plane: ELITZE orchestration plans and coordinates work, the ELITZE Defense Fabric normalizes connected security data and response actions, policy/gateway controls authorize activity, and the audit/evidence layer records the result.
 
 ## Connected integration model
 
@@ -19,7 +19,7 @@ The adapter contract deliberately distinguishes `CONNECTED`, `NOT_CONFIGURED`, `
 
 ## Enterprise data path
 
-`Source → Adapter → Observed Signal → Mythos correlation/routing → Policy/Gateway authorization → Approved action → Result → Evidence/Audit`
+`Source → Adapter → Observed Signal → ELITZE orchestration correlation/routing → Policy/Gateway authorization → Approved action → Result → Evidence/Audit`
 
 Only evidence-backed observations may be represented as live security telemetry. Missing integrations remain explicitly unavailable.
 
