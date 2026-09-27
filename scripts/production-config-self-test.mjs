@@ -38,11 +38,16 @@ assert.match(workflow, /production-config:self-test/);
 
 assert.match(read(".gitignore"), /^tsconfig\.tsbuildinfo$/m);
 assert.match(read("src/app/api/health/route.ts"), /build: "Elitze-Agentic-Security"/);
-assert.match(read("src/app/api/mythos/route.ts"), /agent: ELITZE_AGENT_NAME/);
-assert.match(read("src/app/api/mythos/route.ts"), /assistant: ELITZE_AGENT_ASSISTANT/);
-assert.match(read("src/lib/elitze-secure/mythos-agent.ts"), /ELITZE_AGENT_NAME = "ELITZE"/);
-assert.match(read("src/lib/elitze-secure/mythos-agent.ts"), /ELITZE_AGENT_ASSISTANT = "SARA"/);
+assert.match(read("src/app/api/elitze/route.ts"), /agent: ELITZE_AGENT_NAME/);
+assert.match(read("src/app/api/elitze/route.ts"), /assistant: ELITZE_AGENT_ASSISTANT/);
+assert.match(read("src/lib/elitze-secure/elitze-agent.ts"), /ELITZE_AGENT_NAME = "ELITZE"/);
+assert.match(read("src/lib/elitze-secure/elitze-agent.ts"), /ELITZE_AGENT_ASSISTANT = "SARA"/);
 assert.match(read("src/app/api/public/health/route.ts"), /export \{ GET \}/);
 assert.doesNotMatch(read("docs/ELITZE-AGENTIC-SECURITY-MERGED-FOUNDATION.md"), /ELITZE SECURE/);
 
 console.log("ELITZE production configuration self-test: PASS");
+
+const legacyIdentityFiles = tracked.filter((file) => !file.startsWith("drizzle/") && /mythos/i.test(file));
+assert.equal(legacyIdentityFiles.length, 0, `legacy Mythos file names remain: ${legacyIdentityFiles.join(", ")}`);
+const legacyIdentityContent = textFiles.filter((file) => !file.startsWith("drizzle/") && /mythos/i.test(read(file)));
+assert.equal(legacyIdentityContent.length, 0, `legacy Mythos branding remains: ${legacyIdentityContent.join(", ")}`);
