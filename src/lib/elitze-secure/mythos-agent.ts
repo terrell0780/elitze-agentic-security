@@ -6,6 +6,8 @@ import { evaluateGatewayRequest, type ElitzeGatewayChannel } from "@/lib/elitze-
 import { DEFAULT_SECURITY_POLICIES, PolicyEngine, type PolicyContext } from "@/lib/elitze-secure/policy-engine";
 import { EnforcementPoint } from "@/lib/elitze-secure/runtime-enforcement";
 
+export const ELITZE_AGENT_NAME = "ELITZE";
+export const ELITZE_AGENT_ASSISTANT = "SARA";
 export type MythosCapability = "SECOPS" | "INTELLIGENCE" | "MEMORY" | "REVIEW";
 export type MythosTaskType = "THREAT_HUNT" | "VULNERABILITY_ANALYSIS" | "INCIDENT_RESPONSE" | "OSINT" | "CORPORATE_RESEARCH" | "FRAUD_ANALYSIS" | "MEMORY_CAPTURE" | "REPORT_REVIEW";
 export type MythosPlanDecision = "ALLOW" | "REVIEW" | "BLOCK";
