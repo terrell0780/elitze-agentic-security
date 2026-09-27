@@ -63,7 +63,9 @@ assert.match(env, /ELITZE_ALLOWED_ORIGINS=https:\/\/elitze\.info,https:\/\/www\.
 assert.match(contactRoute, /ELITZE_CONTACT_EMAIL/);
 assert.match(contactRoute, /tsh_cook@hotmail\.com/);
 assert.doesNotMatch(contactRoute, /replyTo:\s*email/);
-assert.match(contactRoute, /REQUESTS = 5/);
+assert.match(contactRoute, /consumeRateLimit\(key, 5, 60 \* 60\)/);
+assert.match(contactRoute, /getRateLimitKey\("acquisition-contact", email\)/);
+assert.doesNotMatch(contactRoute, /const buckets = new Map/);
 assert.match(contactRoute, /website/);
 assert.match(contactForm, /\/api\/acquisition\/contact/);
 assert.match(contactForm, /tsh_cook@hotmail\.com/);
