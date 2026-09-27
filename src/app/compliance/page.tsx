@@ -73,6 +73,19 @@ export default function CompliancePage() {
       </section>
       <section className="border-y border-[var(--border)] bg-[var(--section)]">
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
+          <div className="max-w-5xl">
+            <div className="text-[10px] font-bold uppercase tracking-[.22em] text-[var(--accent)]">SAP security</div>
+            <h2 className="mt-2 text-3xl font-black tracking-[-.04em] sm:text-5xl">Protect your critical SAP applications from AI-powered threats.</h2>
+            <p className="mt-4 max-w-3xl text-lg leading-8 text-[var(--muted-strong)]">Securely accelerate your SAP AI and RISE adoption. ELITZE treats SAP as a business-critical security plane and maps SAP security configuration, SAP BTP identity and authorization, roles and privileged access, security and audit logs, and trust/certificate configuration into an evidence-gated control model.</p>
+            <div className="mt-6 rounded-2xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-5">
+              <div className="text-xl font-black">Speed and confidence. Not a trade-off.</div>
+              <p className="mt-2 text-sm leading-6 text-[var(--muted-strong)]">SAP-changing actions remain subject to ELITZE policy, authorization, approval and audit controls.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section className="border-y border-[var(--border)] bg-[var(--section)]">
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-20">
           <div className="text-[10px] font-bold uppercase tracking-[.22em] text-[var(--accent)]">Security ecosystem</div>
           <h2 className="mt-2 text-3xl font-black tracking-[-.04em]">Bring evidence from the systems that already run the enterprise.</h2>
           <div className="mt-8 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
