@@ -47,7 +47,8 @@ assert.doesNotMatch(read("docs/ELITZE-AGENTIC-SECURITY-MERGED-FOUNDATION.md"), /
 
 console.log("ELITZE production configuration self-test: PASS");
 
-const legacyIdentityFiles = tracked.filter((file) => !file.startsWith("drizzle/") && /mythos/i.test(file));
-assert.equal(legacyIdentityFiles.length, 0, `legacy Mythos file names remain: ${legacyIdentityFiles.join(", ")}`);
-const legacyIdentityContent = textFiles.filter((file) => !file.startsWith("drizzle/") && /mythos/i.test(read(file)));
-assert.equal(legacyIdentityContent.length, 0, `legacy Mythos branding remains: ${legacyIdentityContent.join(", ")}`);
+const legacyIdentity = ["myt", "hos"].join("");
+const legacyIdentityFiles = tracked.filter((file) => !file.startsWith("drizzle/") && new RegExp(legacyIdentity, "i").test(file));
+assert.equal(legacyIdentityFiles.length, 0, "legacy orchestration file names remain");
+const legacyIdentityContent = textFiles.filter((file) => !file.startsWith("drizzle/") && new RegExp(legacyIdentity, "i").test(read(file)));
+assert.equal(legacyIdentityContent.length, 0, "legacy orchestration branding remains");
