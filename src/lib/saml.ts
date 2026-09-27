@@ -1,6 +1,5 @@
 import { SAML, ValidateInResponseTo } from "@node-saml/node-saml";
-
-const siteOrigin = () => process.env.NEXT_PUBLIC_SITE_URL?.trim() || "https://elitze.info";
+import { productionConfig } from "@/config/production";
 
 const required = (name: string) => {
   const value = process.env[name]?.trim();
@@ -15,9 +14,9 @@ export function samlConfig() {
   const entryPoint = required("ELITZE_SAML_IDP_SSO_URL");
   const idpCert = normalizePem(required("ELITZE_SAML_IDP_CERTIFICATE"));
   const spEntityId = process.env.ELITZE_SAML_SP_ENTITY_ID?.trim()
-    || new URL("/api/auth/saml/metadata", siteOrigin()).toString();
+    || new URL("/api/auth/saml/metadata", productionConfig.canonicalOrigin).toString();
   const callbackUrl = process.env.ELITZE_SAML_ACS_URL?.trim()
-    || new URL("/api/auth/saml/callback", siteOrigin()).toString();
+    || new URL("/api/auth/saml/callback", productionConfig.canonicalOrigin).toString();
   const privateKey = process.env.ELITZE_SAML_SP_PRIVATE_KEY?.trim();
   const publicCert = process.env.ELITZE_SAML_SP_CERTIFICATE?.trim();
 
@@ -66,5 +65,5 @@ export function samlMetadata() {
 }
 
 export function samlSiteOrigin() {
-  return siteOrigin();
+  return productionConfig.canonicalOrigin;
 }
