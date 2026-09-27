@@ -19,7 +19,7 @@ This document is the implementation boundary for the current production track.
 
 ## What is implemented in the repository
 
-- Mythos orchestration and Defense Fabric.
+- ELITZE orchestration and Defense Fabric.
 - Tenant-scoped authorization primitives.
 - Durable approval workflow.
 - Persisted integration-event state for idempotency.
