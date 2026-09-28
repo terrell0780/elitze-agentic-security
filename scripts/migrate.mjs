@@ -71,7 +71,7 @@ try {
     "auth_refresh_tokens", "auth_api_keys", "auth_privileged_reauth",
     "security_test_requests",
     "security_fabric_sources", "security_fabric_events", "autonomous_analyst_runs", "autonomous_analyst_findings",
-    "production_readiness_evidence",
+    "production_readiness_evidence", "rag_documents", "rag_chunks",
   ];
 
   const requiredColumns = [
@@ -98,6 +98,9 @@ try {
       throw new Error(`ELITZE migration verification failed; ${table}.${column} expected ${expectedType}, found ${actualType ?? "missing"}`);
     }
   }
+
+  const vectorCheck = await client.query("SELECT 1 FROM pg_extension WHERE extname = 'vector'");
+  if (!vectorCheck.rowCount) throw new Error("ELITZE migration verification failed; pgvector extension is missing");
 
   const tableCheck = await client.query(
     "SELECT table_name FROM information_schema.tables WHERE table_schema = current_schema() AND table_name = ANY($1::text[])",
