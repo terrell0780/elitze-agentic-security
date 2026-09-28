@@ -68,6 +68,8 @@ jobs:
 
       - name: Security fabric self-test
         run: npm run security-fabric:self-test
+      - name: RAG and vector search self-test
+        run: npm run rag:self-test
       - name: Contact and acquisition routing self-test
         run: npm run contact-acquisition:self-test
 
@@ -89,7 +91,7 @@ jobs:
     timeout-minutes: 20
     services:
       postgres:
-        image: postgres:16
+        image: pgvector/pgvector:pg16
         env:
           POSTGRES_USER: elitze
           POSTGRES_PASSWORD: elitze
@@ -166,6 +168,9 @@ jobs:
 
       - name: Security fabric self-test
         run: npm run security-fabric:self-test
+
+      - name: RAG and vector search self-test
+        run: npm run rag:self-test
 
       - name: Evidence expression self-test
         run: npm run evidence-expression:self-test

@@ -9,6 +9,7 @@ import {
   timestamp,
   uuid,
   varchar,
+  vector,
 } from "drizzle-orm/pg-core";
 
 export { useCases, agentIntegrations, godsEyeFindings } from "./use-cases-schema";
@@ -157,5 +158,30 @@ export const evidenceRecords = pgTable("evidence_records", {
   subject: varchar("subject", { length: 240 }).notNull(),
   contentHash: varchar("content_hash", { length: 64 }).notNull(),
   payload: jsonb("payload").$type<Record<string, unknown>>().notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+
+export const ragDocuments = pgTable("rag_documents", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  tenantId: uuid("tenant_id").notNull(),
+  contentId: varchar("content_id", { length: 240 }).notNull(),
+  title: varchar("title", { length: 500 }).notNull(),
+  sourceType: varchar("source_type", { length: 80 }).notNull(),
+  sourceUri: text("source_uri"),
+  contentHash: varchar("content_hash", { length: 64 }).notNull(),
+  metadata: jsonb("metadata").$type<Record<string, unknown>>().notNull().default({}),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+});
+export const ragChunks = pgTable("rag_chunks", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  documentId: uuid("document_id").notNull(),
+  tenantId: uuid("tenant_id").notNull(),
+  chunkIndex: integer("chunk_index").notNull(),
+  content: text("content").notNull(),
+  contentHash: varchar("content_hash", { length: 64 }).notNull(),
+  embedding: vector("embedding", { dimensions: 1536 }).notNull(),
+  metadata: jsonb("metadata").$type<Record<string, unknown>>().notNull().default({}),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
