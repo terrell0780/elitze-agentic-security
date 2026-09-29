@@ -47,7 +47,7 @@ const systems = [
     state: "Authorization + executor dependent",
   },
   {
-    label: "REO / RIO / GOVERNANCE",
+    label: "EVIDENCE GOVERNANCE / MEASUREMENT",
     body: "Provenance, evidence state, outcome measurement, publishing and buyer-grade diligence controls.",
     state: "Evidence-gated",
   },
@@ -83,7 +83,7 @@ const diligence = [
   "Database migrations, required environment variables and runtime dependencies",
   "Configured versus unavailable integrations and external executors",
   "Security graph, policy enforcement, audit ledger and evidence state model",
-  "Pentest / ROE boundaries, retesting controls and containment behavior",
+  "Pentest / Rules of Engagement (ROE) boundaries, retesting controls and containment behavior",
   "Public-claim, IP, domain, brand and third-party rights review",
   "Buyer-controlled deployment verification before closing",
 ];
@@ -203,12 +203,12 @@ export default function SalesPage() {
             </div>
             <h2 className="mt-4 text-3xl font-black tracking-[-.04em]">No unsupported value claim.</h2>
             <p className="mt-4 text-sm leading-7 text-[var(--muted-strong)]">
-              Revenue, customers, benchmarks, certifications, savings, rankings, traffic, ROI percentages
+              Revenue, customers, benchmarks, certifications, savings, rankings, traffic, or Return on Investment (ROI) percentages
               and security outcomes are not presented as established facts unless the underlying evidence
               is available and independently reviewable.
             </p>
             <div className="mt-7 rounded-2xl border border-[var(--border)] bg-[var(--panel-strong)] p-5 text-xs leading-6 text-[var(--muted)]">
-              REO / RIO / ROE are evidence disciplines. Observed, inferred, simulated, unavailable and
+              ROE means Rules of Engagement for authorized security testing. ROI means Return on Investment and is shown only when the underlying evidence and approved financial inputs exist. RIO (Result / Impact / Outcome) is an ELITZE-specific internal evidence model, not a standard cybersecurity acronym. REO is not used as a public sales term. Observed, inferred, simulated, unavailable and
               unmeasurable states remain distinct throughout diligence.
             </div>
           </div>
