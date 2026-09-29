@@ -1,4 +1,4 @@
-# ELITZE 2026 Acquisition, RIO and ROI Measurement
+## Acquisition measurement — ROI and evidence
 
 ## Purpose
 
@@ -20,7 +20,7 @@ Public content is organized around real buyer problems rather than keyword varia
 - AI security policy enforcement.
 - Runtime security and evidence.
 - Security graph and exposure validation.
-- REO evidence and retesting.
+- Reachability, exploitability, evidence and retesting.
 - Enterprise acquisition / product asset acquisition.
 
 Pages must add substantive information for the reader. ELITZE does not create near-duplicate doorway pages, keyword-stuffed pages, synthetic statistics, fabricated testimonials, or AI-generated pages whose primary purpose is search manipulation.
@@ -39,9 +39,9 @@ Events contain page and destination context, not the contents of email messages 
 
 No event is emitted to Google measurement until the visitor has granted optional analytics/advertising measurement consent.
 
-## RIO
+## ELITZE RIO internal model
 
-RIO means **Result / Impact / Outcome** for the ELITZE evidence model.
+**RIO = Result / Impact / Outcome** is an ELITZE-specific internal evidence model, not a standard cybersecurity acronym.
 
 - **Result:** what the control path actually observed or decided.
 - **Impact:** business/security significance supported by observed evidence and, where monetary, an approved customer assumption.
@@ -55,9 +55,9 @@ The RIO implementation therefore returns explicit states rather than manufacturi
 - `INSUFFICIENT_EVIDENCE` — required security evidence is missing.
 - `UNMEASURABLE` — a financial result cannot be calculated because the approved financial basis is absent.
 
-## ROI
+## ROI — Return on Investment
 
-ROI is calculated only from customer-approved financial inputs and evidence that supports the underlying security/business result.
+ROI is the standard business term **Return on Investment**. It is calculated only from customer-approved financial inputs and evidence that supports the underlying security/business result.
 
 `ROI = (approved benefit - approved ELITZE cost) / approved ELITZE cost`
 
