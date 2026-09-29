@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Activity, AlertTriangle, Bot, ChevronRight, CircleDot, Database,
@@ -44,35 +44,55 @@ function value(value:number|null|undefined) {
 export default function AutonomousAnalystPage() {
   const router = useRouter();
   const [dashboard,setDashboard] = useState<Dashboard|null>(null);
+  const [dashboardLoading,setDashboardLoading] = useState(true);
   const [analyst,setAnalyst] = useState<Analyst|null>(null);
   const [busy,setBusy] = useState(false);
   const [error,setError] = useState<string|null>(null);
   const [selected,setSelected] = useState<string|null>(null);
 
-  async function load() {
-    setError(null);
-    const [dashboardResponse,analystResponse] = await Promise.all([
-      fetch("/api/console/security-fabric",{cache:"no-store"}),
-      fetch("/api/console/autonomous-analyst",{cache:"no-store"}),
-    ]);
-    if (dashboardResponse.status === 401 || analystResponse.status === 401) {
-      router.replace("/login?next=%2Fconsole%2Fanalyst");
-      return;
+  const load = useCallback(async () => {
+    try {
+      const [dashboardResponse,analystResponse] = await Promise.all([
+        fetch("/api/console/security-fabric",{cache:"no-store"}),
+        fetch("/api/console/autonomous-analyst",{cache:"no-store"}),
+      ]);
+      if (dashboardResponse.status === 401 || analystResponse.status === 401) {
+        router.replace("/login?next=%2Fconsole%2Fanalyst");
+        return;
+      }
+      if (!dashboardResponse.ok || !analystResponse.ok) {
+        setError("The security fabric is unavailable. No synthetic posture is shown.");
+        return;
+      }
+      const [dashboardData,analystData] = await Promise.all([
+        dashboardResponse.json() as Promise<Dashboard>,
+        analystResponse.json() as Promise<Analyst>,
+      ]);
+      if (!dashboardData.ok || !analystData.ok) {
+        setError("The security fabric is unavailable. No synthetic posture is shown.");
+        return;
+      }
+      setDashboard(dashboardData);
+      setAnalyst(analystData);
+    } finally {
+      setDashboardLoading(false);
     }
-    if (!dashboardResponse.ok || !analystResponse.ok) {
-      setError("The security fabric is unavailable. No synthetic posture is shown.");
-      return;
-    }
-    setDashboard(await dashboardResponse.json() as Dashboard);
-    setAnalyst(await analystResponse.json() as Analyst);
-  }
+  },[router]);
 
   useEffect(() => {
     void load().catch(() => setError("Unable to load the autonomous analyst."));
-  }, []);
+  },[load]);
+
+  async function refresh() {
+    setError(null);
+    setDashboard(null);
+    setAnalyst(null);
+    setDashboardLoading(true);
+    await load();
+  }
 
   const recent = useMemo(() => dashboard?.events ?? [], [dashboard]);
-  const connected = dashboard?.connectors.filter((item) => item.health === "CONNECTED").length ?? 0;
+  const connected = dashboard?.connectors.filter((item) => item.health === "CONNECTED").length;
   const mapPoints = recent.filter((event) =>
     typeof event.payload.latitude === "number" && typeof event.payload.longitude === "number"
   );
@@ -88,7 +108,7 @@ export default function AutonomousAnalystPage() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "analyst_failed");
-      await load();
+      await refresh();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "analyst_failed");
     } finally {
@@ -106,7 +126,7 @@ export default function AutonomousAnalystPage() {
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error ?? "probe_failed");
-      await load();
+      await refresh();
     } catch (cause) {
       setError(cause instanceof Error ? cause.message : "probe_failed");
     }
@@ -161,9 +181,9 @@ export default function AutonomousAnalystPage() {
 
         <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
           {([
-            ["Active Threats",dashboard?.metrics.activeThreats ?? 0,Activity],
-            ["Critical Assets",dashboard?.metrics.criticalAssets ?? 0,Target],
-            ["KEV",dashboard?.metrics.kev ?? 0,Skull],
+            ["Active Threats",dashboard ? dashboard.metrics.activeThreats : "UNMEASURABLE",Activity],
+            ["Critical Assets",dashboard ? dashboard.metrics.criticalAssets : "UNMEASURABLE",Target],
+            ["KEV",dashboard ? dashboard.metrics.kev : "UNMEASURABLE",Skull],
             ["EPSS",value(dashboard?.metrics.epss),CircleDot],
             ["VPR",value(dashboard?.metrics.vpr),Waypoints],
             ["Risk",value(dashboard?.metrics.exposure),AlertTriangle],
@@ -188,7 +208,7 @@ export default function AutonomousAnalystPage() {
                 <div className="text-[9px] font-bold uppercase tracking-[.2em] text-[var(--accent)]">Security Graph</div>
                 <h2 className="mt-1 text-xl font-black">Attack Graph</h2>
               </div>
-              <span className="text-[10px] text-[var(--muted)]">{dashboard?.graph.nodes ?? 0} observed nodes</span>
+              <span className="text-[10px] text-[var(--muted)]">{dashboard ? value(dashboard.graph.nodes) : "UNMEASURABLE"} observed nodes</span>
             </div>
             <div className="relative min-h-[330px] overflow-hidden p-6">
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.08),transparent_50%)]" />
@@ -200,7 +220,7 @@ export default function AutonomousAnalystPage() {
                   <div className="mt-5 text-[10px] font-bold uppercase tracking-[.22em] text-[var(--accent)]">Observed attack paths</div>
                   <div className="mt-2 text-sm text-[var(--muted-strong)]">Asset → Service → CVE → Exploit → Evidence</div>
                   <div className="mt-2 text-[10px] text-[var(--muted)]">
-                    {dashboard?.graph.nodes ? "Graph data available for drill-down." : "No observed graph path is available yet."}
+                    {!dashboard ? "Graph data is unavailable; observed paths are UNMEASURABLE." : dashboard.graph.nodes ? "Graph data available for drill-down." : "No observed graph path is available yet."}
                   </div>
                 </div>
               </div>
@@ -267,7 +287,7 @@ export default function AutonomousAnalystPage() {
                   <span className="text-[9px] uppercase text-[var(--muted)]">{event.severity ?? "INFO"}</span>
                 </button>
               )) : (
-                <div className="p-6 text-sm text-[var(--muted)]">No observed security events.</div>
+                <div className="p-6 text-sm text-[var(--muted)]">{dashboardLoading || !dashboard ? "UNMEASURABLE — security-fabric data is unavailable." : "No observed security events."}</div>
               )}
             </div>
             {selected && (
@@ -286,12 +306,12 @@ export default function AutonomousAnalystPage() {
               <h2 className="mt-1 text-xl font-black">Active Campaigns</h2>
             </div>
             <div className="p-5">
-              <div className="text-3xl font-black">{dashboard?.activeCampaigns ?? 0}</div>
+              <div className="text-3xl font-black">{dashboard ? dashboard.activeCampaigns : "UNMEASURABLE"}</div>
               <div className="mt-1 text-xs text-[var(--muted)]">Campaign identifiers observed in tenant evidence</div>
               <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--panel-strong)] p-4">
                 <div className="flex items-center gap-2 text-xs font-semibold">
                   <Database className="h-4 w-4 text-[var(--accent)]" />
-                  {connected} sources connected
+                  {dashboard ? connected : "UNMEASURABLE"} sources connected
                 </div>
                 <div className="mt-2 text-[10px] leading-5 text-[var(--muted)]">
                   Source state is based on live probes or received evidence, not repository presence.
@@ -374,6 +394,7 @@ export default function AutonomousAnalystPage() {
                 </div>
               </button>
             ))}
+            {!dashboard && <div className="p-4 text-xs text-[var(--muted)]">UNMEASURABLE — connector state is unavailable.</div>}
           </div>
         </section>
 

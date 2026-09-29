@@ -37,7 +37,7 @@ It contains:
 
 ## Autonomous Analyst behavior
 
-The current analyst is deterministic and evidence-first. It correlates the latest observed security-fabric events by subject, CVE, indicator or host. It preserves source references, evidence states, evidence gaps, and proposed next actions.
+The current analyst is deterministic and evidence-first. It correlates the latest observed security-fabric events by subject, CVE, indicator or host; events without a correlation key remain separate. The console only displays findings from the latest analyst run. It preserves source references, evidence states, evidence gaps, and proposed next actions.
 
 The analyst does not:
 
@@ -57,5 +57,7 @@ IMPLEMENTED means the connector code exists.
 INTEGRATED means a real provider path responded successfully or real source evidence was received.
 
 BLOCKED, UNKNOWN and UNMEASURABLE remain explicit when the environment cannot establish the requested condition.
+
+The security-fabric ingestion endpoint uses deployment-wide credentials only with the single tenant configured by `ELITZE_INGEST_TENANT_ID`. The body tenant, when supplied, must match this binding. Multi-tenant collection requires tenant-bound credentials and is not enabled by this endpoint.
 
 Provider credentials belong in the deployment secret manager. Collector and scanner paths require external customer-side infrastructure. No provider credentials or synthetic telemetry are committed to the repository.

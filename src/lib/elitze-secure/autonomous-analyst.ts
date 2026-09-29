@@ -60,12 +60,13 @@ function strings(payload: Record<string, unknown>, key: string) {
 }
 
 function groupKey(row: FabricRow) {
-  if (row.subject_key) return row.subject_key;
-  if (typeof row.payload.cveId === "string") return "cve:" + row.payload.cveId;
-  if (typeof row.payload.cve === "string") return "cve:" + row.payload.cve;
-  if (typeof row.payload.indicator === "string") return "indicator:" + row.payload.indicator;
-  if (typeof row.payload.hostname === "string") return "host:" + row.payload.hostname;
-  return row.event_type;
+  const subjectKey = row.subject_key?.trim();
+  if (subjectKey) return subjectKey;
+  if (typeof row.payload.cveId === "string" && row.payload.cveId.trim()) return "cve:" + row.payload.cveId.trim();
+  if (typeof row.payload.cve === "string" && row.payload.cve.trim()) return "cve:" + row.payload.cve.trim();
+  if (typeof row.payload.indicator === "string" && row.payload.indicator.trim()) return "indicator:" + row.payload.indicator.trim();
+  if (typeof row.payload.hostname === "string" && row.payload.hostname.trim()) return "host:" + row.payload.hostname.trim();
+  return "event:" + row.id;
 }
 
 function buildFinding(subjectKey: string | null, rows: FabricRow[]): AnalystFinding {
@@ -168,7 +169,7 @@ export async function runAutonomousAnalyst(
     }
 
     const findings = Array.from(groups.entries())
-      .map(([subject,rows]) => buildFinding(subject,rows))
+      .map(([subject,rows]) => buildFinding(subject.startsWith("event:") ? null : subject,rows))
       .filter((finding) => finding.severity !== "INFO" || finding.evidenceState !== "OBSERVED")
       .slice(0,50);
 
