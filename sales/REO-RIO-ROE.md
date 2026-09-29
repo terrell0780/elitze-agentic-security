@@ -1,53 +1,14 @@
-# ELITZE Agentic Security — REO / RIO / ROE
+# ELITZE Agentic Security — Buyer Terminology
 
 ## Purpose
 
-This document gives buyers a clear evidence framework for evaluating the product without confusing product claims, reachable conditions, remediation outcomes, or evidence of effectiveness.
-
-## REO — Reachability / Exploitability / Observation
-
-For ELITZE sales and security evidence, REO should establish whether a security condition is actually reachable or exploitable in the connected environment and what evidence supports that conclusion.
-
-Recommended evidence fields:
-
-- Asset.
-- Identity or principal.
-- Entry point.
-- Network or application path.
-- Required capability.
-- Observed condition.
-- Exploitability evidence.
-- Reachability evidence.
-- Business criticality.
-- Timestamp.
-- Source.
-- Retest result.
-
-The repository documents REO as continuous validation of reachable and exploitable conditions with evidence-backed retesting.
-
-## RIO — Result / Impact / Outcome
-
-RIO should distinguish the result of a security decision or remediation from the original finding.
-
-Recommended outcome fields:
-
-- Original condition.
-- Authorized action.
-- Action status.
-- Control affected.
-- Retest performed.
-- Retest evidence.
-- Residual exposure.
-- Business impact.
-- Final outcome.
-
-An action being requested or a ticket being marked resolved is not, by itself, proof that risk was removed.
+This legacy filename is retained only for compatibility with existing references. Buyer-facing terminology must follow the canonical acronym standard in `docs/ACRONYM-TERMINOLOGY.md`.
 
 ## ROE — Rules of Engagement
 
-ROE defines what ELITZE or an authorized testing operation is permitted to do.
+**ROE** means **Rules of Engagement** for an authorized security test, penetration test, red-team exercise, or controlled validation activity.
 
-The transaction and customer deployment should define:
+For buyer diligence or a customer engagement, ROE should define:
 
 - Authorized assets and environments.
 - Authorized identities.
@@ -61,6 +22,26 @@ The transaction and customer deployment should define:
 - Evidence-retention requirements.
 - Escalation and rollback requirements.
 
+## ROI — Return on Investment
+
+**ROI** means **Return on Investment**. It is a financial measure and must be calculated only from real, approved financial inputs and evidence.
+
+ELITZE must not invent savings, avoided losses, revenue, payback, conversion value, customer outcomes, or ROI percentages.
+
+## RIO — ELITZE-specific internal evidence model
+
+**RIO = Result / Impact / Outcome** is an ELITZE-specific internal evidence model. It is not a standard cybersecurity acronym and should be defined on first use.
+
+Use plain-language terms such as result, impact, outcome, reachability, exploitability, evidence, provenance, remediation, and verified outcome when those terms are clearer.
+
+## REO
+
+**REO is not used as a public or sales acronym.** It has no single standard cybersecurity meaning and previously appeared in ELITZE materials with conflicting expansions.
+
+Do not use REO in buyer-facing claims, sales copy, acquisition material, or publishing governance as though it were an industry-standard term.
+
 ## Sales integrity rule
 
-Do not market REO, RIO, or ROE as proof of customer outcomes unless the corresponding deployment evidence exists. The safest commercial representation is that these are product/control concepts documented in the architecture and acceptance standard, followed by a buyer demonstration and evidence review.
+Acronyms are terminology, not proof. No ROE, ROI, or RIO reference may be presented as evidence of customer outcomes, revenue, valuation, rankings, adoption, or efficacy unless the underlying evidence actually exists.
+
+The canonical terminology standard is `docs/ACRONYM-TERMINOLOGY.md`.
