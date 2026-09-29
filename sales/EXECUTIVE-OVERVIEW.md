@@ -24,7 +24,7 @@ ELITZE is not positioned as another alert dashboard. The intended control-plane 
 - Exposure and vulnerability operations: attack paths, CVE intelligence, remediation priority and verification.
 - Security operations: investigation, governed response, containment, audit and evidence.
 - ELITZE Global Security View: interactive visual command surface for connected security domains and exposure relationships.
-- REO: continuous validation of reachable and exploitable conditions with evidence-backed retesting.
+- Evidence-backed validation: continuous validation of reachable and exploitable conditions with documented retesting.
 
 ## Buyer value proposition
 
