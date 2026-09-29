@@ -29,11 +29,11 @@ I have an existing ELITZE Agentic Security product build available for acquisiti
 
 Its core premise is that the model or agent is not the security boundary. ELITZE is designed to put policy enforcement, authorization, containment, continuous validation, and evidence around AI agents, MCP, APIs, software, cloud, identity, and runtime behavior.
 
-The architecture is built around Detect → Explain → Authorize → Act → Retest → Evidence, with REO-oriented validation of reachable or exploitable conditions and explicit separation between observed, planned, and blocked states.
+The architecture is built around Detect → Explain → Authorize → Act → Retest → Evidence, with evidence-backed validation of reachable or exploitable conditions and explicit separation between observed, planned, and blocked states.
 
 This may be useful to an organization that wants an existing AI-security product foundation that can be integrated into a larger security portfolio.
 
-The repository and buyer package are available for technical due diligence.
+The repository and buyer package are available for technical due diligence. Any authorized security testing uses Rules of Engagement (ROE) appropriate to the agreed scope.
 
 Regards,
 Terrell
@@ -48,7 +48,7 @@ I’m offering ELITZE Agentic Security as a software/product acquisition opportu
 
 This is not being presented as a revenue claim or a manufactured customer story. It is an existing security product build with documented architecture and a defined enterprise security direction.
 
-The package covers the source repository, product architecture, database structure, security boundary, API surface, REO/RIO/ROE framework, buyer due diligence, transfer requirements, and marketplace-ready description.
+The package covers the source repository, product architecture, database structure, security boundary, API surface, buyer due diligence, transfer requirements, and marketplace-ready description. The documentation distinguishes ROE (Rules of Engagement) for authorized security testing from ROI (Return on Investment) for substantiated financial analysis.
 
 The most likely fit is a cybersecurity company, AI-security company, MSSP, software acquirer, or entrepreneur looking for a serious starting point rather than commissioning a new build.
 
