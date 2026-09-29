@@ -55,15 +55,15 @@ These adapters participate in the ELITZE control-plane path rather than function
 
 Broader security domains may exist in the architecture, but they are not claimed as simultaneously proven product scope unless the relevant live control path is implemented, connected, and verified.
 
-## REO / RIO / ROE
+## Security testing and business measurement
 
-**REO** is evidence-backed retesting of a real reachable/exploitable condition and proof of the resulting security state.
+**ROE (Rules of Engagement)** governs authorized security testing: scope, approvals, permitted activity, evidence handling, safety boundaries, and stop/containment procedures.
 
-**RIO** separates observed security outcomes from customer-approved financial assumptions. No financial result is invented when the required inputs are unavailable.
+**ROI (Return on Investment)** is used only for substantiated financial return calculations. No financial result is invented when required evidence or approved financial inputs are unavailable.
 
-**ROE** governs authorized validation activity, scope, approvals, evidence, and release/runtime testing boundaries.
+**RIO (Result / Impact / Outcome)** is an ELITZE-specific internal evidence model, not a standard cybersecurity acronym. It is used only when explicitly defined and kept separate from ROI.
 
-These are evidence controls, not marketing labels.
+**REO** is not used as a public acronym because it has no single standard cybersecurity meaning and has previously been used inconsistently in ELITZE materials.
 
 ## Google 2026 publishing standard
 
