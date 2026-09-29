@@ -30,7 +30,7 @@ See `docs/ELITZE-CATEGORY-LEADER-MANIFEST.md` for the project's acceptance stand
 - `EXECUTIVE-OVERVIEW.md` — buyer-facing overview and positioning.
 - `PRODUCT-CAPABILITIES.md` — capabilities documented from the current repository.
 - `ARCHITECTURE-AND-TRANSFER.md` — architecture, deployment path, and transfer scope.
-- `REO-RIO-ROE.md` — evidence, reachability, outcome, and validation framing.
+- `ACRONYM-TERMINOLOGY.md` — canonical meanings and usage rules for ROE, ROI and the ELITZE-specific RIO model.
 - `BUYER-DUE-DILIGENCE.md` — due-diligence checklist and evidence requirements.
 - `MARKETPLACE-LISTING.md` — ready-to-use marketplace listing copy.
 - `SALES-PITCH.md` — buyer conversation pitch.
