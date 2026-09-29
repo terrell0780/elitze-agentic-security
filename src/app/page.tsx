@@ -37,7 +37,7 @@ export default function HomePage() {
             <span><b className="block text-sm tracking-[.12em]">ELITZE</b><span className="block text-[8px] uppercase tracking-[.26em] text-[var(--muted)]">Agentic Security</span></span>
           </Link>
           <nav className="hidden items-center gap-7 text-[12px] font-semibold text-[var(--muted)] lg:flex" aria-label="Primary navigation">
-            {[[ "Platform","/platform" ],[ "Security","/security" ],[ "REO","/reo" ],[ "Search","/search" ],[ "FAQ","/faq" ]].map(([label,href]) => <Link key={href} href={href} className="transition hover:text-[var(--text)]">{label}</Link>)}
+            {[[ "Platform","/platform" ],[ "Security","/security" ],[ "Content Intelligence","/reo" ],[ "Search","/search" ],[ "FAQ","/faq" ]].map(([label,href]) => <Link key={href} href={href} className="transition hover:text-[var(--text)]">{label}</Link>)}
           </nav>
           <div className="flex items-center gap-2 pr-12 sm:pr-0">
             <Link href="/sales" className="hidden rounded-xl border border-[var(--border)] bg-[var(--panel)] px-4 py-2.5 text-xs font-semibold sm:inline-flex">Acquisition</Link>
@@ -46,7 +46,7 @@ export default function HomePage() {
             <GlobalThemeToggle embedded />
           </div>
         </div>
-        {mobileOpen && <nav className="border-t border-[var(--border)] px-4 py-3 lg:hidden"><div className="mx-auto flex max-w-[1400px] flex-col gap-1">{[["Platform","/platform"],["Security","/security"],["REO","/reo"],["Search","/search"],["FAQ","/faq"],["Control Plane","/console"],["Acquisition","/sales"]].map(([label,href]) => <Link key={href} href={href} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-sm text-[var(--muted)] hover:bg-[var(--panel)] hover:text-[var(--text)]">{label}</Link>)}</div></nav>}
+        {mobileOpen && <nav className="border-t border-[var(--border)] px-4 py-3 lg:hidden"><div className="mx-auto flex max-w-[1400px] flex-col gap-1">{[["Platform","/platform"],["Security","/security"],["Content Intelligence","/reo"],["Search","/search"],["FAQ","/faq"],["Control Plane","/console"],["Acquisition","/sales"]].map(([label,href]) => <Link key={href} href={href} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-sm text-[var(--muted)] hover:bg-[var(--panel)] hover:text-[var(--text)]">{label}</Link>)}</div></nav>}
       </header>
 
       <section className="relative overflow-hidden border-b border-[var(--border)]">
@@ -107,7 +107,7 @@ export default function HomePage() {
       </section>
 
       <section className="mx-auto max-w-[1400px] px-4 py-16 sm:px-7 sm:py-24">
-        <div className="rounded-[32px] border border-[var(--accent-border)] bg-[var(--accent-soft)] p-7 sm:p-10 lg:flex lg:items-center lg:justify-between lg:gap-10"><div><div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">Evidence discipline</div><h2 className="mt-3 text-3xl font-black tracking-[-.04em] sm:text-4xl">No record. No claim.</h2><p className="mt-4 max-w-3xl text-sm leading-7 text-[var(--muted-strong)]">REO, RIO/ROI and security posture remain source-bound. When the underlying record is missing, ELITZE exposes the missing state instead of creating a number.</p></div><Link href="/security" className="mt-7 inline-flex shrink-0 items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950 lg:mt-0">Security architecture <ArrowRight className="h-4 w-4" /></Link></div>
+        <div className="rounded-[32px] border border-[var(--accent-border)] bg-[var(--accent-soft)] p-7 sm:p-10 lg:flex lg:items-center lg:justify-between lg:gap-10"><div><div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">Evidence discipline</div><h2 className="mt-3 text-3xl font-black tracking-[-.04em] sm:text-4xl">No record. No claim.</h2><p className="mt-4 max-w-3xl text-sm leading-7 text-[var(--muted-strong)]">ROI and security posture remain source-bound. When the underlying record is missing, ELITZE exposes the missing state instead of creating a number.</p></div><Link href="/security" className="mt-7 inline-flex shrink-0 items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950 lg:mt-0">Security architecture <ArrowRight className="h-4 w-4" /></Link></div>
       </section>
 
       <section className="border-t border-[var(--border)]"><div className="mx-auto max-w-[1400px] px-4 py-16 text-center sm:px-7 sm:py-24"><div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">Commercial path</div><h2 className="mx-auto mt-3 max-w-4xl text-3xl font-black tracking-[-.045em] sm:text-5xl">Built to operate. Structured to transfer.</h2><p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-[var(--muted-strong)]">The public surface explains the architecture. The acquisition surface documents what is included, what remains subject to diligence and how controlled source access works.</p><div className="mt-7 flex justify-center"><Link href="/sales" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950">Open acquisition surface <ArrowRight className="h-4 w-4" /></Link></div></div></section>
