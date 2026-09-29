@@ -1,8 +1,8 @@
-# ELITZE RIO / ROI
+# ELITZE ROI — Return on Investment
 
-ELITZE Agentic Security treats RIO/ROI as evidence-gated measurement, not a marketing estimate.
+ELITZE Agentic Security treats ROI as an evidence-gated financial measure, not a marketing estimate. An optional ELITZE-specific RIO model may be used to organize Result / Impact / Outcome evidence; it is not a standard cybersecurity acronym.
 
-## RIO model
+## Optional ELITZE RIO model
 
 RIO means **Result / Impact / Outcome**:
 
