@@ -22,8 +22,8 @@ ELITZE is a security control plane for software, cloud, identities, AI agents an
 - Tool and protocol governance
 - CI/CD security gates
 - Evidence and audit persistence
-- REO content integrity
-- RIO reach and visibility measurement
+- Content integrity and publishing governance
+- Acquisition reach and visibility measurement
 
 ## Security model
 The security boundary is external to the agent. Identity, authorization, policy, credentials, data access, network controls, sandboxing and containment remain independently enforceable.
