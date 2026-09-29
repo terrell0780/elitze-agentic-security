@@ -26,7 +26,7 @@ Google's current guidance emphasizes helpful, reliable, people-first content and
 
 ELITZE's content-integrity layer is the trust layer around published content and machine-readable claims.
 
-REO must preserve:
+The content-integrity layer must preserve:
 
 1. Provenance — where a claim came from.
 2. Evidence — what supports the claim.
@@ -37,9 +37,9 @@ REO must preserve:
 
 The existing content-integrity persistence layer is evidence-first and explicitly rejects synthetic content, scores and audit records. This remains the required behavior.
 
-## 3. RIO / measurement layer
+## 3. Measurement layer
 
-RIO is the ELITZE reach and visibility operating layer. It connects technical discoverability, search demand, AI/agent reach, referral visibility and measurable business outcomes.
+Use plain-language measurement terms for reach, visibility, search demand, AI/agent reach, referral visibility and measurable business outcomes. **RIO (Result / Impact / Outcome)** is reserved for the ELITZE-specific internal evidence model and is not a general name for this analytics layer.
 
 RIO must measure rather than invent:
 
@@ -50,7 +50,7 @@ RIO must measure rather than invent:
 - Referral and third-party authority only from an authorized source.
 - Conversion outcomes only when a real event has been observed.
 
-No RIO score may be displayed as a measured fact when its source is unavailable.
+No measurement score may be displayed as a measured fact when its source is unavailable.
 
 ## 4. Google Ads readiness
 
@@ -105,7 +105,7 @@ Before declaring ELITZE product/business ready, verify:
 - Google Ads conversion actions are configured only after the actual Ads account supplies the IDs/labels.
 - Public pages contain no fabricated reviews, ratings, customer counts, rankings or performance statistics.
 - Content-integrity decisions are evidence-bound.
-- RIO dashboards clearly distinguish measured, unavailable and inferred state.
+- Measurement dashboards clearly distinguish measured, unavailable and inferred state.
 - Production CI passes typecheck, lint, tests and build.
 
 ## 8. Important limitation
