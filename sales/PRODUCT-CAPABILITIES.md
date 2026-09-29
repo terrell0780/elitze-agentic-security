@@ -49,13 +49,15 @@ These may exist as secondary architecture or future scope, but public and sales-
 - No invented customers, assets, agents, findings, reachability, remediation, savings, rankings, or integrations.
 - Missing evidence is shown as missing, `UNKNOWN`, `UNMEASURABLE`, or `INSUFFICIENT_REACH` as appropriate.
 
-## REO / RIO / ROE
+## Security-testing and business-measurement terminology
 
-**REO:** evidence-backed retesting of an actual reachable or exploitable condition.
+**ROE (Rules of Engagement):** authorized scope and execution rules for security testing, including evidence handling and safety boundaries.
 
-**RIO:** observed security outcomes separated from customer-approved financial assumptions; no invented ROI values.
+**ROI (Return on Investment):** a financial return measure used only when the underlying evidence and approved financial inputs exist.
 
-**ROE:** authorized validation scope and execution rules for security testing, with evidence retained for the actual activity performed.
+**RIO (Result / Impact / Outcome):** an ELITZE-specific internal evidence model, not a standard cybersecurity acronym. It is secondary to the plain-language description of the observed result and verified outcome.
+
+**REO:** not used as a public sales acronym. Use plain-language terms such as reachability, exploitability, evidence and verified outcome.
 
 ## Google 2026 publishing boundary
 
