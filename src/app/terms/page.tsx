@@ -23,7 +23,7 @@ export default function TermsPage() {
             <li>Agentic actions require authorized scope, credentials, targets, and applicable approval controls.</li>
             <li>Customers remain responsible for required AI disclosures and labeling of generated or materially altered content.</li>
             <li>Third-party model and integration processing is governed by the applicable provider and enterprise agreements.</li>
-            <li>ELITZE REO uses provenance, evidence, uniqueness, risk, and publishing-governance controls.</li>
+            <li>ELITZE content integrity uses provenance, evidence, uniqueness, risk, and publishing-governance controls.</li>
           </ul>
         </section>
 
