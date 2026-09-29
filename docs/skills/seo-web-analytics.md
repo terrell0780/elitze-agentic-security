@@ -1,4 +1,4 @@
-# ELITZE REO — SEO Web Analytics Skill
+# ELITZE Content Intelligence — SEO Web Analytics Skill
 
 ## Purpose
 
