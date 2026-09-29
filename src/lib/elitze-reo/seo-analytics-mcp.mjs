@@ -12,7 +12,7 @@ const date = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Use YYYY-MM-DD.");
 server.registerTool(
   "google_search_console_search_analytics",
   {
-    title: "ELITZE REO Google Search Console Analytics",
+    title: "ELITZE Content Intelligence Google Search Console Analytics",
     description: "Query tenant-authorized Google Search Console Search Analytics data. No synthetic SEO metrics are generated.",
     inputSchema: z.object({
       siteUrl: z.string().min(1),
@@ -58,4 +58,4 @@ server.registerTool(
 
 const transport = new StdioServerTransport();
 await server.connect(transport);
-console.error("ELITZE REO SEO Analytics MCP server running on stdio");
+console.error("ELITZE Content Intelligence SEO Analytics MCP server running on stdio");
