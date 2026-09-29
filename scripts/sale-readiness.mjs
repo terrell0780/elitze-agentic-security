@@ -54,7 +54,7 @@ for (const rel of tracked) {
 for (const required of [
   "docs/ELITZE-ROI.md",
   "docs/2026-ACQUISITION-MEASUREMENT.md",
-  "docs/2026-GOOGLE-REO-RIO-READINESS.md",
+  "docs/ACRONYM-TERMINOLOGY.md",
   "docs/ELITZE-SECURITY-SKILLS.md",
   "docs/ELITZE-BRAND-AND-IP-POLICY.md",
   "docs/SALE-READINESS.md",
