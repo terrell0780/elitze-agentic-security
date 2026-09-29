@@ -43,9 +43,9 @@ ELITZE_GITHUB_MCP_WRITE=false
 
 Only enable write mode in an explicitly authorized environment. Do not paste tokens into source, documentation, chat, or commits.
 
-## Agent Reach / REO / RIO relationship
+## Agent Reach and evidence-measurement relationship
 
-This MCP is a GitHub control-plane integration, not a ranking or reach claim. It can provide agents with evidence-backed repository state that ELITZE workflows may use for REO/RIO evidence collection, release review, and security engineering. It does not invent search visibility, rankings, customer activity, or repository health metrics.
+This MCP is a GitHub control-plane integration, not a ranking or reach claim. It can provide agents with evidence-backed repository state that ELITZE workflows may use for evidence collection for reachability, outcomes and business measurement, release review, and security engineering. It does not invent search visibility, rankings, customer activity, or repository health metrics.
 
 ## Verification boundary
 
