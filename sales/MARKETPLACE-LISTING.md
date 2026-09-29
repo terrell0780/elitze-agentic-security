@@ -16,7 +16,7 @@ The product is built around a continuous workflow:
 
 **Detect → Explain → Authorize → Act → Retest → Evidence**
 
-Its documented security surface spans AI and agentic security, MCP and tool governance, API and OpenAPI security, code and software supply chain controls, cloud/identity/data context, exposure and vulnerability operations, security operations, containment, audit/evidence, and REO-based validation of reachable or exploitable conditions.
+Its documented security surface spans AI and agentic security, MCP and tool governance, API and OpenAPI security, code and software supply chain controls, cloud/identity/data context, exposure and vulnerability operations, security operations, containment, audit/evidence, and evidence-backed validation of reachable or exploitable conditions.
 
 A central design principle is that the model or agent is not the security boundary. Security actions are designed to require explicit authorization and protected internal controls. Containment is designed to fail closed when the required infrastructure executor is unavailable.
 
