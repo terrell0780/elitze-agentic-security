@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export const metadata = {
   title: "ELITZE Content Intelligence | Search & Content Governance",
-  description: "ELITZE Content Intelligence unifies content integrity, search analytics, technical SEO, evidence and publishing governance."
+  description: "ELITZE Content Intelligence unifies content integrity, search analytics, technical SEO, evidence and publishing governance.",
   alternates: { canonical: "/reo" },
 };
 
