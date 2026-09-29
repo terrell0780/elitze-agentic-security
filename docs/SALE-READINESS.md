@@ -9,7 +9,7 @@ The repository is the canonical ELITZE Agentic Security product source. Acquisit
 - ELITZE Agentic Security application source
 - Security control-plane architecture
 - Agent, MCP, API, vulnerability, exposure and security operations workflows
-- REO verification and evidence architecture
+- Evidence governance, provenance and verified reachability
 - ROI measurement layer
 - governed Security Skill Registry architecture
 - database migrations and production setup documentation
