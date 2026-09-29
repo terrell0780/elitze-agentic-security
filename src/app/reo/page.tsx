@@ -1,8 +1,8 @@
 import Link from "next/link";
 
 export const metadata = {
-  title: "ELITZE REO | Search & Content Intelligence",
-  description: "ELITZE REO unifies content integrity, search analytics, technical SEO, evidence and publishing governance.",
+  title: "ELITZE Content Intelligence | Search & Content Governance",
+  description: "ELITZE Content Intelligence unifies content integrity, search analytics, technical SEO, evidence and publishing governance."
   alternates: { canonical: "/reo" },
 };
 
@@ -35,7 +35,7 @@ export default function ReoPage() {
     <main className="min-h-screen bg-[#07070a] px-4 py-10 text-zinc-100 sm:px-6 sm:py-14">
       <section className="mx-auto max-w-6xl space-y-10">
         <header className="max-w-4xl space-y-4">
-          <p className="text-sm uppercase tracking-[0.24em] text-zinc-500">ELITZE REO</p>
+          <p className="text-sm uppercase tracking-[0.24em] text-zinc-500">ELITZE CONTENT INTELLIGENCE</p>
           <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">Search &amp; Content Intelligence</h1>
           <p className="text-base leading-7 text-zinc-400 sm:text-lg sm:leading-8">Content integrity and SEO web analytics in one governed control plane: understand how people discover content, validate what the content claims, measure performance, and control publication without presenting unavailable data as fact.</p>
         </header>
