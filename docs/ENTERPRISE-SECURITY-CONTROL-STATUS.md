@@ -1,8 +1,14 @@
 # ELITZE Agentic Security — Enterprise Control Hardening
 
-This release candidate records only controls that are implemented in code or explicitly remain dependent on external infrastructure.
+This document records the current repository control state without treating code presence as proof of a live provider integration.
 
-## Implemented in this hardening pass
+## Verified in the latest release-gate run
+
+The current main release-gate run passed the repository code-review, verification, and final release gates. Those gates cover typecheck, lint, production build, dependency audit, production configuration contracts, database migration verification, authentication security/E2E, tenant isolation checks, security-fabric checks, RAG/vector checks, acquisition routing, compliance/legal controls, progressive proofing, pentest-request controls, evidence expressions, and SBOM generation/upload.
+
+The CI environment is controlled test infrastructure. A CI pass does not by itself prove that an external production deployment has the required provider credentials or configuration.
+
+## Implemented and verified by repository tests
 
 - Durable, tenant-scoped audit ledger in PostgreSQL.
 - Per-tenant serialized audit writes using PostgreSQL transaction advisory locks.
@@ -12,20 +18,38 @@ This release candidate records only controls that are implemented in code or exp
 - Security decisions fail closed when audit persistence is unavailable.
 - Expanded default policy set for tenant boundary, subject identity, explicit action, MCP server identity, tool identity, and restricted-data model/provider binding.
 - Kill-switch request persistence with tenant scope and idempotency key.
-- Kill-switch executor receives the idempotency key and request ID.
-- Kill-switch success requires an explicit `verified: true` executor response; an accepted-but-unverified response is not reported as successful containment.
-- Containment failure and verification states are persisted and audited.
-- Security self-test covers tenant boundary, agent identity, purpose binding, MCP identity, request hashing, and hash-chain tamper behavior.
+- Kill-switch success requires an explicit verified=true executor response; accepted-but-unverified containment is not reported as successful.
+- Security self-test coverage for tenant boundary, agent identity, purpose binding, MCP identity, request hashing, and hash-chain tamper behavior.
+- Email/password authentication, email verification, password reset, session handling, MFA flow, WebAuthn/passkey implementation checks, OIDC/SAML implementation checks, CSRF/origin controls, rate limiting, and real-auth CI E2E coverage.
+- PostgreSQL/pgvector migration and required security control-plane table verification in CI.
+- Tenant-scoped security graph and evidence isolation checks.
+- RAG/vector schema and tenant-bound retrieval implementation.
+- Security-fabric tenant binding and autonomous-analyst latest-run correctness.
+- Acquisition/contact routing and canonical .info domain checks.
+- SBOM generation/upload in CI.
 
-## Still not claimed as complete
+## External or deployment-dependent controls
 
-- Enterprise OIDC/SSO, MFA/passkeys, and lifecycle provisioning.
-- Cryptographically authoritative mapping from authenticated human/service principal to tenant and agent identity. The current internal API-key boundary is not a replacement for enterprise IAM.
-- KMS-backed per-tenant encryption and key rotation.
+These remain dependent on real infrastructure and must not be represented as live merely because the repository contains adapter code:
+
+- Production DATABASE_URL and deployment secret configuration.
+- Live production email provider credentials and delivery.
+- Live enterprise OIDC/SAML identity-provider configuration.
+- Live Google OAuth is not part of the current login surface.
+- Live customer/provider integrations for AWS, Azure/Entra, GitHub, Kubernetes, MCP, threat-intelligence, endpoint, network, scanner, or other adapters.
+- Production containment executor and independently verified containment.
+- KMS-backed per-tenant encryption and demonstrated key rotation.
 - Independent immutable/WORM audit retention outside the application database.
-- Disaster recovery with demonstrated RPO/RTO and restore tests.
-- Production containment executor itself; ELITZE only reports `verified` when the configured executor proves containment.
-- Full CI security release gates, SBOM generation/signing, dependency policy, and external penetration testing.
-- Complete enforcement coverage for every future execution adapter/path until each path is wired through the same policy boundary.
+- Demonstrated disaster-recovery RPO/RTO and restore tests.
+- External penetration testing or independent security assurance.
+- Customer/revenue/performance claims requiring external evidence.
 
-No ranking, traffic, customer, review, conversion, or security-effectiveness metric is inferred from these controls.
+## Production truth
+
+The repository must not seed synthetic operational records or convert missing evidence into positive states. Missing or unavailable evidence remains UNKNOWN, UNMEASURABLE, or INSUFFICIENT_REACH as appropriate.
+
+No ranking, traffic, customer, review, conversion, financial-result, or security-effectiveness metric is inferred from these controls.
+
+## Handoff rule
+
+A buyer can verify the source and CI evidence immediately. Live production claims require inspection of the deployment environment, provider credentials/configuration, database state, domain ownership, and external assurance evidence separately.
