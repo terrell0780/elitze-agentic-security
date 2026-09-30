@@ -37,7 +37,11 @@ export async function POST(request: NextRequest) {
   };
 
   try {
-    body = JSON.parse(raw);
+    const parsed: unknown = JSON.parse(raw);
+    if (!parsed || typeof parsed !== "object" || Array.isArray(parsed)) {
+      return NextResponse.json({ ok:false,error:"invalid_payload" },{ status:400 });
+    }
+    body = parsed as typeof body;
   } catch {
     return NextResponse.json({ ok:false,error:"invalid_json" },{ status:400 });
   }
@@ -46,8 +50,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok:false,error:"tenant_connector_event_required" },{ status:400 });
   }
 
+  const tenantId = process.env.ELITZE_INGEST_TENANT_ID?.trim();
+  if (!tenantId) {
+    return NextResponse.json({ ok:false,error:"ingest_tenant_not_configured" },{ status:503 });
+  }
+  if (body.tenantId !== tenantId) {
+    return NextResponse.json({ ok:false,error:"tenant_binding_mismatch" },{ status:403 });
+  }
+
   try {
-    const result = await ingestSecurityFabricEvent(body.tenantId,{
+    const result = await ingestSecurityFabricEvent(tenantId,{
       connectorId:body.connectorId,
       eventType:body.eventType,
       subjectKey:body.subjectKey,
