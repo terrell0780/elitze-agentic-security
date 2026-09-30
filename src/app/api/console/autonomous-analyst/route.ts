@@ -14,24 +14,25 @@ export async function GET() {
 
   try {
     const db = getPgPool();
-    const [run, findings] = await Promise.all([
-      db.query(
-        "SELECT id,status,evidence_state AS \"evidenceState\",started_at AS \"startedAt\",completed_at AS \"completedAt\",summary " +
-        "FROM autonomous_analyst_runs WHERE tenant_id=$1 ORDER BY started_at DESC LIMIT 1",
-        [user.tenantId],
-      ),
-      db.query(
+    const run = await db.query(
+      "SELECT id,status,evidence_state AS \"evidenceState\",started_at AS \"startedAt\",completed_at AS \"completedAt\",summary " +
+      "FROM autonomous_analyst_runs WHERE tenant_id=$1 ORDER BY started_at DESC,id DESC LIMIT 1",
+      [user.tenantId],
+    );
+    const latestRun = run.rows[0] ?? null;
+    const findings = latestRun
+      ? await db.query(
         "SELECT id,title,severity,confidence,evidence_state AS \"evidenceState\",subject_key AS \"subjectKey\", " +
         "technique_ids AS \"techniqueIds\",source_refs AS \"sourceRefs\",supporting_event_ids AS \"supportingEventIds\", " +
         "gaps,proposed_actions AS \"proposedActions\",action_state AS \"actionState\",created_at AS \"createdAt\" " +
-        "FROM autonomous_analyst_findings WHERE tenant_id=$1 ORDER BY created_at DESC LIMIT 20",
-        [user.tenantId],
-      ),
-    ]);
+        "FROM autonomous_analyst_findings WHERE tenant_id=$1 AND run_id=$2 ORDER BY created_at DESC LIMIT 20",
+        [user.tenantId, latestRun.id],
+      )
+      : { rows: [] };
 
     return NextResponse.json({
       ok: true,
-      run: run.rows[0] ?? null,
+      run: latestRun,
       findings: findings.rows,
     });
   } catch (error) {
