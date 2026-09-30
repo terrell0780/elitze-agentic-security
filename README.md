@@ -6,6 +6,12 @@
 
 ELITZE is narrowing its initial commercial proof to a real, evidence-backed control path for agent identity, MCP servers, tools, reachability, policy enforcement, authorized execution, runtime observation, retesting, and tamper-evident evidence.
 
+## Frontier enterprise security vision
+
+ELITZE is being built toward a unified enterprise security control plane spanning AI, identity, endpoint, cloud, network, application/API, data, SaaS/email, threat intelligence, SecOps, governance, and evidence. The long-term target is to compete for the security workloads addressed by major enterprise security platforms while keeping ELITZE's production-truth rules: no fake telemetry, no unsupported claims, and no capability marked operational without real verification.
+
+See [`docs/ELITZE-FRONTIER-ENTERPRISE-SECURITY-VISION.md`](docs/ELITZE-FRONTIER-ENTERPRISE-SECURITY-VISION.md) for the full capability and execution standard.
+
 ## Initial control loop
 
 `Discover → Identify → Map Reach → Evaluate Policy → Decide → Authorize Execution → Observe → Retest → Prove`
