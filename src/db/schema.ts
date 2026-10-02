@@ -12,7 +12,7 @@ import {
   vector,
 } from "drizzle-orm/pg-core";
 
-export { useCases, agentIntegrations, godsEyeFindings } from "./use-cases-schema";
+export { useCases, agentIntegrations, elitzeGlobalViewFindings } from "./use-cases-schema";
 export { crmContacts, crmActions } from "./crm-schema";
 export { dataSources, insights } from "./data-hub-schema";
 export { dataBridgeSources, dataBridgeEvents } from "./data-bridge-schema";
@@ -161,7 +161,6 @@ export const evidenceRecords = pgTable("evidence_records", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });
 
-
 export const ragDocuments = pgTable("rag_documents", {
   id: uuid("id").primaryKey().defaultRandom(),
   tenantId: uuid("tenant_id").notNull(),
@@ -174,6 +173,7 @@ export const ragDocuments = pgTable("rag_documents", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 });
+
 export const ragChunks = pgTable("rag_chunks", {
   id: uuid("id").primaryKey().defaultRandom(),
   documentId: uuid("document_id").notNull(),
