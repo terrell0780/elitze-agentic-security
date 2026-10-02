@@ -4,13 +4,10 @@ import { getPgPool } from "@/db";
 const SNAPSHOT_VERSION = "2026-10-02";
 
 const SNAPSHOT_TABLES = [
-  "agents",
-  "security_identities",
   "agent_identities",
   "mcp_tool_inventory",
   "security_graph_nodes",
   "security_graph_edges",
-  "security_policies",
   "security_decisions",
   "mcp_gateway_decisions",
   "security_test_requests",
