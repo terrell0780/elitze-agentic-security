@@ -1,0 +1,24 @@
+name: ELITZE dependency lock refresh
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          package-manager-cache: false
+      - run: npm install next@16.3.8 eslint-config-next@16.3.8 --package-lock-only --ignore-scripts --no-audit --no-fund
+      - uses: actions/upload-artifact@v7
+        with:
+          name: refreshed-package-lock
+          path: package-lock.json
+          if-no-files-found: error
