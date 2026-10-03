@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { getPgPool } from "@/db";
 import { type AuthUser } from "@/lib/auth";
+import { securitySkills } from "@/lib/security-skills";
 
 export type SuperAgentMode =
   | "auto"
@@ -38,6 +39,7 @@ const SYSTEM_PRINCIPLES = [
   "High-impact actions must remain outside the model boundary and require an explicit authorized control workflow.",
   "Prefer source-backed answers. For current facts, research the web and cite the sources returned by the research tools.",
   "When code is requested, reason deeply, test with available execution tools when useful, and return production-grade code without pretending it was deployed or validated when it was not.",
+  "Use Agent Reach and the God\'s Eye View tools when analyzing tenant topology, access, blast radius, agent capability, or cross-domain security relationships."
 ].join("\n");
 
 function modeInstruction(mode: SuperAgentMode) {
@@ -121,6 +123,50 @@ function securityTools(): JsonRecord[] {
           limit: { type: "integer", minimum: 1, maximum: 50 },
         },
         required: ["query"],
+        additionalProperties: false,
+      },
+    },
+    {
+      type: "function",
+      name: "get_agent_reach",
+      description:
+        "Read tenant-scoped Agent Reach observations: agent/workload identity and the real resources it can reach. Read-only. Evidence-backed only.",
+      parameters: {
+        type: "object",
+        properties: {
+          agentId: { type: "string", minLength: 1, maxLength: 80 },
+          limit: { type: "integer", minimum: 1, maximum: 100 },
+        },
+        required: [],
+        additionalProperties: false,
+      },
+    },
+    {
+      type: "function",
+      name: "get_gods_eye_view",
+      description:
+        "Read the tenant-scoped ELITZE Security Graph: observed nodes and relationships across agents, identities, MCP, tools, APIs, cloud and data. Read-only.",
+      parameters: {
+        type: "object",
+        properties: {
+          limit: { type: "integer", minimum: 1, maximum: 250 },
+          edgeLimit: { type: "integer", minimum: 1, maximum: 500 },
+        },
+        required: [],
+        additionalProperties: false,
+      },
+    },
+    {
+      type: "function",
+      name: "list_security_skills",
+      description:
+        "Return the ELITZE-owned security skill catalog, including prerequisites, authorization level, verification and evidence requirements.",
+      parameters: {
+        type: "object",
+        properties: {
+          domain: { type: "string", minLength: 1, maxLength: 80 },
+        },
+        required: [],
         additionalProperties: false,
       },
     },
@@ -243,6 +289,82 @@ async function readSecuritySnapshot(user: AuthUser, limit = 20) {
   };
 }
 
+async function readAgentReach(user: AuthUser, agentId?: string, limit = 100) {
+  const db = getPgPool();
+  const safeLimit = Math.min(100, Math.max(1, Math.floor(limit)));
+
+  const query = agentId
+    ? `SELECT ai.id AS "agentId", ai.name AS "agentName", ai.kind, ai.active, ai.identity_fingerprint AS "identityFingerprint",
+               ar.resource_type AS "resourceType", ar.resource_id AS "resourceId", ar.resource_name AS "resourceName",
+               ar.access_mode AS "accessMode", ar.evidence_state AS "evidenceState", ar.source, ar.observed_at AS "observedAt",
+               ar.metadata
+        FROM agent_reachability ar
+        JOIN agent_identities ai ON ai.id=ar.agent_id
+        WHERE ar.tenant_id=$1 AND ar.agent_id=$2
+        ORDER BY ar.observed_at DESC
+        LIMIT $3`
+    : `SELECT ai.id AS "agentId", ai.name AS "agentName", ai.kind, ai.active, ai.identity_fingerprint AS "identityFingerprint",
+               ar.resource_type AS "resourceType", ar.resource_id AS "resourceId", ar.resource_name AS "resourceName",
+               ar.access_mode AS "accessMode", ar.evidence_state AS "evidenceState", ar.source, ar.observed_at AS "observedAt",
+               ar.metadata
+        FROM agent_reachability ar
+        JOIN agent_identities ai ON ai.id=ar.agent_id
+        WHERE ar.tenant_id=$1
+        ORDER BY ar.observed_at DESC
+        LIMIT $2`;
+
+  const values = agentId ? [user.tenantId, agentId, safeLimit] : [user.tenantId, safeLimit];
+  const result = await db.query(query, values);
+
+  return {
+    tenantId: user.tenantId,
+    observedAt: new Date().toISOString(),
+    source: "ELITZE Agent Reach / production PostgreSQL",
+    evidenceState: result.rows.length ? "OBSERVED" : "UNKNOWN",
+    records: result.rows,
+  };
+}
+
+async function readGodsEyeView(user: AuthUser, limit = 250, edgeLimit = 500) {
+  const db = getPgPool();
+  const safeLimit = Math.min(250, Math.max(1, Math.floor(limit)));
+  const safeEdgeLimit = Math.min(500, Math.max(1, Math.floor(edgeLimit)));
+
+  const [nodes, edges] = await Promise.all([
+    db.query(
+      `SELECT id, node_type AS "nodeType", subject_key AS "subjectKey", display_name AS "displayName",
+              evidence_state AS "evidenceState", source, source_ref AS "sourceRef", observed_at AS "observedAt", metadata
+       FROM security_graph_nodes
+       WHERE tenant_id=$1 AND active=true
+       ORDER BY observed_at DESC NULLS LAST
+       LIMIT $2`,
+      [user.tenantId, safeLimit],
+    ),
+    db.query(
+      `SELECT e.id, e.relation, e.access_mode AS "accessMode", e.policy_effect AS "policyEffect",
+              e.evidence_state AS "evidenceState", e.source, e.source_ref AS "sourceRef", e.observed_at AS "observedAt",
+              f.subject_key AS "from", f.display_name AS "fromName",
+              t.subject_key AS "to", t.display_name AS "toName"
+       FROM security_graph_edges e
+       JOIN security_graph_nodes f ON f.id=e.from_node_id
+       JOIN security_graph_nodes t ON t.id=e.to_node_id
+       WHERE e.tenant_id=$1 AND e.active=true
+       ORDER BY e.observed_at DESC NULLS LAST
+       LIMIT $2`,
+      [user.tenantId, safeEdgeLimit],
+    ),
+  ]);
+
+  return {
+    tenantId: user.tenantId,
+    observedAt: new Date().toISOString(),
+    source: "ELITZE Security Graph / production PostgreSQL",
+    evidenceState: nodes.rows.length || edges.rows.length ? "OBSERVED" : "UNKNOWN",
+    nodes: nodes.rows,
+    edges: edges.rows,
+  };
+}
+
 async function searchSecurityEvidence(user: AuthUser, query: string, limit = 20) {
   const safeLimit = Math.min(50, Math.max(1, Math.floor(limit)));
   const pattern = `%${query.slice(0, 180)}%`;
@@ -297,6 +419,33 @@ async function executeLocalTool(name: string, rawArguments: string, user: AuthUs
     const query = typeof args.query === "string" ? args.query.trim() : "";
     if (!query) return { ok: false, error: "query_required" };
     return { ok: true, data: await searchSecurityEvidence(user, query, Number(args.limit ?? 20)) };
+  }
+
+  if (name === "get_agent_reach") {
+    const agentId = typeof args.agentId === "string" ? args.agentId.trim() : undefined;
+    return { ok: true, data: await readAgentReach(user, agentId, Number(args.limit ?? 100)) };
+  }
+
+  if (name === "get_gods_eye_view") {
+    return {
+      ok: true,
+      data: await readGodsEyeView(user, Number(args.limit ?? 250), Number(args.edgeLimit ?? 500)),
+    };
+  }
+
+  if (name === "list_security_skills") {
+    const domain = typeof args.domain === "string" ? args.domain.trim().toLowerCase() : "";
+    const skills = domain
+      ? securitySkills.filter((skill) => skill.domain.toLowerCase() === domain)
+      : securitySkills;
+    return {
+      ok: true,
+      data: {
+        source: "ELITZE security skill registry",
+        evidenceState: "CATALOGED",
+        skills,
+      },
+    };
   }
 
   return { ok: false, error: "tool_not_available" };
