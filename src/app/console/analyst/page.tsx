@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Activity, AlertTriangle, Bot, ChevronRight, CircleDot, Database,
@@ -49,7 +49,7 @@ export default function AutonomousAnalystPage() {
   const [error,setError] = useState<string|null>(null);
   const [selected,setSelected] = useState<string|null>(null);
 
-  async function load() {
+  const load = useCallback(async () => {
     setError(null);
     const [dashboardResponse,analystResponse] = await Promise.all([
       fetch("/api/console/security-fabric",{cache:"no-store"}),
@@ -65,11 +65,17 @@ export default function AutonomousAnalystPage() {
     }
     setDashboard(await dashboardResponse.json() as Dashboard);
     setAnalyst(await analystResponse.json() as Analyst);
-  }
+  }, [router]);
 
   useEffect(() => {
-    void load().catch(() => setError("Unable to load the autonomous analyst."));
-  }, []);
+    const timer = window.setTimeout(() => {
+      void load().catch(() => {
+        setError("Unable to load the autonomous analyst.");
+      });
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [load]);
 
   const recent = useMemo(() => dashboard?.events ?? [], [dashboard]);
   const connected = dashboard?.connectors.filter((item) => item.health === "CONNECTED").length ?? 0;
