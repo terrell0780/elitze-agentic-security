@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS mcp_gateway_request_nonces (
   token_jti text NOT NULL,
   created_at timestamptz NOT NULL DEFAULT now(),
   expires_at timestamptz NOT NULL,
+  consumed_at timestamptz,
   UNIQUE (tenant_id, workload_session_id, request_id)
 );
 
