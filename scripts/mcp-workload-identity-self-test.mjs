@@ -22,6 +22,7 @@ for (const marker of [
   "mcp_gateway_request_nonces",
   "mcp_gateway_rate_limits",
   "tool_name",
+  "consumed_at",
   "UNIQUE (tenant_id, workload_session_id, request_id)",
 ]) {
   if (!migration.includes(marker)) throw new Error(`mcp_lockdown_schema_missing:${marker}`);
@@ -66,6 +67,7 @@ for (const marker of [
   "approvalIsValid",
   "pg_advisory_xact_lock",
   "redirect: \"error\"",
+  "consumed_at",
   "credentialsInAgentContext",
 ]) {
   if (!gateway.includes(marker)) throw new Error(`gateway_enforcement_missing:${marker}`);
