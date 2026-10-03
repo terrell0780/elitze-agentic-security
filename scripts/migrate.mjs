@@ -84,6 +84,8 @@ try {
     ["security_policies", "created_by", "text"],
     ["security_policies", "expires_at", "timestamptz"],
     ["mcp_gateway_decisions", "policy_id", "int4"],
+    ["workload_sessions", "gateway_server_id", "uuid"],
+    ["workload_delegations", "tool_name", "text"],
   ];
   const columnCheck = await client.query(
     `SELECT table_name, column_name, udt_name
