@@ -95,7 +95,7 @@ export default function SuperAgentPage() {
             reasoning: { effort: "high" },
             instructions: "You are ELITZE Super Agent. The model is not the security boundary. Use evidence-bound answers and ELITZE Agent Reach plus Security Graph context where relevant. Never invent security facts.",
             turn_detection: { type: "server_vad" },
-            tools: [{ type: "web_search" }],
+            tools: [{ type: "web_search" }, { type: "x_search" }],
           },
         }));
       };
