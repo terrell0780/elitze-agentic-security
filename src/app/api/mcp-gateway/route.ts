@@ -108,7 +108,7 @@ async function reserveRequestId(
   jti: string,
   expiresAt: number,
 ) {
-  const result = await client.query(
+  const inserted = await client.query(
     `INSERT INTO mcp_gateway_request_nonces
       (tenant_id, workload_session_id, request_id, token_jti, expires_at)
      VALUES ($1,$2,$3,$4,to_timestamp($5))
@@ -116,7 +116,36 @@ async function reserveRequestId(
      RETURNING id`,
     [tenantId, workloadSessionId, requestId, jti, expiresAt],
   );
-  return result.rowCount === 1;
+  if (inserted.rowCount === 1) return true;
+
+  const existing = await client.query(
+    `SELECT token_jti, consumed_at, expires_at
+       FROM mcp_gateway_request_nonces
+      WHERE tenant_id=$1 AND workload_session_id=$2 AND request_id=$3
+      LIMIT 1`,
+    [tenantId, workloadSessionId, requestId],
+  );
+  if (existing.rowCount !== 1) return false;
+  return String(existing.rows[0].token_jti) === jti &&
+    !existing.rows[0].consumed_at &&
+    new Date(existing.rows[0].expires_at).getTime() > Date.now();
+}
+
+async function consumeRequestId(
+  client: import("pg").PoolClient,
+  tenantId: string,
+  workloadSessionId: string,
+  requestId: string,
+) {
+  const consumed = await client.query(
+    `UPDATE mcp_gateway_request_nonces
+        SET consumed_at=now()
+      WHERE tenant_id=$1 AND workload_session_id=$2 AND request_id=$3
+        AND consumed_at IS NULL AND expires_at > now()
+      RETURNING id`,
+    [tenantId, workloadSessionId, requestId],
+  );
+  return consumed.rowCount === 1;
 }
 
 async function callMcpUpstream(
@@ -863,6 +892,15 @@ export async function POST(request: NextRequest) {
         },
         403,
       );
+    }
+
+    if (!(await consumeRequestId(
+      client,
+      String(chain.tenant_id),
+      String(chain.id),
+      requestId,
+    ))) {
+      return json({ error: "MCP_REQUEST_REPLAY_DETECTED" }, 409);
     }
 
     const upstream = await callMcpUpstream(
