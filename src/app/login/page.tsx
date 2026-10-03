@@ -103,7 +103,11 @@ function LoginContent() {
   }, []);
 
   useEffect(() => {
-    void prepareLogin();
+    const timer = window.setTimeout(() => {
+      void prepareLogin();
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, [prepareLogin]);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
