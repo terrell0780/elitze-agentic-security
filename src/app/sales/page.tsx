@@ -226,20 +226,6 @@ export default function SalesPage() {
               One control model across the systems that agents can touch.
             </h2>
             <p className="mt-4 text-sm leading-7 text-[var(--muted-strong)]">
-      <section className="border-y border-[var(--border)] bg-[var(--section)]">
-        <div className="mx-auto max-w-[1400px] px-4 py-14 sm:px-7 sm:py-20">
-          <div className="max-w-5xl">
-            <div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">SAP SECURITY</div>
-            <h2 className="mt-3 text-3xl font-black tracking-[-.04em] sm:text-5xl">Protect your critical SAP applications from AI-powered threats.</h2>
-            <p className="mt-4 max-w-3xl text-lg leading-8 text-[var(--muted-strong)]">Securely accelerate your SAP AI and RISE adoption. ELITZE treats SAP as a business-critical security plane, connecting AI-agent governance, identity and authorization, security and audit telemetry, policy enforcement, and evidence controls around SAP environments.</p>
-            <div className="mt-7 rounded-2xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-5">
-              <div className="text-xl font-black tracking-[-.02em]">Speed and confidence. Not a trade-off.</div>
-              <p className="mt-2 text-sm leading-6 text-[var(--muted-strong)]">SAP security coverage is designed to support governed AI adoption while preserving explicit authorization, approval and audit boundaries for SAP-changing actions.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
               The acquisition is not framed as a single scanner or a single alert surface. The repository
               organizes security context around multiple connected systems, with actual runtime coverage
               determined by deployment configuration, credentials, executors and authorized data sources.

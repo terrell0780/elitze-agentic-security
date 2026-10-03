@@ -85,3 +85,19 @@ assert.equal(
 );
 
 console.log("ELITZE contact/acquisition self-test: PASS — stale-domain removal, inbound routing, repository-contact path, anti-abuse markers, and fallback email verified");
+
+const businessProcessMigration = fs.readFileSync(path.join(root, "drizzle/0028_acquisition_pipeline.sql"), "utf8");
+const businessProcessRoute = fs.readFileSync(path.join(root, "src/app/api/acquisition/leads/route.ts"), "utf8");
+const acquisitionContactRoute = fs.readFileSync(path.join(root, "src/app/api/acquisition/contact/route.ts"), "utf8");
+
+assert.match(businessProcessMigration, /acquisition_leads/);
+assert.match(businessProcessMigration, /acquisition_lead_events/);
+assert.match(businessProcessMigration, /CLOSED_WON/);
+assert.match(businessProcessMigration, /CLOSED_LOST/);
+assert.match(businessProcessRoute, /acquisition_manager_required/);
+assert.match(businessProcessRoute, /UPDATE acquisition_leads/);
+assert.match(acquisitionContactRoute, /INSERT INTO acquisition_leads/);
+assert.match(acquisitionContactRoute, /leadRecorded/);
+assert.doesNotMatch(sales, /SAP SECURITY|SAP applications|SAP AI|SAP-changing actions/i);
+
+console.log("ELITZE business-process handoff controls: PASS");

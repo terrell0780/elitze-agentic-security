@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { getPgPool } from "@/db";
 import { sendEmail } from "@/lib/auth-email";
 import { productionConfig } from "@/config/production";
 import { consumeRateLimit, getRateLimitKey } from "@/lib/auth";
@@ -49,9 +50,7 @@ function labelFor(requestType: RequestType) {
 export async function POST(request: NextRequest) {
   try {
     const origin = request.headers.get("origin");
-    if (!origin) {
-      return Response.json({ error: "csrf_rejected" }, { status: 403 });
-    }
+    if (!origin) return Response.json({ error: "csrf_rejected" }, { status: 403 });
 
     let requestOrigin: URL;
     try {
@@ -67,8 +66,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json().catch(() => null) as Record<string, unknown> | null;
     if (!body) return Response.json({ error: "invalid_request" }, { status: 400 });
 
-    const honeypot = normalize(body.website, 200);
-    if (honeypot) return Response.json({ ok: true });
+    if (normalize(body.website, 200)) return Response.json({ ok: true });
 
     const requestTypeRaw = normalize(body.requestType, 20) as RequestType;
     const requestType: RequestType = ["acquisition", "repository", "general"].includes(requestTypeRaw)
@@ -91,34 +89,54 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (!process.env.RESEND_API_KEY?.trim() || !process.env.RESEND_FROM?.trim()) {
-      return Response.json({ error: "email_delivery_not_configured" }, { status: 503 });
-    }
+    const lead = await getPgPool().query(
+      "INSERT INTO acquisition_leads (request_type,name,organization,email,message,source) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id,created_at AS \"createdAt\"",
+      [
+        requestType,
+        name,
+        organization || "Not provided",
+        email,
+        message,
+        productionConfig.canonicalOrigin,
+      ],
+    );
 
-    const submittedAt = new Date().toISOString();
-    const text = [
-      `ELITZE contact type: ${labelFor(requestType)}`,
-      `Submitted: ${submittedAt}`,
+    const leadId = lead.rows[0]?.id ?? "unavailable";
+    const submittedAt = lead.rows[0]?.createdAt ?? new Date().toISOString();
+    const emailText = [
+      "ELITZE contact type: " + labelFor(requestType),
+      "Lead ID: " + leadId,
+      "Submitted: " + submittedAt,
       "",
-      `Name: ${name}`,
-      `Organization: ${organization || "Not provided"}`,
-      `Email: ${email}`,
+      "Name: " + name,
+      "Organization: " + (organization || "Not provided"),
+      "Email: " + email,
       "",
       "Message:",
       message,
       "",
-      `Source: ${productionConfig.canonicalOrigin}`,
+      "Source: " + productionConfig.canonicalOrigin,
     ].join("\n");
 
-    await sendEmail({
-      to: DESTINATION(),
-      subject: subjectFor(requestType),
-      text,
-    });
+    try {
+      if (!process.env.RESEND_API_KEY?.trim() || !process.env.RESEND_FROM?.trim()) {
+        return Response.json(
+          { error: "email_delivery_not_configured", leadRecorded: true, leadId },
+          { status: 503 },
+        );
+      }
+      await sendEmail({ to: DESTINATION(), subject: subjectFor(requestType), text: emailText });
+    } catch (error) {
+      console.error("ELITZE contact email delivery failed after lead persistence", error);
+      return Response.json(
+        { error: "email_delivery_failed", leadRecorded: true, leadId },
+        { status: 503 },
+      );
+    }
 
-    return Response.json({ ok: true });
+    return Response.json({ ok: true, leadRecorded: true, leadId });
   } catch (error) {
-    console.error("ELITZE contact delivery failed", error);
-    return Response.json({ error: "email_delivery_failed" }, { status: 503 });
+    console.error("ELITZE contact intake failed", error);
+    return Response.json({ error: "contact_intake_unavailable" }, { status: 503 });
   }
 }
