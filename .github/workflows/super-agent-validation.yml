@@ -1,0 +1,19 @@
+name: ELITZE Super Agent validation
+
+on:
+  push:
+    branches:
+      - feature/elitze-super-agent
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  static-self-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Super Agent self-test
+        run: node scripts/super-agent-self-test.mjs
