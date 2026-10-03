@@ -138,7 +138,9 @@ export default function SalesPage() {
               <span className="text-[var(--accent)]">Verify the boundary.</span>
             </h1>
             <p className="mt-7 max-w-3xl text-lg leading-8 text-[var(--muted-strong)]">
-              ELITZE Agentic Security is offered as a complete pre-revenue product asset acquisition.
+              ELITZE Agentic Security is offered as a complete pre-revenue software/IP asset acquisition.
+              This is an outright acquisition, not a seller-managed SaaS subscription or ongoing service.
+              The buyer assumes hosting, customer relationships, billing, support and operations after transfer.
               The buyer surface separates implemented product structure, integration dependencies,
               evidence limitations and transaction scope instead of treating architecture as proof of production outcomes.
             </p>
@@ -177,7 +179,7 @@ export default function SalesPage() {
               representations, warranties, closing conditions and final transfer mechanics are negotiated
               privately and defined in the executed agreement.
             </p>
-            <div className="mt-7 grid gap-3 sm:grid-cols-2">
+            <div className="mt-7 grid gap-3 sm:grid-cols-3">
               <div className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5">
                 <div className="text-[9px] font-bold uppercase tracking-[.18em] text-[var(--muted)]">
                   Commercial terms
@@ -185,6 +187,13 @@ export default function SalesPage() {
                 <div className="mt-2 text-2xl font-black">Private negotiation</div>
                 <div className="mt-2 text-xs leading-5 text-[var(--muted)]">
                   No fixed asking price is published on the public acquisition surface.
+                </div>
+              </div>
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5">
+                <div className="text-[9px] font-bold uppercase tracking-[.18em] text-[var(--muted)]">Customer status</div>
+                <div className="mt-2 text-xl font-black">No customer evidence</div>
+                <div className="mt-2 text-xs leading-5 text-[var(--muted)]">
+                  No active customer, revenue or managed-service claim is represented without separate evidence.
                 </div>
               </div>
               <div className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5">

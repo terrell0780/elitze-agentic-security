@@ -34,7 +34,7 @@ The proposed acquisition package, subject to a definitive agreement and verifica
 - Deployment configuration and documentation.
 - Sales/acquisition materials.
 - Transferable cloud, communications, analytics, and social accounts only where legally and contractually transferable.
-- 30 days of transition support capped at 10 hours, unless separately agreed.
+- Up to 30 days of technical handoff assistance capped at 10 hours, limited to transfer and repository questions unless separately agreed.
 
 The seller's personal GitHub account, personal email and financial accounts, unrelated repositories/projects, non-transferable vendor accounts, and third-party IP not owned by the seller are excluded.
 
@@ -52,7 +52,9 @@ The repository uses a Next.js/TypeScript application with Drizzle database confi
 
 **Revenue/customers/traffic/valuation: not represented in this listing unless separately verified.**
 
-This is a software/product acquisition listing, not a claim of an established revenue-generating business.
+This is an outright software/product acquisition listing, not a seller-managed SaaS subscription or ongoing service.
+
+The seller is not representing an ongoing hosted service, customer-success operation, billing system, renewal book, support organization, or active customer base. Any customer relationships, contracts, hosting, support, billing, and operating obligations after transfer belong to the buyer unless separately negotiated and documented.
 
 ## Buyer profile
 

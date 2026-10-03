@@ -12,6 +12,6 @@ export async function GET(request:Request){
   const cases=category?await db.select().from(useCases).where(eq(useCases.category,category)).orderBy(asc(useCases.sortOrder)):await db.select().from(useCases).orderBy(asc(useCases.sortOrder));
   const integrations=await db.select().from(agentIntegrations).orderBy(asc(agentIntegrations.id));
   const findings=await db.select().from(godsEyeFindings).where(eq(godsEyeFindings.tenantId,user.tenantId)).orderBy(asc(godsEyeFindings.id));
-  return NextResponse.json({ok:true,useCases:cases,integrations,findings,industries:["Financial services","Healthcare","Government","SaaS and technology","Retail and commerce","Telecommunications","Manufacturing","Security operations"],source:"catalog metadata + tenant-scoped PostgreSQL findings"});
+  return NextResponse.json({ok:true,useCases:cases,integrations,findings,industries:["Financial services","Healthcare","Government","Enterprise technology","Retail and commerce","Telecommunications","Manufacturing","Security operations"],source:"catalog metadata + tenant-scoped PostgreSQL findings"});
  }catch(error){console.error("ELITZE use-case load failed",error);return NextResponse.json({ok:false,error:"use_cases_unavailable"},{status:503})}
 }
