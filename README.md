@@ -93,6 +93,18 @@ The model or agent is not the security boundary. Identity, policy, authorization
 
 The repository does not seed synthetic records on startup. Empty or disconnected production state remains empty or explicitly unavailable.
 
+## ELITZE Super Agent
+
+Authenticated Super Agent workspace: `/console/super-agent`.
+
+Capabilities include high-effort reasoning, live web research, X Search, code execution, native image generation, secure browser voice, approved remote MCP servers, tenant-scoped Agent Reach, Security Graph / God's Eye View, ELITZE security skills, and evidence recording.
+
+Required environment variable: `XAI_API_KEY`.
+
+Optional environment variables: `ELITZE_SUPER_AGENT_MODEL`, `XAI_BASE_URL`, and `ELITZE_SUPER_AGENT_MCP_SERVERS`.
+
+The agent never becomes the authorization boundary. Consequential actions remain behind ELITZE identity, policy, authorization, approval, execution and verification controls. See [`docs/ELITZE-SUPER-AGENT.md`](docs/ELITZE-SUPER-AGENT.md).
+
 ## Core endpoints
 
 - `GET /api/health` — database readiness.
