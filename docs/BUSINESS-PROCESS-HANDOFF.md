@@ -1,9 +1,9 @@
 # ELITZE Agentic Security — Business Process Handoff
 
-**Handoff date:** October 2, 2026 PDT  
-**Canonical product:** ELITZE Agentic Security  
-**Canonical domain:** `https://elitze.info`  
-**Canonical repository:** `terrell0780/elitze-agentic-security`  
+**Handoff date:** October 2, 2026 PDT
+**Canonical product:** ELITZE Agentic Security
+**Canonical domain:** `https://elitze.info`
+**Canonical repository:** `terrell0780/elitze-agentic-security`
 **Branch:** `main`
 
 ## Transaction definition
