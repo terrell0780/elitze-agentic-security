@@ -213,6 +213,7 @@ function availableCapabilities() {
   return {
     xaiModel: Boolean(process.env.XAI_API_KEY?.trim()),
     webResearch: Boolean(process.env.XAI_API_KEY?.trim()),
+    xSearch: Boolean(process.env.XAI_API_KEY?.trim()),
     codeExecution: Boolean(process.env.XAI_API_KEY?.trim()),
     imageGeneration: Boolean(process.env.XAI_API_KEY?.trim()),
     voiceRealtime: Boolean(process.env.XAI_API_KEY?.trim()),
@@ -223,7 +224,9 @@ function availableCapabilities() {
 function buildTools() {
   const tools: JsonRecord[] = [
     { type: "web_search" },
+    { type: "x_search" },
     { type: "code_interpreter" },
+    { type: "image_generation" },
     ...securityTools(),
     ...configuredMcpTools(),
   ];
