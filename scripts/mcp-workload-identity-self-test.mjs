@@ -68,7 +68,6 @@ for (const marker of [
   "pg_advisory_xact_lock",
   "redirect: \"error\"",
   "consumed_at",
-  "credentialsInAgentContext",
 ]) {
   if (!gateway.includes(marker)) throw new Error(`gateway_enforcement_missing:${marker}`);
 }
@@ -86,6 +85,7 @@ for (const marker of [
   "tool_outside_requested_capability",
   "gateway_server_id",
   "tool_name",
+  "credentialsInAgentContext",
 ]) {
   if (!tokenRoute.includes(marker)) throw new Error(`workload_issuance_control_missing:${marker}`);
 }
