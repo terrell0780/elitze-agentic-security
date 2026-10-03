@@ -4,11 +4,12 @@ import { getPgPool, isDatabaseConfigured } from "@/db";
 import { authorizeInternalRequest } from "@/lib/security/policy";
 import {
   capabilityAllows,
-  hashWorkloadToken,
-  issueWorkloadToken,
   parseCapabilitySet,
 } from "@/lib/elitze-secure/mcp-gateway";
-import { hashWorkloadToken as hashToken } from "@/lib/elitze-secure/workload-identity";
+import {
+  hashWorkloadToken,
+  issueWorkloadToken,
+} from "@/lib/elitze-secure/workload-identity";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -150,7 +151,7 @@ export async function POST(request: NextRequest) {
       ttlSeconds,
     );
 
-    const tokenHash = hashToken(token);
+    const tokenHash = hashWorkloadToken(token);
     const tokenKid = "current";
     const expiresAt = new Date(Date.now() + ttlSeconds * 1000);
 
