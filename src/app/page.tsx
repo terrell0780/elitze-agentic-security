@@ -40,7 +40,7 @@ export default function HomePage() {
             {[[ "Platform","/platform" ],[ "Security","/security" ],[ "REO","/reo" ],[ "Search","/search" ],[ "FAQ","/faq" ]].map(([label,href]) => <Link key={href} href={href} className="transition hover:text-[var(--text)]">{label}</Link>)}
           </nav>
           <div className="flex items-center gap-2 pr-12 sm:pr-0">
-            <Link href="/sales" className="hidden rounded-xl border border-[var(--border)] bg-[var(--panel)] px-4 py-2.5 text-xs font-semibold sm:inline-flex">Acquisition</Link>
+            <Link href="/sales" className="hidden rounded-xl border border-[var(--border)] bg-[var(--panel)] px-4 py-2.5 text-xs font-semibold sm:inline-flex">Acquisition</Link><Link href="/console/super-agent" className="hidden rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] px-4 py-2.5 text-xs font-bold text-[var(--accent)] sm:inline-flex">Super Agent</Link>
             <AcquisitionCta href="/console" event="console_open" className="hidden rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-slate-950 sm:inline-flex">Open Control Plane</AcquisitionCta>
             <button type="button" onClick={() => setMobileOpen((v) => !v)} aria-label="Toggle menu" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--panel)] lg:hidden">{mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}</button>
             <GlobalThemeToggle embedded />
