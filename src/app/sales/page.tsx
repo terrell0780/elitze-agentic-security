@@ -139,7 +139,7 @@ export default function SalesPage() {
             </h1>
             <p className="mt-7 max-w-3xl text-lg leading-8 text-[var(--muted-strong)]">
               ELITZE Agentic Security is offered as a complete pre-revenue software/IP asset acquisition.
-              This is an outright acquisition, not a seller-managed SaaS subscription or ongoing service.
+              This is an outright acquisition, not a seller-managed hosted subscription or ongoing service.
               The buyer assumes hosting, customer relationships, billing, support and operations after transfer.
               The buyer surface separates implemented product structure, integration dependencies,
               evidence limitations and transaction scope instead of treating architecture as proof of production outcomes.

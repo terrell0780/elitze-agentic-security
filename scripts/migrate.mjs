@@ -73,6 +73,7 @@ try {
     "security_fabric_sources", "security_fabric_events", "autonomous_analyst_runs", "autonomous_analyst_findings",
     "production_readiness_evidence", "rag_documents", "rag_chunks",
     "mcp_gateway_servers", "mcp_gateway_decisions", "mcp_gateway_request_nonces", "mcp_gateway_rate_limits",
+    "acquisition_leads", "acquisition_lead_events",
   ];
 
   const requiredColumns = [
