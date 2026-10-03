@@ -44,3 +44,5 @@ When source records are missing, unavailable or insufficient, the agent must say
 
 ## Provider independence
 ELITZE Super Agent is wrapped behind runSuperAgent(). The rest of ELITZE talks to the ELITZE agent interface rather than a provider-specific UI. This keeps the intelligence engine replaceable without changing the product identity or the security boundary.
+
+Validation workflow: `.github/workflows/super-agent-validation.yml` runs the static self-test on pushes to the implementation branch and on pull requests to `main`.
