@@ -4,7 +4,7 @@
 
 ## Purpose
 
-After transfer, a buyer may use this program to establish customer evidence. ELITZE must never establish customer claims merely because this process exists. before making customer, outcome, scale, ranking, or market-leadership claims. Documentation, a prototype, or a design-partner conversation is not customer proof.
+After transfer, a buyer may use this program to establish customer evidence. ELITZE must never make customer, outcome, scale, ranking, or market-leadership claims merely because this process exists. Evidence must exist before making any such claim. Documentation, a prototype, or a design-partner conversation is not customer proof.
 
 ## Initial wedge
 
