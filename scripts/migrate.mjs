@@ -72,6 +72,7 @@ try {
     "security_test_requests",
     "security_fabric_sources", "security_fabric_events", "autonomous_analyst_runs", "autonomous_analyst_findings",
     "production_readiness_evidence", "rag_documents", "rag_chunks",
+    "mcp_gateway_servers", "mcp_gateway_decisions", "mcp_gateway_request_nonces", "mcp_gateway_rate_limits",
   ];
 
   const requiredColumns = [
@@ -83,6 +84,8 @@ try {
     ["security_policies", "created_by", "text"],
     ["security_policies", "expires_at", "timestamptz"],
     ["mcp_gateway_decisions", "policy_id", "int4"],
+    ["workload_sessions", "gateway_server_id", "uuid"],
+    ["workload_delegations", "tool_name", "text"],
   ];
   const columnCheck = await client.query(
     `SELECT table_name, column_name, udt_name
