@@ -65,7 +65,7 @@ for (const marker of [
   "createApproval",
   "approvalIsValid",
   "pg_advisory_xact_lock",
-  "redirect: "error"",
+  "redirect: \"error\"",
   "credentialsInAgentContext",
 ]) {
   if (!gateway.includes(marker)) throw new Error(`gateway_enforcement_missing:${marker}`);
