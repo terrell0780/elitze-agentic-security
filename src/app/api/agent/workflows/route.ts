@@ -140,6 +140,10 @@ export async function POST(request: NextRequest) {
       "self_delegation_forbidden",
       "delegation_agent_identity_unavailable",
       "delegation_expiry_invalid",
+      "invalid_workflow_channel",
+      "invalid_workflow_trigger",
+      "scheduled_workflow_requires_schedule",
+      "invalid_workflow_autonomy",
     ]);
     return NextResponse.json({ ok: false, error: clientErrors.has(message) ? message : "agent_workflow_operation_failed" }, { status: clientErrors.has(message) ? 400 : 503 });
   }

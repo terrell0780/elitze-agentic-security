@@ -76,6 +76,11 @@ export async function createAgentWorkflow(input: {
   const description = clean(input.description, 5000);
   const allowedSkillIds = validateSkills(input.allowedSkillIds ?? []);
   const allowedChannels = [...new Set((input.allowedChannels ?? []).map((channel) => clean(channel, 40)))];
+  const validChannels = new Set(["LLM", "MCP", "A2A", "API", "BROWSER", "SAAS"]);
+  if (allowedChannels.some((channel) => !validChannels.has(channel))) throw new Error("invalid_workflow_channel");
+  if (!["MANUAL", "SCHEDULED", "EVENT"].includes(input.triggerKind)) throw new Error("invalid_workflow_trigger");
+  if (input.triggerKind === "SCHEDULED" && !input.schedule?.trim()) throw new Error("scheduled_workflow_requires_schedule");
+  if (!["READ_ONLY", "APPROVAL_GATED", "AUTONOMOUS"].includes(input.autonomyMode ?? "APPROVAL_GATED")) throw new Error("invalid_workflow_autonomy");
   const maxDelegationDepth = Math.min(Math.max(Math.trunc(input.maxDelegationDepth ?? 1), 0), 8);
   const definition = input.definition ?? {};
 
@@ -173,10 +178,14 @@ export async function claimAgentWorkflowRun(tenantId: string, runId: string) {
        SET status='RUNNING', started_at=COALESCE(started_at,now())
      WHERE r.id=$1::uuid AND r.tenant_id=$2
        AND r.status='PLANNED'
-       AND NOT EXISTS (
-         SELECT 1 FROM security_approvals a
-          WHERE a.approval_id=r.approval_id AND a.tenant_id=r.tenant_id
-            AND a.status <> 'APPROVED'
+       AND (
+         r.approval_id IS NULL
+         OR EXISTS (
+           SELECT 1 FROM security_approvals a
+            WHERE a.approval_id=r.approval_id AND a.tenant_id=r.tenant_id
+              AND a.status='APPROVED'
+              AND (a.expires_at IS NULL OR a.expires_at>now())
+         )
        )
      RETURNING r.*`,
     [clean(runId, 100), clean(tenantId, 200)],

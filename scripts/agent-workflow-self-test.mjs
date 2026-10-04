@@ -23,6 +23,8 @@ for (const marker of [
   "completeAgentWorkflowRun",
   "recordAgentMemory",
   "delegateAgent",
+  "invalid_workflow_trigger",
+  "scheduled_workflow_requires_schedule",
   "WAITING_APPROVAL",
   "UNTRUSTED",
 ]) {
@@ -47,7 +49,7 @@ if (!moduleSource.includes("ON CONFLICT (tenant_id,agent_id,memory_key)")) {
 if (!moduleSource.includes("status='PLANNED'")) {
   throw new Error("Workflow claim boundary missing");
 }
-if (!moduleSource.includes("status <> 'APPROVED'")) {
+if (!moduleSource.includes("status='APPROVED'")) {
   throw new Error("Approval gate is not fail-closed");
 }
 if (!moduleSource.includes("sourceAgentId === targetAgentId")) {
