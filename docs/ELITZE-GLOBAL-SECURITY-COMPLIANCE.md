@@ -179,7 +179,6 @@ This complements ELITZE's existing principle:
 
 The control plane is structured to accommodate real evidence from:
 
-- Microsoft Sentinel
 - Splunk
 - CrowdStrike
 - Palo Alto Networks
