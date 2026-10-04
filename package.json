@@ -35,7 +35,9 @@
     "rag:self-test": "node scripts/rag-self-test.mjs",
     "agent-workflow:self-test": "node scripts/agent-workflow-self-test.mjs",
     "trust-ownership:self-test": "node scripts/trust-ownership-self-test.mjs",
-    "reo-market-intelligence:self-test": "node scripts/reo-market-intelligence-self-test.mjs"
+    "reo-market-intelligence:self-test": "node scripts/reo-market-intelligence-self-test.mjs",
+    "db:production-migrate": "node scripts/production-migrate.mjs",
+    "db:production-health": "node scripts/production-db-health.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.0.0",
