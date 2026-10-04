@@ -67,17 +67,6 @@ function Spinner() {
   );
 }
 
-function GoogleIcon() {
-  return (
-    <svg aria-hidden="true" viewBox="0 0 24 24" className="size-5">
-      <path fill="#4285F4" d="M21.35 12.27c0-.71-.06-1.4-.18-2.05H12v3.88h5.24a4.48 4.48 0 0 1-1.94 2.94v2.45h3.14c1.84-1.69 2.91-4.18 2.91-7.22Z" />
-      <path fill="#34A853" d="M12 21.7c2.63 0 4.84-.87 6.45-2.36l-3.14-2.45c-.87.58-1.98.92-3.31.92-2.54 0-4.69-1.72-5.46-4.03H3.3v2.53A9.74 9.74 0 0 0 12 21.7Z" />
-      <path fill="#FBBC05" d="M6.54 13.78A5.85 5.85 0 0 1 6.23 12c0-.62.11-1.22.31-1.78V7.69H3.3A9.75 9.75 0 0 0 2.25 12c0 1.57.38 3.05 1.05 4.31l3.24-2.53Z" />
-      <path fill="#EA4335" d="M12 6.19c1.43 0 2.71.49 3.72 1.46l2.79-2.79C16.83 3.25 14.63 2.3 12 2.3a9.74 9.74 0 0 0-8.7 5.39l3.24 2.53C7.31 7.91 9.46 6.19 12 6.19Z" />
-    </svg>
-  );
-}
-
 function messageFor(error: string) {
   if (error === "email_verification_required") return "Verify your email before signing in.";
   if (error === "invalid_credentials") return "Email or password is incorrect.";
@@ -95,7 +84,6 @@ function LoginContent() {
   const [mfaCode, setMfaCode] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [googleBusy, setGoogleBusy] = useState(false);
 
   const prepareLogin = useCallback(async () => {
     setError("");
@@ -108,7 +96,7 @@ function LoginContent() {
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (busy || googleBusy) return;
+    if (busy) return;
 
     setBusy(true);
     setError("");
@@ -166,25 +154,6 @@ function LoginContent() {
     }
   }
 
-  async function continueWithGoogle() {
-    if (busy || googleBusy) return;
-
-    setGoogleBusy(true);
-    setError("");
-
-    try {
-      await prepareLogin();
-
-      // There is currently no Google OAuth route in this application.
-      // Do not redirect to a fabricated endpoint or silently fail.
-      setError("Google sign-in is not configured for this deployment. Use email sign-in.");
-    } catch {
-      setError("Authentication is temporarily unavailable.");
-    } finally {
-      setGoogleBusy(false);
-    }
-  }
-
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#F9FAFB] px-4 py-10 font-sans text-[#111827] sm:px-6">
       <div className="w-full max-w-[420px]">
@@ -220,24 +189,6 @@ function LoginContent() {
               {error}
             </div>
           )}
-
-          <div className="mt-7">
-            <button
-              type="button"
-              disabled={busy || googleBusy}
-              onClick={() => void continueWithGoogle()}
-              className="flex min-h-12 w-full items-center justify-center gap-3 rounded-xl border border-[#D1D5DB] bg-white px-4 py-3 text-sm font-medium text-[#111827] transition hover:bg-[#F9FAFB] focus:outline-none focus:ring-2 focus:ring-[#111827]/15 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {googleBusy ? <Spinner /> : <GoogleIcon />}
-              {googleBusy ? "Preparing sign in…" : "Continue with Google"}
-            </button>
-          </div>
-
-          <div className="my-7 flex items-center gap-4">
-            <div className="h-px flex-1 bg-[#E5E7EB]" />
-            <span className="text-xs font-medium text-[#9CA3AF]">or continue with email</span>
-            <div className="h-px flex-1 bg-[#E5E7EB]" />
-          </div>
 
           <form onSubmit={submit} className="space-y-5">
             <label className={mfaRequired ? "hidden" : "block"}>
@@ -303,7 +254,7 @@ function LoginContent() {
 
             <button
               type="submit"
-              disabled={busy || googleBusy}
+              disabled={busy}
               className="flex min-h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#111827] px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:bg-[#1F2937] focus:outline-none focus:ring-2 focus:ring-[#111827]/20 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {busy && <Spinner />}

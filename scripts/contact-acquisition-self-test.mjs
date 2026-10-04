@@ -56,6 +56,9 @@ const email = read("src/lib/auth-email.ts");
 
 assert.match(env, /^ELITZE_CONTACT_EMAIL=tsh_cook@hotmail\.com$/m);
 assert.match(env, /^NEXT_PUBLIC_SITE_URL=https:\/\/elitze\.info$/m);
+assert.equal((env.match(/^NEXT_PUBLIC_SITE_URL=/gm) ?? []).length, 1);
+assert.match(env, /^ELITZE_SAML_SP_ENTITY_ID=https:\/\/elitze\.info\/api\/auth\/saml\/metadata$/m);
+assert.match(env, /^ELITZE_SAML_ACS_URL=https:\/\/elitze\.info\/api\/auth\/saml\/callback$/m);
 assert.match(env, /ELITZE_WEBAUTHN_RP_ID=elitze\.info/);
 assert.match(env, /ELITZE_WEBAUTHN_ORIGIN=https:\/\/elitze\.info,https:\/\/www\.elitze\.info/);
 assert.match(env, /ELITZE_ALLOWED_ORIGINS=https:\/\/elitze\.info,https:\/\/www\.elitze\.info/);
