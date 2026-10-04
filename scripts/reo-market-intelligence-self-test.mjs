@@ -1,0 +1,11 @@
+import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
+const read=p=>readFileSync(p,"utf8");
+const semrush=read("src/app/api/reo/intelligence/semrush/route.ts");
+const similarweb=read("src/app/api/reo/intelligence/similarweb/route.ts");
+const mcp=read("src/lib/elitze-reo/market-intelligence-mcp.mjs");
+assert.match(semrush,/SEMRUSH_API_KEY/); assert.match(semrush,/api\.semrush\.com/); assert.match(semrush,/domain_rank/);
+assert.match(similarweb,/SIMILARWEB_API_KEY/); assert.match(similarweb,/api\.similarweb\.com\/v4\/website-analysis\/keywords/);
+assert.match(mcp,/semrush_domain_overview/); assert.match(mcp,/similarweb_keywords/);
+assert.match(mcp,/third-party estimates/);
+console.log("reo-market-intelligence:self-test PASS");
