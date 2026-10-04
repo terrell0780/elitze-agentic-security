@@ -15,6 +15,11 @@ const prohibitedBrandTerms = [
   /manus/i,
   /salts team/i,
   /god'?s eye/i,
+  /Elitze\\s+Sentinel/i,
+  /Elitze[-\\s]Secure/i,
+  /\\bMythos\\b/i,
+  /\\bFABLE\\b/i,
+  /\\bLindy\\b/i,
 ];
 
 const files = execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8" })
