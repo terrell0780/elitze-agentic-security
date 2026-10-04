@@ -18,7 +18,7 @@ const prohibitedBrandTerms = [
   /god'?s eye/i,
   new RegExp("\\b" + legacyBrand + "\\b", "i"),
   /Elitze\\s+Sentinel/i,
-  /Elitze[-\\s]Secure/i,
+  /\\bELITZE[-\\s]SECURE\\b/,
   new RegExp("\\b" + ["f", "able"].join("") + "\\b", "i"),
   new RegExp("\\b" + ["l", "indy"].join("") + "\\b", "i"),
 ];
