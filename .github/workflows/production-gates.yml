@@ -70,6 +70,8 @@ jobs:
         run: npm run security-fabric:self-test
       - name: RAG and vector search self-test
         run: npm run rag:self-test
+      - name: Persistent agent workflow self-test
+        run: npm run agent-workflow:self-test
       - name: Contact and acquisition routing self-test
         run: npm run contact-acquisition:self-test
 
