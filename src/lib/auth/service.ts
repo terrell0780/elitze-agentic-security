@@ -165,7 +165,7 @@ export async function getUserBySessionToken(token: string): Promise<AuthUser | n
       eq(users.disabled, false),
       // Only verified accounts receive authenticated application sessions.
       // The verification requirement is enforced again here for defense in depth.
-      isNull(users.emailVerifiedAt) === false,
+      isNotNull(users.emailVerifiedAt),
     ))
     .limit(1);
 
