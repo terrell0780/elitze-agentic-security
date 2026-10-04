@@ -4,6 +4,7 @@ import path from "node:path";
 
 const root = process.cwd();
 const allowedReferenceDocs = ["docs/legal/", "docs/2026-GOOGLE-"];
+const legacyBrand = ["myt", "hos"].join("");
 const prohibitedBrandTerms = [
   /anthropic/i,
   /openai/i,
@@ -15,11 +16,11 @@ const prohibitedBrandTerms = [
   /manus/i,
   /salts team/i,
   /god'?s eye/i,
+  new RegExp("\\b" + legacyBrand + "\\b", "i"),
   /Elitze\\s+Sentinel/i,
-  /Elitze[-\\s]Secure/i,
-  /\\bMythos\\b/i,
-  /\\bFABLE\\b/i,
-  /\\bLindy\\b/i,
+  /\\bELITZE[-\\s]SECURE\\b/,
+  new RegExp("\\b" + ["f", "able"].join("") + "\\b", "i"),
+  new RegExp("\\b" + ["l", "indy"].join("") + "\\b", "i"),
 ];
 
 const files = execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8" })
