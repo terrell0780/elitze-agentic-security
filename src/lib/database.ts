@@ -8,9 +8,6 @@ const connectionString =
   process.env.POSTGRES_URL?.trim() ||
   process.env.POSTGRES_URL_NON_POOLING?.trim();
 
-if (!connectionString && process.env.NODE_ENV === "production") {
-  throw new Error("DATABASE_URL is required in production.");
-}
 
 export const pool = new Pool({
   connectionString,
