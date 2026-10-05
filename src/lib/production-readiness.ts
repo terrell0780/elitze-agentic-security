@@ -53,7 +53,7 @@ export async function getProductionReadiness():Promise<ProductionReadiness>{
   const pilotRows=await db.query("SELECT COUNT(*)::int AS count FROM production_readiness_evidence WHERE category='customer_pilot' AND status='VERIFIED'");
   realCustomerPilotData=Number(pilotRows.rows[0]?.count??0)>0?{state:"READY",detail:"Verified real-customer pilot evidence exists.",source:"production_readiness_evidence"}:{state:"UNMEASURABLE",detail:"No verified real-customer pilot evidence is recorded. No customer activity is fabricated.",source:"production_readiness_evidence"};
  }
- const authentication=databaseReady&&hasAll("ELITZE_AUTH_ENCRYPTION_KEY","ELITZE_TEAM_SESSION_SECRET","ELITZE_ALLOWED_ORIGINS")
+ const authentication=databaseReady&&hasAll("ELITZE_AUTH_ENCRYPTION_KEY_ACTIVE","ELITZE_TEAM_SESSION_SECRET_ACTIVE","ELITZE_ALLOWED_ORIGINS")
   ?{state:"READY" as const,detail:"Database-backed authentication and required production auth configuration are present.",source:"ELITZE auth runtime configuration"}
   :{state:"BLOCKED" as const,detail:"Authentication requires the production database plus auth encryption, team-session and allowed-origin configuration.",source:"ELITZE auth runtime configuration"};
  const emailProvider=hasAll("RESEND_API_KEY","RESEND_FROM")
