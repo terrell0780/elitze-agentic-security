@@ -1,14 +1,18 @@
-const RESEND_API = "https://api.resend.com/emails";
+import { productionConfig } from "@/config/production";
 
-function required(name: string): string {
-  const value = process.env[name]?.trim();
-  if (!value) throw new Error(`${name} is required for transactional email.`);
-  return value;
+const RESEND_API = process.env.RESEND_API_URL?.trim() || "https://api.resend.com/emails";
+
+function requiredAny(names: string[]): string {
+  for (const name of names) {
+    const value = process.env[name]?.trim();
+    if (value) return value;
+  }
+  throw new Error(`${names.join(" or ")} is required for transactional email.`);
 }
 
 async function sendEmail(input: { to: string; subject: string; html: string }): Promise<void> {
-  const apiKey = required("RESEND_API_KEY");
-  const from = required("EMAIL_FROM");
+  const apiKey = requiredAny(["RESEND_API_KEY"]);
+  const from = requiredAny(["EMAIL_FROM", "RESEND_FROM"]);
 
   const response = await fetch(RESEND_API, {
     method: "POST",
@@ -27,21 +31,21 @@ async function sendEmail(input: { to: string; subject: string; html: string }): 
 }
 
 export async function sendVerificationEmail(email: string, token: string): Promise<void> {
-  const origin = required("APP_ORIGIN").replace(/\/$/, "");
-  const url = `${origin}/verify-email?token=${encodeURIComponent(token)}`;
+  const origin = (process.env.APP_ORIGIN?.trim() || productionConfig.canonicalOrigin).replace(/\/$/, "");
+  const url = `${origin}/auth/verify?token=${encodeURIComponent(token)}`;
   await sendEmail({
     to: email,
-    subject: "Verify your ELITZE Cybersecurity account",
-    html: `<p>Verify your ELITZE Cybersecurity account.</p><p><a href="${url}">Verify email</a></p><p>This link expires in 24 hours.</p>`,
+    subject: "Verify your ELITZE Agentic Security account",
+    html: `<p>Verify your ELITZE Agentic Security account.</p><p><a href="${url}">Verify email</a></p><p>This link expires in 24 hours.</p>`,
   });
 }
 
 export async function sendRecoveryEmail(email: string, token: string): Promise<void> {
-  const origin = required("APP_ORIGIN").replace(/\/$/, "");
+  const origin = (process.env.APP_ORIGIN?.trim() || productionConfig.canonicalOrigin).replace(/\/$/, "");
   const url = `${origin}/reset-password?token=${encodeURIComponent(token)}`;
   await sendEmail({
     to: email,
-    subject: "Reset your ELITZE Cybersecurity password",
-    html: `<p>A password reset was requested for your ELITZE Cybersecurity account.</p><p><a href="${url}">Reset password</a></p><p>This link expires in 1 hour.</p>`,
+    subject: "Reset your ELITZE Agentic Security password",
+    html: `<p>A password reset was requested for your ELITZE Agentic Security account.</p><p><a href="${url}">Reset password</a></p><p>This link expires in 1 hour.</p>`,
   });
 }

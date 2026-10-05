@@ -45,6 +45,27 @@ CREATE TABLE IF NOT EXISTS auth_tokens (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
+ALTER TABLE auth_tokens ADD COLUMN IF NOT EXISTS kind varchar(40);
+
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1
+    FROM information_schema.columns
+    WHERE table_schema = current_schema()
+      AND table_name = 'auth_tokens'
+      AND column_name = 'purpose'
+  ) THEN
+    EXECUTE 'UPDATE auth_tokens SET kind = COALESCE(kind, purpose, ''legacy'') WHERE kind IS NULL';
+  END IF;
+END $$;
+
+UPDATE auth_tokens
+SET kind = 'legacy'
+WHERE kind IS NULL;
+
+ALTER TABLE auth_tokens ALTER COLUMN kind SET NOT NULL;
+
 CREATE INDEX IF NOT EXISTS auth_tokens_user_kind_idx ON auth_tokens(user_id, kind);
 
 CREATE TABLE IF NOT EXISTS production_security_policies (

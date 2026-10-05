@@ -35,9 +35,14 @@ export async function resetPassword(token: string, password: string): Promise<vo
 
 export async function issueEmailVerification(userId: string): Promise<string> {
   const token = createOpaqueToken();
+  const [user] = await db.select({ organizationId: users.organizationId }).from(users).where(eq(users.id, userId)).limit(1);
+  if (!user) throw new Error("User not found.");
+
   await db.insert(authTokens).values({
     userId,
+    tenantId: user.organizationId,
     tokenHash: hashOpaqueToken(token),
+    purpose: "email_verification",
     kind: "email_verification",
     expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
   });

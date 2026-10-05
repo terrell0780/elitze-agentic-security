@@ -1,4 +1,4 @@
-import { and, eq, gt, isNull } from "drizzle-orm";
+import { and, eq, gt, isNull, isNotNull } from "drizzle-orm";
 import { db } from "@/lib/database";
 import { authTokens, organizations, sessions, users } from "@/db/production-schema";
 import {
@@ -53,7 +53,9 @@ export async function registerUser(input: {
     const verificationToken = createOpaqueToken();
     await tx.insert(authTokens).values({
       userId: user.id,
+      tenantId: organization.id,
       tokenHash: hashOpaqueToken(verificationToken),
+      purpose: "email_verification",
       kind: "email_verification",
       expiresAt: expiresFromNow(VERIFICATION_HOURS * 60 * 60 * 1000),
     });
@@ -195,7 +197,7 @@ export async function revokeSession(token: string): Promise<void> {
 
 export async function requestPasswordRecovery(emailInput: string): Promise<string | null> {
   const email = normalizeEmail(emailInput);
-  const [user] = await db.select({ id: users.id })
+  const [user] = await db.select({ id: users.id, organizationId: users.organizationId })
     .from(users)
     .where(and(eq(users.email, email), eq(users.disabled, false)))
     .limit(1);
@@ -205,7 +207,9 @@ export async function requestPasswordRecovery(emailInput: string): Promise<strin
   const token = createOpaqueToken();
   await db.insert(authTokens).values({
     userId: user.id,
+    tenantId: user.organizationId,
     tokenHash: hashOpaqueToken(token),
+    purpose: "password_reset",
     kind: "password_recovery",
     expiresAt: expiresFromNow(RECOVERY_HOURS * 60 * 60 * 1000),
   });

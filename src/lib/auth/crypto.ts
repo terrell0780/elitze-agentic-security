@@ -4,9 +4,18 @@ import {
   scrypt as nodeScrypt,
   timingSafeEqual,
 } from "node:crypto";
-import { promisify } from "node:util";
 
-const scrypt = promisify(nodeScrypt);
+const scrypt = (
+  password: string,
+  salt: Uint8Array,
+  keyLength: number,
+  options: { N: number; r: number; p: number; maxmem: number },
+) => new Promise<Buffer>((resolve, reject) => {
+  nodeScrypt(password, salt, keyLength, options, (error, derivedKey) => {
+    if (error) reject(error);
+    else resolve(derivedKey as Buffer);
+  });
+});
 const KEY_LENGTH = 64;
 const SCRYPT_N = 1 << 15;
 const SCRYPT_R = 8;

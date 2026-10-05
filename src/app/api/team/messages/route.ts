@@ -12,6 +12,7 @@ const bodySchema = z.object({
   replyToId: z.number().int().positive().optional(),
   linkedDecisionId: z.number().int().positive().optional(),
   linkedEvidenceId: z.number().int().positive().optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 async function authorizedChannel(channelId: number, actorId: string, tenantId: string) {
@@ -41,6 +42,7 @@ export async function GET(request: NextRequest) {
       linkedEvidenceId: teamMessages.linkedEvidenceId,
       createdAt: teamMessages.createdAt,
       editedAt: teamMessages.editedAt,
+      metadata: teamMessages.metadata,
     }).from(teamMessages)
       .innerJoin(teamChannels, eq(teamChannels.id, teamMessages.channelId))
       .where(and(eq(teamMessages.channelId, parsed.data.channelId), eq(teamChannels.tenantId, session.tenantId), isNull(teamMessages.deletedAt)))
@@ -68,6 +70,7 @@ export async function POST(request: NextRequest) {
       replyToId: parsed.data.replyToId ?? null,
       linkedDecisionId: parsed.data.linkedDecisionId ?? null,
       linkedEvidenceId: parsed.data.linkedEvidenceId ?? null,
+      metadata: parsed.data.metadata ?? {},
     }).returning({
       id: teamMessages.id,
       channelId: teamMessages.channelId,
@@ -77,6 +80,7 @@ export async function POST(request: NextRequest) {
       replyToId: teamMessages.replyToId,
       linkedDecisionId: teamMessages.linkedDecisionId,
       linkedEvidenceId: teamMessages.linkedEvidenceId,
+      metadata: teamMessages.metadata,
       createdAt: teamMessages.createdAt,
     });
     return NextResponse.json({ ok: true, message }, { status: 201 });

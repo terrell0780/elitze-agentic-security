@@ -480,12 +480,13 @@ export async function issueEmailToken(
   );
   await db.query(
     `INSERT INTO auth_tokens
-      (user_id,tenant_id,token_hash,purpose,expires_at)
-     VALUES ($1,$2,$3,$4,$5)`,
+      (user_id,tenant_id,token_hash,purpose,kind,expires_at)
+     VALUES ($1,$2,$3,$4,$5,$6)`,
     [
       user.id,
       user.tenantId,
       digest(raw),
+      purpose,
       purpose,
       new Date(Date.now() + ttlMinutes * 60_000).toISOString(),
     ],

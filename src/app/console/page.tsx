@@ -10,6 +10,8 @@ import TeamCollaboration from "@/components/team-collaboration";
 import GovernedChat from "@/components/governed-chat";
 import ProgressiveProofPanel from "@/components/progressive-proof-panel";
 import EvidenceExpressionDebugger from "@/components/evidence-expression-debugger";
+import GodsEyeGlobe from "@/components/gods-eye-globe";
+import SecurityCapabilityAtlas from "@/components/security-capability-atlas";
 
 type Health = { ok: boolean; checks?: { database?: string; schema?: string } };
 type Overview = { ok: boolean; metrics?: { agentIdentities: number; activeMcpServers: number; activePolicies: number; pendingApprovals: number; approvalRequests: number; gatewayDecisions: number; deniedGatewayDecisions: number; approvalRequiredDecisions: number; graphNodes: number; graphEdges: number; graphEvidence: number; securityTests: number; queuedTests: number; runningTests: number; completedTests: number; failedTests: number; evidenceRecords: number; latestDecisionAt: string | null; latestTestAt: string | null; latestEvidenceAt: string | null }; error?: string };
@@ -83,7 +85,13 @@ export default function ConsolePage() {
 
         {!overview?.ok && <div className="mb-6 rounded-2xl border border-amber-400/25 bg-amber-400/[0.06] p-4 text-sm text-amber-200">The tenant data plane is not currently available. Database connectivity and completed migrations are required before live security records can be displayed.</div>}
 
-        <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{cards.map(([Icon, label, value]) => <div key={label} className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5"><div className="flex items-center justify-between"><Icon className="h-4 w-4 text-[var(--accent)]" /><span className="font-mono text-[9px] text-[var(--muted)]">TENANT LIVE</span></div><div className="mt-5 font-mono text-2xl font-semibold">{overview ? value(overview) : "UNMEASURABLE"}</div><div className="mt-1 text-xs uppercase tracking-wider text-[var(--muted)]">{label}</div></div>)}</section>
+        <section className="mb-8">
+          <GodsEyeGlobe />
+        </section>
+
+        <SecurityCapabilityAtlas />
+
+        <section className="mt-8 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">{cards.map(([Icon, label, value]) => <div key={label} className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5"><div className="flex items-center justify-between"><Icon className="h-4 w-4 text-[var(--accent)]" /><span className="font-mono text-[9px] text-[var(--muted)]">TENANT LIVE</span></div><div className="mt-5 font-mono text-2xl font-semibold">{overview ? value(overview) : "UNMEASURABLE"}</div><div className="mt-1 text-xs uppercase tracking-wider text-[var(--muted)]">{label}</div></div>)}</section>
 
         <section className="mt-8 rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-5 sm:p-7">
           <div className="flex items-center gap-2"><ShieldCheck className="h-4 w-4 text-[var(--accent)]" /><h2 className="text-sm font-semibold">Tenant control-plane state</h2></div>

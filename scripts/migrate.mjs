@@ -72,7 +72,9 @@ try {
     "security_test_requests",
     "security_fabric_sources", "security_fabric_events", "autonomous_analyst_runs", "autonomous_analyst_findings",
     "production_readiness_evidence", "rag_documents", "rag_chunks",
-    "mcp_gateway_servers", "mcp_gateway_decisions", "mcp_gateway_request_nonces", "mcp_gateway_rate_limits",
+"mcp_gateway_servers", "mcp_gateway_decisions", "mcp_gateway_request_nonces", "mcp_gateway_rate_limits",
+    "chat_attachments", "team_message_attachments", "ai_connections",
+    "team_voice_presence", "team_voice_signals", "teamspeak_integrations",
   ];
 
   const requiredColumns = [
