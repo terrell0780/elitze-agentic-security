@@ -4,8 +4,8 @@ import { isDatabaseConfigured } from "@/db";
 const ProductionSecretsSchema = z.object({
   ELITZE_AUTH_ENCRYPTION_KEY: z.string().trim().min(32),
   ELITZE_TEAM_SESSION_SECRET: z.string().trim().min(32),
-  ELITZE_INTERNAL_API_KEY: z.string().trim().min(16),
   ELITZE_ALLOWED_ORIGINS: z.string().trim().min(1),
+  ELITZE_INTERNAL_API_KEY_ACTIVE: z.string().trim().min(16),
   RESEND_API_KEY: z.string().trim().startsWith("re_"),
   RESEND_FROM: z.string().trim().min(3),
 });
