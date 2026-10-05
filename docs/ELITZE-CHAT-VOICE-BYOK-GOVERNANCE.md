@@ -22,7 +22,7 @@ Tenant-scoped RAG material is explicitly treated as untrusted context. Prompt co
 
 Secrets are encrypted at rest with AES-256-GCM using a server-only integration encryption key. Secrets are never returned through inventory APIs.
 
-Only the OpenAI-compatible model invocation protocol is currently executed by the ELITZE Chat runtime. Stored agent/bot connections remain explicitly marked as unsupported until their invocation contracts are implemented and verified.
+Only the configured compatible model invocation protocol is currently executed by the ELITZE Chat runtime. Stored agent/bot connections remain explicitly marked as unsupported until their invocation contracts are implemented and verified.
 
 ## Files
 
