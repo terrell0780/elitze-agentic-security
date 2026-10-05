@@ -24,6 +24,10 @@ export const pool = new Pool({
 export const db = drizzle(pool, { schema });
 
 export async function verifyDatabaseConnection(): Promise<void> {
+  if (!connectionString) {
+    throw new Error("DATABASE_URL is required in production.");
+  }
+
   const client = await pool.connect();
   try {
     await client.query("select 1 as ok");
