@@ -1,12 +1,19 @@
 import {
+  type BinaryLike,
   createHash,
+  type ScryptOptions,
   randomBytes,
   scrypt as nodeScrypt,
   timingSafeEqual,
 } from "node:crypto";
 import { promisify } from "node:util";
 
-const scrypt = promisify(nodeScrypt);
+const scrypt = promisify(nodeScrypt) as (
+  password: BinaryLike,
+  salt: BinaryLike,
+  keylen: number,
+  options: ScryptOptions,
+) => Promise<Buffer>;
 const KEY_LENGTH = 64;
 const SCRYPT_N = 1 << 15;
 const SCRYPT_R = 8;
