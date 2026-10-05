@@ -52,8 +52,11 @@ A sale should explicitly identify which of the following are included:
 - Analytics properties.
 - Deployment account(s).
 - Cloud/database accounts.
-- Third-party subscriptions.
-- Customer contracts and data.
+- Customer contracts or customer data only if they actually exist, are verified, legally transferable, and expressly included in the definitive agreement.
+
+### Operating-model boundary
+
+The seller is not offering an ongoing SaaS service, managed hosting operation, billing operation, customer-support function, renewal program, or customer-success organization.
 
 ### Credentials
 

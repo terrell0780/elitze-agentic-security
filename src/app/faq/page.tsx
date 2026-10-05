@@ -8,6 +8,8 @@ export const metadata = {
 import { ArrowRight, ChevronDown, ShieldCheck } from "lucide-react";
 
 const faq = [
+  ["Is ELITZE being sold as a hosted subscription?", "No. The current transaction is an outright software/IP acquisition. The seller is not offering an ongoing hosted subscription, managed hosting, billing, customer support or renewals. After transfer, those operating responsibilities belong to the buyer."],
+  ["Does ELITZE currently have customers or recurring revenue?", "The acquisition package does not represent an active customer base or recurring revenue unless separately verified with transaction evidence. Product architecture, a CRM schema, a pilot playbook or a product demo is not customer proof."],
   ["Is ELITZE replacing our existing security tools?", "No. ELITZE is designed as a control and verification layer across connected code, cloud, identity, agent, data, runtime and security systems."],
   ["Does ELITZE invent live security data?", "No. Connected, verified records drive posture. Empty or unavailable integrations remain explicit instead of being filled with synthetic assets, alerts or telemetry."],
   ["What is ELITZE Global Security View?", "It is the visual command surface for traversing connected security domains, security-graph relationships, exposure paths and authorized visual intelligence. Production posture still comes from verified data sources."],

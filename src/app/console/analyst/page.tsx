@@ -80,8 +80,14 @@ export default function AutonomousAnalystPage() {
   },[router]);
 
   useEffect(() => {
-    void load().catch(() => setError("Unable to load the autonomous analyst."));
-  },[load]);
+    const timer = window.setTimeout(() => {
+      void load().catch(() => {
+        setError("Unable to load the autonomous analyst.");
+      });
+    }, 0);
+
+    return () => window.clearTimeout(timer);
+  }, [load]);
 
   async function refresh() {
     setError(null);

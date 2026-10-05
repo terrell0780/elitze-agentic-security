@@ -16,7 +16,7 @@ const cases = [
   [Wrench, "Containment operations", "Create an auditable containment request and delegate infrastructure isolation to a separately authorized executor."],
 ];
 
-const industries = ["Financial services", "Healthcare", "Government", "SaaS and technology", "Manufacturing", "Retail and commerce", "Telecommunications", "Security operations"];
+const industries = ["Financial services", "Healthcare", "Government", "Enterprise technology", "Manufacturing", "Retail and commerce", "Telecommunications", "Security operations"];
 
 export default function UseCasesPage() {
   return (
