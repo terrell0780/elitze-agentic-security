@@ -94,8 +94,11 @@ export default function TeamCollaboration() {
 
   useEffect(() => {
     if (!selected) {
-      setMessages([]);
-      return;
+      const timer = window.setTimeout(() => {
+        setMessages([]);
+      }, 0);
+
+      return () => window.clearTimeout(timer);
     }
 
     const channelId = selected;

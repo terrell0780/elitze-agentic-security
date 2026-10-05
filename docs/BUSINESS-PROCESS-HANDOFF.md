@@ -1,40 +1,132 @@
 # ELITZE Agentic Security — Business Process Handoff
 
-## Operating chain
+**Handoff date:** October 2, 2026 PDT
+**Canonical product:** ELITZE Agentic Security
+**Canonical domain:** `https://elitze.info`
+**Canonical repository:** `terrell0780/elitze-agentic-security`
+**Branch:** `main`
 
-`Inbound → Lead Record → Qualification → NDA → Diligence → Offer → Contract → Closing`
+## Transaction definition
 
-Public acquisition, repository-access, and general-contact submissions are persisted as acquisition leads before email notification is attempted. Email is a notification channel, not the sole system of record.
+ELITZE is being offered as an **outright software/IP acquisition**.
 
-## Pipeline stages
+The seller is **not** offering an ongoing SaaS subscription, managed hosting, billing operation, customer-support organization, renewals program, or customer-success service.
 
-- `NEW` — inbound request not yet qualified.
-- `QUALIFIED` — buyer and transaction intent reviewed.
-- `NDA` — NDA process active or completed.
-- `DILIGENCE` — controlled technical, IP, legal, and operational diligence.
-- `OFFER` — commercial proposal or term negotiation.
-- `CONTRACT` — definitive transaction documentation.
-- `CLOSED_WON` — transaction completed.
-- `CLOSED_LOST` — opportunity closed without transaction.
+The seller-side business process ends with a controlled transaction handoff. After closing, the buyer owns the agreed operating model unless separate transition services are expressly documented.
 
-Stage changes are recorded in `acquisition_lead_events` with actor identity and optional notes.
+## Seller handoff lifecycle
 
-## Management access
+`Inbound → Lead Record → Qualification → NDA → Diligence → Offer → Contract → Closing → Transfer`
 
-`/api/acquisition/leads` is restricted to owner/admin roles or the configured `ELITZE_ACQUISITION_ADMIN_EMAIL`.
+### 1. Inbound
+Acquisition, repository-access, and general product inquiries enter through the public acquisition surface.
 
-## Data boundary
+Current seller contact:
+`tsh_cook@hotmail.com`
 
-Acquisition leads are separate from tenant-scoped customer CRM records until a qualified contact is converted.
+This is the only seller contact address represented in the acquisition workflow.
 
-## Operational boundary
+### 2. Lead Record
+Every acquisition/general/repository inquiry is persisted in `acquisition_leads` before the notification email is attempted.
 
-Contract execution, funds settlement, domain/account transfer, and other legal transaction steps remain controlled outside the application unless separately implemented.
+The notification email is not the system of record.
 
-## Production gate
+### 3. Qualification
+The seller records whether the prospective buyer is identified and whether access to private source material is appropriate.
 
-Migrations `0027_mcp_control_plane_lockdown.sql` and `0028_acquisition_pipeline.sql` must both be applied to the target production database before the runtime is considered release-aligned.
+Qualification is a transaction-control step, not proof of available customer traction.
+
+### 4. NDA
+Private source review requires an appropriate NDA before access is granted.
+
+No signed NDA is implied by the existence of this document.
+
+### 5. Diligence
+Diligence is controlled around:
+
+- repository and commit history;
+- technical architecture;
+- database schema/migrations;
+- authentication and authorization;
+- CI/security gates;
+- dependencies and SBOM;
+- IP/domain/brand ownership;
+- disclosed historical public exposure;
+- known blockers and unverified operational evidence.
+
+### 6. Offer
+Commercial consideration is negotiated privately.
+
+No public price, valuation or outcome is represented as established fact without evidence.
+
+### 7. Contract
+The definitive agreement controls exactly what transfers, including any domain, brand assets, infrastructure, contracts, data, transition assistance or other assets.
+
+### 8. Closing
+Closing requires the parties' agreed legal and financial conditions to be satisfied.
+
+### 9. Transfer
+The buyer receives the assets expressly included in the definitive agreement and establishes or assumes post-transfer hosting, credentials, support, billing, customer operations and other service responsibilities unless the parties separately agree otherwise.
+
+## Customer / revenue status
+
+The transfer package does **not** represent an active customer base, recurring revenue, renewals, support queue, or managed SaaS operation unless separate evidence is provided.
+
+The buyer should verify:
+
+- current customer contracts, if any;
+- revenue records, if any;
+- customer data, if any;
+- infrastructure accounts, if any;
+- support obligations, if any;
+- licenses and third-party obligations, if any.
+
+No customer relationship should be inferred from a product screen, CRM schema, customer-validation document or architecture reference.
+
+## System of record
+
+Acquisition lifecycle state is held in the acquisition pipeline:
+
+- `acquisition_leads`
+- `acquisition_lead_events`
+- `crm_contacts` only when a contact is deliberately converted/linked.
+
+Stage states:
+
+`NEW → QUALIFIED → NDA → DILIGENCE → OFFER → CONTRACT → CLOSED_WON / CLOSED_LOST`
+
+Stage transitions create audit events.
 
 ## Evidence rule
 
-Empty lead, customer, revenue, backup, integration, or transaction records remain empty. No business outcome is inferred from code presence alone.
+A claim is represented only when the underlying evidence exists. Empty tables mean no current records, not a hidden customer base.
+
+The package must distinguish:
+
+- IMPLEMENTED
+- CONFIGURED
+- INTEGRATED
+- VERIFIED
+- BLOCKED
+- UNKNOWN
+- UNMEASURABLE
+
+Documentation, code presence and passing tests are not substitutes for live customer or revenue evidence.
+
+## Production database alignment
+
+The current source contains migrations through `0028_acquisition_pipeline.sql`.
+
+Production Neon `main` must be migrated through the transfer commit before the environment is described as schema-aligned.
+
+Do not seed synthetic acquisition or customer records merely to make the dashboard appear populated.
+
+## Post-transfer operation
+
+Customer onboarding, production hosting, billing, support, security operations, renewals, account management and service-level commitments are **buyer-owned post-transfer responsibilities** unless expressly included in a separate written transition agreement.
+
+## Handoff standard
+
+The seller's definition of business-process readiness is:
+
+**A buyer can identify the asset, qualify access, execute diligence, negotiate the transaction, close under written terms, and receive a clean transfer package without the seller pretending to operate a SaaS business that does not exist.**

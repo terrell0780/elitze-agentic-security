@@ -21,6 +21,10 @@ It treats the model or agent as a decision input—not the security boundary—a
 - Repository includes documented production setup and security boundary requirements.
 - Suitable foundation for further enterprise productization or integration into an existing security portfolio.
 
+## Transaction model
+
+The transaction is an outright software/IP acquisition. It is not a seller-managed SaaS subscription, managed hosting engagement, or ongoing customer-operations business. The buyer receives the agreed transferable asset set and controls post-transfer deployment, commercial operations and customer relationships.
+
 ## Closing point
 
 The right buyer is not simply buying source code. The buyer is acquiring a security product foundation, architecture, product positioning, and an extensible control-plane concept that can be developed into the buyer's existing security business.
