@@ -1,4 +1,4 @@
-import { and, eq, gt, isNull } from "drizzle-orm";
+import { and, eq, gt, isNotNull, isNull } from "drizzle-orm";
 import { db } from "@/lib/database";
 import { authTokens, organizations, sessions, users } from "@/db/production-schema";
 import {
