@@ -5,7 +5,8 @@ type EmailMessage = {
   replyTo?: string;
 };
 
-const env = (name: string) => process.env[name]?.trim() ?? "";\nconst DEFAULT_REPLY_TO = "tsh_cook@hotmail.com";
+const env = (name: string) => process.env[name]?.trim() ?? "";
+const DEFAULT_REPLY_TO = "tsh_cook@hotmail.com";
 
 export async function sendEmail({ to, subject, text, replyTo }: EmailMessage) {
   const provider = env("ELITZE_EMAIL_PROVIDER").toLowerCase() || "postmark";
