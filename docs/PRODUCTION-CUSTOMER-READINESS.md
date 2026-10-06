@@ -6,7 +6,7 @@ Required operating dependencies:
 - Managed PostgreSQL: reachable, migrated and schema-verified.
 - Authentication: production database plus auth encryption/session/origin configuration.
 - CRM: tenant-scoped storage.
-- Email provider: Resend credentials and verifiable delivery path.
+- Email provider: Postmark credentials and a verifiable delivery path; the sender/domain must be verified with Postmark.
 - Authorized lead sources: real tenant-bound source with accepted ingestion evidence.
 - Analytics: consent-gated measurement configuration.
 - Monitoring: production runtime monitoring.

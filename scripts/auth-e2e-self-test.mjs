@@ -73,9 +73,9 @@ const env = {
   ELITZE_CONTACT_EMAIL: "tsh_cook@hotmail.com",
   ELITZE_TEAM_SESSION_SECRET: "e2e-team-session-secret-" + runId,
   ELITZE_INTEGRATION_ENCRYPTION_KEY: "a".repeat(64),
-  RESEND_API_KEY: "e2e-key",
-  RESEND_FROM: "ELITZE E2E <e2e@example.invalid>",
-  RESEND_API_URL: `http://${host}:${mailPort}/emails`,
+  ELITZE_EMAIL_PROVIDER: "test",
+  ELITZE_EMAIL_FROM: "ELITZE E2E <e2e@example.invalid>",
+  ELITZE_EMAIL_TEST_ENDPOINT: `http://${host}:${mailPort}/emails`,
 };
 
 const nextCli = path.resolve(process.cwd(), "node_modules/next/dist/bin/next");
