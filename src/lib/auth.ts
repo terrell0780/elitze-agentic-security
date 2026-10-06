@@ -24,7 +24,7 @@ export type AuthUser = {
   sessionId?: string;
 };
 
-const normalizeEmail = (email: string) => email.trim().toLowerCase();
+export const normalizeEmail = (email: string) => email.trim().toLowerCase();
 const digest = (value: string) => createHash("sha256").update(value).digest("hex");
 const newToken = () => randomBytes(32).toString("base64url");
 
