@@ -18,10 +18,6 @@ export async function POST(request: NextRequest) {
       return Response.json({ error: "too_many_attempts" }, { status: 429, headers: { "Retry-After": "3600" } });
     }
 
-    if (!process.env.ELITZE_EMAIL_FROM?.trim() || process.env.ELITZE_EMAIL_PROVIDER?.trim() !== "postmark" || !process.env.POSTMARK_SERVER_TOKEN?.trim()) {
-      return Response.json({ error: "email_delivery_not_configured" }, { status: 503 });
-    }
-
     const user = await registerUser(email, body.password, typeof body.displayName === "string" ? body.displayName : undefined);
     const token = await issueEmailToken(user, "email_verification", 60);
     const base = productionConfig.canonicalOrigin.replace(/\/$/, "");
