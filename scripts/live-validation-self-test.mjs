@@ -6,6 +6,7 @@ const migration = fs.readFileSync("drizzle/0031_live_security_validation.sql", "
 const kinds = fs.readFileSync("drizzle/0032_validation_kinds.sql", "utf8");
 const runner = fs.readFileSync("src/lib/security-validation/runner.ts", "utf8");
 const page = fs.readFileSync("src/app/console/pentesting/page.tsx", "utf8");
+const vulnerabilityRoute = fs.readFileSync("src/app/api/vulnerabilities/route.ts", "utf8");
 
 assert.match(route, /runnerConfigured/);
 assert.match(route, /verifyRunnerSignature/);
@@ -23,4 +24,7 @@ assert.match(page, /Run now/);
 assert.match(page, /Live telemetry/);
 assert.match(page, /Findings/);
 assert.match(page, /Every 5 minutes/);
+assert.match(vulnerabilityRoute, /known_exploited_vulnerabilities/);
+assert.match(vulnerabilityRoute, /services\.nvd\.nist\.gov/);
+assert.match(vulnerabilityRoute, /api\.first\.org\/data\/v1\/epss/);
 console.log("ELITZE live validation self-test: PASS");
