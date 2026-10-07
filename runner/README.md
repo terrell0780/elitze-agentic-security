@@ -4,7 +4,7 @@ This is the execution tier for live, authorized security validation. The ELITZE 
 
 ## Engines
 
-The first production engine is Nuclei v3.11.1. That version is pinned in the runner image. Nuclei's current release history identifies v3.11.1 as the latest release at the time this runner was added. citeturn649246search0
+The first production engine is Nuclei v3.11.1. That version is pinned in the runner image. Nuclei v3.11.1 is pinned for reproducible runner builds.n649246search0
 
 ## Required configuration
 
