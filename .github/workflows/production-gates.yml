@@ -76,6 +76,8 @@ jobs:
         run: npm run contact-acquisition:self-test
       - name: Live validation self-test
         run: npm run live-validation:self-test
+      - name: Security runner self-test
+        run: npm run runner:self-test
 
       - name: Typecheck
         run: npm run typecheck
