@@ -7,9 +7,21 @@ let pool: Pool | undefined;
 let productionDb: NodePgDatabase<typeof schema> | undefined;
 
 function connectionString() {
-  return process.env.DATABASE_URL?.trim()
+  const value =
+    process.env.DATABASE_URL?.trim()
     || process.env.POSTGRES_URL?.trim()
     || process.env.POSTGRES_URL_NON_POOLING?.trim();
+  if (!value) return "";
+  try {
+    const url = new URL(value);
+    if (/\.neon\.tech$/i.test(url.hostname)) {
+      url.searchParams.set("sslmode", "verify-full");
+      return url.toString();
+    }
+  } catch {
+    // Keep the original value so pg can report a precise connection error.
+  }
+  return value;
 }
 
 function getPool() {

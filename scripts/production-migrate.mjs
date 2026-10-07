@@ -2,8 +2,22 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import pg from "pg";
 
-const url = process.env.DATABASE_URL?.trim();
-if (!url) throw new Error("DATABASE_URL is required for production migration.");
+function normalizeConnectionString(value) {
+  try {
+    const url = new URL(value);
+    if (/\.neon\.tech$/i.test(url.hostname)) {
+      url.searchParams.set("sslmode", "verify-full");
+      return url.toString();
+    }
+  } catch {
+    // Preserve the original value for pg to diagnose.
+  }
+  return value;
+}
+
+const rawUrl = process.env.DATABASE_URL?.trim();
+if (!rawUrl) throw new Error("DATABASE_URL is required for production migration.");
+const url = normalizeConnectionString(rawUrl);
 
 const client = new pg.Client({
   connectionString: url,
