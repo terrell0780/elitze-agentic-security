@@ -117,7 +117,7 @@ export default function VulnerabilitiesPage() {
             ].map(([label, state, copy]) => (
               <article key={label} className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-4">
                 <div className="flex items-center justify-between gap-3"><div className="text-[9px] font-bold uppercase tracking-[.16em] text-[var(--muted)]">{label}</div><span className={"text-[8px] font-black uppercase " + (state === "LIVE" ? "text-emerald-300" : "text-amber-300")}>{state}</span></div>
-                <div className="mt-3 text-xs text-[var(--muted)]">{copy}</div>
+                <div className="mt-3 text-xs text-[var(--muted)]">{copy}</div><div className="mt-2 text-[8px] font-bold uppercase tracking-[.14em] text-emerald-300/80">Live source</div>
               </article>
             ))}
           </div>
