@@ -1,6 +1,7 @@
 import http from "node:http";
 import { spawn } from "node:child_process";
 import { createHmac, timingSafeEqual, randomUUID } from "node:crypto";
+import dns from "node:dns/promises";
 import { URL } from "node:url";
 
 const PORT = Number(process.env.PORT ?? 8787);
@@ -13,6 +14,7 @@ const ALLOW_PRIVATE = /^(1|true|yes)$/i.test(process.env.ELITZE_RUNNER_ALLOW_PRI
 const MAX_CONCURRENT = Math.max(1, Math.min(8, Number(process.env.ELITZE_RUNNER_MAX_CONCURRENT ?? 2)));
 const NUCLEI_BIN = process.env.NUCLEI_BIN?.trim() || "nuclei";
 const DEFAULT_RATE = Math.max(1, Math.min(200, Number(process.env.ELITZE_RUNNER_RATE_LIMIT ?? 20)));
+const TEMPLATE_UPDATE = /^(1|true|yes)$/i.test(process.env.ELITZE_RUNNER_UPDATE_TEMPLATES ?? "true");
 
 if (!CONTROL_SECRET) {
   console.error("ELITZE_SECURITY_RUNNER_HMAC_SECRET is required");
@@ -83,15 +85,25 @@ function hostAuthorized(hostname) {
   return false;
 }
 
-function isPrivateHost(hostname) {
-  const host = hostname.toLowerCase();
-  if (host === "localhost" || host.endsWith(".localhost") || host === "::1") return true;
-  const match = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
-  if (!match) return false;
-  const octets = match.slice(1).map(Number);
-  if (octets.some((n) => n > 255)) return true;
-  const [a,b] = octets;
+function isPrivateIp(address) {
+  const value = address.toLowerCase();
+  if (value === "::1" || value === "0:0:0:0:0:0:0:1") return true;
+  if (value.includes(":")) {
+    return value.startsWith("fc") || value.startsWith("fd") || value.startsWith("fe80:");
+  }
+  const match = value.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (!match) return true;
+  const [a,b] = match.slice(1).map(Number);
+  if ([a,b,...match.slice(3).map(Number)].some((n) => n > 255)) return true;
   return a === 10 || a === 127 || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 169 && b === 254) || a === 0;
+}
+
+async function assertResolvedTargetSafe(hostname) {
+  if (ALLOW_PRIVATE) return;
+  const records = await dns.lookup(hostname, { all: true, verbatim: true });
+  if (!records.length || records.some((record) => isPrivateIp(record.address))) {
+    throw new Error("resolved_target_is_private_or_unroutable");
+  }
 }
 
 function validateJob(input) {
@@ -103,8 +115,12 @@ function validateJob(input) {
   if (!validCallback(input.callbackUrl)) throw new Error("callback_not_allowed");
   if (!/^(http|https):\/\//i.test(input.target)) throw new Error("invalid_target");
   const target = new URL(input.target);
+  if (target.username || target.password) throw new Error("target_credentials_not_allowed");
   if (!hostAuthorized(target.hostname)) throw new Error("target_not_in_authorized_allowlist");
-  if (!ALLOW_PRIVATE && isPrivateHost(target.hostname)) throw new Error("private_target_blocked");
+  if (!ALLOW_PRIVATE) {
+    if (isPrivateIp(target.hostname)) throw new Error("private_target_blocked");
+    await assertResolvedTargetSafe(target.hostname);
+  }
   if (input.roeExpiresAt && Date.parse(input.roeExpiresAt) <= Date.now()) throw new Error("roe_expired");
   return {
     ...input,
@@ -160,8 +176,31 @@ function templateArgs(job) {
   return args;
 }
 
+let templatesReady = false;
+
+async function ensureTemplates() {
+  if (templatesReady || !TEMPLATE_UPDATE) return;
+  await new Promise((resolve, reject) => {
+    const child = spawn(NUCLEI_BIN, ["-update-templates", "-silent"], { stdio: ["ignore", "ignore", "pipe"] });
+    let error = "";
+    child.stderr.on("data", (chunk) => { error += chunk.toString("utf8").slice(0, 2000); });
+    child.once("error", reject);
+    child.once("close", (code) => code === 0 ? resolve() : reject(new Error(error || "nuclei_template_update_failed")));
+  });
+  templatesReady = true;
+}
+
 async function execute(job) {
   job.status = "RUNNING";
+  try {
+    await ensureTemplates();
+  } catch (error) {
+    job.status = "FAILED";
+    job.completedAt = new Date().toISOString();
+    job.result = { engine: "nuclei", error: error instanceof Error ? error.message : String(error) };
+    await callback(job, "FAILED", { events: [{ level: "ERROR", eventType: "RUN_FAILED", message: "Scanner template preparation failed." }], result: job.result });
+    return;
+  }
   job.startedAt = new Date().toISOString();
   job.heartbeatAt = job.startedAt;
   job.events = [{ level: "INFO", eventType: "RUN_STARTED", message: "Authorized security scan started." }];
