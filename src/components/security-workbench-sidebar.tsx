@@ -7,8 +7,8 @@ const groups = [
     items: [
       { href: "/console", label: "Command Center", icon: LayoutDashboard, description: "Identity, policy and evidence" },
       { href: "/control-room", label: "Control Room", icon: Activity, description: "Attack, observe, prove" },
-      { href: "/console/pentesting", label: "Pentesting", icon: Crosshair, description: "Authorized security validation" },
-      { href: "/console/vulnerabilities", label: "Vulnerability Search", icon: Bug, description: "CVE, KEV and vulnerability intelligence" },
+      { href: "/console/pentesting", label: "Security Validation", icon: Crosshair, description: "Live manual and automated testing" },
+      { href: "/console/vulnerabilities", label: "Vulnerability Intelligence", icon: Bug, description: "CVE, KEV and emerging-threat signals" },
     ],
   },
   {
@@ -29,12 +29,12 @@ export default function SecurityWorkbenchSidebar() {
       <div className="flex h-full flex-col">
         <div className="border-b border-white/8 px-5 py-5">
           <Link href="/console" className="text-sm font-black tracking-[.24em] text-white">ELITZE</Link>
-          <div className="mt-1 text-[9px] uppercase tracking-[.22em] text-cyan-300/80">The accountability layer for autonomous agents</div>
+          <div className="mt-1 text-[9px] uppercase tracking-[.22em] text-cyan-300/80">Enterprise agentic security control plane</div>
         </div>
         <div className="flex-1 overflow-y-auto px-3 py-4">
           <div className="mb-4 rounded-2xl border border-cyan-300/10 bg-cyan-300/[.035] p-4">
             <div className="text-[9px] font-bold uppercase tracking-[.2em] text-cyan-200/80">CONTROL PATH</div>
-            <div className="mt-2 text-xs font-semibold leading-5 text-slate-200">Discover → Identify → Map Reach → Decide → Execute → Prove → Retest</div>
+            <div className="mt-2 text-xs font-semibold leading-5 text-slate-200">Discover → Identify → Map Reach → Decide → Execute → Observe → Prove → Retest</div>
           </div>
           {groups.map((group) => (
             <section key={group.label} className="mb-5">
