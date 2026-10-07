@@ -5,7 +5,7 @@ FROM node:22-alpine
 RUN apk add --no-cache ca-certificates
 COPY --from=nuclei-build /go/bin/nuclei /usr/local/bin/nuclei
 WORKDIR /app
-COPY runner/server.mjs /app/server.mjs
+COPY server.mjs /app/server.mjs
 USER node
 ENV PORT=8787
 EXPOSE 8787
