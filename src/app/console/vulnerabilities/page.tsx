@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useCallback, useEffect, useState } from "react";
+import { FormEvent, useCallback, useState } from "react";
 import { Activity, AlertTriangle, Bug, ExternalLink, RefreshCw, Search, ShieldAlert, ShieldCheck } from "lucide-react";
 
 type Result = {
@@ -83,10 +83,6 @@ export default function VulnerabilitiesPage() {
     }
   }, [mode, query]);
 
-  useEffect(() => {
-    if (query.trim()) void runSearch(query, mode);
-  }, [mode]);
-
   function submit(event: FormEvent) {
     event.preventDefault();
     void runSearch();
@@ -131,7 +127,7 @@ export default function VulnerabilitiesPage() {
       <section className="mx-auto max-w-7xl px-4 py-8 sm:px-6 sm:py-12">
         <form onSubmit={submit} className="rounded-3xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-5 sm:p-7">
           <div className="grid gap-3 lg:grid-cols-[230px_1fr_auto]">
-            <select value={mode} onChange={(e) => setMode(e.target.value)} className="rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] px-3 py-3 text-sm outline-none">{modes.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select>
+            <select value={mode} onChange={(e) => { const nextMode = e.target.value; setMode(nextMode); if (query.trim()) void runSearch(query, nextMode); }} className="rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] px-3 py-3 text-sm outline-none">{modes.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select>
             <input value={query} onChange={(e) => setQuery(e.target.value)} maxLength={240} required placeholder="CVE-2026-…, OpenSSL, Microsoft, npm package, vendor advisory…" className="min-w-0 rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] px-4 py-3 text-sm outline-none placeholder:text-[var(--muted)]" />
             <button disabled={busy} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-black text-slate-950 disabled:opacity-50"><Search className="h-4 w-4" />{busy ? "Searching live sources" : "Search live sources"}</button>
           </div>
