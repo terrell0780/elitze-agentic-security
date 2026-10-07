@@ -74,6 +74,8 @@ jobs:
         run: npm run agent-workflow:self-test
       - name: Contact and acquisition routing self-test
         run: npm run contact-acquisition:self-test
+      - name: Live validation self-test
+        run: npm run live-validation:self-test
 
       - name: Typecheck
         run: npm run typecheck
@@ -85,7 +87,7 @@ jobs:
         run: npm run build
 
       - name: Code review green light
-        run: echo "GREEN LIGHT — review integrity, sale readiness, security fabric, typecheck, lint, and production build passed."
+        run: echo "GREEN LIGHT — review integrity, sale readiness, security fabric, live validation, typecheck, lint, and production build passed."
 
   verify:
     needs: code-review
@@ -180,6 +182,9 @@ jobs:
       - name: Pentest request self-test
         run: npm run pentest-request:self-test
 
+      - name: Live validation self-test
+        run: npm run live-validation:self-test
+
       - name: Typecheck
         run: npm run typecheck
 
@@ -214,5 +219,5 @@ jobs:
     steps:
       - name: Confirm all release gates passed
         run: |
-          echo "GREEN LIGHT — code review, security verification, sale readiness, security fabric, typecheck, lint, build, dependency audit, and SBOM gates passed."
+          echo "GREEN LIGHT — code review, security verification, sale readiness, security fabric, live validation, typecheck, lint, build, dependency audit, and SBOM gates passed."
           echo "This commit is eligible for merge evaluation and production promotion."
