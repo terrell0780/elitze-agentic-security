@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS security_test_findings (
   status text NOT NULL DEFAULT 'OPEN' CHECK (status IN ('OPEN','ACCEPTED','REMEDIATING','RESOLVED','FALSE_POSITIVE')),
   summary text NOT NULL,
   remediation text,
-  references jsonb NOT NULL DEFAULT '[]'::jsonb,
+  "references" jsonb NOT NULL DEFAULT '[]'::jsonb,
   evidence jsonb NOT NULL DEFAULT '{}'::jsonb,
   observed_at timestamptz,
   created_at timestamptz NOT NULL DEFAULT now(),
