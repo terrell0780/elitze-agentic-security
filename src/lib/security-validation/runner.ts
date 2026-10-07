@@ -56,7 +56,7 @@ export async function runnerConfigured() {
 }
 
 export async function dispatchValidationJob(input: RunnerDispatchInput) {
-  const callbackUrl = productionConfig.canonicalOrigin.replace(/\/$/, "") + "/api/security/validation/ingest";
+  const callbackUrl = productionConfig.canonicalOrigin.replace(/\/$/, "") + "/api/security/pentest";
   const body = JSON.stringify({ ...input, callbackUrl });
   const response = await runnerFetch("/v1/jobs", {
     method: "POST",
