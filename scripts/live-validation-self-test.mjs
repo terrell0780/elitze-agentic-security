@@ -18,7 +18,7 @@ assert.match(migration, /security_test_findings/);
 assert.match(kinds, /PENTEST.*RED_TEAM/);
 assert.match(kinds, /roe_expires_at/);
 assert.match(runner, /ELITZE_SECURITY_RUNNER_HMAC_SECRET/);
-assert.match(runner, /callbackUrl/);
+assert.match(runner, /\/api\/security\/pentest/);
 assert.match(page, /Run now/);
 assert.match(page, /Live telemetry/);
 assert.match(page, /Findings/);
