@@ -38,7 +38,7 @@ type Api = {
 const modes = [
   { value: "cve", label: "CVE / vulnerability" },
   { value: "kev", label: "CISA KEV" },
-  { value: "zero-day", label: "Emerging / zero-day signals" },
+  { value: "zero-day", label: "Zero-day signals" },
   { value: "package", label: "Package / product" },
 ];
 
