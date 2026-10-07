@@ -106,7 +106,7 @@ async function assertResolvedTargetSafe(hostname) {
   }
 }
 
-function validateJob(input) {
+async function validateJob(input) {
   if (!input || typeof input !== "object") throw new Error("invalid_job");
   const required = ["jobId","tenantId","kind","executionMode","target","scope","profile","authorizationRef","callbackUrl"];
   for (const key of required) if (typeof input[key] !== "string" || !input[key].trim()) throw new Error(key + "_required");
@@ -328,7 +328,7 @@ async function handle(req, res) {
 
   if (req.method === "POST" && url.pathname === "/v1/jobs") {
     try {
-      const job = validateJob(JSON.parse(body));
+      const job = await validateJob(JSON.parse(body));
       if (jobs.has(job.jobId)) return json(res, 200, { ok: true, jobId: job.jobId, status: jobs.get(job.jobId).status });
       const record = { ...job, status: "QUEUED", createdAt: new Date().toISOString(), heartbeatAt: null, startedAt: null, completedAt: null, findings: [], events: [], result: null, cancelRequested: false };
       enqueue(record);
