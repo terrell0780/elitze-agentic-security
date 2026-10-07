@@ -78,6 +78,8 @@ jobs:
         run: npm run live-validation:self-test
       - name: Security runner self-test
         run: npm run runner:self-test
+      - name: Vulnerability intelligence self-test
+        run: npm run vulnerability-intelligence:self-test
 
       - name: Typecheck
         run: npm run typecheck
