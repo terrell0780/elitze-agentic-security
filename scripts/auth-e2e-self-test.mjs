@@ -45,7 +45,7 @@ if (!process.env.PGUSER || !process.env.PGPASSWORD || !process.env.PGHOST || !pr
   throw new Error("PG environment or project DATABASE_URL is required for auth E2E");
 }
 
-const databaseUrl = ["postgresql:", "//", process.env.PGUSER, ":", process.env.PGPASSWORD, "@", process.env.PGHOST, ":", process.env.PGPORT, "/", process.env.PGDATABASE].join("");
+const databaseUrl = configuredDatabaseUrl;
 
 let deliveredEmail;
 const mailServer = createServer(async (request, response) => {
@@ -81,10 +81,10 @@ const env = {
 const nextCli = path.resolve(process.cwd(), "node_modules/next/dist/bin/next");
 const server = spawn(process.execPath, [nextCli, "start", "--hostname", host, "--port", String(appPort)], {
   env,
-  detached: process.platform !== "win32",
+  detached: false,
   stdio: ["ignore", "pipe", "pipe"],
 });
-server.unref();
+// Keep the child referenced until stop() for deterministic Windows E2E cleanup.
 let serverLogs = "";
 let serverExited = false;
 server.stdout.on("data", (chunk) => { serverLogs += chunk.toString(); });
@@ -208,9 +208,11 @@ function sessionCookie(response) {
 
 try {
   await waitForServer();
-  const db = new Client({ connectionString: databaseUrl });
+  const db = new Client({ connectionString: databaseUrl, connectionTimeoutMillis: 10000 });
   await db.connect();
+  console.log("E2E: DB connected");
   try {
+    console.log("E2E: starting registration");
     const registration = await jsonRequest("/api/auth/register", {
       method: "POST",
       body: JSON.stringify({ email: testEmail, password: primaryPassword, displayName: "ELITZE E2E" }),
@@ -453,7 +455,7 @@ try {
     assert(evidenceBBody.records.some((record) => record.decisionRef === fixtureB.decisionRef), "tenant B evidence missing");
     assert(!evidenceBBody.records.some((record) => record.decisionRef === fixtureA.decisionRef), "tenant B evidence exposed tenant A data");
 
-    console.log("ELITZE real-auth E2E: PASS — clean PostgreSQL account creation, verification email contract, verification, login, database session creation, password reset, session revocation, and cross-tenant graph/evidence isolation verified");
+    console.log("ELITZE real-auth E2E: PASS - clean PostgreSQL account creation, verification email contract, verification, login, database session creation, password reset, session revocation, and cross-tenant graph/evidence isolation verified");
   } finally {
     await db.end();
   }
