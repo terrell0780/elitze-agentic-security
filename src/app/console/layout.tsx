@@ -4,6 +4,6 @@ import SecurityWorkbenchSidebar from "@/components/security-workbench-sidebar";
 export const dynamic = "force-dynamic";
 export default async function ConsoleLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const user = await getCurrentUser().catch(() => null);
-  if (!user) redirect("/login");
+  if (!user) redirect("/sales/access");
   return <div className="min-h-screen lg:pl-64"><SecurityWorkbenchSidebar />{children}</div>;
 }

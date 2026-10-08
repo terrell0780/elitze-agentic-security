@@ -43,12 +43,12 @@ export default function HomePage() {
           </nav>
           <div className="flex items-center gap-2 pr-12 sm:pr-0">
             <Link href="/sales" className="hidden rounded-xl border border-[var(--border)] bg-[var(--panel)] px-4 py-2.5 text-xs font-semibold sm:inline-flex">Acquisition</Link>
-            <AcquisitionCta href="/console" event="console_open" className="hidden rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-slate-950 sm:inline-flex">Open Control Plane</AcquisitionCta>
+            <AcquisitionCta href="/sales/access" event="repository_access_request" className="hidden rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-slate-950 sm:inline-flex">Request Controlled Access</AcquisitionCta>
             <button type="button" onClick={() => setMobileOpen((v) => !v)} aria-label="Toggle menu" className="inline-flex h-10 w-10 items-center justify-center rounded-xl border border-[var(--border)] bg-[var(--panel)] lg:hidden">{mobileOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}</button>
             <GlobalThemeToggle embedded />
           </div>
         </div>
-        {mobileOpen && <nav className="border-t border-[var(--border)] px-4 py-3 lg:hidden"><div className="mx-auto flex max-w-[1400px] flex-col gap-1">{[["Platform","/platform"],["Security","/security"],["REO","/reo"],["Chat","/chat"],["Search","/search"],["Help","/help"],["FAQ","/faq"],["Legal","/legal"],["Contact","/contact"],["Control Plane","/console"],["Acquisition","/sales"]].map(([label,href]) => <Link key={href} href={href} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-sm text-[var(--muted)] hover:bg-[var(--panel)] hover:text-[var(--text)]">{label}</Link>)}</div></nav>}
+        {mobileOpen && <nav className="border-t border-[var(--border)] px-4 py-3 lg:hidden"><div className="mx-auto flex max-w-[1400px] flex-col gap-1">{[["Platform","/platform"],["Security","/security"],["REO","/reo"],["Chat","/chat"],["Search","/search"],["Help","/help"],["FAQ","/faq"],["Legal","/legal"],["Contact","/contact"],["Controlled Access","/sales/access"],["Acquisition","/sales"]].map(([label,href]) => <Link key={href} href={href} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-sm text-[var(--muted)] hover:bg-[var(--panel)] hover:text-[var(--text)]">{label}</Link>)}</div></nav>}
       </header>
 
       <section className="relative overflow-hidden border-b border-[var(--border)]">
@@ -60,7 +60,7 @@ export default function HomePage() {
             <h1 className="mt-7 max-w-3xl text-[3.7rem] font-black leading-[.88] tracking-[-.075em] sm:text-6xl lg:text-[5.7rem]">Control what<br /><span className="text-[var(--accent)]">agents can do.</span></h1>
             <p className="mt-7 max-w-2xl text-lg leading-8 text-[var(--muted-strong)]">ELITZE connects discovery, identity, reachability, policy enforcement, runtime validation and evidence around the actions AI systems actually take.</p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <AcquisitionCta href="/console" event="console_open" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950">Open control plane <ArrowRight className="h-4 w-4" /></AcquisitionCta>
+              <AcquisitionCta href="/sales/access" event="repository_access_request" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950">Request controlled access <ArrowRight className="h-4 w-4" /></AcquisitionCta>
               <AcquisitionCta href="/sales" event="sales_cta" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold">Enterprise / acquisition <ArrowRight className="h-4 w-4" /></AcquisitionCta>
             </div>
             <div className="mt-8 grid max-w-xl grid-cols-2 gap-x-6 gap-y-3 text-[10px] font-bold uppercase tracking-[.15em] text-[var(--muted)] sm:grid-cols-4">
