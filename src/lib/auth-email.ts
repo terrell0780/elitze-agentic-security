@@ -9,28 +9,27 @@ const env = (name: string) => process.env[name]?.trim() ?? "";
 const DEFAULT_REPLY_TO = "tsh_cook@hotmail.com";
 
 export async function sendEmail({ to, subject, text, replyTo }: EmailMessage) {
-  const provider = env("ELITZE_EMAIL_PROVIDER").toLowerCase() || "postmark";
+  const provider = env("ELITZE_EMAIL_PROVIDER").toLowerCase() || "resend";
   const from = env("ELITZE_EMAIL_FROM");
   if (!from) throw new Error("email_delivery_not_configured");
 
-  if (provider === "postmark") {
-    const token = env("POSTMARK_SERVER_TOKEN");
-    if (!token) throw new Error("email_delivery_not_configured");
+  if (provider === "resend") {
+    const apiKey = env("RESEND_API_KEY");
+    if (!apiKey) throw new Error("email_delivery_not_configured");
 
-    const endpoint = env("POSTMARK_API_URL") || "https://api.postmarkapp.com/email";
-    const response = await fetch(endpoint, {
+    const response = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
-        "X-Postmark-Server-Token": token,
+        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
         Accept: "application/json",
       },
       body: JSON.stringify({
-        From: from,
-        To: to,
-        Subject: subject,
-        TextBody: text,
-        ReplyTo: replyTo || env("ELITZE_CONTACT_EMAIL") || DEFAULT_REPLY_TO,
+        from,
+        to: [to],
+        subject,
+        text,
+        reply_to: [replyTo || env("ELITZE_CONTACT_EMAIL") || DEFAULT_REPLY_TO].filter(Boolean),
       }),
       cache: "no-store",
     });
