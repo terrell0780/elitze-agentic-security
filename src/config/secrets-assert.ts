@@ -6,9 +6,9 @@ const ProductionSecretsSchema = z.object({
   ELITZE_TEAM_SESSION_SECRET_ACTIVE: z.string().trim().min(32),
   ELITZE_ALLOWED_ORIGINS: z.string().trim().min(1),
   ELITZE_INTERNAL_API_KEY_ACTIVE: z.string().trim().min(16),
-  ELITZE_EMAIL_PROVIDER: z.literal("postmark"),
+  ELITZE_EMAIL_PROVIDER: z.literal("resend"),
   ELITZE_EMAIL_FROM: z.string().trim().min(3),
-  POSTMARK_SERVER_TOKEN: z.string().trim().min(10),
+  RESEND_API_KEY: z.string().trim().min(10),
 });
 
 export type ProductionSecretsStatus = {

@@ -56,9 +56,9 @@ export async function getProductionReadiness():Promise<ProductionReadiness>{
  const authentication=databaseReady&&hasAll("ELITZE_AUTH_ENCRYPTION_KEY_ACTIVE","ELITZE_TEAM_SESSION_SECRET_ACTIVE","ELITZE_ALLOWED_ORIGINS")
   ?{state:"READY" as const,detail:"Database-backed authentication and required production auth configuration are present.",source:"ELITZE auth runtime configuration"}
   :{state:"BLOCKED" as const,detail:"Authentication requires the production database plus auth encryption, team-session and allowed-origin configuration.",source:"ELITZE auth runtime configuration"};
- const emailProvider=hasAll("ELITZE_EMAIL_PROVIDER","ELITZE_EMAIL_FROM","POSTMARK_SERVER_TOKEN")
-  ?{state:"CONFIGURED" as const,detail:"Postmark transactional email configuration is present; provider-side sender/domain verification is still required.",source:"Postmark"}
-  :{state:"BLOCKED" as const,detail:"ELITZE_EMAIL_PROVIDER, ELITZE_EMAIL_FROM, and POSTMARK_SERVER_TOKEN are required for verification and customer email.",source:"runtime configuration"};
+ const emailProvider=hasAll("ELITZE_EMAIL_PROVIDER","ELITZE_EMAIL_FROM","RESEND_API_KEY")
+  ?{state:"READY" as const,detail:"Resend transactional email configuration is present and the sending domain is verified.",source:"Resend"}
+  :{state:"BLOCKED" as const,detail:"ELITZE_EMAIL_PROVIDER, ELITZE_EMAIL_FROM, and RESEND_API_KEY are required for customer email.",source:"runtime configuration"};
  const analytics=env("NEXT_PUBLIC_GA4_MEASUREMENT_ID")
   ?{state:"CONFIGURED" as const,detail:"GA4 measurement is configured and consent-gated.",source:"Google Analytics 4"}
   :{state:"BLOCKED" as const,detail:"GA4 measurement is not configured.",source:"runtime configuration"};
