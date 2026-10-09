@@ -30,7 +30,8 @@ export async function verifyRunnerHandshake({
   } catch {
     throw new Error("security_runner_url_invalid");
   }
-  if (parsedBase.protocol !== "https:" && parsedBase.hostname !== "127.0.0.1" && parsedBase.hostname !== "localhost") {
+  const localHttp = parsedBase.protocol === "http:" && ["127.0.0.1", "localhost"].includes(parsedBase.hostname);
+  if (parsedBase.protocol !== "https:" && !localHttp) {
     throw new Error("security_runner_https_required");
   }
 
