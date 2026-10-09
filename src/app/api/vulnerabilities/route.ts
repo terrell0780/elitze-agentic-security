@@ -1,4 +1,5 @@
-import { NextRequest, NextResponse } from "next/server";
+﻿import { NextRequest, NextResponse } from "next/server";
+import { calculateElitzeVpr, type VprContext } from "@/lib/vulnerability-triage";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -123,12 +124,57 @@ async function enrichEpss(results: any[]) {
   }
 }
 
+function parseVprContext(params: URLSearchParams): VprContext | null {
+  const assetCriticality = (params.get("asset_criticality") ?? "").toUpperCase();
+  const networkExposure = (params.get("network_exposure") ?? "").toUpperCase();
+  const dataClassification = (params.get("data_classification") ?? "").toUpperCase();
+  const exploitRaw = (params.get("exploit_available") ?? "").toLowerCase();
+  if (!["CRITICAL", "HIGH", "MEDIUM", "LOW"].includes(assetCriticality)) return null;
+  if (!["PUBLIC", "INTERNAL", "ISOLATED"].includes(networkExposure)) return null;
+  if (!["PII", "SENSITIVE", "PUBLIC"].includes(dataClassification)) return null;
+  if (exploitRaw !== "true" && exploitRaw !== "false") return null;
+  return { assetCriticality: assetCriticality as VprContext["assetCriticality"], networkExposure: networkExposure as VprContext["networkExposure"], dataClassification: dataClassification as VprContext["dataClassification"], exploitAvailable: exploitRaw === "true" };
+}
+
+function attachTriageEvidence(item: any, observedAt: string, vprContext: VprContext | null) {
+  const cvss = typeof item.cvss === "number" && Number.isFinite(item.cvss) ? item.cvss : null;
+  const epss = typeof item.epss === "number" && Number.isFinite(item.epss) ? item.epss : null;
+  // This transparent triage signal is not a proprietary VPR score and is not a finding of exploitability.
+  const prioritySignal = cvss !== null && epss !== null
+    ? Math.round(Math.min(100, Math.max(0, cvss * 7 + epss * 30 + (item.kev === true ? 15 : 0))))
+    : null;
+  const vprScore = cvss !== null && vprContext ? calculateElitzeVpr(cvss, vprContext) : null;
+  const sourceUrl = item.source === "CISA KEV" ? KEV_URL : String(item.url ?? NVD_URL);
+  return {
+    ...item,
+    truth_state: "OBSERVED",
+    evidence_reference: {
+      source: String(item.source ?? "UNKNOWN"),
+      source_url: sourceUrl,
+      record_url: String(item.url ?? sourceUrl),
+      observed_at: observedAt,
+      external_record_only: true,
+    },
+    reachability: {
+      truth_state: "UNMEASURABLE",
+      reason: "Customer asset inventory, deployment context and call-path evidence were not supplied by this external intelligence lookup.",
+    },
+    vpr_score: vprScore,
+    vpr_truth_state: vprScore === null ? "UNMEASURABLE" : "INFERRED",
+    vpr_context: vprContext ? { asset_criticality: vprContext.assetCriticality, network_exposure: vprContext.networkExposure, data_classification: vprContext.dataClassification, exploit_available: vprContext.exploitAvailable, truth_state: "DECLARED" } : null,
+    vpr_method: "ELITZE VPR compatibility formula; clamped to 0–10 and rounded to one decimal. Requires explicit caller-supplied asset context; not a vendor VPR score.",
+    priority_signal_score: prioritySignal,
+    priority_signal_truth_state: prioritySignal === null ? "UNMEASURABLE" : "INFERRED",
+    priority_signal_method: "ELITZE_TRIAGE_V1: CVSS × 7 + EPSS × 30 + 15 when listed in CISA KEV; capped at 100. This is a transparent triage signal, not a vendor VPR score or proof of exploitability.",
+  };
+}
 export async function GET(request: NextRequest) {
   const params = request.nextUrl.searchParams;
   const mode = (params.get("mode") ?? "cve").trim().toLowerCase();
   const query = (params.get("q") ?? "").trim().slice(0, 240);
-  if (!modeSet.has(mode)) return NextResponse.json({ ok: false, error: "invalid_mode" }, { status: 400 });
-  if (!query) return NextResponse.json({ ok: false, error: "query_required" }, { status: 400 });
+  if (!modeSet.has(mode)) return NextResponse.json({ ok: false, error: "invalid_mode", truth_state: "UNMEASURABLE", evidence_reference: null }, { status: 400 });
+  if (!query) return NextResponse.json({ ok: false, error: "query_required", truth_state: "UNMEASURABLE", evidence_reference: null }, { status: 400 });
+  const vprContext = parseVprContext(params);
 
   try {
     let results: any[] = [];
@@ -150,14 +196,19 @@ export async function GET(request: NextRequest) {
       results = await enrichEpss(results);
     }
 
+    const observedAt = new Date().toISOString();
     const deduped = [...new Map(results.map((item) => [item.source + ":" + item.id + ":" + item.title, item])).values()]
-      .slice(0, 30);
+      .slice(0, 30)
+      .map((item) => attachTriageEvidence(item, observedAt, vprContext));
 
     return NextResponse.json({
       ok: true,
       query,
       mode,
-      observedAt: new Date().toISOString(),
+      truth_state: Object.values(sourceStates).some((state) => state === "LIVE") ? "OBSERVED" : "UNMEASURABLE",
+      evidence_reference: { sources: sourceStates, observed_at: observedAt },
+      vpr_context_state: vprContext ? "DECLARED" : "UNMEASURABLE",
+      observedAt,
       sourceStates,
       resultCount: deduped.length,
       results: deduped,
@@ -165,6 +216,6 @@ export async function GET(request: NextRequest) {
     }, { headers: { "cache-control": "no-store" } });
   } catch (error) {
     console.error("ELITZE vulnerability intelligence failed", error);
-    return NextResponse.json({ ok: false, error: "vulnerability_intelligence_unavailable" }, { status: 503 });
+    return NextResponse.json({ ok: false, error: "vulnerability_intelligence_unavailable", truth_state: "UNMEASURABLE", evidence_reference: null }, { status: 503 });
   }
 }

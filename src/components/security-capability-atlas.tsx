@@ -1,6 +1,7 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
+import AgentPassportAtlas from "@/components/agent-passport-atlas";
 import { useMemo, useState } from "react";
 import {
   Activity,
@@ -81,7 +82,7 @@ export default function SecurityCapabilityAtlas() {
           <div className="max-w-3xl">
             <div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">ELITZE SECURITY ATLAS</div>
             <h2 className="mt-3 text-3xl font-black tracking-[-.045em] sm:text-5xl">Every security control, one visible surface.</h2>
-            <p className="mt-5 text-sm leading-7 text-[var(--muted-strong)]">Explore the product by security domain. Each tile is a live application surface or documented control path—not a decorative claim of unverified telemetry.</p>
+            <p className="mt-5 text-sm leading-7 text-[var(--muted-strong)]">Explore the product by security domain. Each tile is a live application surface or documented control path, not a decorative claim of unverified telemetry.</p>
           </div>
           <Link href="/search" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--accent-soft)] px-4 py-3 text-xs font-bold text-[var(--accent)]"><Search className="h-4 w-4" /> Open Global Search</Link>
         </div>
@@ -125,7 +126,7 @@ export default function SecurityCapabilityAtlas() {
                 <div><div className="text-lg font-black tracking-[-.03em]">{selected.title}</div><div className="mt-1 text-[9px] uppercase tracking-[.14em] text-slate-500">{selected.category}</div></div>
               </div>
               <p className="mt-5 text-xs leading-6 text-slate-400">{selected.detail}</p>
-              <Link href={selected.href} className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-300 px-4 py-3 text-xs font-bold text-slate-950">Open control <span aria-hidden="true">↗</span></Link>
+              <Link href={selected.href} className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-300 px-4 py-3 text-xs font-bold text-slate-950">Open control <span aria-hidden="true">Open</span></Link>
 
               <div className="mt-7 grid grid-cols-2 gap-2 text-center">
                 <div className="rounded-xl border border-white/8 bg-white/[.025] p-3"><div className="font-mono text-lg">{capabilities.length}</div><div className="mt-1 text-[8px] uppercase tracking-[.14em] text-slate-600">Mapped surfaces</div></div>
@@ -135,6 +136,7 @@ export default function SecurityCapabilityAtlas() {
           </aside>
         </div>
       </div>
+      <AgentPassportAtlas />
     </section>
   );
 }

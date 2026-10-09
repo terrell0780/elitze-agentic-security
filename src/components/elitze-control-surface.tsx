@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import SecurityTruthPanel from "@/components/security-truth-panel";
 import { Activity, ArrowUpRight, Database, FileSearch, Fingerprint, Layers3, Radar, RotateCcw, ShieldCheck, ScanLine, Waypoints } from "lucide-react";
 
 type DomainId = "agents" | "identity" | "mcp" | "tools" | "apis" | "data";
@@ -111,7 +112,7 @@ export default function ElitzeControlSurface() {
           </div>
           <div className="absolute right-4 top-4 z-20 flex gap-2">
             <button type="button" onClick={() => setZoom((value) => Math.min(1.18, value + 0.08))} className="rounded-full border border-white/10 bg-black/45 px-3 py-2 text-[10px]">+</button>
-            <button type="button" onClick={() => setZoom((value) => Math.max(.86, value - 0.08))} className="rounded-full border border-white/10 bg-black/45 px-3 py-2 text-[10px]">−</button>
+            <button type="button" onClick={() => setZoom((value) => Math.max(.86, value - 0.08))} className="rounded-full border border-white/10 bg-black/45 px-3 py-2 text-[10px]">âˆ’</button>
             <button type="button" onClick={() => { setZoom(1); setActive("agents"); setMode("GRAPH"); }} aria-label="Reset security view" className="rounded-full border border-white/10 bg-black/45 p-2"><RotateCcw className="h-3.5 w-3.5" /></button>
           </div>
 
@@ -147,7 +148,7 @@ export default function ElitzeControlSurface() {
                 const selected = entry.id === active;
                 return (
                   <button key={entry.id} type="button" onClick={() => setActive(entry.id)} style={{ left: `${entry.x}%`, top: `${entry.y}%` }} className={`absolute -translate-x-1/2 -translate-y-1/2 rounded-xl border px-3 py-2 backdrop-blur-xl transition ${selected ? "border-cyan-200/45 bg-cyan-200/10 text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,.12)]" : "border-white/10 bg-black/35 text-slate-400 hover:border-cyan-300/20 hover:text-white"}`}>
-                    <span className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[.12em]"><Icon className="h-3.5 w-3.5" />{entry.label}</span>
+                    <span className="flex flex-col items-start gap-1"><span className="flex items-center gap-1.5 text-[9px] font-bold uppercase tracking-[.12em]"><Icon className="h-3.5 w-3.5" />{entry.label}</span><span className="pl-5 font-mono text-[7px] tracking-[.1em] opacity-60">TRUTH: DECLARED</span></span>
                   </button>
                 );
               })}
@@ -155,8 +156,8 @@ export default function ElitzeControlSurface() {
           </div>
 
           <div className="absolute bottom-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/45 px-4 py-3 text-[9px] uppercase tracking-[.16em] text-slate-500 backdrop-blur-xl">
-            <span>{mode === "SCAN" ? "LIVE SCAN SURFACE · NO FINDINGS IMPLIED" : "SELECT OBJECT · INSPECT PATH · FOLLOW EVIDENCE"}</span>
-            <span>{overview?.ok ? "TENANT-SCOPED" : "NO RECORD. NO CLAIM."}</span>
+            <span>{mode === "SCAN" ? "SCAN MODE SELECTED · NO FINDINGS IMPLIED" : "SCHEMATIC GRAPH · RELATIONSHIPS: DECLARED"}</span>
+            <span>{overview?.ok ? "OVERVIEW METRICS OBSERVED" : "NO RECORD. NO CLAIM."}</span>
           </div>
         </div>
 
@@ -196,6 +197,7 @@ export default function ElitzeControlSurface() {
           <div className="mt-5 rounded-2xl border border-white/8 bg-black/20 p-4 text-[10px] leading-5 text-slate-500">No synthetic telemetry. Missing connector evidence remains unavailable, unknown or unmeasurable.</div>
         </aside>
       </div>
+      <SecurityTruthPanel />
     </section>
   );
 }

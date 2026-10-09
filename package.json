@@ -47,7 +47,9 @@
     "business-process:self-test": "node scripts/business-process-self-test.mjs",
     "security-graph:self-test": "node scripts/security-graph-self-test.mjs",
     "chat:governance-self-test": "node --experimental-strip-types scripts/chat-governance-self-test.mjs",
-    "diagnostics:manual-random": "node scripts/diagnostics-manual-random.mjs"
+    "diagnostics:manual-random": "node scripts/diagnostics-manual-random.mjs",
+    "agent-passports:self-test": "node --experimental-strip-types scripts/agent-passports-self-test.mjs",
+    "vulnerability-triage:self-test": "node --experimental-strip-types scripts/vulnerability-triage-self-test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.0.0",
