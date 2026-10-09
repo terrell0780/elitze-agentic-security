@@ -32,6 +32,7 @@
     "live-validation:self-test": "node scripts/live-validation-self-test.mjs",
     "runner:self-test": "node runner/self-test.mjs",
     "runner:handshake-self-test": "node runner/handshake-integration-self-test.mjs",
+    "runner:control-plane-handshake-self-test": "node --experimental-strip-types scripts/runner-control-plane-handshake-self-test.mjs",
     "vulnerability-intelligence:self-test": "node scripts/vulnerability-intelligence-self-test.mjs",
     "security-fabric:self-test": "node scripts/security-fabric-self-test.mjs",
     "google-ads-governance:self-test": "node scripts/google-ads-governance-self-test.mjs",
