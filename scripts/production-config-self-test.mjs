@@ -45,6 +45,16 @@ assert.match(read("src/lib/elitze-secure/elitze-agent.ts"), /ELITZE_AGENT_ASSIST
 assert.match(read("src/app/api/public/health/route.ts"), /export \{ GET \}/);
 assert.doesNotMatch(read("docs/ELITZE-AGENTIC-SECURITY-MERGED-FOUNDATION.md"), /ELITZE SECURE/);
 
+const productionSecrets = read("src/config/secrets-assert.ts");
+assert.match(productionSecrets, /ELITZE_EMAIL_PROVIDER:\s*z\.literal\("resend"\)/);
+assert.match(productionSecrets, /RESEND_API_KEY:\s*z\.string\(\)\.trim\(\)\.min\(10\)/);
+assert.doesNotMatch(productionSecrets, /POSTMARK_SERVER_TOKEN/);
+const authEmail = read("src/lib/auth-email.ts");
+assert.match(authEmail, /https:\/\/api\.resend\.com\/emails/);
+assert.match(authEmail, /RESEND_API_KEY/);
+assert.doesNotMatch(authEmail, /POSTMARK_SERVER_TOKEN/);
+assert.match(env, /^ELITZE_EMAIL_PROVIDER=resend$/m);
+assert.match(env, /^RESEND_API_KEY=$/m);
 console.log("ELITZE production configuration self-test: PASS");
 
 const legacyIdentity = ["myt", "hos"].join("");
