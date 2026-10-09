@@ -1,0 +1,56 @@
+name: ELITZE Runner Handshake Gate
+
+on:
+  push:
+    branches:
+      - main
+      - verify/runner-handshake-20261008
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+concurrency:
+  group: runner-handshake-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  runner-handshake-validation:
+    name: Runner handshake and release checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install locked dependencies
+        run: npm ci
+
+      - name: Type-check
+        run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Verify runner-side challenge-response
+        run: npm run runner:handshake-self-test
+
+      - name: Verify control-plane challenge-response
+        run: npm run runner:control-plane-handshake-self-test
+
+      - name: Verify sale-readiness gate
+        run: npm run sale:readiness
+
+      - name: Build production application
+        run: npm run build
+
+      - name: Audit production dependencies
+        run: npm audit --omit=dev
