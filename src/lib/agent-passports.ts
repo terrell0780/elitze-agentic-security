@@ -16,11 +16,11 @@ export type AgentPassport = {
 };
 
 /**
- * ELITZE presentation of the 24 roles documented in the local MythosSecOps source archive.
+ * ELITZE presentation of the 24 roles documented in the supplied Python source archive.
  * Source-derived role descriptions are catalog declarations, not proof of active agents,
  * permissions, execution windows, real findings or claimed performance metrics.
  */
-const sourceReference = "MythosSecOps_Source.zip:static/index.html and app.py agent prompt catalog";
+const sourceReference = "supplied Python source archive: static/index.html and app.py agent prompt catalog";
 
 export const agentPassports: AgentPassport[] = [
   { id: "LINDY-01", name: "LINDY-01", role: "Zero-Day Hunter", division: "OFFENSIVE", mission: "Hunt for memory-safety defects and investigate candidate vulnerability paths.", documentedCapabilities: ["Static analysis", "Fuzzing", "CVE discovery", "ASAN harness concepts", "Exploit-chain analysis"], authorizationBoundary: "Target allowlist and written Rules of Engagement required; no unapproved exploitation.", executionWindow: "UNKNOWN — no live scheduler or runtime evidence connected", catalogTruthState: "DECLARED", runtimeTruthState: "UNKNOWN", sourceReference },
