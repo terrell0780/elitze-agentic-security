@@ -5,7 +5,7 @@ import dns from "node:dns/promises";
 import { URL } from "node:url";
 
 const PORT = Number(process.env.PORT ?? 8787);
-const CONTROL_SECRET = process.env.ELITZE_SECURITY_RUNNER_HMAC_SECRET?.trim() ?? "";
+const CONTROL_SECRET = process.env.ELITZE_RUNNER_HMAC_SECRET?.trim() ?? "";
 const RUNNER_TOKEN = process.env.ELITZE_SECURITY_RUNNER_TOKEN?.trim() ?? "";
 const CALLBACK_ORIGIN = process.env.ELITZE_CALLBACK_ORIGIN?.trim().replace(/\/$/, "") ?? "";
 const ALLOWED_HOSTS = (process.env.ELITZE_RUNNER_ALLOWED_HOSTS ?? "")
@@ -16,8 +16,8 @@ const NUCLEI_BIN = process.env.NUCLEI_BIN?.trim() || "nuclei";
 const DEFAULT_RATE = Math.max(1, Math.min(200, Number(process.env.ELITZE_RUNNER_RATE_LIMIT ?? 20)));
 const TEMPLATE_UPDATE = /^(1|true|yes)$/i.test(process.env.ELITZE_RUNNER_UPDATE_TEMPLATES ?? "true");
 
-if (!CONTROL_SECRET) {
-  console.error("ELITZE_SECURITY_RUNNER_HMAC_SECRET is required");
+if (!CONTROL_SECRET || Buffer.byteLength(CONTROL_SECRET, "utf8") < 32) {
+  console.error("ELITZE_RUNNER_HMAC_SECRET must contain at least 32 UTF-8 bytes");
   process.exit(1);
 }
 if (!CALLBACK_ORIGIN || !/^https:\/\//i.test(CALLBACK_ORIGIN)) {
@@ -31,6 +31,7 @@ if (!ALLOWED_HOSTS.length) {
 
 const jobs = new Map();
 const queue = [];
+const handshakeNonces = new Map();
 
 function authOk(req) {
   if (!RUNNER_TOKEN) return true;
@@ -325,6 +326,31 @@ async function handle(req, res) {
   if (!authOk(req)) return json(res, 401, { ok: false, error: "unauthorized" });
   const body = await readBody(req);
   if (!requestSignatureOk(req, body)) return json(res, 401, { ok: false, error: "invalid_signature" });
+
+  if (req.method === "POST" && url.pathname === "/api/handshake") {
+    let challenge;
+    try { challenge = JSON.parse(body); } catch { return json(res, 400, { ok: false, error: "invalid_json" }); }
+    const requestTimestamp = String(req.headers["x-elitze-timestamp"] ?? "");
+    const nonce = challenge?.nonce;
+    if (challenge?.action !== "handshake" || !Number.isSafeInteger(challenge?.timestamp) ||
+        String(challenge.timestamp) !== requestTimestamp || typeof nonce !== "string" ||
+        !/^[a-f0-9]{32}$/i.test(nonce)) {
+      return json(res, 400, { ok: false, error: "invalid_handshake_challenge" });
+    }
+    const now = Date.now();
+    for (const [seenNonce, seenAt] of handshakeNonces) if (now - seenAt > 300000) handshakeNonces.delete(seenNonce);
+    if (handshakeNonces.has(nonce)) return json(res, 409, { ok: false, error: "handshake_nonce_replayed" });
+    handshakeNonces.set(nonce, now);
+    const responseTimestamp = String(now);
+    const responseBody = JSON.stringify({ ok: true, action: "handshake", nonce, timestamp: now });
+    res.writeHead(200, {
+      "content-type": "application/json",
+      "cache-control": "no-store",
+      "x-elitze-timestamp": responseTimestamp,
+      "x-elitze-signature": signature(responseBody, responseTimestamp),
+    });
+    return res.end(responseBody);
+  }
 
   if (req.method === "POST" && url.pathname === "/v1/jobs") {
     try {

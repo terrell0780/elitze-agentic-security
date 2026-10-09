@@ -31,6 +31,7 @@
     "pentest-request:self-test": "node scripts/pentest-request-self-test.mjs",
     "live-validation:self-test": "node scripts/live-validation-self-test.mjs",
     "runner:self-test": "node runner/self-test.mjs",
+    "runner:handshake-self-test": "node runner/handshake-integration-self-test.mjs",
     "vulnerability-intelligence:self-test": "node scripts/vulnerability-intelligence-self-test.mjs",
     "security-fabric:self-test": "node scripts/security-fabric-self-test.mjs",
     "google-ads-governance:self-test": "node scripts/google-ads-governance-self-test.mjs",
