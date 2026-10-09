@@ -3,7 +3,7 @@ import { spawn } from "node:child_process";
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
 const port = 18787 + Math.floor(Math.random() * 1000);
-const secret = "test-only-runner-hmac-secret-32-bytes-min";
+const secret = randomBytes(32).toString("hex");
 const child = spawn(process.execPath, ["runner/server.mjs"], {
   env: {
     ...process.env,
