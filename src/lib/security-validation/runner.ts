@@ -1,5 +1,6 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { productionConfig } from "@/config/production";
+import { verifyRunnerHandshake } from "./runner-handshake";
 
 export type ValidationKind = "PENTEST" | "RED_TEAM";
 export type ExecutionMode = "manual" | "automatic";
@@ -56,6 +57,7 @@ export async function runnerConfigured() {
 }
 
 export async function dispatchValidationJob(input: RunnerDispatchInput) {
+  await verifyRunnerHandshake({ baseUrl: runnerBaseUrl(), secret: signingSecret(), token: runnerToken() });
   const callbackUrl = productionConfig.canonicalOrigin.replace(/\/$/, "") + "/api/security/pentest";
   const body = JSON.stringify({ ...input, callbackUrl });
   const response = await runnerFetch("/v1/jobs", {

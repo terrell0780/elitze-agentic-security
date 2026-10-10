@@ -1,7 +1,8 @@
-"use client";
+﻿"use client";
 
 import { FormEvent, useCallback, useState } from "react";
 import { Activity, AlertTriangle, Bug, ExternalLink, RefreshCw, Search, ShieldAlert, ShieldCheck } from "lucide-react";
+import SecurityAnalysisWorkbench from "@/components/security-analysis-workbench";
 
 type Result = {
   id: string;
@@ -21,6 +22,13 @@ type Result = {
   dueDate?: string | null;
   references?: string[];
   external?: true;
+  truth_state?: "OBSERVED" | "DECLARED" | "INFERRED" | "UNKNOWN" | "UNMEASURABLE";
+  evidence_reference?: { source?: string; source_url?: string; record_url?: string; observed_at?: string; external_record_only?: boolean } | null;
+  reachability?: { truth_state: "OBSERVED" | "DECLARED" | "INFERRED" | "UNKNOWN" | "UNMEASURABLE"; reason: string };
+  vpr_score?: number | null;
+  vpr_truth_state?: "OBSERVED" | "DECLARED" | "INFERRED" | "UNKNOWN" | "UNMEASURABLE";
+  priority_signal_score?: number | null;
+  priority_signal_truth_state?: "OBSERVED" | "DECLARED" | "INFERRED" | "UNKNOWN" | "UNMEASURABLE";
 };
 
 type Api = {
@@ -32,6 +40,8 @@ type Api = {
   results?: Result[];
   resultCount?: number;
   truthNote?: string;
+  truth_state?: "OBSERVED" | "DECLARED" | "INFERRED" | "UNKNOWN" | "UNMEASURABLE";
+  vpr_context_state?: "DECLARED" | "UNMEASURABLE";
   error?: string;
 };
 
@@ -58,6 +68,11 @@ export default function VulnerabilitiesPage() {
   const [observedAt, setObservedAt] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [assetCriticality, setAssetCriticality] = useState("");
+  const [networkExposure, setNetworkExposure] = useState("");
+  const [dataClassification, setDataClassification] = useState("");
+  const [exploitAvailable, setExploitAvailable] = useState("");
+  const [vprContextState, setVprContextState] = useState<"DECLARED" | "UNMEASURABLE">("UNMEASURABLE");
 
   const runSearch = useCallback(async (value = query, selectedMode = mode) => {
     const q = value.trim();
@@ -65,7 +80,15 @@ export default function VulnerabilitiesPage() {
     setBusy(true);
     setError(null);
     try {
-      const response = await fetch(`/api/vulnerabilities?mode=${encodeURIComponent(selectedMode)}&q=${encodeURIComponent(q)}`, { cache: "no-store" });
+      const params = new URLSearchParams({ mode: selectedMode, q });
+      const contextReady = Boolean(assetCriticality && networkExposure && dataClassification && exploitAvailable !== "");
+      if (contextReady) {
+        params.set("asset_criticality", assetCriticality);
+        params.set("network_exposure", networkExposure);
+        params.set("data_classification", dataClassification);
+        params.set("exploit_available", exploitAvailable);
+      }
+      const response = await fetch(`/api/vulnerabilities?${params.toString()}`, { cache: "no-store" });
       const payload = (await response.json()) as Api;
       if (!response.ok || !payload.ok) {
         setError(payload.error ?? "Vulnerability intelligence unavailable");
@@ -75,13 +98,14 @@ export default function VulnerabilitiesPage() {
       setResults(payload.results ?? []);
       setSourceStates(payload.sourceStates ?? {});
       setObservedAt(payload.observedAt ?? null);
+      setVprContextState(payload.vpr_context_state ?? "UNMEASURABLE");
     } catch {
       setError("Vulnerability intelligence service unavailable");
       setResults([]);
     } finally {
       setBusy(false);
     }
-  }, [mode, query]);
+  }, [mode, query, assetCriticality, networkExposure, dataClassification, exploitAvailable]);
 
   function submit(event: FormEvent) {
     event.preventDefault();
@@ -117,7 +141,7 @@ export default function VulnerabilitiesPage() {
             ].map(([label, state, copy]) => (
               <article key={label} className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-4">
                 <div className="flex items-center justify-between gap-3"><div className="text-[9px] font-bold uppercase tracking-[.16em] text-[var(--muted)]">{label}</div><span className={"text-[8px] font-black uppercase " + (state === "LIVE" ? "text-emerald-300" : "text-amber-300")}>{state}</span></div>
-                <div className="mt-3 text-xs text-[var(--muted)]">{copy}</div><div className="mt-2 text-[8px] font-bold uppercase tracking-[.14em] text-emerald-300/80">Live source</div>
+                <div className="mt-3 text-xs text-[var(--muted)]">{copy}</div><div className={"mt-2 text-[8px] font-bold uppercase tracking-[.14em] " + (state === "LIVE" ? "text-emerald-300/80" : "text-amber-200/80")}>{state === "LIVE" ? "OBSERVED source response" : "UNMEASURABLE / NOT VERIFIED"}</div>
               </article>
             ))}
           </div>
@@ -128,13 +152,29 @@ export default function VulnerabilitiesPage() {
         <form onSubmit={submit} className="rounded-3xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-5 sm:p-7">
           <div className="grid gap-3 lg:grid-cols-[230px_1fr_auto]">
             <select value={mode} onChange={(e) => { const nextMode = e.target.value; setMode(nextMode); if (query.trim()) void runSearch(query, nextMode); }} className="rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] px-3 py-3 text-sm outline-none">{modes.map((item) => <option key={item.value} value={item.value}>{item.label}</option>)}</select>
-            <input value={query} onChange={(e) => setQuery(e.target.value)} maxLength={240} required placeholder="CVE-2026-…, OpenSSL, Microsoft, npm package, vendor advisory…" className="min-w-0 rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] px-4 py-3 text-sm outline-none placeholder:text-[var(--muted)]" />
+            <input value={query} onChange={(e) => setQuery(e.target.value)} maxLength={240} required placeholder="CVE identifier, OpenSSL, Microsoft, npm package, vendor advisory" className="min-w-0 rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] px-4 py-3 text-sm outline-none placeholder:text-[var(--muted)]" />
             <button disabled={busy} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-black text-slate-950 disabled:opacity-50"><Search className="h-4 w-4" />{busy ? "Searching live sources" : "Search live sources"}</button>
           </div>
+          <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            <label className="grid gap-1 text-[9px] font-bold uppercase tracking-[.12em] text-[var(--muted)]">Asset criticality
+              <select value={assetCriticality} onChange={(e) => setAssetCriticality(e.target.value)} className="rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] px-3 py-2.5 text-xs text-[var(--text)]"><option value="">Not supplied</option><option value="CRITICAL">Critical</option><option value="HIGH">High</option><option value="MEDIUM">Medium</option><option value="LOW">Low</option></select>
+            </label>
+            <label className="grid gap-1 text-[9px] font-bold uppercase tracking-[.12em] text-[var(--muted)]">Network exposure
+              <select value={networkExposure} onChange={(e) => setNetworkExposure(e.target.value)} className="rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] px-3 py-2.5 text-xs text-[var(--text)]"><option value="">Not supplied</option><option value="PUBLIC">Public</option><option value="INTERNAL">Internal</option><option value="ISOLATED">Isolated</option></select>
+            </label>
+            <label className="grid gap-1 text-[9px] font-bold uppercase tracking-[.12em] text-[var(--muted)]">Data classification
+              <select value={dataClassification} onChange={(e) => setDataClassification(e.target.value)} className="rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] px-3 py-2.5 text-xs text-[var(--text)]"><option value="">Not supplied</option><option value="PII">PII</option><option value="SENSITIVE">Sensitive</option><option value="PUBLIC">Public</option></select>
+            </label>
+            <label className="grid gap-1 text-[9px] font-bold uppercase tracking-[.12em] text-[var(--muted)]">Exploit available
+              <select value={exploitAvailable} onChange={(e) => setExploitAvailable(e.target.value)} className="rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] px-3 py-2.5 text-xs text-[var(--text)]"><option value="">Not supplied</option><option value="true">Yes</option><option value="false">No</option></select>
+            </label>
+          </div>
+          <p className="mt-3 text-[9px] leading-4 text-[var(--muted)]">Optional ELITZE VPR context. All four values are caller-declared inputs; without them, VPR remains UNMEASURABLE. Public intelligence alone cannot establish tenant reachability.</p>
           <div className="mt-4 flex flex-wrap items-center gap-3 text-[9px] uppercase tracking-[.13em] text-[var(--muted)]">
             <span className="inline-flex items-center gap-1.5"><Activity className="h-3.5 w-3.5 text-[var(--accent)]" />{observedAt ? "Observed " + new Date(observedAt).toLocaleString() : "Awaiting live query"}</span>
             <span>Results: {results.length}</span>
             <span>External intelligence only</span>
+            <span>VPR context: {vprContextState}</span>
           </div>
         </form>
 
@@ -157,12 +197,15 @@ export default function VulnerabilitiesPage() {
 
               <p className="mt-4 text-sm leading-6 text-[var(--muted-strong)]">{result.description}</p>
 
-              <div className="mt-5 grid gap-3 sm:grid-cols-4">
+              <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                 {[
                   ["CVSS", score(result.cvss)],
                   ["EPSS", result.epss != null ? (result.epss * 100).toFixed(2) + "%" : "—"],
                   ["EPSS percentile", result.epssPercentile != null ? (result.epssPercentile * 100).toFixed(2) + "%" : "—"],
-                  ["Source state", "LIVE"],
+                  ["ELITZE VPR", typeof result.vpr_score === "number" ? result.vpr_score.toFixed(1) : "UNMEASURABLE"],
+                  ["VPR truth", result.vpr_truth_state ?? "UNMEASURABLE"],
+                  ["Reachability", result.reachability?.truth_state ?? "UNMEASURABLE"],
+                  ["Finding truth", result.truth_state ?? "UNKNOWN"],
                 ].map(([label, value]) => <div key={label} className="rounded-xl border border-[var(--border)] bg-[var(--panel-strong)] p-3"><div className="text-[8px] uppercase tracking-[.14em] text-[var(--muted)]">{label}</div><div className="mt-2 font-mono text-sm font-black">{value}</div></div>)}
               </div>
 
@@ -174,6 +217,8 @@ export default function VulnerabilitiesPage() {
               </div>}
 
               <div className="mt-5 flex flex-wrap items-center gap-3 border-t border-[var(--border)] pt-4 text-[9px] text-[var(--muted)]">
+                <span className="rounded-full border border-[var(--border)] px-2 py-1">TRUTH: {result.truth_state ?? "UNKNOWN"}</span>
+                <span className="break-all">Evidence: {result.evidence_reference?.source_url ?? result.url}</span>
                 <span>Published {result.published ? new Date(result.published).toLocaleString() : "—"}</span>
                 <span>Modified {result.modified ? new Date(result.modified).toLocaleString() : "—"}</span>
                 <span className="inline-flex items-center gap-1 text-amber-200/80"><ShieldAlert className="h-3 w-3" />Public intelligence does not prove tenant exposure</span>
@@ -188,9 +233,11 @@ export default function VulnerabilitiesPage() {
           </div>}
         </div>
 
+        <SecurityAnalysisWorkbench />
+
         <div className="mt-6 rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-5 text-[10px] leading-5 text-[var(--muted)]">
           <div className="font-black uppercase tracking-[.16em] text-[var(--text)]">Evidence boundary</div>
-          <div className="mt-2">NVD/CISA/EPSS data is live external intelligence. ELITZE still requires observed tenant assets, reachability and authorized validation before treating a vulnerability as an environment-specific finding.</div>
+          <div className="mt-2">NVD/CISA/EPSS data is live external intelligence. ELITZE still requires observed tenant assets and authorized validation before treating public intelligence as an environment-specific finding. VPR context is caller-declared; reachability remains UNMEASURABLE unless code or runtime evidence is separately analyzed.</div>
         </div>
       </section>
     </main>

@@ -141,7 +141,8 @@ export async function validateMcpUpstreamUrl(raw: string): Promise<URL> {
     .split(",")
     .map((item) => item.trim().toLowerCase())
     .filter(Boolean);
-  if (allowlist.length && !allowlist.includes(host)) {
+  // Controlled integrations only: an empty allowlist must never mean "allow any public host".
+  if (!allowlist.length || !allowlist.includes(host)) {
     throw new Error("mcp_upstream_host_not_allowlisted");
   }
 

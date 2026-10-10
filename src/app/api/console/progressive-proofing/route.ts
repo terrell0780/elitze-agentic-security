@@ -48,7 +48,14 @@ function receiptVerified(row: DecisionRow) {
 
 export async function GET() {
   const user = await getCurrentUser();
-  if (!user) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  if (!user) {
+    return NextResponse.json({
+      ok: false,
+      error: "unauthorized",
+      truth_state: "UNMEASURABLE",
+      evidence_reference: null,
+    }, { status: 401 });
+  }
 
   try {
     const result = await getPgPool().query<DecisionRow>(
@@ -95,6 +102,11 @@ export async function GET() {
       subject: subject(row),
       decision: row.decision,
       observedAt: row.observed_at ?? row.requested_at,
+      truth_state: ["OBSERVED", "DECLARED", "INFERRED", "UNKNOWN", "UNMEASURABLE"].includes(String(row.evidence_state))
+        ? String(row.evidence_state)
+        : records[index].stage === "UNMEASURABLE" ? "UNMEASURABLE" : "UNKNOWN",
+      evidence_reference: row.source_ref,
+      evidence_hash: row.evidence_hash,
       ...records[index],
     }));
 
@@ -114,7 +126,12 @@ export async function GET() {
   } catch (error) {
     console.error("ELITZE progressive proofing load failed", error);
     return NextResponse.json(
-      { ok: false, error: "progressive_proofing_unavailable", evidenceState: "UNMEASURABLE" },
+      {
+        ok: false,
+        error: "progressive_proofing_unavailable",
+        truth_state: "UNMEASURABLE",
+        evidence_reference: null,
+      },
       { status: 503, headers: { "cache-control": "no-store" } },
     );
   }

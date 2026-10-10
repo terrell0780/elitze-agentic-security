@@ -1,5 +1,3 @@
-import { getDb, databaseConfigurationSource } from "@/db";
-import { sql } from "drizzle-orm";
 import { productionConfig } from "@/config/production";
 import { validateProductionSecrets } from "@/config/secrets-assert";
 import { verifyProductionDatabase } from "@/lib/database-verify";
@@ -14,10 +12,6 @@ export async function GET() {
   const schema = database.success ? "ok" : databaseConfigured ? "migration_or_connection_error" : "unknown";
   const configurationReady = secretStatus.ok;
   const ok = database.success && configurationReady;
-
-  if (database.success) {
-    await getDb().execute(sql`select 1`);
-  }
 
   return Response.json(
     {

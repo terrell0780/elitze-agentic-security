@@ -394,6 +394,12 @@ export async function POST(request: NextRequest) {
   }
 
   const method = typeof body.method === "string" ? body.method : "";
+  if (method === "tools/call" && process.env.ELITZE_MCP_GATEWAY_EXECUTION_ENABLED !== "true") {
+    return json(
+      { error: "MCP_TOOL_EXECUTION_DISABLED", failClosed: true },
+      503,
+    );
+  }
   const requestId = requestBodyId(body) ?? crypto.randomUUID();
   const client = await pool.connect();
 
@@ -667,7 +673,7 @@ export async function POST(request: NextRequest) {
 
     const policyDecision = policyMatch
       ? mapDecision(policyMatch.decision)
-      : "ALLOW";
+      : "DENY";
 
     const baseDecision = moreRestrictiveDecision(
       policyDecision,
