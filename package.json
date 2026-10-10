@@ -49,7 +49,8 @@
     "chat:governance-self-test": "node --experimental-strip-types scripts/chat-governance-self-test.mjs",
     "diagnostics:manual-random": "node scripts/diagnostics-manual-random.mjs",
     "agent-passports:self-test": "node --experimental-strip-types scripts/agent-passports-self-test.mjs",
-    "vulnerability-triage:self-test": "node --experimental-strip-types scripts/vulnerability-triage-self-test.mjs"
+    "vulnerability-triage:self-test": "node --experimental-strip-types scripts/vulnerability-triage-self-test.mjs",
+    "evidence-snapshot:self-test": "node scripts/evidence-snapshot-self-test.mjs"
   },
   "dependencies": {
     "@modelcontextprotocol/server": "2.0.0",
