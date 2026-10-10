@@ -49,6 +49,7 @@ for (const marker of [
   "validateMcpUpstreamUrl",
   "mcp_upstream_https_required",
   "mcp_upstream_private_address_blocked",
+  "!allowlist.length || !allowlist.includes(host)",
 ]) {
   if (!gatewayLibrary.includes(marker)) throw new Error(`gateway_library_control_missing:${marker}`);
 }
