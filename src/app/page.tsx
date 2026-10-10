@@ -7,7 +7,7 @@ import { ArrowRight, Check, Crosshair, Menu, ShieldCheck, X } from "lucide-react
 import GlobalThemeToggle from "@/components/global-theme-toggle";
 import AcquisitionCta from "@/components/acquisition-cta";
 import LiveControlPlane from "@/components/live-control-plane";
-import GodsEyeGlobe from "@/components/gods-eye-globe";
+import SecurityWorkspacePreview from "@/components/security-workspace-preview";
 import SecurityCapabilityAtlas from "@/components/security-capability-atlas";
 
 const lifecycle = [
@@ -56,9 +56,9 @@ export default function HomePage() {
         <div className="pointer-events-none absolute left-[62%] top-[-220px] h-[650px] w-[650px] rounded-full bg-[var(--accent-glow)] blur-3xl" />
         <div className="relative mx-auto grid max-w-[1400px] gap-12 px-4 py-16 sm:px-7 sm:py-24 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:py-28">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent-border)] bg-[var(--accent-soft)] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]"><span className="h-1.5 w-1.5 rounded-full bg-[var(--accent)] pulse-soft" /> AI security control plane</div>
-            <h1 className="mt-7 max-w-3xl text-[3.7rem] font-black leading-[.88] tracking-[-.075em] sm:text-6xl lg:text-[5.7rem]">Control what<br /><span className="text-[var(--accent)]">agents can do.</span></h1>
-            <p className="mt-7 max-w-2xl text-lg leading-8 text-[var(--muted-strong)]">ELITZE connects discovery, identity, reachability, policy enforcement, runtime validation and evidence around the actions AI systems actually take.</p>
+            <div className="inline-flex items-center gap-2 rounded-full border border-violet-300/20 bg-violet-300/[.07] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[.22em] text-violet-200"><span className="h-1.5 w-1.5 rounded-full bg-violet-300 pulse-soft" /> ELITZE · Agentic Security</div>
+            <h1 className="mt-7 max-w-3xl text-[3.4rem] font-semibold leading-[.98] tracking-[-.065em] sm:text-6xl lg:text-[5rem]">AI security,<br /><span className="text-violet-300">under control.</span></h1>
+            <p className="mt-6 max-w-xl text-base leading-7 text-[var(--muted-strong)]">One workspace to inspect agent access, govern sensitive actions, and trace security decisions back to evidence.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <AcquisitionCta href="/console" event="console_open" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950">Open control plane <ArrowRight className="h-4 w-4" /></AcquisitionCta>
               <AcquisitionCta href="/sales" event="sales_cta" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold">Enterprise / acquisition <ArrowRight className="h-4 w-4" /></AcquisitionCta>
@@ -67,12 +67,12 @@ export default function HomePage() {
               {["Agent discovery","Workload identity","Policy enforcement","Evidence / retest"].map((x) => <div key={x} className="flex items-center gap-2"><Check className="h-3.5 w-3.5 text-[var(--accent)]" />{x}</div>)}
             </div>
           </div>
-          <LiveControlPlane />
+          <SecurityWorkspacePreview />
         </div>
       </section>
 
-      <section className="mx-auto max-w-[1400px] px-4 py-8 sm:px-7 sm:py-12">
-        <GodsEyeGlobe />
+      <section className="mx-auto max-w-[1400px] px-4 py-10 sm:px-7 sm:py-14">
+        <LiveControlPlane />
       </section>
 
       <SecurityCapabilityAtlas />

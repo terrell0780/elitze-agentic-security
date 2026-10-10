@@ -62,6 +62,8 @@ for (const marker of [
   "consumeMcpRateLimit",
   "ELITZE_MCP_GATEWAY_ENABLED",
   "ELITZE_MCP_GATEWAY_EXECUTION_ENABLED",
+  "MCP_TOOL_EXECUTION_DISABLED",
+  "failClosed: true",
   "APPROVAL_REQUIRED",
   "createApproval",
   "approvalIsValid",
@@ -70,6 +72,13 @@ for (const marker of [
   "consumed_at",
 ]) {
   if (!gateway.includes(marker)) throw new Error(`gateway_enforcement_missing:${marker}`);
+}
+
+if (!/method === "tools\/call" && process\.env\.ELITZE_MCP_GATEWAY_EXECUTION_ENABLED !== "true"/.test(gateway)) {
+  throw new Error("mcp_tool_execution_must_be_explicitly_enabled");
+}
+if (!/policyMatch\s*\?\s*mapDecision\(policyMatch\.decision\)\s*:\s*"DENY"/.test(gateway)) {
+  throw new Error("mcp_unmatched_policy_must_deny_by_default");
 }
 
 if (/capability === ["']\*["']/.test(gateway) || /capability\.includes\(tool/.test(gateway)) {

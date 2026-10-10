@@ -10,6 +10,8 @@ const dashboard = fs.readFileSync(path.join(root,"src/app/console/analyst/page.t
 const ingest = fs.readFileSync(path.join(root,"src/app/api/integrations/security-fabric/ingest/route.ts"),"utf8");
 const analystRoute = fs.readFileSync(path.join(root,"src/app/api/console/autonomous-analyst/route.ts"),"utf8");
 const sourceFabric = fs.readFileSync(path.join(root,"src/lib/elitze-secure/security-source-fabric.ts"),"utf8");
+const productionAdapters = fs.readFileSync(path.join(root,"src/lib/elitze-secure/production-adapters.ts"),"utf8");
+const defenseFabric = fs.readFileSync(path.join(root,"src/lib/elitze-secure/defense-fabric.ts"),"utf8");
 const consolePage = fs.readFileSync(path.join(root,"src/app/console/page.tsx"),"utf8");
 const envExample = fs.readFileSync(path.join(root,".env.example"),"utf8");
 
@@ -53,7 +55,13 @@ assert.match(analystRoute,/const findings = latestRun\s*\?/s);
 assert.match(analyst,/return "event:" \+ row\.id/);
 assert.doesNotMatch(analyst,/return row\.event_type/);
 assert.match(analyst,/row\.subject_key\?\.trim\(\)/);
-assert.match(sourceFabric,/integration_state='INTEGRATED',health_state='CONNECTED'/);
+assert.match(sourceFabric,/VALUES \(\$1,\$2,'IMPLEMENTED','NOT_CONFIGURED',now\(\),NULL,\$3\)/);
+assert.match(sourceFabric,/last_observed_at=now\(\),updated_at=now\(\)/);
+assert.doesNotMatch(sourceFabric,/integration_state='INTEGRATED',health_state='CONNECTED'/);
+assert.match(productionAdapters,/integration = config\.integration \?\? "IMPLEMENTED"/);
+assert.match(productionAdapters,/this\.connectionVerified \? "CONNECTED"/);
+assert.match(productionAdapters,/confirmed \? "EXECUTED" : "ACCEPTED"/);
+assert.match(defenseFabric,/"ACCEPTED" \| "EXECUTED"/);
 assert.equal((consolePage.match(/<header\b/g) ?? []).length,1);
 assert.equal((consolePage.match(/import Link from "next\/link";/g) ?? []).length,1);
 assert.match(consolePage,/href="\/console\/analyst"/);
