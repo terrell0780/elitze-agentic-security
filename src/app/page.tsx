@@ -56,8 +56,8 @@ export default function HomePage() {
         <div className="pointer-events-none absolute left-[62%] top-[-220px] h-[650px] w-[650px] rounded-full bg-[var(--accent-glow)] blur-3xl" />
         <div className="relative mx-auto grid max-w-[1400px] gap-12 px-4 py-16 sm:px-7 sm:py-24 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:py-28">
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-violet-300/20 bg-violet-300/[.07] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[.22em] text-violet-200"><span className="h-1.5 w-1.5 rounded-full bg-violet-300 pulse-soft" /> ELITZE · Agentic Security</div>
-            <h1 className="mt-7 max-w-3xl text-[3.4rem] font-semibold leading-[.98] tracking-[-.065em] sm:text-6xl lg:text-[5rem]">AI security,<br /><span className="text-violet-300">under control.</span></h1>
+            <div className="inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/[.07] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[.22em] text-cyan-200"><span className="h-1.5 w-1.5 rounded-full bg-cyan-300 pulse-soft" /> ELITZE · Agentic Security</div>
+            <h1 className="mt-7 max-w-3xl text-[3.4rem] font-semibold leading-[.98] tracking-[-.065em] sm:text-6xl lg:text-[5rem]">AI security,<br /><span className="text-cyan-300">under control.</span></h1>
             <p className="mt-6 max-w-xl text-base leading-7 text-[var(--muted-strong)]">One workspace to inspect agent access, govern sensitive actions, and trace security decisions back to evidence.</p>
             <div className="mt-8 flex flex-wrap gap-3">
               <AcquisitionCta href="/console" event="console_open" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950">Open control plane <ArrowRight className="h-4 w-4" /></AcquisitionCta>
