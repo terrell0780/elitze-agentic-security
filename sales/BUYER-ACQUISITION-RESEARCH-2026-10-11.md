@@ -36,11 +36,18 @@ Ranking is based on the publicly stated strategic fit, not on private informatio
 
 ## Outreach controls
 
-1. Address corporate development / M&A / strategic technology acquisition through the official entry points above; do not guess individual employee emails.
-2. Send a short, factual acquisition enquiry and request a confidential first conversation. Share the public product URL first; share repository access only after identity, funding ability, confidentiality and scope are established.
-3. Present US$250,000 as a negotiable ask only; accept credible offers and compare certainty, timeline and transfer conditions—not price alone.
-4. Keep every statement evidence-bounded. No invented customer metrics, revenue, ROI, certifications, production scan results, successful external integrations, or acquisition interest.
-5. Record a recipient, date, sent message, response, and next action only after the event actually happens.
+1. Route acquisition enquiries to corporate development / M&A / strategic technology acquisition. Do not guess individual employee emails.
+2. Share the public product URL first; provide repository access only after identity, funding ability, confidentiality and scope are established.
+3. Keep every statement evidence-bounded. No invented customer metrics, revenue, ROI, certifications, production scan results, successful external integrations, or acquisition interest.
+
+## Outreach status — as of 11 October 2026
+
+| Company / route | Verified activity | Current result |
+|---|---|---|
+| ServiceNow | Investor Relations replied on 14 September 2026 that the earlier inquiry had been passed to Corporate Development. A follow-up was sent 11 October correcting the canonical domain to elitze.info and requesting a status/contact. | Referral confirmed; no acquisition interest or offer confirmed. Follow-up response pending. |
+| Zscaler | An acquisition enquiry was sent 11 October to publicly listed M&A/Divestiture/PE practice contacts Stephen Singh and Akshay Grover (stephen.singh@zscaler.com, akshay.grover@zscaler.com) with a request to route to the appropriate acquisition team. The public contact listing is [Zscaler's M&A/Divestiture and PE practice material](https://www.zscaler.com/de/resources/brochures/zscaler-private-equity-placemat.pdf); these are not verified as corporate-development acquisition officers. | Sent; no response or offer confirmed. |
+
+No buyer has confirmed interest, price, or intent to acquire ELITZE. The US$250,000 figure remains a negotiable seller-side opening target, not an independent valuation or offer.
 
 ## Release blockers to disclose before diligence
 
