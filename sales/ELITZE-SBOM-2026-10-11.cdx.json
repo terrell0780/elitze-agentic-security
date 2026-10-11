@@ -1,0 +1,3430 @@
+{
+  "$schema": "http://cyclonedx.org/schema/bom-1.5.schema.json",
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:dbc43051-56f0-4474-9918-d64bdf2802c4",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-10-11T14:41:40.252Z",
+    "lifecycles": [
+      {
+        "phase": "build"
+      }
+    ],
+    "tools": [
+      {
+        "vendor": "npm",
+        "name": "cli",
+        "version": "12.0.2"
+      }
+    ],
+    "component": {
+      "bom-ref": "elitze-agentic-security@0.1.0",
+      "type": "application",
+      "name": "elitze-agentic-security",
+      "version": "0.1.0",
+      "scope": "required",
+      "purl": "pkg:npm/elitze-agentic-security@0.1.0",
+      "properties": [
+        {
+          "name": "cdx:npm:package:private",
+          "value": "true"
+        }
+      ],
+      "externalReferences": []
+    }
+  },
+  "components": [
+    {
+      "bom-ref": "@hexagon/base64@1.1.28",
+      "type": "library",
+      "name": "@hexagon/base64",
+      "version": "1.1.28",
+      "scope": "required",
+      "author": "Hexagon <github.com/hexagon>",
+      "description": "Base64 and base64url to string or arraybuffer, and back. Node, Deno or browser.",
+      "purl": "pkg:npm/%40hexagon/base64@1.1.28",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@hexagon/base64/-/base64-1.1.28.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/hexagon/base64"
+        },
+        {
+          "type": "website",
+          "url": "https://base64.56k.guru"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/hexagon/base64/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "961a83100bd68b1cb76d9f943986cfc146c193006ae42d4b009ff13c2f0e8be94be78a326a4bff9e96c0d1a5368600acc7fd4d51de0806f574dfe694056c5eaf"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@img/colour@1.1.0",
+      "type": "library",
+      "name": "@img/colour",
+      "version": "1.1.0",
+      "scope": "optional",
+      "description": "The ESM-only 'color' package made compatible for use with CommonJS runtimes",
+      "purl": "pkg:npm/%40img/colour@1.1.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@img/colour/-/colour-1.1.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/lovell/colour.git"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "4ddefaabb8f9ee8fed2d57604bbe3a7180117d2cb193c8847d1c5ec0bf61e0e3336216d6e1301ca69974993e1ecaa5dd761e8bfe3c2833be66a3b8b16bfa4279"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@img/sharp-win32-x64@0.35.5",
+      "type": "library",
+      "name": "@img/sharp-win32-x64",
+      "version": "0.35.5",
+      "scope": "optional",
+      "author": "Lovell Fuller <npm@lovell.info>",
+      "description": "Prebuilt sharp for use with Windows x64",
+      "purl": "pkg:npm/%40img/sharp-win32-x64@0.35.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@img/sharp-win32-x64/-/sharp-win32-x64-0.35.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/lovell/sharp.git"
+        },
+        {
+          "type": "website",
+          "url": "https://sharp.pixelplumbing.com"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "c7be9e1f4bc488795c310bbc63c21e9e7b5a002b5d7694fa5b4c265ed5ab9ca727288ecc1390dd82a8400fa48458e125d6fdb30ef9190e1140f4a9d4470a5faa"
+        }
+      ],
+      "licenses": [
+        {
+          "expression": "Apache-2.0 AND LGPL-3.0-or-later"
+        }
+      ]
+    },
+    {
+      "bom-ref": "@levischuck/tiny-cbor@0.2.11",
+      "type": "library",
+      "name": "@levischuck/tiny-cbor",
+      "version": "0.2.11",
+      "scope": "required",
+      "description": "Tiny CBOR library",
+      "purl": "pkg:npm/%40levischuck/tiny-cbor@0.2.11",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@levischuck/tiny-cbor/-/tiny-cbor-0.2.11.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/levischuck/tiny-cbor.git"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/levischuck/tiny-cbor/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "9650519b8753e19f3d691b26eaeda8119f2d7f02ffda5e81c2967b25cca27a8ba788310233902a360affcb4f336a5108bd6dd148ae2ea58cb26c37268d7a80a3"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@modelcontextprotocol/core@2.0.0",
+      "type": "library",
+      "name": "@modelcontextprotocol/core",
+      "version": "2.0.0",
+      "scope": "required",
+      "author": "Anthropic, PBC (https://anthropic.com)",
+      "description": "Model Context Protocol for TypeScript — public Zod schemas (spec + OAuth/OpenID)",
+      "purl": "pkg:npm/%40modelcontextprotocol/core@2.0.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@modelcontextprotocol/core/-/core-2.0.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/modelcontextprotocol/typescript-sdk.git"
+        },
+        {
+          "type": "website",
+          "url": "https://modelcontextprotocol.io"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "a49084c061bb2dfafff8f429f594f029735e3b9c336df28bec7dcc6290a8acce28141a10add8e7060128a86f918e1b2f4b514aac36cabb1f8cd478659c65aa70"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@modelcontextprotocol/server@2.0.0",
+      "type": "library",
+      "name": "@modelcontextprotocol/server",
+      "version": "2.0.0",
+      "scope": "required",
+      "author": "Anthropic, PBC (https://anthropic.com)",
+      "description": "Model Context Protocol implementation for TypeScript - Server package",
+      "purl": "pkg:npm/%40modelcontextprotocol/server@2.0.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@modelcontextprotocol/server/-/server-2.0.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/modelcontextprotocol/typescript-sdk.git"
+        },
+        {
+          "type": "website",
+          "url": "https://modelcontextprotocol.io"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "6211d67477e914c41f774a6bb049f129e4b7433df2b481a6b12d2cb61e0a0e39da7084fb87193a8571e427d2b2b31964bd333e59902d41b6dc5217683f81efb7"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@next/env@16.3.8",
+      "type": "library",
+      "name": "@next/env",
+      "version": "16.3.8",
+      "scope": "required",
+      "author": "Next.js Team <support@vercel.com>",
+      "description": "Next.js dotenv file loading",
+      "purl": "pkg:npm/%40next/env@16.3.8",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@next/env/-/env-16.3.8.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/vercel/next.js"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "025f73a87555ed326fd1e16e394e14ecbbefef83d38a1e0287adec936c42229493904dee7459da39c9f33f69505729a22fbc92f428f68829545e5477110e6c13"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@next/swc-win32-x64-msvc@16.3.8",
+      "type": "library",
+      "name": "@next/swc-win32-x64-msvc",
+      "version": "16.3.8",
+      "scope": "optional",
+      "purl": "pkg:npm/%40next/swc-win32-x64-msvc@16.3.8",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@next/swc-win32-x64-msvc/-/swc-win32-x64-msvc-16.3.8.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/vercel/next.js"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "59c4e568ab7f4d6921e64523749714981d57819fb573a7f3e18f5f0c72fbdd83527466945a371e796aeb9701749efd7d880058582e2202ad685f5c38067d2f7e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@node-saml/node-saml@5.1.0",
+      "type": "library",
+      "name": "@node-saml/node-saml",
+      "version": "5.1.0",
+      "scope": "required",
+      "author": "Henri Bergius",
+      "description": "SAML 2.0 implementation for Node.js",
+      "purl": "pkg:npm/%40node-saml/node-saml@5.1.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@node-saml/node-saml/-/node-saml-5.1.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/node-saml/node-saml.git"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "b777099d9e1a0bb1e13d9e8c1b29466542ef52d04e67a173b949dd6871978e62191d79cb7c2ffb2fc6b9ecef50f55ec0c4918a02244ce73bb6c0d9bd12cbd0a7"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@peculiar/asn1-android@2.9.5",
+      "type": "library",
+      "name": "@peculiar/asn1-android",
+      "version": "2.9.5",
+      "scope": "required",
+      "author": "PeculiarVentures, LLC",
+      "description": "ASN.1 schema for Android key attestation extensions, including legacy Keymaster and newer KeyMint structures.",
+      "purl": "pkg:npm/%40peculiar/asn1-android@2.9.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@peculiar/asn1-android/-/asn1-android-2.9.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/PeculiarVentures/asn1-schema"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/tree/master/packages/android#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "2a7344e25d37de06c9dd9cdf624edf269499c21779c53f9d3c09eb07c6dcc2aca51e22cddb38d9d0ec856a8d0b0c8388fd975745a6d5d27dd6c3f2afa6066aeb"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@peculiar/asn1-asym-key@2.9.5",
+      "type": "library",
+      "name": "@peculiar/asn1-asym-key",
+      "version": "2.9.5",
+      "scope": "required",
+      "author": "PeculiarVentures, LLC",
+      "description": "ASN.1 schema for asymmetric key packages and OneAsymmetricKey structures defined in RFC 5958.",
+      "purl": "pkg:npm/%40peculiar/asn1-asym-key@2.9.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@peculiar/asn1-asym-key/-/asn1-asym-key-2.9.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/PeculiarVentures/asn1-schema"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/tree/master/packages/asym-key#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "5374366d4598355a5f93ea0e84f97ff8e487c576814d007031ff778c9ee83e2fec6e6718e429c045d8c63302e85d3fe08164abca8e6dec0ee8dff19fcf453658"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@peculiar/asn1-cms@2.9.5",
+      "type": "library",
+      "name": "@peculiar/asn1-cms",
+      "version": "2.9.5",
+      "scope": "required",
+      "author": "PeculiarVentures, LLC",
+      "description": "ASN.1 schema for Cryptographic Message Syntax (CMS) defined in RFC 5652.",
+      "purl": "pkg:npm/%40peculiar/asn1-cms@2.9.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@peculiar/asn1-cms/-/asn1-cms-2.9.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/PeculiarVentures/asn1-schema"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/tree/master/packages/cms#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "e08bf3d1fb321687ded1bb2536c61c18df7e8844dd1d7e2ff8117020fafe2bf040b7ad6c1d71023faddf7fd167b54f7371f55010b2457541bdb28e383a352505"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@peculiar/asn1-csr@2.9.5",
+      "type": "library",
+      "name": "@peculiar/asn1-csr",
+      "version": "2.9.5",
+      "scope": "required",
+      "author": "PeculiarVentures, LLC",
+      "description": "ASN.1 schema for PKCS #10 certificate signing requests defined in RFC 2986.",
+      "purl": "pkg:npm/%40peculiar/asn1-csr@2.9.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@peculiar/asn1-csr/-/asn1-csr-2.9.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/PeculiarVentures/asn1-schema"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/tree/master/packages/csr#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "f5d3ba3dca09788fb5c49e2b1bb78834c6ba7fd231fd0751b395066740fbbff4774f39ac6d5af972a0207d8c38c604bd539e28b8762a133d1b21905b33f518d6"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@peculiar/asn1-ecc@2.9.5",
+      "type": "library",
+      "name": "@peculiar/asn1-ecc",
+      "version": "2.9.5",
+      "scope": "required",
+      "author": "PeculiarVentures, LLC",
+      "description": "ASN.1 schema for elliptic-curve private keys and related identifiers defined in RFC 5915, RFC 5480, and RFC 3279.",
+      "purl": "pkg:npm/%40peculiar/asn1-ecc@2.9.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@peculiar/asn1-ecc/-/asn1-ecc-2.9.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/PeculiarVentures/asn1-schema"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/tree/master/packages/ecc#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "383f872e5715ef008beb8c34ae1797fc2d09df50db25c7b49dff2e96fdd435fb50eb5ec9119137b10e1c30de8fa2d5d6949d4ce46431f741b76f2c2d74a3acb7"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@peculiar/asn1-pfx@2.9.5",
+      "type": "library",
+      "name": "@peculiar/asn1-pfx",
+      "version": "2.9.5",
+      "scope": "required",
+      "author": "PeculiarVentures, LLC",
+      "description": "ASN.1 schema for PKCS #12 personal information exchange structures defined in RFC 7292.",
+      "purl": "pkg:npm/%40peculiar/asn1-pfx@2.9.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@peculiar/asn1-pfx/-/asn1-pfx-2.9.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/PeculiarVentures/asn1-schema"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/tree/master/packages/pfx#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "6ed707ee56dc0f8e35d2a9e31efbfb174904b8c34a6d7f02140652b3d0833d61cacd3d5bc8b3c761e478d009d4c3dcf80b3b228cc63475a045614bd5c7be6c74"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@peculiar/asn1-pkcs8@2.9.5",
+      "type": "library",
+      "name": "@peculiar/asn1-pkcs8",
+      "version": "2.9.5",
+      "scope": "required",
+      "author": "PeculiarVentures, LLC",
+      "description": "ASN.1 schema for PKCS #8 private key information structures defined in RFC 5208.",
+      "purl": "pkg:npm/%40peculiar/asn1-pkcs8@2.9.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@peculiar/asn1-pkcs8/-/asn1-pkcs8-2.9.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/PeculiarVentures/asn1-schema"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/tree/master/packages/pkcs8#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "73b5208401907417c01cbf4977070990073f94324a3577c27585cf5e57fc059743fdf5498c99d7287c57e20c8b864153be71a1304edc6a279281cd913ada984d"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@peculiar/asn1-pkcs9@2.9.5",
+      "type": "library",
+      "name": "@peculiar/asn1-pkcs9",
+      "version": "2.9.5",
+      "scope": "required",
+      "author": "PeculiarVentures, LLC",
+      "description": "ASN.1 schema for PKCS #9 selected attribute types defined in RFC 2985.",
+      "purl": "pkg:npm/%40peculiar/asn1-pkcs9@2.9.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@peculiar/asn1-pkcs9/-/asn1-pkcs9-2.9.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/PeculiarVentures/asn1-schema"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/tree/master/packages/pkcs9#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "e11ff33202d21db4086510703f52b35fa8ae347996df1156c2ef534bd034d0deb47e642aa7d0e492a9d017277498060c413ad079fbb343fc8fe14f2c38b19481"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@peculiar/asn1-rsa@2.9.5",
+      "type": "library",
+      "name": "@peculiar/asn1-rsa",
+      "version": "2.9.5",
+      "scope": "required",
+      "author": "PeculiarVentures, LLC",
+      "description": "ASN.1 schema for RSA keys and algorithms defined in RFC 8017.",
+      "purl": "pkg:npm/%40peculiar/asn1-rsa@2.9.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@peculiar/asn1-rsa/-/asn1-rsa-2.9.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/PeculiarVentures/asn1-schema"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/tree/master/packages/rsa#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "907c012d53249bd96394ce76d68bd2ef2e33e26afcc6e1d374dcb2a0f943bdc901c0529282cf47a8a06bc8b05ea87a8bd98a48825f95b2997b9333461b6a61cc"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@peculiar/asn1-schema@2.9.5",
+      "type": "library",
+      "name": "@peculiar/asn1-schema",
+      "version": "2.9.5",
+      "scope": "required",
+      "author": "PeculiarVentures, LLC",
+      "description": "Decorators and helper APIs for declaring ASN.1 schemas in TypeScript.",
+      "purl": "pkg:npm/%40peculiar/asn1-schema@2.9.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@peculiar/asn1-schema/-/asn1-schema-2.9.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/PeculiarVentures/asn1-schema"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/tree/master/packages/schema#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "133df02ca5636b176c2dc81e58de0e137d5090cee804e80abae049c6575160091f630d82fbccc93dc49dfd24e19db86ccec10e9409a8692e6420890ddbd7c629"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@peculiar/asn1-x509@2.9.5",
+      "type": "library",
+      "name": "@peculiar/asn1-x509",
+      "version": "2.9.5",
+      "scope": "required",
+      "author": "PeculiarVentures, LLC",
+      "description": "ASN.1 schema for X.509 certificates, certificate revocation lists, and related profile structures defined in RFC 5280.",
+      "purl": "pkg:npm/%40peculiar/asn1-x509@2.9.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@peculiar/asn1-x509/-/asn1-x509-2.9.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/PeculiarVentures/asn1-schema"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/tree/master/packages/x509#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "34fdde72f37acd30e5c02be880858becc24df4064dbac92421b9e586b96407decc9f612a8ab05443c18acec3a67402f7a51be31aed5493f6b80cd7e266b5b187"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@peculiar/asn1-x509-attr@2.9.5",
+      "type": "library",
+      "name": "@peculiar/asn1-x509-attr",
+      "version": "2.9.5",
+      "scope": "required",
+      "author": "PeculiarVentures, LLC",
+      "description": "ASN.1 schema for X.509 attribute certificates defined in RFC 5755.",
+      "purl": "pkg:npm/%40peculiar/asn1-x509-attr@2.9.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@peculiar/asn1-x509-attr/-/asn1-x509-attr-2.9.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/PeculiarVentures/asn1-schema"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/tree/master/packages/x509-attr#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "3e56cbd5aef84598abcbba6e3c267985d93fa6ebe2bf16093db8da76bda2ec30631c224510a09f4d13ca2f70c82de645b732639fde49e4406d49ce3f4c1f7fe9"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@peculiar/asn1-x509-post-quantum@2.9.5",
+      "type": "library",
+      "name": "@peculiar/asn1-x509-post-quantum",
+      "version": "2.9.5",
+      "scope": "required",
+      "author": "PeculiarVentures, LLC",
+      "description": "ASN.1 schema for composite public keys, private keys, and signatures for post-quantum Internet PKI drafts.",
+      "purl": "pkg:npm/%40peculiar/asn1-x509-post-quantum@2.9.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@peculiar/asn1-x509-post-quantum/-/asn1-x509-post-quantum-2.9.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/PeculiarVentures/asn1-schema"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/tree/master/packages/x509-post-quantum#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/PeculiarVentures/asn1-schema/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "093ce70e46e84a0c11a5748586d6be3dee5c435d89b688dd32b98e6535989014af6d6ff5479a5f94f2079294a56882c87c67006b1215a57abcf34c427c9633a3"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@peculiar/utils@2.0.3",
+      "type": "library",
+      "name": "@peculiar/utils",
+      "version": "2.0.3",
+      "scope": "required",
+      "author": "PeculiarVentures",
+      "description": "Modern byte, encoding, converter registry, and PEM utilities for TypeScript projects.",
+      "purl": "pkg:npm/%40peculiar/utils@2.0.3",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@peculiar/utils/-/utils-2.0.3.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/PeculiarVentures/pvtsutils"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/PeculiarVentures/pvtsutils#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/PeculiarVentures/pvtsutils/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "fa82f71cf151219d52b762b9d255825e28a82204a8c73cfb475277b85ea778edb2975b209a9818e975c91f805da680e4316ce741379817aa1634364b09d43879"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@peculiar/x509@2.1.0",
+      "type": "library",
+      "name": "@peculiar/x509",
+      "version": "2.1.0",
+      "scope": "required",
+      "author": "Peculiar Ventures LLC",
+      "description": "@peculiar/x509 is an easy to use TypeScript/Javascript library based on @peculiar/asn1-schema that makes generating X.509 Certificates and Certificate Requests as well as validating certificate chains easy",
+      "purl": "pkg:npm/%40peculiar/x509@2.1.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@peculiar/x509/-/x509-2.1.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/PeculiarVentures/x509"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/PeculiarVentures/x509#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/PeculiarVentures/x509/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "2186e0d51d370924065b0976e241b2aab755b62c4d49b45a0ef060d6be70c988d33fe5703d09246b50734e0539fafc62bb0aa0d383b176f749d7161814875448"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@simplewebauthn/browser@14.0.0",
+      "type": "library",
+      "name": "@simplewebauthn/browser",
+      "version": "14.0.0",
+      "scope": "required",
+      "author": "Matthew Miller <matthew@millerti.me>",
+      "description": "SimpleWebAuthn for Browsers",
+      "purl": "pkg:npm/%40simplewebauthn/browser@14.0.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@simplewebauthn/browser/-/browser-14.0.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/MasterKale/SimpleWebAuthn.git"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/MasterKale/SimpleWebAuthn/tree/master/packages/browser#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/MasterKale/SimpleWebAuthn/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "d6875656a78405397b949f7330a2c4b264e59f2ac33b9891713bdf30a2a4d564e1527a7f8bc24975f7dd8f689c3feb6dcb5e7db383e0c04dc188ca045bd345a3"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@simplewebauthn/server@14.0.2",
+      "type": "library",
+      "name": "@simplewebauthn/server",
+      "version": "14.0.2",
+      "scope": "required",
+      "author": "Matthew Miller <matthew@millerti.me>",
+      "description": "SimpleWebAuthn for Servers",
+      "purl": "pkg:npm/%40simplewebauthn/server@14.0.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@simplewebauthn/server/-/server-14.0.2.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/MasterKale/SimpleWebAuthn.git"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/MasterKale/SimpleWebAuthn/tree/master/packages/server#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/MasterKale/SimpleWebAuthn/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "83e9bfc6ff7ff05456b03636d82c2c4d8473b775b04bd7c9ad1dcfede6374e2d351571f9150dfa5e7e79bfa0fee6d6fa55a8e5a8e8f8872c0ffd5c6c6fa6b74a"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@swc/helpers@0.5.23",
+      "type": "library",
+      "name": "@swc/helpers",
+      "version": "0.5.23",
+      "scope": "required",
+      "author": "강동윤 <kdy1997.dev@gmail.com>",
+      "description": "External helpers for the swc project.",
+      "purl": "pkg:npm/%40swc/helpers@0.5.23",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@swc/helpers/-/helpers-0.5.23.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/swc-project/swc.git"
+        },
+        {
+          "type": "website",
+          "url": "https://swc.rs"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/swc-project/swc/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "e654ac30e4d751178f8250dfbee01052a9067a4f47836924b0e61acb69b4f9747ef9bd8d5982ffe2c5b2baf54122cf282a725ac64762f7085a2ffb2a375dda7f"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@types/debug@4.1.13",
+      "type": "library",
+      "name": "@types/debug",
+      "version": "4.1.13",
+      "scope": "required",
+      "description": "TypeScript definitions for debug",
+      "purl": "pkg:npm/%40types/debug@4.1.13",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@types/debug/-/debug-4.1.13.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/debug"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "2925609909b33303e59ad9633a899aca847cf56e05ca70808b713c3cfb3bbe60d53def38853faf18f2a425f4e19265ecd31d2301a6bd53cb96f1b6dfc92d9f5b"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@types/ms@2.1.0",
+      "type": "library",
+      "name": "@types/ms",
+      "version": "2.1.0",
+      "scope": "required",
+      "description": "TypeScript definitions for ms",
+      "purl": "pkg:npm/%40types/ms@2.1.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@types/ms/-/ms-2.1.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/ms"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "1ac0822190c4fe9de2f7abed12ac7eedd054197adcef37922b7c303c721a453852fbd3a15885d1ab3b3877a93549553c83dd43acd456c56506869e4a5d06f654"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@types/qs@6.15.1",
+      "type": "library",
+      "name": "@types/qs",
+      "version": "6.15.1",
+      "scope": "required",
+      "description": "TypeScript definitions for qs",
+      "purl": "pkg:npm/%40types/qs@6.15.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@types/qs/-/qs-6.15.1.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/qs"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "1991d405947d85c912521af19a9d671ba37076933d7c2ba7270c9384b5b55f70321e077d2251dbe9500da5042a0ebda8fea429e8c719df2fc8036ad5ccacd26f"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@types/xml-encryption@1.2.4",
+      "type": "library",
+      "name": "@types/xml-encryption",
+      "version": "1.2.4",
+      "scope": "required",
+      "description": "TypeScript definitions for xml-encryption",
+      "purl": "pkg:npm/%40types/xml-encryption@1.2.4",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@types/xml-encryption/-/xml-encryption-1.2.4.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/xml-encryption"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "23af4afd65b50efee3e8ede3875df3d17f2c2d62515dbbb9c671c397dc87cd4343501b54a01634e7c79be6cfb1fd61bac990b587c68a748d84a3210f8f2121f9"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@types/xml2js@0.4.14",
+      "type": "library",
+      "name": "@types/xml2js",
+      "version": "0.4.14",
+      "scope": "required",
+      "description": "TypeScript definitions for xml2js",
+      "purl": "pkg:npm/%40types/xml2js@0.4.14",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@types/xml2js/-/xml2js-0.4.14.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped.git"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/xml2js"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "e189eb45e9814a15913b6423bd48a7f04480e35ac7fbd9d018b506655ff5203862dd22fd3a1769342fccaee9535aea6d5cac21c7f683c44eeda15d1fff2a485d"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@xmldom/is-dom-node@1.0.1",
+      "type": "library",
+      "name": "@xmldom/is-dom-node",
+      "version": "1.0.1",
+      "scope": "required",
+      "author": "Chris Barth <chrisjbarth@hotmail.com>",
+      "description": "TypeScript helper functions to narrow the type of object to a Node descendant",
+      "purl": "pkg:npm/%40xmldom/is-dom-node@1.0.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@xmldom/is-dom-node/-/is-dom-node-1.0.1.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/xmldom/is-dom-node.git"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/xmldom/is-dom-node#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/xmldom/is-dom-node/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "0890f1220139234147fadb6afc5c72ea7469c4fef4f9ed8ed38f043def39276bac7b75ca75ab5533b74356f14d8d0b9d77d078f4d3e867ef0f1b8f738f812bf1"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "@xmldom/xmldom@0.8.15",
+      "type": "library",
+      "name": "@xmldom/xmldom",
+      "version": "0.8.15",
+      "scope": "required",
+      "description": "A pure JavaScript W3C standard-based (XML DOM Level 2 Core) DOMParser and XMLSerializer module.",
+      "purl": "pkg:npm/%40xmldom/xmldom@0.8.15",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/@xmldom/xmldom/-/xmldom-0.8.15.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git://github.com/xmldom/xmldom.git"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/xmldom/xmldom"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/xmldom/xmldom/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "ff9355fef0c02d51435e02e67eccbd4d108194ac0ed8b341173a73bdbf62223fa347e79273a0cb618bd539d8af4ff8e6eccb54e9379b62e466cc4388ef0e3450"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "asn1js@3.0.10",
+      "type": "library",
+      "name": "asn1js",
+      "version": "3.0.10",
+      "scope": "required",
+      "author": "Yury Strozhevsky",
+      "description": "asn1js is a pure JavaScript library implementing this standard. ASN.1 is the basis of all X.509 related data structures and numerous other protocols used on the web",
+      "purl": "pkg:npm/asn1js@3.0.10",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/asn1js/-/asn1js-3.0.10.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/PeculiarVentures/ASN1.js"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "4b6b3768ecad88a74545dba5c36a8f139d4cce3cd53a2b29a5c56fee354547e2b0d24c70bc5ac371803487b35da9b9a3d0790c2176166a88fb7e58bc920c757a"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "client-only@0.0.1",
+      "type": "library",
+      "name": "client-only",
+      "version": "0.0.1",
+      "scope": "required",
+      "description": "This is a marker package to indicate that a module can only be used in Client Components.",
+      "purl": "pkg:npm/client-only@0.0.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/client-only/-/client-only-0.0.1.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://reactjs.org/"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "215dcebb48d233366b777a59e3c9cb913f4303b020d699cfcda8908695bb73745b72aab3bf3cd5bbe2fc81fa8ca7ff08336310b528aa682c6badc7eef08f2b30"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "drizzle-orm@0.45.2",
+      "type": "library",
+      "name": "drizzle-orm",
+      "version": "0.45.2",
+      "scope": "required",
+      "author": "Drizzle Team",
+      "description": "Drizzle ORM package for SQL databases",
+      "purl": "pkg:npm/drizzle-orm@0.45.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/drizzle-orm/-/drizzle-orm-0.45.2.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/drizzle-team/drizzle-orm.git"
+        },
+        {
+          "type": "website",
+          "url": "https://orm.drizzle.team"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/drizzle-team/drizzle-orm/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "918d0149a4cd6169e80cc568c98f2ec66c878e9256d6078e98131d49289c2a8f422085a44b13088f6ae4792479d5bf0a00f07b9beab2b23b8799ee6728ff84e5"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "duck-duck-scrape@2.2.7",
+      "type": "library",
+      "name": "duck-duck-scrape",
+      "version": "2.2.7",
+      "scope": "required",
+      "author": "Snazzah",
+      "description": "Search from DuckDuckGo and use it's spice APIs.",
+      "purl": "pkg:npm/duck-duck-scrape@2.2.7",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/duck-duck-scrape/-/duck-duck-scrape-2.2.7.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://duck-duck-scrape.js.org/"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/Snazzah/duck-duck-scrape/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "0447209709dfc79a6e265f742907d7f90daae6f0a0baac8ca5971244f05693c398e79a96c15f77f84fbb0db224ac60d6e2a92a3df52fb4e51d8b4957cfa94431"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "escape-html@1.0.3",
+      "type": "library",
+      "name": "escape-html",
+      "version": "1.0.3",
+      "scope": "required",
+      "description": "Escape string for use in HTML",
+      "purl": "pkg:npm/escape-html@1.0.3",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/escape-html/-/escape-html-1.0.3.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "3624aea59e0e7ae1b0afaf251887b29bf92c219309a1d506392099fc54a74f172b7a46efaab81d53194938ca628da299563009ad6ac6b3fe89cbc38cbb28fda3"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "html-entities@2.6.0",
+      "type": "library",
+      "name": "html-entities",
+      "version": "2.6.0",
+      "scope": "required",
+      "author": "Marat Dulin",
+      "description": "Fastest HTML entities encode/decode library.",
+      "purl": "pkg:npm/html-entities@2.6.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/html-entities/-/html-entities-2.6.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/mdevils/html-entities.git"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "92283eacc9ff40e551bebedcf3a810f25597abe1e4bfa09b007d612eef911b7dfc4ad4e913c6746f8e120d56aa56eec718a7f6edfadd994604b3d853517fdc2d"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "iconv-lite@0.6.3",
+      "type": "library",
+      "name": "iconv-lite",
+      "version": "0.6.3",
+      "scope": "required",
+      "author": "Alexander Shtuchkin <ashtuchkin@gmail.com>",
+      "description": "Convert character encodings in pure javascript.",
+      "purl": "pkg:npm/iconv-lite@0.6.3",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/iconv-lite/-/iconv-lite-0.6.3.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git://github.com/ashtuchkin/iconv-lite.git"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/ashtuchkin/iconv-lite"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "e1f0a4efdc2c84c773329dab1f4eaa5ab244e22a25a8b842507f8e8ae22053ef91074fbde0d9432fcd5ab4eec65f9e6e50ab9ea34b711cdb6f13223a0fb59d33"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "jose@6.2.12",
+      "type": "library",
+      "name": "jose",
+      "version": "6.2.12",
+      "scope": "required",
+      "author": "Filip Skokan <panva.ip@gmail.com>",
+      "description": "JWA, JWS, JWE, JWT, JWK, JWKS for Node.js, Browser, Cloudflare Workers, Deno, Bun, and other Web-interoperable runtimes",
+      "purl": "pkg:npm/jose@6.2.12",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/jose/-/jose-6.2.12.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/panva/jose"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "f4d88598911ec74b32d83939f23d94181487814b36ca917d7994aee0beaf8ce5f70e9f7a4b0d45dee2fe1fe0f5b31d368d965dcd44f41e0bc2cb9f42baf5dc5b"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "lucide-react@1.47.0",
+      "type": "library",
+      "name": "lucide-react",
+      "version": "1.47.0",
+      "scope": "required",
+      "author": "Eric Fennis",
+      "description": "A Lucide icon library package for React applications.",
+      "purl": "pkg:npm/lucide-react@1.47.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/lucide-react/-/lucide-react-1.47.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/lucide-icons/lucide.git"
+        },
+        {
+          "type": "website",
+          "url": "https://lucide.dev"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "a3c0b6dda5e9350ca9458ef75bb7d6d36132bd62629c431780a7868c5a0aca6d338f743bde10fdec0d48429b3583c0b5e074c6b0ea592f4026fb18df8056406e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "needle@3.5.0",
+      "type": "library",
+      "name": "needle",
+      "version": "3.5.0",
+      "scope": "required",
+      "author": "Tomás Pollak <tomas@forkhq.com>",
+      "description": "The leanest and most handsome HTTP client in the Nodelands.",
+      "purl": "pkg:npm/needle@3.5.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/needle/-/needle-3.5.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/tomas/needle.git"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "8da4323ca2a4d98a241eb120faf1436315c81d30818226704873a8571ffc577188052f3f54de8d75546683cab5111b4f90cbe63af79bb2081ae2c023e6196cff"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "next@16.3.8",
+      "type": "library",
+      "name": "next",
+      "version": "16.3.8",
+      "scope": "required",
+      "description": "The React Framework",
+      "purl": "pkg:npm/next@16.3.8",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/next/-/next-16.3.8.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://nextjs.org"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "53b40465a4e29e2eb02ab6fc03c86a2cba9843209eb5e80a8c2a493b2c64eb8daf5a8328535c793f2642245be06208a9b40f317398fff716256453bbc3d4a39b"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "postcss@8.5.23",
+      "type": "library",
+      "name": "postcss",
+      "version": "8.5.23",
+      "scope": "required",
+      "author": "Andrey Sitnik <andrey@sitnik.es>",
+      "description": "Tool for transforming styles with JS plugins",
+      "purl": "pkg:npm/postcss@8.5.23",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/postcss/-/postcss-8.5.23.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://postcss.org/"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/postcss/postcss/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "839d39f3acebe1b666c0589395f94cbbc1346c34dbe48e607abb60c002a6b1d5254d022166dba7cd4943d564b3c1c5563e8015a6cac0eaf95f083ee85ef47082"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "oauth4webapi@3.8.8",
+      "type": "library",
+      "name": "oauth4webapi",
+      "version": "3.8.8",
+      "scope": "required",
+      "author": "Filip Skokan <panva.ip@gmail.com>",
+      "description": "Low-Level OAuth 2 / OpenID Connect Client API for JavaScript Runtimes",
+      "purl": "pkg:npm/oauth4webapi@3.8.8",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/oauth4webapi/-/oauth4webapi-3.8.8.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/panva/oauth4webapi"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "f0ddbc13e6bfa317d758180e32df993ff2547ff5d1f8815bbe40043cfde0ce75ce32ff41a400308888f44c5373ded1933dcd1943cce65813603759c0cacd209e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "openid-client@6.8.8",
+      "type": "library",
+      "name": "openid-client",
+      "version": "6.8.8",
+      "scope": "required",
+      "author": "Filip Skokan <panva.ip@gmail.com>",
+      "description": "OAuth 2 / OpenID Connect Client API for JavaScript Runtimes",
+      "purl": "pkg:npm/openid-client@6.8.8",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/openid-client/-/openid-client-6.8.8.tgz"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/panva/openid-client"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "66cb9c240e40774e14bfb60de2a97eb381973666fdb80610c32253b09c7b087fcc5f72598a82c4da954a8b5482f98adb48b0383f1dc68b7d1d32380e66d6faa4"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "pg@8.20.0",
+      "type": "library",
+      "name": "pg",
+      "version": "8.20.0",
+      "scope": "required",
+      "author": "Brian Carlson <brian.m.carlson@gmail.com>",
+      "description": "PostgreSQL client - pure javascript & libpq with the same API",
+      "purl": "pkg:npm/pg@8.20.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/pg/-/pg-8.20.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git://github.com/brianc/node-postgres.git"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/brianc/node-postgres"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "95d84cc73dabf1f97fe909179c10f7091f7fc60ebde284fa0d9436b3a73f448dbc3a3b523a9c673eb50218e049e3a442531716771de9ea4c3fc670c78cabda44"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "pg-cloudflare@1.4.0",
+      "type": "library",
+      "name": "pg-cloudflare",
+      "version": "1.4.0",
+      "scope": "optional",
+      "description": "A socket implementation that can run on Cloudflare Workers using native TCP connections.",
+      "purl": "pkg:npm/pg-cloudflare@1.4.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/pg-cloudflare/-/pg-cloudflare-1.4.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git://github.com/brianc/node-postgres.git"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "568ef3ffaaeb418c69351ca5a784e5a1bd9e9736e1f8dfcc3906f1155582c52ee8131ea3179dc64c91712b6596a4ab814649a28a7e0cb7ec687c50e3c74f51d0"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "pg-connection-string@2.14.0",
+      "type": "library",
+      "name": "pg-connection-string",
+      "version": "2.14.0",
+      "scope": "required",
+      "author": "Blaine Bublitz <blaine@iceddev.com> (http://iceddev.com/)",
+      "description": "Functions for dealing with a PostgreSQL connection string",
+      "purl": "pkg:npm/pg-connection-string@2.14.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/pg-connection-string/-/pg-connection-string-2.14.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git://github.com/brianc/node-postgres.git"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/brianc/node-postgres/tree/master/packages/pg-connection-string"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/brianc/node-postgres/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "5f058319c2d11825c047c17f00ce5b1bb43e0375a6dace907848e538a64b947dd461c82e8aa0962b259755a8394cb4c88d1ee8389518f247000da66058fc8b7a"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "pg-pool@3.14.0",
+      "type": "library",
+      "name": "pg-pool",
+      "version": "3.14.0",
+      "scope": "required",
+      "author": "Brian M. Carlson",
+      "description": "Connection pool for node-postgres",
+      "purl": "pkg:npm/pg-pool@3.14.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/pg-pool/-/pg-pool-3.14.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git://github.com/brianc/node-postgres.git"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/brianc/node-postgres/tree/master/packages/pg-pool#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/brianc/node-postgres/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "80ab4f9057503d4dc392ca2854b8bd2ec8d9c6bb015192296beeda571f8b579a4d8742b33f86657ae776a68f82a27af16ee5c6049e877deafa85d829201a416b"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "pgpass@1.0.5",
+      "type": "library",
+      "name": "pgpass",
+      "version": "1.0.5",
+      "scope": "required",
+      "author": "Hannes Hörl <hannes.hoerl+pgpass@snowreporter.com>",
+      "description": "Module for reading .pgpass",
+      "purl": "pkg:npm/pgpass@1.0.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/pgpass/-/pgpass-1.0.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/hoegaarden/pgpass.git"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "15d5bdaff8d066149ea21b35677b08d72c4540d16f31c9e67ee8f85813144f13ab0322cc693704d5a00c0624e56cc35a5ef04242e562d11ee177cb9d0d23fbba"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "pvtsutils@1.3.6",
+      "type": "library",
+      "name": "pvtsutils",
+      "version": "1.3.6",
+      "scope": "required",
+      "author": "PeculiarVentures",
+      "description": "pvtsutils is a set of common utility functions used in various Peculiar Ventures TypeScript based projects.",
+      "purl": "pkg:npm/pvtsutils@1.3.6",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/pvtsutils/-/pvtsutils-1.3.6.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/PeculiarVentures/pvtsutils"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/PeculiarVentures/pvtsutils#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/PeculiarVentures/pvtsutils/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "3cb8105d0e87d8558269e45a93cbef935196e3ada5331079b37266ebbdcdf36cc8e2faad5543ee65d7df7596cf0c546853c900848b5616d3c25a23e9a78fc40e"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "pvutils@1.2.0",
+      "type": "library",
+      "name": "pvutils",
+      "version": "1.2.0",
+      "scope": "required",
+      "author": "Yury Strozhevsky",
+      "description": "Common utilities for products from Peculiar Ventures",
+      "purl": "pkg:npm/pvutils@1.2.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/pvutils/-/pvutils-1.2.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/PeculiarVentures/pvutils"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "05bb9b7821324ee42354c6a4bc943f4b16dcf77176a7099bb3138d4ff651af053b51adfc77cba7613c17a5354b00a278043b87f481b3b428d071dfcdff7f43be"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "react@19.2.6",
+      "type": "library",
+      "name": "react",
+      "version": "19.2.6",
+      "scope": "required",
+      "description": "React is a JavaScript library for building user interfaces.",
+      "purl": "pkg:npm/react@19.2.6",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/react/-/react-19.2.6.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/facebook/react.git"
+        },
+        {
+          "type": "website",
+          "url": "https://react.dev/"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "b1f58619f6af8b4c6bf0f834b15b321cc00ece25582a03cb36b4bb8a0fa2bcc35bdf06c2070dcac6d7e5b06040c03de0610944fc0119b132e04e846b4828dbd1"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "react-dom@19.2.6",
+      "type": "library",
+      "name": "react-dom",
+      "version": "19.2.6",
+      "scope": "required",
+      "description": "React package for working with the DOM.",
+      "purl": "pkg:npm/react-dom@19.2.6",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/react-dom/-/react-dom-19.2.6.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/facebook/react.git"
+        },
+        {
+          "type": "website",
+          "url": "https://react.dev/"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/facebook/react/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "d29acc23e86f05b3e3b169f10cbc65086c8cf0f37a52e5a311409899984eebbc4857d5dab1afebfef0e7abe5f2ab82e8dbb83c4126cee58cc046ed03d52a6cde"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "reflect-metadata@0.2.2",
+      "type": "library",
+      "name": "reflect-metadata",
+      "version": "0.2.2",
+      "scope": "required",
+      "author": "Ron Buckton",
+      "description": "Polyfill for Metadata Reflection API",
+      "purl": "pkg:npm/reflect-metadata@0.2.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/reflect-metadata/-/reflect-metadata-0.2.2.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/rbuckton/reflect-metadata.git"
+        },
+        {
+          "type": "website",
+          "url": "http://rbuckton.github.io/reflect-metadata"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/rbuckton/reflect-metadata/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "bab07081faef54ffde0325f1e2196e262bc12b3b846d242cf6b2960ab0a46d2c4dbfc9b13dc51929eba8177532e26265dcbc29ae9eb2cb9ff7f555a2819e0ae9"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "safer-buffer@2.1.2",
+      "type": "library",
+      "name": "safer-buffer",
+      "version": "2.1.2",
+      "scope": "required",
+      "author": "Nikita Skovoroda",
+      "description": "Modern Buffer API polyfill without footguns",
+      "purl": "pkg:npm/safer-buffer@2.1.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/safer-buffer/-/safer-buffer-2.1.2.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/ChALkeR/safer-buffer.git"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/ChALkeR/safer-buffer/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "619a372bcd920fb462ca2d04d4440fa232f3ee4a5ea6749023d2323db1c78355d75debdbe5d248eeda72376003c467106c71bbbdcc911e4d1c6f0a9c42b894b6"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "sax@1.6.1",
+      "type": "library",
+      "name": "sax",
+      "version": "1.6.1",
+      "scope": "required",
+      "author": "Isaac Z. Schlueter <i@izs.me> (http://blog.izs.me/)",
+      "description": "An evented streaming XML parser in JavaScript",
+      "purl": "pkg:npm/sax@1.6.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/sax/-/sax-1.6.1.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+ssh://git@github.com/isaacs/sax-js.git"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "e36b415702d69da42f5b9cdce076d9ad3b9671c1020997c18bdd850eec2dab16ac1fe25b3c1dff14e29bd66db6d8ae364785b1bb1cf332c4ecc1fce0b52bbae1"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "BlueOak-1.0.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "scheduler@0.27.0",
+      "type": "library",
+      "name": "scheduler",
+      "version": "0.27.0",
+      "scope": "required",
+      "description": "Cooperative scheduler for the browser environment.",
+      "purl": "pkg:npm/scheduler@0.27.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/scheduler/-/scheduler-0.27.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/facebook/react.git"
+        },
+        {
+          "type": "website",
+          "url": "https://react.dev/"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/facebook/react/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "78dbfe5ab55b2aed5fdef6d8253ff1b62179b320391cf20cb5ff48818fe72a0d2c5aacc0504bea63fc66ece71973fa9a7cbc7f88ef4580e99e480a78bf9b62fd"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "sharp@0.35.5",
+      "type": "library",
+      "name": "sharp",
+      "version": "0.35.5",
+      "scope": "optional",
+      "author": "Lovell Fuller <npm@lovell.info>",
+      "description": "High performance Node.js image processing, the fastest module to resize JPEG, PNG, WebP, GIF, AVIF and TIFF images",
+      "purl": "pkg:npm/sharp@0.35.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/sharp/-/sharp-0.35.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/lovell/sharp.git"
+        },
+        {
+          "type": "website",
+          "url": "https://sharp.pixelplumbing.com"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "6309f83a7cc6ba4a7b08332ba74f11439d182a6bb01b8edbad980854f4ef05a6807d095197282b46a4abc5d0a22fd33e2e5ccb06227af0847542abf31f28c2ee"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "semver@7.8.5",
+      "type": "library",
+      "name": "semver",
+      "version": "7.8.5",
+      "scope": "optional",
+      "author": "GitHub Inc.",
+      "description": "The semantic version parser used by npm.",
+      "purl": "pkg:npm/semver@7.8.5",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/semver/-/semver-7.8.5.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/npm/node-semver.git"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "63bfca0ec6fc2e3a28669c1aa86cae94ee8342592c8029dc7211c693eb19218e1206f52870c044147e54af57c8e1d57e26f974c3a723bee71a222e34a6e462a0"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "split2@4.2.0",
+      "type": "library",
+      "name": "split2",
+      "version": "4.2.0",
+      "scope": "required",
+      "author": "Matteo Collina <hello@matteocollina.com>",
+      "description": "split a Text Stream into a Line Stream, using Stream 3",
+      "purl": "pkg:npm/split2@4.2.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/split2/-/split2-4.2.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/mcollina/split2.git"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "http://github.com/mcollina/split2/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "51c8dc24e5a49eb36417a3cb5fcdea70733a28781528d915eb663c6b9b980d5bfdc9d19057000730aa877498ded554d6a658c6d1662908386b09d00e607e135a"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "styled-jsx@5.1.6",
+      "type": "library",
+      "name": "styled-jsx",
+      "version": "5.1.6",
+      "scope": "required",
+      "description": "Full CSS support for JSX without compromises",
+      "purl": "pkg:npm/styled-jsx@5.1.6",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/styled-jsx/-/styled-jsx-5.1.6.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "a925720d378ca2d76f418a0758b346c111491c2fa2f99bdd051628b0e1600be5a0d6fc787eb376fd11bf340ed262aaaf28d2dfdfd3f62d2440da9bba9f45d864"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "tslib@2.8.1",
+      "type": "library",
+      "name": "tslib",
+      "version": "2.8.1",
+      "scope": "required",
+      "author": "Microsoft Corp.",
+      "description": "Runtime library for TypeScript helper functions",
+      "purl": "pkg:npm/tslib@2.8.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/tslib/-/tslib-2.8.1.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/Microsoft/tslib.git"
+        },
+        {
+          "type": "website",
+          "url": "https://www.typescriptlang.org/"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/Microsoft/TypeScript/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "a0916ef781d06fe29576e49440bef09e99aa9df98bb0e03f9c087a6fa107d30084a0ad3f98f79753a737c0a0d5f373243ae1cf447b525ca294f7d2016b34bfdb"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "0BSD"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "tsyringe@4.10.0",
+      "type": "library",
+      "name": "tsyringe",
+      "version": "4.10.0",
+      "scope": "required",
+      "author": "Steven Hobson-Campbell",
+      "description": "Lightweight dependency injection container for JavaScript/TypeScript",
+      "purl": "pkg:npm/tsyringe@4.10.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/tsyringe/-/tsyringe-4.10.0.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git+https://github.com/Microsoft/tsyringe.git"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/Microsoft/tsyringe#readme"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/Microsoft/tsyringe/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "6b1af721d36e548c6768ae571845054eedd898043a965960aefa9f128475ea0fc71a7618ffa59ee2858436d027ccaebf2e9276babf4f01bf34441b7bfd4e2e83"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "tslib@1.14.1",
+      "type": "library",
+      "name": "tslib",
+      "version": "1.14.1",
+      "scope": "required",
+      "author": "Microsoft Corp.",
+      "description": "Runtime library for TypeScript helper functions",
+      "purl": "pkg:npm/tslib@1.14.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/tslib/-/tslib-1.14.1.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/Microsoft/tslib.git"
+        },
+        {
+          "type": "website",
+          "url": "https://www.typescriptlang.org/"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "https://github.com/Microsoft/TypeScript/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "5e78b7e4d2b38e032bc1ebf2b074c202bb4b0e93efc9ef3357fd04e04c989f8dcfeffeeabd0c0f87d0469077b06ccba5567b5b8a099c4fbadd5f704da3dc1126"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "0BSD"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "xml-crypto@6.3.1",
+      "type": "library",
+      "name": "xml-crypto",
+      "version": "6.3.1",
+      "scope": "required",
+      "author": "Yaron Naveh <yaronn01@gmail.com> (http://webservices20.blogspot.com/)",
+      "description": "Xml digital signature and encryption library for Node.js",
+      "purl": "pkg:npm/xml-crypto@6.3.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/xml-crypto/-/xml-crypto-6.3.1.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/node-saml/xml-crypto.git"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "b92139d3d1ffe6978f96daba0c4b1d191cf4889406f538608acaba8c0c529d6691eade1f3d95a3495455cb03a847c704b0326d9c4a5ea548426e0c90afb370b6"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "xpath@0.0.33",
+      "type": "library",
+      "name": "xpath",
+      "version": "0.0.33",
+      "scope": "required",
+      "author": "Cameron McCormack",
+      "description": "DOM 3 XPath implemention and helper for node.js and the web",
+      "purl": "pkg:npm/xpath@0.0.33",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/xpath/-/xpath-0.0.33.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/goto100/xpath.git"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "34d5e7ceb903ac0cda94b84851cd358ceda63b35c65e1d49c0f8248a170b2f3c3df1cd168180e69a34a1d4a977c336b149558cb80f9f7b459358e04358206634"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "xml-encryption@3.1.0",
+      "type": "library",
+      "name": "xml-encryption",
+      "version": "3.1.0",
+      "scope": "required",
+      "author": "Matias Woloski (Auth0)",
+      "purl": "pkg:npm/xml-encryption@3.1.0",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/xml-encryption/-/xml-encryption-3.1.0.tgz"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "3d5eea9d8a6800c5db7f592f424a8c49c2de4298c2322c5d7402aaf4fb6a56b868f079d86c139635f1b4900e11ef3c500e8ef0f64898032cd2fee9650323b9e5"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "xpath@0.0.32",
+      "type": "library",
+      "name": "xpath",
+      "version": "0.0.32",
+      "scope": "required",
+      "author": "Cameron McCormack",
+      "description": "DOM 3 XPath implemention and helper for node.js.",
+      "purl": "pkg:npm/xpath@0.0.32",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/xpath/-/xpath-0.0.32.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/goto100/xpath.git"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "af130985222888ef2f5dc5af4a27caaa1bd5f7a1a3883e7061bf3f40776847242fada4e9a78204bfde389e119abac659deeedd8505ed799b996daa9fa41eee63"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "xml2js@0.6.2",
+      "type": "library",
+      "name": "xml2js",
+      "version": "0.6.2",
+      "scope": "required",
+      "author": "Marek Kubica <marek@xivilization.net> (https://xivilization.net)",
+      "description": "Simple XML to JavaScript object converter.",
+      "purl": "pkg:npm/xml2js@0.6.2",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/xml2js/-/xml2js-0.6.2.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/Leonidas-from-XIV/node-xml2js.git"
+        },
+        {
+          "type": "website",
+          "url": "https://github.com/Leonidas-from-XIV/node-xml2js"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "4f8ae2787682d445dc112d0ac718f825681a5101c393eab01dc60e0851df8b02b3eed3953cbabb1e3abd74cd5608c87296a3047cfee131c3880a1be8b6265e80"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "xmlbuilder@11.0.1",
+      "type": "library",
+      "name": "xmlbuilder",
+      "version": "11.0.1",
+      "scope": "required",
+      "author": "Ozgur Ozcitak <oozcitak@gmail.com>",
+      "description": "An XML builder for node.js",
+      "purl": "pkg:npm/xmlbuilder@11.0.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/xmlbuilder/-/xmlbuilder-11.0.1.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git://github.com/oozcitak/xmlbuilder-js.git"
+        },
+        {
+          "type": "website",
+          "url": "http://github.com/oozcitak/xmlbuilder-js"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "http://github.com/oozcitak/xmlbuilder-js/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "7c396c23f905131ee02ef6de71cd3fa212c6e747ee810a7caf21f3313b96f6f49ad462745d858a9e1b14c7ba227b71bdf3eaf9e9a4d0214078921b78d91dc9bc"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "xmlbuilder@15.1.1",
+      "type": "library",
+      "name": "xmlbuilder",
+      "version": "15.1.1",
+      "scope": "required",
+      "author": "Ozgur Ozcitak <oozcitak@gmail.com>",
+      "description": "An XML builder for node.js",
+      "purl": "pkg:npm/xmlbuilder@15.1.1",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/xmlbuilder/-/xmlbuilder-15.1.1.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "git://github.com/oozcitak/xmlbuilder-js.git"
+        },
+        {
+          "type": "website",
+          "url": "http://github.com/oozcitak/xmlbuilder-js"
+        },
+        {
+          "type": "issue-tracker",
+          "url": "http://github.com/oozcitak/xmlbuilder-js/issues"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "c8ca8606ab57c9e3757b74c662f80d803559de3f385b873090e5d0b30821a25e803e065669f7fd9676ef37b3076093a25ecbc63d7b634d8244882f49db0bfd12"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    },
+    {
+      "bom-ref": "xpath@0.0.34",
+      "type": "library",
+      "name": "xpath",
+      "version": "0.0.34",
+      "scope": "required",
+      "author": "Cameron McCormack",
+      "description": "DOM 3 XPath implemention and helper for node.js and the web",
+      "purl": "pkg:npm/xpath@0.0.34",
+      "properties": [],
+      "externalReferences": [
+        {
+          "type": "distribution",
+          "url": "https://registry.npmjs.org/xpath/-/xpath-0.0.34.tgz"
+        },
+        {
+          "type": "vcs",
+          "url": "https://github.com/goto100/xpath.git"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-512",
+          "content": "17117afab92bd6b35242b854358ac0149a515cdce50e8331797379a88f38f77f72944bf7aaa3c529af393b1afab436892aac16e8a2b2a36bf6e934afde4e8b78"
+        }
+      ],
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "elitze-agentic-security@0.1.0",
+      "dependsOn": [
+        "@modelcontextprotocol/server@2.0.0",
+        "@node-saml/node-saml@5.1.0",
+        "@simplewebauthn/browser@14.0.0",
+        "@simplewebauthn/server@14.0.2",
+        "drizzle-orm@0.45.2",
+        "duck-duck-scrape@2.2.7",
+        "lucide-react@1.47.0",
+        "next@16.3.8",
+        "openid-client@6.8.8",
+        "pg@8.20.0",
+        "react@19.2.6",
+        "react-dom@19.2.6"
+      ]
+    },
+    {
+      "ref": "@hexagon/base64@1.1.28",
+      "dependsOn": []
+    },
+    {
+      "ref": "@img/colour@1.1.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "@img/sharp-win32-x64@0.35.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "@levischuck/tiny-cbor@0.2.11",
+      "dependsOn": []
+    },
+    {
+      "ref": "@modelcontextprotocol/core@2.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "@modelcontextprotocol/server@2.0.0",
+      "dependsOn": [
+        "@modelcontextprotocol/core@2.0.0"
+      ]
+    },
+    {
+      "ref": "@next/env@16.3.8",
+      "dependsOn": []
+    },
+    {
+      "ref": "@next/swc-win32-x64-msvc@16.3.8",
+      "dependsOn": []
+    },
+    {
+      "ref": "@node-saml/node-saml@5.1.0",
+      "dependsOn": [
+        "@types/debug@4.1.13",
+        "@types/qs@6.15.1",
+        "@types/xml-encryption@1.2.4",
+        "@types/xml2js@0.4.14",
+        "@xmldom/is-dom-node@1.0.1",
+        "@xmldom/xmldom@0.8.15",
+        "xml-crypto@6.3.1",
+        "xml-encryption@3.1.0",
+        "xml2js@0.6.2",
+        "xmlbuilder@15.1.1",
+        "xpath@0.0.34"
+      ]
+    },
+    {
+      "ref": "@peculiar/asn1-android@2.9.5",
+      "dependsOn": [
+        "@peculiar/asn1-schema@2.9.5",
+        "asn1js@3.0.10",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@peculiar/asn1-asym-key@2.9.5",
+      "dependsOn": [
+        "@peculiar/asn1-pkcs8@2.9.5",
+        "@peculiar/asn1-schema@2.9.5",
+        "@peculiar/asn1-x509@2.9.5",
+        "asn1js@3.0.10",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@peculiar/asn1-cms@2.9.5",
+      "dependsOn": [
+        "@peculiar/asn1-schema@2.9.5",
+        "@peculiar/asn1-x509@2.9.5",
+        "@peculiar/asn1-x509-attr@2.9.5",
+        "asn1js@3.0.10",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@peculiar/asn1-csr@2.9.5",
+      "dependsOn": [
+        "@peculiar/asn1-schema@2.9.5",
+        "@peculiar/asn1-x509@2.9.5",
+        "asn1js@3.0.10",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@peculiar/asn1-ecc@2.9.5",
+      "dependsOn": [
+        "@peculiar/asn1-schema@2.9.5",
+        "@peculiar/asn1-x509@2.9.5",
+        "asn1js@3.0.10",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@peculiar/asn1-pfx@2.9.5",
+      "dependsOn": [
+        "@peculiar/asn1-cms@2.9.5",
+        "@peculiar/asn1-pkcs8@2.9.5",
+        "@peculiar/asn1-rsa@2.9.5",
+        "@peculiar/asn1-schema@2.9.5",
+        "asn1js@3.0.10",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@peculiar/asn1-pkcs8@2.9.5",
+      "dependsOn": [
+        "@peculiar/asn1-schema@2.9.5",
+        "@peculiar/asn1-x509@2.9.5",
+        "asn1js@3.0.10",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@peculiar/asn1-pkcs9@2.9.5",
+      "dependsOn": [
+        "@peculiar/asn1-cms@2.9.5",
+        "@peculiar/asn1-pfx@2.9.5",
+        "@peculiar/asn1-pkcs8@2.9.5",
+        "@peculiar/asn1-schema@2.9.5",
+        "@peculiar/asn1-x509@2.9.5",
+        "@peculiar/asn1-x509-attr@2.9.5",
+        "asn1js@3.0.10",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@peculiar/asn1-rsa@2.9.5",
+      "dependsOn": [
+        "@peculiar/asn1-schema@2.9.5",
+        "@peculiar/asn1-x509@2.9.5",
+        "asn1js@3.0.10",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@peculiar/asn1-schema@2.9.5",
+      "dependsOn": [
+        "@peculiar/utils@2.0.3",
+        "asn1js@3.0.10",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@peculiar/asn1-x509@2.9.5",
+      "dependsOn": [
+        "@peculiar/asn1-schema@2.9.5",
+        "@peculiar/utils@2.0.3",
+        "asn1js@3.0.10",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@peculiar/asn1-x509-attr@2.9.5",
+      "dependsOn": [
+        "@peculiar/asn1-schema@2.9.5",
+        "@peculiar/asn1-x509@2.9.5",
+        "asn1js@3.0.10",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@peculiar/asn1-x509-post-quantum@2.9.5",
+      "dependsOn": [
+        "@peculiar/asn1-asym-key@2.9.5",
+        "@peculiar/asn1-schema@2.9.5",
+        "@peculiar/asn1-x509@2.9.5",
+        "asn1js@3.0.10",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@peculiar/utils@2.0.3",
+      "dependsOn": [
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@peculiar/x509@2.1.0",
+      "dependsOn": [
+        "@peculiar/asn1-cms@2.9.5",
+        "@peculiar/asn1-csr@2.9.5",
+        "@peculiar/asn1-ecc@2.9.5",
+        "@peculiar/asn1-pkcs9@2.9.5",
+        "@peculiar/asn1-rsa@2.9.5",
+        "@peculiar/asn1-schema@2.9.5",
+        "@peculiar/asn1-x509@2.9.5",
+        "@peculiar/asn1-x509-post-quantum@2.9.5",
+        "pvtsutils@1.3.6",
+        "tslib@2.8.1",
+        "tsyringe@4.10.0"
+      ]
+    },
+    {
+      "ref": "@simplewebauthn/browser@14.0.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "@simplewebauthn/server@14.0.2",
+      "dependsOn": [
+        "@hexagon/base64@1.1.28",
+        "@levischuck/tiny-cbor@0.2.11",
+        "@peculiar/asn1-android@2.9.5",
+        "@peculiar/asn1-ecc@2.9.5",
+        "@peculiar/asn1-rsa@2.9.5",
+        "@peculiar/asn1-schema@2.9.5",
+        "@peculiar/asn1-x509@2.9.5",
+        "@peculiar/asn1-x509-post-quantum@2.9.5",
+        "@peculiar/x509@2.1.0",
+        "reflect-metadata@0.2.2"
+      ]
+    },
+    {
+      "ref": "@swc/helpers@0.5.23",
+      "dependsOn": [
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "@types/debug@4.1.13",
+      "dependsOn": [
+        "@types/ms@2.1.0"
+      ]
+    },
+    {
+      "ref": "@types/ms@2.1.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "@types/qs@6.15.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "@types/xml-encryption@1.2.4",
+      "dependsOn": []
+    },
+    {
+      "ref": "@types/xml2js@0.4.14",
+      "dependsOn": []
+    },
+    {
+      "ref": "@xmldom/is-dom-node@1.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "@xmldom/xmldom@0.8.15",
+      "dependsOn": []
+    },
+    {
+      "ref": "asn1js@3.0.10",
+      "dependsOn": [
+        "pvtsutils@1.3.6",
+        "pvutils@1.2.0",
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "client-only@0.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "drizzle-orm@0.45.2",
+      "dependsOn": [
+        "pg@8.20.0"
+      ]
+    },
+    {
+      "ref": "duck-duck-scrape@2.2.7",
+      "dependsOn": [
+        "html-entities@2.6.0",
+        "needle@3.5.0"
+      ]
+    },
+    {
+      "ref": "escape-html@1.0.3",
+      "dependsOn": []
+    },
+    {
+      "ref": "html-entities@2.6.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "iconv-lite@0.6.3",
+      "dependsOn": [
+        "safer-buffer@2.1.2"
+      ]
+    },
+    {
+      "ref": "jose@6.2.12",
+      "dependsOn": []
+    },
+    {
+      "ref": "lucide-react@1.47.0",
+      "dependsOn": [
+        "react@19.2.6"
+      ]
+    },
+    {
+      "ref": "needle@3.5.0",
+      "dependsOn": [
+        "iconv-lite@0.6.3",
+        "sax@1.6.1"
+      ]
+    },
+    {
+      "ref": "next@16.3.8",
+      "dependsOn": [
+        "react@19.2.6",
+        "react-dom@19.2.6",
+        "@next/env@16.3.8",
+        "@swc/helpers@0.5.23",
+        "postcss@8.5.23",
+        "styled-jsx@5.1.6",
+        "sharp@0.35.5",
+        "@next/swc-win32-x64-msvc@16.3.8"
+      ]
+    },
+    {
+      "ref": "postcss@8.5.23",
+      "dependsOn": []
+    },
+    {
+      "ref": "oauth4webapi@3.8.8",
+      "dependsOn": []
+    },
+    {
+      "ref": "openid-client@6.8.8",
+      "dependsOn": [
+        "jose@6.2.12",
+        "oauth4webapi@3.8.8"
+      ]
+    },
+    {
+      "ref": "pg@8.20.0",
+      "dependsOn": [
+        "pg-connection-string@2.14.0",
+        "pg-pool@3.14.0",
+        "pgpass@1.0.5",
+        "pg-cloudflare@1.4.0"
+      ]
+    },
+    {
+      "ref": "pg-cloudflare@1.4.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pg-connection-string@2.14.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "pg-pool@3.14.0",
+      "dependsOn": [
+        "pg@8.20.0"
+      ]
+    },
+    {
+      "ref": "pgpass@1.0.5",
+      "dependsOn": [
+        "split2@4.2.0"
+      ]
+    },
+    {
+      "ref": "pvtsutils@1.3.6",
+      "dependsOn": [
+        "tslib@2.8.1"
+      ]
+    },
+    {
+      "ref": "pvutils@1.2.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "react@19.2.6",
+      "dependsOn": []
+    },
+    {
+      "ref": "react-dom@19.2.6",
+      "dependsOn": [
+        "react@19.2.6",
+        "scheduler@0.27.0"
+      ]
+    },
+    {
+      "ref": "reflect-metadata@0.2.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "safer-buffer@2.1.2",
+      "dependsOn": []
+    },
+    {
+      "ref": "sax@1.6.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "scheduler@0.27.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "sharp@0.35.5",
+      "dependsOn": [
+        "@img/colour@1.1.0",
+        "semver@7.8.5",
+        "@img/sharp-win32-x64@0.35.5"
+      ]
+    },
+    {
+      "ref": "semver@7.8.5",
+      "dependsOn": []
+    },
+    {
+      "ref": "split2@4.2.0",
+      "dependsOn": []
+    },
+    {
+      "ref": "styled-jsx@5.1.6",
+      "dependsOn": [
+        "react@19.2.6",
+        "client-only@0.0.1"
+      ]
+    },
+    {
+      "ref": "tslib@2.8.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "tsyringe@4.10.0",
+      "dependsOn": [
+        "tslib@1.14.1"
+      ]
+    },
+    {
+      "ref": "tslib@1.14.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "xml-crypto@6.3.1",
+      "dependsOn": [
+        "@xmldom/is-dom-node@1.0.1",
+        "@xmldom/xmldom@0.8.15",
+        "xpath@0.0.33"
+      ]
+    },
+    {
+      "ref": "xpath@0.0.33",
+      "dependsOn": []
+    },
+    {
+      "ref": "xml-encryption@3.1.0",
+      "dependsOn": [
+        "@xmldom/xmldom@0.8.15",
+        "escape-html@1.0.3",
+        "xpath@0.0.32"
+      ]
+    },
+    {
+      "ref": "xpath@0.0.32",
+      "dependsOn": []
+    },
+    {
+      "ref": "xml2js@0.6.2",
+      "dependsOn": [
+        "sax@1.6.1",
+        "xmlbuilder@11.0.1"
+      ]
+    },
+    {
+      "ref": "xmlbuilder@11.0.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "xmlbuilder@15.1.1",
+      "dependsOn": []
+    },
+    {
+      "ref": "xpath@0.0.34",
+      "dependsOn": []
+    }
+  ]
+}
