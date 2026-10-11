@@ -6,7 +6,7 @@ export const maxDuration = 30;
 
 const ATTACK_STIX_URL = "https://raw.githubusercontent.com/mitre-attack/attack-stix-data/master/enterprise-attack/enterprise-attack.json";
 const CACHE_TTL_MS = 60 * 60 * 1000;
-const MAX_STIX_BYTES = 40 * 1024 * 1024;
+const MAX_STIX_BYTES = 60 * 1024 * 1024;
 
 type Technique = {
   id: string;

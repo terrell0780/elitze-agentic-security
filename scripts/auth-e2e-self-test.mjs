@@ -63,6 +63,9 @@ const env = {
   ELITZE_EMAIL_PROVIDER: "test",
   ELITZE_EMAIL_FROM: "ELITZE E2E <e2e@example.invalid>",
   ELITZE_EMAIL_TEST_ENDPOINT: `http://${host}:${mailPort}/emails`,
+  // This E2E verifies that uploads fail closed without an explicitly configured private scanner.
+  ELITZE_MALWARE_SCANNER_PROVIDER: "",
+  ELITZE_VIRUSTOTAL_PRIVATE_API_KEY: "",
 };
 
 const nextCli = path.resolve(process.cwd(), "node_modules/next/dist/bin/next");
@@ -341,31 +344,36 @@ try {
     });
     assert(channel.response.status === 201 && channel.body.ok === true, "file E2E channel creation failed");
 
+    const attachmentsBefore = await db.query(
+      "SELECT count(*)::int AS count FROM public.chat_attachments WHERE tenant_id=$1 AND channel_id=$2",
+      [userRecord.rows[0].tenant_id, channel.body.channel.id],
+    );
+
     const uploadForm = new FormData();
     uploadForm.set("channelId", String(channel.body.channel.id));
-    uploadForm.append("files", new Blob(["ELITZE real file sharing E2E"], { type: "text/plain" }), "elitze-file-e2e.txt");
+    uploadForm.append("files", new Blob(["ELITZE malware-scan fail-closed E2E"], { type: "text/plain" }), "elitze-file-e2e.txt");
     const upload = await fetch(`${origin}/api/chat/files`, {
       method: "POST",
       headers: { origin, cookie },
       body: uploadForm,
     });
     const uploadBody = await upload.json();
-    assert(upload.status === 201 && uploadBody.ok === true, `file upload failed: ${upload.status} ${JSON.stringify(uploadBody)}`);
-    const attachmentId = uploadBody.attachments?.[0]?.id;
-    const attachmentHash = uploadBody.attachments?.[0]?.sha256;
-    assert(typeof attachmentId === "string" && /^[0-9a-f-]{36}$/i.test(attachmentId), "upload did not return an attachment id");
+    assert(
+      upload.status === 503
+        && uploadBody.ok === false
+        && uploadBody.state === "NOT_CONFIGURED"
+        && uploadBody.error === "malware_scanner_not_configured",
+      `unconfigured private malware scanner did not fail closed: ${upload.status} ${JSON.stringify(uploadBody)}`,
+    );
 
-    const anonymousDownload = await fetch(`${origin}/api/chat/files/${attachmentId}`, { cache: "no-store" });
-    assert(anonymousDownload.status === 401, "anonymous file download was not blocked");
-
-    const tenantWideDownload = await fetch(`${origin}/api/chat/files/${attachmentId}`, {
-      headers: { cookie },
-      cache: "no-store",
-    });
-    assert(tenantWideDownload.status === 200, `same-tenant download failed: ${tenantWideDownload.status}`);
-    const downloaded = await tenantWideDownload.text();
-    assert(downloaded === "ELITZE real file sharing E2E", "downloaded file content did not match uploaded content");
-    assert(tenantWideDownload.headers.get("x-elitze-sha256") === attachmentHash, "download SHA-256 digest did not match upload");
+    const attachmentsAfter = await db.query(
+      "SELECT count(*)::int AS count FROM public.chat_attachments WHERE tenant_id=$1 AND channel_id=$2",
+      [userRecord.rows[0].tenant_id, channel.body.channel.id],
+    );
+    assert(
+      Number(attachmentsAfter.rows[0].count) === Number(attachmentsBefore.rows[0].count),
+      "upload stored an attachment without a successful private malware verdict",
+    );
 
     const tenants = await db.query(
       "SELECT id, email_normalized, tenant_id FROM auth_users WHERE email_normalized IN ($1,$2) ORDER BY email_normalized",
@@ -440,7 +448,7 @@ try {
     assert(evidenceBBody.records.some((record) => record.decisionRef === fixtureB.decisionRef), "tenant B evidence missing");
     assert(!evidenceBBody.records.some((record) => record.decisionRef === fixtureA.decisionRef), "tenant B evidence exposed tenant A data");
 
-    console.log("ELITZE real-auth E2E: PASS — clean PostgreSQL account creation, verification email contract, verification, login, database session creation, password reset, session revocation, and cross-tenant graph/evidence isolation verified");
+    console.log("ELITZE real-auth E2E: PASS — account creation, email verification, login, database sessions, recovery/session revocation, fail-closed malware upload without scanner configuration, and cross-tenant graph/evidence isolation verified");
   } finally {
     try {
       // Security decisions are an append-only audit trail; deleting them is correctly denied
