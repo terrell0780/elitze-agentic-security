@@ -205,6 +205,7 @@ jobs:
       PGUSER: elitze
       PGPASSWORD: elitze
       PGDATABASE: elitze_ci
+      ELITZE_AUTH_E2E_DISPOSABLE_DB: "true"
 
     steps:
       - name: Checkout

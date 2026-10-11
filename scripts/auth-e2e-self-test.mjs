@@ -23,6 +23,9 @@ const normalizedPgHost = process.env.PGHOST.toLowerCase().replace(/^\[|\]$/g, ""
 if (!["127.0.0.1", "localhost", "::1"].includes(normalizedPgHost)) {
   throw new Error("Refusing authentication E2E against a remote database. Use local/CI PostgreSQL only; hosted Neon and production databases must never receive test fixtures.");
 }
+if (process.env.ELITZE_AUTH_E2E_DISPOSABLE_DB !== "true" || !/(^|[_-])(ci|test|e2e)([_-]|$)/i.test(process.env.PGDATABASE)) {
+  throw new Error("Refusing authentication E2E unless ELITZE_AUTH_E2E_DISPOSABLE_DB=true and PGDATABASE is explicitly named as a disposable CI/test/E2E database.");
+}
 
 const databaseHost = normalizedPgHost === "::1" ? "[::1]" : normalizedPgHost;
 const databaseUrl = new URL(
@@ -30,6 +33,8 @@ const databaseUrl = new URL(
 ).toString();
 
 let deliveredEmail;
+let fixtureA;
+let fixtureB;
 const mailServer = createServer(async (request, response) => {
   if (request.method !== "POST" || request.url !== "/emails") {
     response.writeHead(404);
@@ -408,8 +413,8 @@ try {
       return { nodeKey: `ci-only:${suffix}`, decisionRef: `ci-decision-${suffix}` };
     };
 
-    const fixtureA = await seed({ tenantId: tenantA.tenant_id, suffix: `A-${runId}` });
-    const fixtureB = await seed({ tenantId: tenantB.tenant_id, suffix: `B-${runId}` });
+    fixtureA = await seed({ tenantId: tenantA.tenant_id, suffix: `A-${runId}` });
+    fixtureB = await seed({ tenantId: tenantB.tenant_id, suffix: `B-${runId}` });
 
     const graphA = await jsonWithTimeout("/api/console/security-graph", cookie);
     const graphABody = await graphA.json();
@@ -438,35 +443,31 @@ try {
     console.log("ELITZE real-auth E2E: PASS — clean PostgreSQL account creation, verification email contract, verification, login, database session creation, password reset, session revocation, and cross-tenant graph/evidence isolation verified");
   } finally {
     try {
+      // Security decisions are an append-only audit trail; deleting them is correctly denied
+      // by deny_mcp_gateway_decision_mutation(). This E2E uses a dedicated disposable CI DB.
+      // Its PostgreSQL service is destroyed by the workflow after this job, retaining immutable
+      // evidence for the complete test run without leaking fixtures into any persistent database.
       const fixtureEmails = [testEmail, secondEmail].filter((email) => typeof email === "string");
-      if (fixtureEmails.length > 0) {
-        const fixtureTenants = await db.query(
-          "SELECT DISTINCT tenant_id FROM public.auth_users WHERE email_normalized = ANY($1::text[])",
-          [fixtureEmails],
-        );
-        const tenantIds = [...new Set(fixtureTenants.rows.map((row) => String(row.tenant_id)))];
-        if (tenantIds.length > 0) {
-          await db.query("BEGIN");
-          try {
-            // Remove rows with RESTRICT references before deleting test tenants.
-            await db.query(
-              "DELETE FROM public.mcp_gateway_decisions WHERE tenant_id = ANY($1::uuid[])",
-              [tenantIds],
-            );
-            // The tenant's FK cascade removes its test users, sessions, tokens, graph fixtures,
-            // agent/MCP records, channels, attachments, and any other tenant-owned test state.
-            await db.query(
-              "DELETE FROM public.auth_tenants WHERE id = ANY($1::uuid[])",
-              [tenantIds],
-            );
-            await db.query("COMMIT");
-            console.log(`ELITZE auth E2E cleanup: PASS — removed ${tenantIds.length} test tenant(s) and all tenant-scoped fixtures`);
-          } catch (error) {
-            await db.query("ROLLBACK").catch(() => {});
-            throw error;
-          }
-        }
-      }
+      const fixtureCounts = await db.query(
+        `SELECT
+           (SELECT count(*)::int FROM public.auth_users WHERE email_normalized = ANY($1::text[])) AS users,
+           (SELECT count(*)::int FROM public.security_graph_nodes WHERE subject_key = ANY($2::text[])) AS graph_nodes,
+           (SELECT count(*)::int FROM public.agent_identities WHERE name = ANY($3::text[])) AS agents,
+           (SELECT count(*)::int FROM public.mcp_gateway_servers WHERE name = ANY($4::text[])) AS servers,
+           (SELECT count(*)::int FROM public.mcp_gateway_decisions WHERE decision_ref = ANY($5::text[])) AS decisions`,
+        [
+          fixtureEmails,
+          [`ci-only:A-${runId}`, `ci-only:B-${runId}`],
+          [`ci-agent-A-${runId}`, `ci-agent-B-${runId}`],
+          [`ci-server-A-${runId}`, `ci-server-B-${runId}`],
+          [`ci-decision-A-${runId}`, `ci-decision-B-${runId}`],
+        ],
+      );
+      const counts = fixtureCounts.rows[0];
+      console.log(
+        "ELITZE auth E2E fixture accounting: PASS — append-only audit rows retained only in the disposable CI database until service teardown; " +
+        Object.entries(counts).map(([key, value]) => `${key}=${value}`).join(", "),
+      );
     } finally {
       await db.end();
     }
