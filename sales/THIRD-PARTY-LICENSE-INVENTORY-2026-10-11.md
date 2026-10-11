@@ -8,8 +8,8 @@
 
 | Check | Result |
 |---|---:|
-| Package manifests inspected | 595 |
-| Dependencies with a declared license field | 595 |
+| Package manifests inspected | 615 |
+| Dependencies with a declared license field | 615 |
 | Dependencies requiring focused license/legal review | 14 |
 | Root-level ELITZE project LICENSE | Not found |
 
@@ -17,7 +17,7 @@
 
 | Declared license expression | Packages |
 |---|---:|
-| MIT | 493 |
+| MIT | 513 |
 | Apache-2.0 | 37 |
 | ISC | 20 |
 | MPL-2.0 | 13 |
@@ -74,6 +74,7 @@ These entries are not automatically prohibited. Their exact license texts, usage
 | @babel/template | 7.29.7 | MIT |
 | @babel/traverse | 7.29.8 | MIT |
 | @babel/types | 7.29.8 | MIT |
+| @cfworker/json-schema | 4.1.1 | MIT |
 | @drizzle-team/brocli | 0.10.2 | Apache-2.0 |
 | @emnapi/core | 1.10.0 | MIT |
 | @emnapi/runtime | 1.11.3 | MIT |
@@ -154,6 +155,14 @@ These entries are not automatically prohibited. Their exact license texts, usage
 | @jridgewell/resolve-uri | 3.1.2 | MIT |
 | @jridgewell/sourcemap-codec | 1.6.0 | MIT |
 | @jridgewell/trace-mapping | 0.3.31 | MIT |
+| @langchain/core | 1.2.17 | MIT |
+| @langchain/langgraph | 1.4.21 | MIT |
+| @langchain/langgraph-checkpoint | 1.1.6 | MIT |
+| @langchain/langgraph-sdk | 1.12.3 | MIT |
+| @langchain/langgraph-sdk/node_modules/eventemitter3 | 5.0.4 | MIT |
+| @langchain/langgraph-sdk/node_modules/p-queue | 9.3.4 | MIT |
+| @langchain/langgraph-sdk/node_modules/p-timeout | 7.0.2 | MIT |
+| @langchain/protocol | 0.0.19 | MIT |
 | @levischuck/tiny-cbor | 0.2.11 | MIT |
 | @modelcontextprotocol/core | 2.0.0 | MIT |
 | @modelcontextprotocol/server | 2.0.0 | MIT |
@@ -193,6 +202,7 @@ These entries are not automatically prohibited. Their exact license texts, usage
 | @rtsao/scc | 1.1.0 | MIT |
 | @simplewebauthn/browser | 14.0.0 | MIT |
 | @simplewebauthn/server | 14.0.2 | MIT |
+| @standard-schema/spec | 1.1.0 | MIT |
 | @swc/helpers | 0.5.23 | Apache-2.0 |
 | @tailwindcss/node | 4.1.17 | MIT |
 | @tailwindcss/oxide | 4.1.17 | MIT |
@@ -284,6 +294,7 @@ These entries are not automatically prohibited. Their exact license texts, usage
 | axe-core | 4.13.0 | MPL-2.0 |
 | axobject-query | 4.1.0 | Apache-2.0 |
 | balanced-match | 1.0.2 | MIT |
+| base64-js | 1.5.1 | MIT |
 | baseline-browser-mapping | 2.11.25 | Apache-2.0 |
 | brace-expansion | 1.1.21 | MIT |
 | braces | 3.0.4-elitze.1 | MIT |
@@ -377,6 +388,7 @@ These entries are not automatically prohibited. Their exact license texts, usage
 | esrecurse | 4.3.0 | BSD-2-Clause |
 | estraverse | 5.3.0 | BSD-2-Clause |
 | esutils | 2.0.3 | BSD-2-Clause |
+| eventemitter3 | 4.0.7 | MIT |
 | fast-deep-equal | 3.1.3 | MIT |
 | fast-glob | 3.3.1 | MIT |
 | fast-glob/node_modules/glob-parent | 5.1.2 | ISC |
@@ -436,6 +448,7 @@ These entries are not automatically prohibited. Their exact license texts, usage
 | is-glob | 4.0.3 | MIT |
 | is-map | 2.0.3 | MIT |
 | is-negative-zero | 2.0.3 | MIT |
+| is-network-error | 1.3.2 | MIT |
 | is-number | 7.0.0 | MIT |
 | is-number-object | 1.1.1 | MIT |
 | is-regex | 1.2.1 | MIT |
@@ -452,6 +465,7 @@ These entries are not automatically prohibited. Their exact license texts, usage
 | iterator.prototype | 1.1.5 | MIT |
 | jiti | 2.7.0 | MIT |
 | jose | 6.2.12 | MIT |
+| js-tiktoken | 1.0.21 | MIT |
 | js-tokens | 4.0.0 | MIT |
 | js-yaml | 4.3.2 | MIT |
 | jsesc | 3.1.0 | MIT |
@@ -461,6 +475,7 @@ These entries are not automatically prohibited. Their exact license texts, usage
 | json5 | 2.2.3 | MIT |
 | jsx-ast-utils | 3.3.5 | MIT |
 | keyv | 4.5.4 | MIT |
+| langsmith | 0.10.11 | MIT |
 | language-subtag-registry | 0.3.23 | CC0-1.0 |
 | language-tags | 1.0.9 | MIT |
 | levn | 0.4.1 | MIT |
@@ -488,6 +503,7 @@ These entries are not automatically prohibited. Their exact license texts, usage
 | minimatch | 3.1.5 | ISC |
 | minimist | 1.2.8 | MIT |
 | ms | 2.1.3 | MIT |
+| mustache | 4.2.0 | MIT |
 | nanoid | 3.3.19 | MIT |
 | napi-postinstall | 0.3.4 | MIT |
 | natural-compare | 1.4.0 | MIT |
@@ -508,8 +524,12 @@ These entries are not automatically prohibited. Their exact license texts, usage
 | openid-client | 6.8.8 | MIT |
 | optionator | 0.9.4 | MIT |
 | own-keys | 1.0.2 | MIT |
+| p-finally | 1.0.0 | MIT |
 | p-limit | 3.1.0 | MIT |
 | p-locate | 5.0.0 | MIT |
+| p-queue | 6.6.2 | MIT |
+| p-retry | 7.1.1 | MIT |
+| p-timeout | 3.2.0 | MIT |
 | parent-module | 1.0.1 | MIT |
 | path-exists | 4.0.0 | MIT |
 | path-key | 3.1.1 | MIT |

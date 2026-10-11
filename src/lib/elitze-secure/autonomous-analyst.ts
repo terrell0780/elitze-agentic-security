@@ -1,6 +1,6 @@
 import { getPgPool } from "@/db";
 
-type FabricRow = {
+export type FabricRow = {
   id: string;
   connector_id: string;
   event_type: string;
@@ -39,7 +39,7 @@ export type AutonomousAnalystResult = {
 
 const weight: Record<string, number> = { INFO: 0, LOW: 1, MEDIUM: 2, HIGH: 3, CRITICAL: 4 };
 
-function evidenceState(rows: FabricRow[]) {
+export function evidenceState(rows: FabricRow[]) {
   if (!rows.length) return "UNMEASURABLE" as const;
   if (rows.some((row) => row.evidence_state === "UNMEASURABLE")) return "UNMEASURABLE" as const;
   if (rows.some((row) => row.evidence_state === "UNKNOWN")) return "UNKNOWN" as const;
@@ -59,7 +59,7 @@ function strings(payload: Record<string, unknown>, key: string) {
   return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
 }
 
-function groupKey(row: FabricRow) {
+export function groupKey(row: FabricRow) {
   const subjectKey = row.subject_key?.trim();
   if (subjectKey) return subjectKey;
   if (typeof row.payload.cveId === "string" && row.payload.cveId.trim()) return "cve:" + row.payload.cveId.trim();
@@ -69,7 +69,7 @@ function groupKey(row: FabricRow) {
   return "event:" + row.id;
 }
 
-function buildFinding(subjectKey: string | null, rows: FabricRow[]): AnalystFinding {
+export function buildFinding(subjectKey: string | null, rows: FabricRow[]): AnalystFinding {
   const state = evidenceState(rows);
   const techniqueIds = Array.from(new Set(rows.flatMap((row) => strings(row.payload,"techniqueIds"))));
   const sourceRefs = rows.map((row) => row.source_ref).filter((value): value is string => Boolean(value));

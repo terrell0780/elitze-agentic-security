@@ -19,8 +19,7 @@ export const metadata: Metadata = {
   creator: "ELITZE", publisher: "ELITZE", authors: [{ name: "ELITZE" }],
   ...(googleVerification ? { verification: { google: googleVerification } } : {}),
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
-  alternates: { canonical: siteUrl },
-  openGraph: { type: "website", url: siteUrl, siteName: "ELITZE Agentic Security", title: "ELITZE Agentic Security | See the threat. Control the path. Prove the fix.", description: "A security decision and evidence plane for AI agents, software, cloud, identity, APIs and runtime behavior.", locale: "en_CA" },
+  openGraph: { type: "website", siteName: "ELITZE Agentic Security", title: "ELITZE Agentic Security | See the threat. Control the path. Prove the fix.", description: "A security decision and evidence plane for AI agents, software, cloud, identity, APIs and runtime behavior.", locale: "en_CA" },
   twitter: { card: "summary_large_image", title: "ELITZE Agentic Security | See the threat. Control the path. Prove the fix.", description: "Security decision, policy enforcement and verification for the agentic enterprise." },
 };
 

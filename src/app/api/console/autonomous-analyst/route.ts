@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser, assertSameOrigin } from "@/lib/auth";
 import { getPgPool } from "@/db";
-import { runAutonomousAnalyst } from "@/lib/elitze-secure/autonomous-analyst";
+import { runAgenticSocGraph as runAutonomousAnalyst } from "@/lib/elitze-secure/agentic-soc-graph";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";

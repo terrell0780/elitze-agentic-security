@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "test": "node scripts/security-self-test.mjs",
     "security:self-test": "node scripts/security-self-test.mjs",
-    "data-bridge:self-test": "node scripts/data-bridge-self-test.mjs",
+    "threat-detection:self-test": "node --experimental-strip-types scripts/threat-detection-self-test.mjs",
+    "malware-scanner:self-test": "node --experimental-strip-types scripts/malware-scanner-self-test.mjs",
+        "data-bridge:self-test": "node scripts/data-bridge-self-test.mjs",
     "mcp-workload-identity:self-test": "node scripts/mcp-workload-identity-self-test.mjs",
     "policy-evidence:self-test": "node scripts/policy-evidence-self-test.mjs",
     "phase5-6:self-test": "node scripts/phase5-6-self-test.mjs",
@@ -55,6 +57,8 @@
     "evidence-snapshot:self-test": "node scripts/evidence-snapshot-self-test.mjs"
   },
   "dependencies": {
+    "@langchain/core": "^1.2.17",
+    "@langchain/langgraph": "^1.4.21",
     "@modelcontextprotocol/server": "2.0.0",
     "@node-saml/node-saml": "5.1.0",
     "@simplewebauthn/browser": "14.0.0",

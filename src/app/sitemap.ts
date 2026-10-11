@@ -22,6 +22,13 @@ const routes = [
   "/help",
   "/contact",
   "/search",
+  "/agentic-soc",
+  "/threat-detection",
+  "/adversary-emulation",
+  "/integrations",
+  "/recursive-agents",
+  "/docs",
+  "/contributing",
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
