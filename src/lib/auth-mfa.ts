@@ -3,7 +3,7 @@ import crypto from "node:crypto";
 const base32Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
 
 function encryptionKey() {
-  const raw = process.env.ELITZE_AUTH_ENCRYPTION_KEY?.trim() ?? "";
+  const raw = process.env.ELITZE_AUTH_ENCRYPTION_KEY_ACTIVE?.trim() || process.env.ELITZE_AUTH_ENCRYPTION_KEY?.trim() || "";
   if (!/^[0-9a-fA-F]{64}$/.test(raw)) throw new Error("auth_encryption_key_invalid");
   return Buffer.from(raw, "hex");
 }

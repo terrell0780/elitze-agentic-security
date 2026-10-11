@@ -142,9 +142,9 @@ export async function ingestSecurityFabricEvent(tenantId: string, input: {
   await db.query(
     "INSERT INTO security_fabric_sources " +
     "(tenant_id,connector_id,integration_state,health_state,last_observed_at,last_error,metadata) " +
-    "VALUES ($1,$2,'INTEGRATED','CONNECTED',now(),NULL,$3) " +
+    "VALUES ($1,$2,'IMPLEMENTED','NOT_CONFIGURED',now(),NULL,$3) " +
     "ON CONFLICT (tenant_id,connector_id) DO UPDATE SET " +
-    "integration_state='INTEGRATED',health_state='CONNECTED',last_observed_at=now(),last_error=NULL,last_error_at=NULL,updated_at=now()",
+    "last_observed_at=now(),updated_at=now()",
     [tenantId, input.connectorId, JSON.stringify({ lastEventHash: contentHash })],
   );
   return {

@@ -30,29 +30,34 @@ function extractItems(payload: unknown): unknown[] {
 }
 
 export class HttpJsonSecurityAdapter implements SecurityAdapter {
-  readonly id: string; readonly domain: SecurityDomain; readonly integration: "IMPLEMENTED" | "INTEGRATED"; private readonly config: HttpJsonAdapterConfig;
+  readonly id: string; readonly domain: SecurityDomain; readonly integration: "IMPLEMENTED" | "INTEGRATED"; private readonly config: HttpJsonAdapterConfig; private connectionVerified = false;
   constructor(config: HttpJsonAdapterConfig) {
     if (!/^https:\/\//i.test(config.endpoint)) throw new Error(`Security adapter ${config.id} endpoint must use HTTPS`);
-    this.config = config; this.id = config.id; this.domain = config.domain; this.integration = config.integration ?? "INTEGRATED";
+    this.config = config; this.id = config.id; this.domain = config.domain; this.integration = config.integration ?? "IMPLEMENTED";
   }
-  health() { return this.config.endpoint && this.config.token ? "CONNECTED" as const : "NOT_CONFIGURED" as const; }
+  health() { return !this.config.endpoint || !this.config.token ? "NOT_CONFIGURED" as const : this.connectionVerified ? "CONNECTED" as const : "UNAVAILABLE" as const; }
   async collect(tenantId: string, query?: string): Promise<ObservedSignal[]> {
-    if (this.health() !== "CONNECTED") return [];
+    if (!this.config.endpoint || !this.config.token) return [];
     const url = new URL(this.config.endpoint);
     if (query && this.config.queryParam) url.searchParams.set(this.config.queryParam, query);
     const headers = new Headers(this.config.headers); headers.set("accept", "application/json"); headers.set("authorization", `Bearer ${this.config.token}`); headers.set("x-elitze-tenant", tenantId);
     const response = await fetch(url, { method: "GET", headers, signal: AbortSignal.timeout(15_000), cache: "no-store" });
-    if (!response.ok) throw new Error(`${this.id} returned HTTP ${response.status}`);
-    return extractItems(await response.json()).map((item, index) => toSignal(item, this.config, tenantId, index));
+    if (!response.ok) { this.connectionVerified = false; throw new Error(`${this.id} returned HTTP ${response.status}`); }
+    const payload = await response.json();
+    this.connectionVerified = true;
+    return extractItems(payload).map((item, index) => toSignal(item, this.config, tenantId, index));
   }
   async execute(action: AuthorizedAction): Promise<ActionResult> {
     if (this.health() !== "CONNECTED") return { state: "FAILED", actionId: action.id, target: action.target, summary: "Connector is not configured or connected.", evidenceIds: [] };
     const headers = new Headers(this.config.headers); headers.set("accept", "application/json"); headers.set("content-type", "application/json"); headers.set("authorization", `Bearer ${this.config.token}`);
     const response = await fetch(this.config.endpoint, { method: "POST", headers, signal: AbortSignal.timeout(15_000), body: JSON.stringify({ tenantId: action.tenantId, action: action.action, target: action.target, risk: action.risk, evidenceIds: action.evidenceIds }), cache: "no-store" });
-    if (!response.ok) return { state: "FAILED", actionId: action.id, target: action.target, summary: `${this.id} rejected the action with HTTP ${response.status}.`, evidenceIds: [] };
+    if (!response.ok) { this.connectionVerified = false; return { state: "FAILED", actionId: action.id, target: action.target, summary: `${this.id} rejected the action with HTTP ${response.status}.`, evidenceIds: [] }; }
+    this.connectionVerified = true;
     const payload = await response.json().catch(() => ({}));
     const evidenceIds = isRecord(payload) && Array.isArray(payload.evidenceIds) ? payload.evidenceIds.filter((value): value is string => typeof value === "string") : [];
-    return { state: "EXECUTED", actionId: action.id, target: action.target, summary: `${this.id} accepted the authorized action.`, evidenceIds };
+    const outcome = isRecord(payload) ? String(payload.state ?? payload.status ?? "").toUpperCase() : "";
+    const confirmed = ["SUCCEEDED", "COMPLETED", "EXECUTED"].includes(outcome);
+    return { state: confirmed ? "EXECUTED" : "ACCEPTED", actionId: action.id, target: action.target, summary: confirmed ? `${this.id} reported a completed action.` : `${this.id} accepted the action; completion is not independently confirmed.`, evidenceIds };
   }
 }
 

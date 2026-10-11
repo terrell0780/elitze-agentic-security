@@ -69,10 +69,12 @@ try {
     "auth_tenants", "auth_users", "auth_sessions", "auth_tokens", "auth_rate_limits",
     "auth_mfa_factors", "auth_recovery_codes", "auth_webauthn_credentials", "auth_challenges",
     "auth_refresh_tokens", "auth_api_keys", "auth_privileged_reauth",
-    "security_test_requests",
+    "security_test_requests", "security_test_findings", "security_validation_events", "security_validation_schedules",
     "security_fabric_sources", "security_fabric_events", "autonomous_analyst_runs", "autonomous_analyst_findings",
     "production_readiness_evidence", "rag_documents", "rag_chunks",
     "mcp_gateway_servers", "mcp_gateway_decisions", "mcp_gateway_request_nonces", "mcp_gateway_rate_limits",
+    "chat_attachments", "team_message_attachments", "ai_connections",
+    "team_voice_presence", "team_voice_signals", "teamspeak_integrations",
   ];
 
   const requiredColumns = [

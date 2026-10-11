@@ -87,8 +87,9 @@ export function evaluatePolicy(context: SecurityContext): PolicyEvaluation {
 }
 
 export function authorizeInternalRequest(supplied: string | null, expected: string | undefined): boolean {
-  if (!supplied || !expected) return false;
+  const activeExpected = expected?.trim() || process.env.ELITZE_INTERNAL_API_KEY_ACTIVE?.trim();
+  if (!supplied || !activeExpected) return false;
   const left = Buffer.from(supplied);
-  const right = Buffer.from(expected);
+  const right = Buffer.from(activeExpected);
   return left.length === right.length && timingSafeEqual(left, right);
 }

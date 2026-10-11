@@ -17,12 +17,26 @@ function parseSslSetting(): boolean | undefined {
   return undefined;
 }
 
+function normalizeConnectionString(value: string): string {
+  try {
+    const url = new URL(value);
+    if (/\.neon\.tech$/i.test(url.hostname)) {
+      url.searchParams.set("sslmode", "verify-full");
+      return url.toString();
+    }
+  } catch {
+    // Leave non-URL/legacy connection strings untouched so configuration
+    // validation can report the original error.
+  }
+  return value;
+}
+
 function connectionConfig(): PoolConfig {
   const databaseUrl =
     process.env.DATABASE_URL?.trim() ||
     process.env.POSTGRES_URL?.trim() ||
     process.env.POSTGRES_URL_NON_POOLING?.trim();
-  if (databaseUrl) return { connectionString: databaseUrl };
+  if (databaseUrl) return { connectionString: normalizeConnectionString(databaseUrl) };
 
   const host = process.env.PGHOST?.trim();
   const user = process.env.PGUSER?.trim();

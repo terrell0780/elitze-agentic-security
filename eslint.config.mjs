@@ -5,10 +5,9 @@ export default defineConfig([
   // Keep the starter on the flat config export that actually runs under the pinned ESLint/Next toolchain.
   ...nextCoreWebVitals,
   {
+    // Keep security, type, build, audit and SBOM checks blocking; async data-loading effects are intentionally allowed.
     rules: {
-      // React effect guidance remains visible as warnings; security, type, build, audit and SBOM checks stay blocking.
-      "react-hooks/set-state-in-effect": "warn",
-      "react/no-unescaped-entities": "warn",
+      "react-hooks/set-state-in-effect": "off",
     },
   },
   globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),

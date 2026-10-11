@@ -1,0 +1,242 @@
+{
+  "suite": "ELITZE Agentic Security — manual randomized diagnostics",
+  "startedAt": "2026-10-05T19:58:07.457Z",
+  "finishedAt": "2026-10-05T19:59:23.291Z",
+  "randomizedOrder": [
+    {
+      "name": "auth:security-self-test",
+      "label": "Authentication security"
+    },
+    {
+      "name": "business-process:self-test",
+      "label": "Business process controls"
+    },
+    {
+      "name": "progressive-proofing:self-test",
+      "label": "Progressive proofing"
+    },
+    {
+      "name": "mcp-workload-identity:self-test",
+      "label": "MCP workload identity"
+    },
+    {
+      "name": "reo-market-intelligence:self-test",
+      "label": "REO market intelligence"
+    },
+    {
+      "name": "pentest-request:self-test",
+      "label": "Pentest request controls"
+    },
+    {
+      "name": "evidence-expression:self-test",
+      "label": "Evidence expression"
+    },
+    {
+      "name": "trust-ownership:self-test",
+      "label": "Trust/ownership controls"
+    },
+    {
+      "name": "security-graph:self-test",
+      "label": "Security graph"
+    },
+    {
+      "name": "tenant-overview:self-test",
+      "label": "Tenant isolation"
+    },
+    {
+      "name": "legal:control-self-test",
+      "label": "Legal control pack"
+    },
+    {
+      "name": "security:self-test",
+      "label": "Core security policy"
+    },
+    {
+      "name": "policy-evidence:self-test",
+      "label": "Policy/evidence"
+    },
+    {
+      "name": "rag:self-test",
+      "label": "RAG/vector controls"
+    },
+    {
+      "name": "global-compliance:self-test",
+      "label": "Global compliance catalog"
+    },
+    {
+      "name": "security-fabric:self-test",
+      "label": "Security source fabric"
+    },
+    {
+      "name": "google-ads-governance:self-test",
+      "label": "Advertising governance"
+    },
+    {
+      "name": "contact-acquisition:self-test",
+      "label": "Contact/acquisition routing"
+    },
+    {
+      "name": "brand:self-test",
+      "label": "ELITZE public brand"
+    },
+    {
+      "name": "phase5-6:self-test",
+      "label": "Real integration control"
+    },
+    {
+      "name": "production-config:self-test",
+      "label": "Production identity/config"
+    },
+    {
+      "name": "braces:self-test",
+      "label": "Dependency security patch"
+    },
+    {
+      "name": "data-bridge:self-test",
+      "label": "Data bridge controls"
+    },
+    {
+      "name": "agent-workflow:self-test",
+      "label": "Agent workflows"
+    }
+  ],
+  "results": [
+    {
+      "name": "auth:security-self-test",
+      "ok": true,
+      "durationMs": 718
+    },
+    {
+      "name": "business-process:self-test",
+      "ok": true,
+      "durationMs": 704
+    },
+    {
+      "name": "progressive-proofing:self-test",
+      "ok": true,
+      "durationMs": 799
+    },
+    {
+      "name": "mcp-workload-identity:self-test",
+      "ok": true,
+      "durationMs": 699
+    },
+    {
+      "name": "reo-market-intelligence:self-test",
+      "ok": true,
+      "durationMs": 670
+    },
+    {
+      "name": "pentest-request:self-test",
+      "ok": true,
+      "durationMs": 911
+    },
+    {
+      "name": "evidence-expression:self-test",
+      "ok": true,
+      "durationMs": 825
+    },
+    {
+      "name": "trust-ownership:self-test",
+      "ok": true,
+      "durationMs": 793
+    },
+    {
+      "name": "security-graph:self-test",
+      "ok": true,
+      "durationMs": 890
+    },
+    {
+      "name": "tenant-overview:self-test",
+      "ok": true,
+      "durationMs": 967
+    },
+    {
+      "name": "legal:control-self-test",
+      "ok": true,
+      "durationMs": 870
+    },
+    {
+      "name": "security:self-test",
+      "ok": true,
+      "durationMs": 960
+    },
+    {
+      "name": "policy-evidence:self-test",
+      "ok": true,
+      "durationMs": 818
+    },
+    {
+      "name": "rag:self-test",
+      "ok": true,
+      "durationMs": 660
+    },
+    {
+      "name": "global-compliance:self-test",
+      "ok": true,
+      "durationMs": 744
+    },
+    {
+      "name": "security-fabric:self-test",
+      "ok": true,
+      "durationMs": 724
+    },
+    {
+      "name": "google-ads-governance:self-test",
+      "ok": true,
+      "durationMs": 790
+    },
+    {
+      "name": "contact-acquisition:self-test",
+      "ok": true,
+      "durationMs": 1017
+    },
+    {
+      "name": "brand:self-test",
+      "ok": true,
+      "durationMs": 757
+    },
+    {
+      "name": "phase5-6:self-test",
+      "ok": true,
+      "durationMs": 692
+    },
+    {
+      "name": "production-config:self-test",
+      "ok": true,
+      "durationMs": 1033
+    },
+    {
+      "name": "braces:self-test",
+      "ok": true,
+      "durationMs": 722
+    },
+    {
+      "name": "data-bridge:self-test",
+      "ok": true,
+      "durationMs": 672
+    },
+    {
+      "name": "agent-workflow:self-test",
+      "ok": true,
+      "durationMs": 735
+    },
+    {
+      "name": "typecheck",
+      "ok": true,
+      "durationMs": 14468
+    },
+    {
+      "name": "lint",
+      "ok": true,
+      "durationMs": 16176
+    },
+    {
+      "name": "build",
+      "ok": true,
+      "durationMs": 19911
+    }
+  ],
+  "allGreen": true,
+  "hostname": "unknown"
+}

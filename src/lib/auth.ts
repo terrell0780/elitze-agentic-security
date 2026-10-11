@@ -24,7 +24,7 @@ export type AuthUser = {
   sessionId?: string;
 };
 
-const normalizeEmail = (email: string) => email.trim().toLowerCase();
+export const normalizeEmail = (email: string) => email.trim().toLowerCase();
 const digest = (value: string) => createHash("sha256").update(value).digest("hex");
 const newToken = () => randomBytes(32).toString("base64url");
 
@@ -364,12 +364,16 @@ export async function registerUser(
   email: string,
   password: string,
   displayName?: string,
+  organizationName?: string,
+  organizationSlug?: string,
 ) {
   const normalized = normalizeEmail(email);
   if (!/^\S+@\S+\.\S+$/.test(normalized)) throw new Error("invalid_email");
 
   const passwordHash = await hashPassword(password);
-  const tenantSlug = `tenant-${randomBytes(8).toString("hex")}`;
+  const tenantName = organizationName?.trim() || `${normalized.split("@")[0]}'s organization`;
+  const tenantSlug = organizationSlug?.trim().toLowerCase() || `tenant-${randomBytes(8).toString("hex")}`;
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(tenantSlug)) throw new Error("organization_slug_policy");
   const result = await getPgPool().query(
     `WITH new_tenant AS (
        INSERT INTO auth_tenants (name,slug)
@@ -388,7 +392,7 @@ export async function registerUser(
        role,
        status`,
     [
-      displayName?.trim() || `${normalized.split("@")[0]}'s organization`,
+      tenantName,
       tenantSlug,
       normalized,
       passwordHash,
@@ -466,6 +470,33 @@ export async function authenticate(email: string, password: string) {
   };
 }
 
+export async function verifyEmailToken(raw: string): Promise<AuthUser | null> {
+  const record = await consumeToken(raw, "email_verification");
+  if (!record) return null;
+  const result = await getPgPool().query(
+    `UPDATE auth_users
+     SET status='active', email_verified_at=now(), updated_at=now()
+     WHERE id=$1 AND tenant_id=$2
+     RETURNING id, tenant_id AS "tenantId", email, display_name AS "displayName", role, status`,
+    [record.userId, record.tenantId],
+  );
+  return (result.rows[0] as AuthUser | undefined) ?? null;
+}
+
+export async function requestPasswordRecovery(emailInput: string): Promise<string | null> {
+  const email = normalizeEmail(emailInput);
+  const [user] = (await (async () => {
+    const result = await getPgPool().query(
+      `SELECT id, tenant_id AS "tenantId", email, display_name AS "displayName", role, status
+       FROM auth_users WHERE email_normalized=$1 AND status='active' LIMIT 1`,
+      [email],
+    );
+    return result.rows;
+  })()) as AuthUser[];
+  if (!user) return null;
+  return issueEmailToken(user, "password_reset", 60);
+}
+
 export async function issueEmailToken(
   user: AuthUser,
   purpose: "email_verification" | "password_reset",
@@ -480,12 +511,13 @@ export async function issueEmailToken(
   );
   await db.query(
     `INSERT INTO auth_tokens
-      (user_id,tenant_id,token_hash,purpose,expires_at)
-     VALUES ($1,$2,$3,$4,$5)`,
+      (user_id,tenant_id,token_hash,purpose,kind,expires_at)
+     VALUES ($1,$2,$3,$4,$5,$6)`,
     [
       user.id,
       user.tenantId,
       digest(raw),
+      purpose,
       purpose,
       new Date(Date.now() + ttlMinutes * 60_000).toISOString(),
     ],
@@ -510,4 +542,4 @@ export async function consumeToken(
   return result.rows[0] as { userId: string; tenantId: string } | undefined;
 }
 
-export { normalizeEmail, hashPassword, verifyPassword, SESSION_COOKIE };
+export { hashPassword, verifyPassword, SESSION_COOKIE };

@@ -13,6 +13,7 @@ for (const type of ["HUMAN_IDENTITY", "AGENT_IDENTITY", "SERVICE_ACCOUNT", "MODE
 for (const relation of ["AUTHORIZES", "DELEGATES", "INVOKES", "CAN_REACH", "READS", "WRITES", "EXECUTES", "GOVERNS", "DECIDED_BY", "RESULTED_IN", "VERIFIED_BY", "PROVES"]) assert.match(migration, new RegExp(relation));
 for (const marker of ["contentHash", "UNMEASURABLE", "graph_edge_endpoint_missing", "findGraphPaths", "graphStats"]) assert.match(service, new RegExp(marker));
 assert.match(route, /ELITZE_INTERNAL_API_KEY/);
-assert.match(route, /securityGraph/i);
+assert.match(route, /graphStats/);
+assert.match(route, /findGraphPaths/);
 assert.match(docs, /No seed agents, fake tools, fabricated credentials, synthetic reachability/);
 console.log("ELITZE security graph self-test: PASS");

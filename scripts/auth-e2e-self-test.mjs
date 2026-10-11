@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import { createServer } from "node:http";
 import { once } from "node:events";
-import { spawn } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import path from "node:path";
 import pg from "pg";
 
@@ -9,14 +9,43 @@ const { Client } = pg;
 const host = "127.0.0.1";
 const appPort = 3010;
 const origin = `http://${host}:${appPort}`;
-const testEmail = `e2e-auth-${Date.now()}@example.invalid`;
-const primaryPassword = ["E2EAuth", Date.now().toString(), "PrimaryPass12"].join("-");
+const runId = Date.now().toString(36) + randomBytes(4).toString("hex");
+const testEmail = `e2e-auth-${runId}@example.invalid`;
+const primaryPassword = ["E2EAuth", runId, "PrimaryPass12"].join("-");
 const resetPassword = ["E2EReset", Date.now().toString(), "ResetPass12"].join("-");
-const databaseUrl = ["postgresql:", "//", process.env.PGUSER, ":", process.env.PGPASSWORD, "@", process.env.PGHOST, ":", process.env.PGPORT, "/", process.env.PGDATABASE].join("");
+
+try {
+  process.loadEnvFile?.(path.resolve(process.cwd(), ".env.local"));
+} catch {}
+
+let configuredDatabaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.POSTGRES_URL_NON_POOLING;
+if (!configuredDatabaseUrl && process.env.NEON_PROJECT_ID) {
+  try {
+    const command = process.platform === "win32" ? process.env.ComSpec : "npx";
+    const args = process.platform === "win32"
+      ? ["/d", "/s", "/c", "npx neonctl connection-string --project-id " + process.env.NEON_PROJECT_ID]
+      : ["neonctl", "connection-string", "--project-id", process.env.NEON_PROJECT_ID];
+    configuredDatabaseUrl = execFileSync(command, args, { encoding: "utf8", windowsHide: true })
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .findLast((line) => line.startsWith("postgres")) || "";
+  } catch {}
+}
+if (configuredDatabaseUrl && (!process.env.PGUSER || !process.env.PGPASSWORD || !process.env.PGHOST || !process.env.PGPORT || !process.env.PGDATABASE)) {
+  const parsed = new URL(configuredDatabaseUrl);
+  process.env.PGHOST ||= parsed.hostname;
+  process.env.PGPORT ||= parsed.port || "5432";
+  process.env.PGUSER ||= decodeURIComponent(parsed.username);
+  process.env.PGPASSWORD ||= decodeURIComponent(parsed.password);
+  process.env.PGDATABASE ||= decodeURIComponent(parsed.pathname.slice(1));
+  process.env.PGSSLMODE ||= "require";
+}
 
 if (!process.env.PGUSER || !process.env.PGPASSWORD || !process.env.PGHOST || !process.env.PGPORT || !process.env.PGDATABASE) {
-  throw new Error("PG environment is required for auth E2E");
+  throw new Error("PG environment or project DATABASE_URL is required for auth E2E");
 }
+
+const databaseUrl = ["postgresql:", "//", process.env.PGUSER, ":", process.env.PGPASSWORD, "@", process.env.PGHOST, ":", process.env.PGPORT, "/", process.env.PGDATABASE].join("");
 
 let deliveredEmail;
 const mailServer = createServer(async (request, response) => {
@@ -42,9 +71,11 @@ const env = {
   NEXT_PUBLIC_SITE_URL: origin,
   ELITZE_ALLOWED_ORIGINS: origin,
   ELITZE_CONTACT_EMAIL: "tsh_cook@hotmail.com",
-  RESEND_API_KEY: "e2e-key",
-  RESEND_FROM: "ELITZE E2E <e2e@example.invalid>",
-  RESEND_API_URL: `http://${host}:${mailPort}/emails`,
+  ELITZE_TEAM_SESSION_SECRET: "e2e-team-session-secret-" + runId,
+  ELITZE_INTEGRATION_ENCRYPTION_KEY: "a".repeat(64),
+  ELITZE_EMAIL_PROVIDER: "test",
+  ELITZE_EMAIL_FROM: "ELITZE E2E <e2e@example.invalid>",
+  ELITZE_EMAIL_TEST_ENDPOINT: `http://${host}:${mailPort}/emails`,
 };
 
 const nextCli = path.resolve(process.cwd(), "node_modules/next/dist/bin/next");
@@ -253,7 +284,7 @@ try {
       [testEmail],
     );
     await db.query(
-      "INSERT INTO auth_tokens (user_id, tenant_id, token_hash, purpose, expires_at) VALUES ($1,$2,$3,'password_reset',now()+interval '10 minutes')",
+      "INSERT INTO auth_tokens (user_id, tenant_id, token_hash, purpose, kind, expires_at) VALUES ($1,$2,$3,'password_reset','password_reset',now()+interval '10 minutes')",
       [userRecord.rows[0].id, user.tenant_id, resetHash],
     );
 
@@ -307,6 +338,48 @@ try {
     const secondCookie = sessionCookie(secondLogin.response);
     assert(secondCookie.includes("elitze_session="), "second account did not receive a session cookie");
 
+    const teamSession = await jsonRequest("/api/team/session", {
+      method: "POST",
+      headers: { cookie },
+      body: "{}",
+    });
+    assert(teamSession.response.status === 200 && teamSession.body.ok === true, "team session bootstrap failed");
+    const teamCookie = sessionCookie(teamSession.response);
+    assert(teamCookie.includes("elitze_team_session="), "team session cookie was not issued");
+
+    const channel = await jsonRequest("/api/team", {
+      method: "POST",
+      headers: { cookie: teamCookie },
+      body: JSON.stringify({ name: `ELITZE E2E Files ${runId}`, channelType: "team" }),
+    });
+    assert(channel.response.status === 201 && channel.body.ok === true, "file E2E channel creation failed");
+
+    const uploadForm = new FormData();
+    uploadForm.set("channelId", String(channel.body.channel.id));
+    uploadForm.append("files", new Blob(["ELITZE real file sharing E2E"], { type: "text/plain" }), "elitze-file-e2e.txt");
+    const upload = await fetch(`${origin}/api/chat/files`, {
+      method: "POST",
+      headers: { origin, cookie },
+      body: uploadForm,
+    });
+    const uploadBody = await upload.json();
+    assert(upload.status === 201 && uploadBody.ok === true, `file upload failed: ${upload.status} ${JSON.stringify(uploadBody)}`);
+    const attachmentId = uploadBody.attachments?.[0]?.id;
+    const attachmentHash = uploadBody.attachments?.[0]?.sha256;
+    assert(typeof attachmentId === "string" && /^[0-9a-f-]{36}$/i.test(attachmentId), "upload did not return an attachment id");
+
+    const anonymousDownload = await fetch(`${origin}/api/chat/files/${attachmentId}`, { cache: "no-store" });
+    assert(anonymousDownload.status === 401, "anonymous file download was not blocked");
+
+    const tenantWideDownload = await fetch(`${origin}/api/chat/files/${attachmentId}`, {
+      headers: { cookie },
+      cache: "no-store",
+    });
+    assert(tenantWideDownload.status === 200, `same-tenant download failed: ${tenantWideDownload.status}`);
+    const downloaded = await tenantWideDownload.text();
+    assert(downloaded === "ELITZE real file sharing E2E", "downloaded file content did not match uploaded content");
+    assert(tenantWideDownload.headers.get("x-elitze-sha256") === attachmentHash, "download SHA-256 digest did not match upload");
+
     const tenants = await db.query(
       "SELECT id, email_normalized, tenant_id FROM auth_users WHERE email_normalized IN ($1,$2) ORDER BY email_normalized",
       [testEmail, secondEmail],
@@ -353,8 +426,8 @@ try {
       return { nodeKey: `ci-only:${suffix}`, decisionRef: `ci-decision-${suffix}` };
     };
 
-    const fixtureA = await seed({ tenantId: tenantA.tenant_id, suffix: "A" });
-    const fixtureB = await seed({ tenantId: tenantB.tenant_id, suffix: "B" });
+    const fixtureA = await seed({ tenantId: tenantA.tenant_id, suffix: `A-${runId}` });
+    const fixtureB = await seed({ tenantId: tenantB.tenant_id, suffix: `B-${runId}` });
 
     const graphA = await jsonWithTimeout("/api/console/security-graph", cookie);
     const graphABody = await graphA.json();

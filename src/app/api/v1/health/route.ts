@@ -9,7 +9,7 @@ export async function GET() {
     await verifyDatabaseConnection();
     return NextResponse.json({
       ok: true,
-      service: "elitze-cybersecurity",
+      service: "elitze-agentic-security",
       database: "reachable",
       latencyMs: Date.now() - started,
       claims: {
@@ -22,7 +22,7 @@ export async function GET() {
     console.error("ELITZE database health check failed", error);
     return NextResponse.json({
       ok: false,
-      service: "elitze-cybersecurity",
+      service: "elitze-agentic-security",
       database: "unavailable",
       claims: {
         productionDatabase: "NOT_VERIFIED",

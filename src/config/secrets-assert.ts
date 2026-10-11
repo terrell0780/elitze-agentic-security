@@ -2,12 +2,13 @@ import { z } from "zod";
 import { isDatabaseConfigured } from "@/db";
 
 const ProductionSecretsSchema = z.object({
-  ELITZE_AUTH_ENCRYPTION_KEY: z.string().trim().min(32),
-  ELITZE_TEAM_SESSION_SECRET: z.string().trim().min(32),
-  ELITZE_INTERNAL_API_KEY: z.string().trim().min(16),
+  ELITZE_AUTH_ENCRYPTION_KEY_ACTIVE: z.string().trim().min(32),
+  ELITZE_TEAM_SESSION_SECRET_ACTIVE: z.string().trim().min(32),
   ELITZE_ALLOWED_ORIGINS: z.string().trim().min(1),
-  RESEND_API_KEY: z.string().trim().startsWith("re_"),
-  RESEND_FROM: z.string().trim().min(3),
+  ELITZE_INTERNAL_API_KEY_ACTIVE: z.string().trim().min(16),
+  ELITZE_EMAIL_PROVIDER: z.literal("resend"),
+  ELITZE_EMAIL_FROM: z.string().trim().min(3),
+  RESEND_API_KEY: z.string().trim().min(10),
 });
 
 export type ProductionSecretsStatus = {

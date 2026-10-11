@@ -1,13 +1,14 @@
 import { NextResponse } from "next/server";
-import { clearSessionCookie, getSessionToken, requireCsrf } from "@/lib/auth/cookies";
-import { revokeSession } from "@/lib/auth/service";
+import { assertSameOrigin, logout } from "@/lib/auth";
+
+export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
-    await requireCsrf(request);
-    const token = await getSessionToken();
-    if (token) await revokeSession(token);
-    await clearSessionCookie();
+    if (!(await assertSameOrigin(request))) {
+      return NextResponse.json({ ok: false, error: "csrf_rejected" }, { status: 403 });
+    }
+    await logout();
     return NextResponse.json({ ok: true });
   } catch {
     return NextResponse.json({ ok: false, error: "Logout rejected." }, { status: 403 });

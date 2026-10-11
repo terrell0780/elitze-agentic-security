@@ -1,36 +1,67 @@
 import { Pool } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
-
+import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import * as schema from "@/db/production-schema";
 
-const connectionString =
-  process.env.DATABASE_URL?.trim() ||
-  process.env.POSTGRES_URL?.trim() ||
-  process.env.POSTGRES_URL_NON_POOLING?.trim();
+let pool: Pool | undefined;
+let productionDb: NodePgDatabase<typeof schema> | undefined;
 
-if (!connectionString && process.env.NODE_ENV === "production") {
-  throw new Error("DATABASE_URL is required in production.");
+function connectionString() {
+  const value =
+    process.env.DATABASE_URL?.trim()
+    || process.env.POSTGRES_URL?.trim()
+    || process.env.POSTGRES_URL_NON_POOLING?.trim();
+  if (!value) return "";
+  try {
+    const url = new URL(value);
+    if (/\.neon\.tech$/i.test(url.hostname)) {
+      url.searchParams.set("sslmode", "verify-full");
+      return url.toString();
+    }
+  } catch {
+    // Keep the original value so pg can report a precise connection error.
+  }
+  return value;
 }
 
-export const pool = new Pool({
-  connectionString,
-  max: Number(process.env.DB_POOL_MAX ?? 10),
-  idleTimeoutMillis: 30_000,
-  connectionTimeoutMillis: 10_000,
-  ssl: process.env.DATABASE_SSL === "disable"
-    ? false
-    : connectionString?.includes(".neon.tech")
-      ? { rejectUnauthorized: true }
-      : undefined,
+function getPool() {
+  if (pool) return pool;
+  const url = connectionString();
+  if (!url) throw new Error("DATABASE_URL or PostgreSQL connection settings are required.");
+  pool = new Pool({
+    connectionString: url,
+    max: Number(process.env.DB_POOL_MAX ?? 10),
+    idleTimeoutMillis: 30_000,
+    connectionTimeoutMillis: 10_000,
+    ssl: process.env.DATABASE_SSL === "disable"
+      ? false
+      : url.includes(".neon.tech")
+        ? { rejectUnauthorized: true }
+        : undefined,
+  });
+  return pool;
+}
+
+export function getProductionDb() {
+  productionDb ??= drizzle(getPool(), { schema });
+  return productionDb;
+}
+
+export const db = new Proxy({} as NodePgDatabase<typeof schema>, {
+  get(_target, property) {
+    const current = getProductionDb();
+    const value = Reflect.get(current, property);
+    return typeof value === "function" ? value.bind(current) : value;
+  },
 });
 
-export const db = drizzle(pool, { schema });
-
 export async function verifyDatabaseConnection(): Promise<void> {
-  const client = await pool.connect();
+  const client = await getPool().connect();
   try {
     await client.query("select 1 as ok");
   } finally {
     client.release();
   }
 }
+
+export { getPool as getProductionPool };

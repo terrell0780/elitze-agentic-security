@@ -7,7 +7,7 @@ const MAX_AGE = 60 * 60 * 12;
 type TeamSession = { actorId: string; tenantId: string; issuedAt: number };
 
 function secret() {
-  const value = process.env.ELITZE_TEAM_SESSION_SECRET?.trim();
+  const value = process.env.ELITZE_TEAM_SESSION_SECRET_ACTIVE?.trim() || process.env.ELITZE_TEAM_SESSION_SECRET?.trim();
   if (!value) throw new Error("ELITZE_TEAM_SESSION_SECRET is required");
   return value;
 }

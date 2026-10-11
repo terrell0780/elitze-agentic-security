@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
     ].join("\n");
 
     try {
-      if (!process.env.RESEND_API_KEY?.trim() || !process.env.RESEND_FROM?.trim()) {
+      if (!process.env.ELITZE_EMAIL_PROVIDER?.trim() || !process.env.ELITZE_EMAIL_FROM?.trim()) {
         return Response.json(
           { error: "email_delivery_not_configured", leadRecorded: true, leadId },
           { status: 503 },

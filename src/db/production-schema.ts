@@ -51,7 +51,9 @@ export const sessions = pgTable("sessions", {
 export const authTokens = pgTable("auth_tokens", {
   id: uuid("id").defaultRandom().primaryKey(),
   userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  tenantId: uuid("tenant_id").notNull(),
   tokenHash: varchar("token_hash", { length: 64 }).notNull(),
+  purpose: text("purpose").notNull(),
   kind: varchar("kind", { length: 40 }).notNull(),
   expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
   consumedAt: timestamp("consumed_at", { withTimezone: true }),
