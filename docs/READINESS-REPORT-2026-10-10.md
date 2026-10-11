@@ -35,6 +35,7 @@ The inspected production-gates workflow run, [38078783511](https://github.com/te
 - Added `/security-disclosure` with a real contact route, safe-research boundaries, and no invented response-time or reward commitments.
 - Added `/accessibility` with accessibility goals and an explicit `UNVERIFIED` conformance status because no independent conformance assessment has been established by this work.
 - Added both public routes to the sitemap.
+- Expanded the homepage security relationship map canvas and nodes for clearer enterprise presentation; it remains explicitly labeled conceptual and not live telemetry.
 - Preserved the original working tree by making changes only in a separate Git worktree and branch.
 
 These routes have not been deployed to production; their live 404 responses observed before the branch change remain the current production behavior until an approved release is built and promoted.
