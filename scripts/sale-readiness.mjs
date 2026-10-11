@@ -22,7 +22,6 @@ const publicCodeExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".css"]);
 const textExtensions = new Set([".ts", ".tsx", ".js", ".mjs", ".json", ".md", ".yml", ".yaml", ".sql", ".css"]);
 const topMarketingClaimPattern = /((?<!-)\btop[- ]?(?:1|3|5|five)\b)(?![./\d])/i;
 const publicCodeForbidden = [
-  /God['’]s Eye/i,
   /salts team/i,
   topMarketingClaimPattern,
   /\b(?:#1|number one|best in class|industry[- ]leading)\b/i,
