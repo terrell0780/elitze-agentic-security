@@ -2,6 +2,7 @@ import { createHash, randomBytes, scrypt as scryptCallback, timingSafeEqual, typ
 import { cookies, headers } from "next/headers";
 import { getPgPool } from "@/db";
 import { productionConfig } from "@/config/production";
+import { isReservedNonDeliverableEmail } from "@/lib/elitze-secure/auth-email-policy";
 
 const SESSION_COOKIE = "elitze_session";
 const PERSISTENT_DAYS = 30;
@@ -251,6 +252,14 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
     | undefined;
 
   if (!row || row.status !== "active") return null;
+  if (isReservedNonDeliverableEmail(row.email)) {
+    await db.query(
+      "UPDATE auth_sessions SET revoked_at=now() WHERE id=$1 AND revoked_at IS NULL",
+      [row.session_id],
+    );
+    (await cookies()).delete(SESSION_COOKIE);
+    return null;
+  }
 
   const now = Date.now();
   const absoluteLifetime = (row.persistent ? PERSISTENT_DAYS : NON_PERSISTENT_DAYS) * 86_400_000;
@@ -368,7 +377,9 @@ export async function registerUser(
   organizationSlug?: string,
 ) {
   const normalized = normalizeEmail(email);
-  if (!/^\S+@\S+\.\S+$/.test(normalized)) throw new Error("invalid_email");
+  if (!/^\S+@\S+\.\S+$/.test(normalized) || isReservedNonDeliverableEmail(normalized)) {
+    throw new Error("invalid_email");
+  }
 
   const passwordHash = await hashPassword(password);
   const tenantName = organizationName?.trim() || `${normalized.split("@")[0]}'s organization`;
@@ -405,6 +416,10 @@ export async function registerUser(
 
 export async function authenticate(email: string, password: string) {
   const normalized = normalizeEmail(email);
+  if (isReservedNonDeliverableEmail(normalized)) {
+    await verifyPassword(password, DUMMY_PASSWORD_HASH);
+    return null;
+  }
   const db = getPgPool();
   const result = await db.query(
     `SELECT
@@ -485,6 +500,7 @@ export async function verifyEmailToken(raw: string): Promise<AuthUser | null> {
 
 export async function requestPasswordRecovery(emailInput: string): Promise<string | null> {
   const email = normalizeEmail(emailInput);
+  if (isReservedNonDeliverableEmail(email)) return null;
   const [user] = (await (async () => {
     const result = await getPgPool().query(
       `SELECT id, tenant_id AS "tenantId", email, display_name AS "displayName", role, status

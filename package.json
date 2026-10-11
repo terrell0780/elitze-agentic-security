@@ -26,7 +26,7 @@
     "tenant-overview:self-test": "node scripts/tenant-overview-self-test.mjs",
     "mcp:github": "node src/lib/elitze-secure/github-control-mcp.mjs",
     "auth:security-self-test": "node scripts/auth-security-self-test.mjs",
-    "auth:e2e-safety-self-test": "node scripts/auth-e2e-safety-self-test.mjs",
+    "auth:e2e-safety-self-test": "node --experimental-strip-types scripts/auth-e2e-safety-self-test.mjs",
     "auth:e2e-self-test": "node scripts/auth-e2e-self-test.mjs",
     "progressive-proofing:self-test": "node --experimental-strip-types scripts/progressive-proofing-self-test.mjs",
     "evidence-expression:self-test": "node --experimental-strip-types scripts/evidence-expression-self-test.mjs",

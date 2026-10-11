@@ -1,6 +1,7 @@
 import { generateAuthenticationOptions } from "@simplewebauthn/server";
 import { assertSameOrigin } from "@/lib/auth";
 import { getPgPool } from "@/db";
+import { isReservedNonDeliverableEmail } from "@/lib/elitze-secure/auth-email-policy";
 import crypto from "node:crypto";
 
 export const dynamic = "force-dynamic";
@@ -12,6 +13,7 @@ export async function POST(request: Request) {
     const body = await request.json() as { email?: unknown };
     if (typeof body.email !== "string") return Response.json({ error: "invalid_credentials" }, { status: 401 });
     const email = body.email.trim().toLowerCase();
+    if (isReservedNonDeliverableEmail(email)) return Response.json({ error: "invalid_credentials" }, { status: 401 });
     const userResult = await getPgPool().query(
       `SELECT id, tenant_id AS "tenantId" FROM auth_users WHERE email_normalized=$1 AND status='active' LIMIT 1`,
       [email],
