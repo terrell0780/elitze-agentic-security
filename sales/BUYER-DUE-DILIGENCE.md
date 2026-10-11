@@ -80,7 +80,7 @@ The proposed software/product asset package may include, subject to the definiti
 - Deployment configuration and documentation.
 - Sales and acquisition materials.
 - Transferable cloud, analytics, communications, and social accounts only where legally and contractually transferable.
-- Up to 30 days of transition support, capped at 10 hours, unless separately agreed.
+- No ongoing managed service or SaaS operation is included. Any transition assistance must be optional, limited, and separately agreed in the definitive transaction documents.
 
 The seller's personal GitHub account, personal email and financial accounts, unrelated repositories/projects, non-transferable vendor accounts, and third-party IP not owned by the seller are excluded.
 

@@ -14,6 +14,8 @@ const routes = [
   "/reo",
   "/privacy",
   "/terms",
+  "/security-disclosure",
+  "/accessibility",
   "/legal",
   "/legal/ownership",
   "/sales",

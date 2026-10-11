@@ -9,7 +9,26 @@ export type ValidationStatus = "QUEUED" | "DISPATCHED" | "RUNNING" | "COMPLETED"
 const env = (name: string) => process.env[name]?.trim() ?? "";
 
 function runnerBaseUrl() {
-  return env("ELITZE_SECURITY_RUNNER_URL").replace(/\/$/, "");
+  const raw = env("ELITZE_SECURITY_RUNNER_URL").replace(/\/+$/, "");
+  if (!raw) return "";
+  try {
+    const parsed = new URL(raw);
+    const hostname = parsed.hostname.replace(/^\[|\]$/g, "").toLowerCase();
+    const localHost = ["localhost", "127.0.0.1", "::1"].includes(hostname);
+    const secureProtocol = parsed.protocol === "https:" ||
+      (process.env.NODE_ENV !== "production" && parsed.protocol === "http:" && localHost);
+    if (
+      !secureProtocol ||
+      parsed.username ||
+      parsed.password ||
+      parsed.pathname !== "/" ||
+      parsed.search ||
+      parsed.hash
+    ) return "";
+    return parsed.origin;
+  } catch {
+    return "";
+  }
 }
 
 function signingSecret() {
@@ -36,7 +55,12 @@ async function runnerFetch(path: string, init: RequestInit = {}) {
   headers.set("x-elitze-signature", sign(body, timestamp));
   headers.set("accept", "application/json");
   if (runnerToken()) headers.set("authorization", "Bearer " + runnerToken());
-  return fetch(base + path, { ...init, headers, cache: "no-store" });
+  return fetch(base + path, {
+    ...init,
+    headers,
+    cache: "no-store",
+    signal: init.signal ?? AbortSignal.timeout(15_000),
+  });
 }
 
 export type RunnerDispatchInput = {
@@ -53,7 +77,7 @@ export type RunnerDispatchInput = {
 };
 
 export async function runnerConfigured() {
-  return Boolean(runnerBaseUrl() && signingSecret());
+  return Boolean(runnerBaseUrl() && Buffer.byteLength(signingSecret(), "utf8") >= 32);
 }
 
 export async function dispatchValidationJob(input: RunnerDispatchInput) {
@@ -71,7 +95,7 @@ export async function dispatchValidationJob(input: RunnerDispatchInput) {
     status?: ValidationStatus;
     message?: string;
   };
-  if (!response.ok || !payload.ok || !payload.jobId) {
+  if (!response.ok || !payload.ok || payload.jobId !== input.jobId) {
     throw new Error(payload.message || "security_runner_dispatch_failed");
   }
   return payload;

@@ -2,26 +2,48 @@ import http from "node:http";
 import { spawn } from "node:child_process";
 import { createHmac, timingSafeEqual, randomUUID } from "node:crypto";
 import dns from "node:dns/promises";
+import { isIP } from "node:net";
 import { URL } from "node:url";
+import { hostAuthorized, isPrivateIp, RUNNER_PROFILES, RUNNER_SCOPES } from "./scope-policy.mjs";
 
-const PORT = Number(process.env.PORT ?? 8787);
+const boundedNumber = (value, fallback, minimum, maximum) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) ? Math.max(minimum, Math.min(maximum, Math.trunc(parsed))) : fallback;
+};
+
+const PORT = boundedNumber(process.env.PORT, 8787, 1, 65535);
 const CONTROL_SECRET = process.env.ELITZE_RUNNER_HMAC_SECRET?.trim() ?? "";
 const RUNNER_TOKEN = process.env.ELITZE_SECURITY_RUNNER_TOKEN?.trim() ?? "";
 const CALLBACK_ORIGIN = process.env.ELITZE_CALLBACK_ORIGIN?.trim().replace(/\/$/, "") ?? "";
 const ALLOWED_HOSTS = (process.env.ELITZE_RUNNER_ALLOWED_HOSTS ?? "")
   .split(",").map((v) => v.trim().toLowerCase()).filter(Boolean);
 const ALLOW_PRIVATE = /^(1|true|yes)$/i.test(process.env.ELITZE_RUNNER_ALLOW_PRIVATE_TARGETS ?? "");
-const MAX_CONCURRENT = Math.max(1, Math.min(8, Number(process.env.ELITZE_RUNNER_MAX_CONCURRENT ?? 2)));
+const MAX_CONCURRENT = boundedNumber(process.env.ELITZE_RUNNER_MAX_CONCURRENT, 2, 1, 8);
+const MAX_QUEUE = boundedNumber(process.env.ELITZE_RUNNER_MAX_QUEUE, 100, 1, 1000);
+const MAX_RETAINED_JOBS = boundedNumber(process.env.ELITZE_RUNNER_MAX_RETAINED_JOBS, 500, 50, 5000);
+const JOB_TIMEOUT_MS = boundedNumber(process.env.ELITZE_RUNNER_JOB_TIMEOUT_MS, 900000, 30000, 3600000);
+const CANCEL_GRACE_MS = boundedNumber(process.env.ELITZE_RUNNER_CANCEL_GRACE_MS, 5000, 1000, 30000);
 const NUCLEI_BIN = process.env.NUCLEI_BIN?.trim() || "nuclei";
-const DEFAULT_RATE = Math.max(1, Math.min(200, Number(process.env.ELITZE_RUNNER_RATE_LIMIT ?? 20)));
-const TEMPLATE_UPDATE = /^(1|true|yes)$/i.test(process.env.ELITZE_RUNNER_UPDATE_TEMPLATES ?? "true");
+const DEFAULT_RATE = boundedNumber(process.env.ELITZE_RUNNER_RATE_LIMIT, 20, 1, 200);
+const TEMPLATE_UPDATE = /^(1|true|yes)$/i.test(process.env.ELITZE_RUNNER_UPDATE_TEMPLATES ?? "false");
+const ALLOWED_PORTS = new Set((process.env.ELITZE_RUNNER_ALLOWED_PORTS ?? "443")
+  .split(",").map((value) => Number(value.trim())).filter((value) => Number.isInteger(value) && value > 0 && value <= 65535));
 
 if (!CONTROL_SECRET || Buffer.byteLength(CONTROL_SECRET, "utf8") < 32) {
   console.error("ELITZE_RUNNER_HMAC_SECRET must contain at least 32 UTF-8 bytes");
   process.exit(1);
 }
-if (!CALLBACK_ORIGIN || !/^https:\/\//i.test(CALLBACK_ORIGIN)) {
-  console.error("ELITZE_CALLBACK_ORIGIN must be an HTTPS origin");
+let callbackOriginIsValid = false;
+try {
+  const callbackOrigin = new URL(CALLBACK_ORIGIN);
+  callbackOriginIsValid = callbackOrigin.protocol === "https:" &&
+    callbackOrigin.origin === CALLBACK_ORIGIN &&
+    callbackOrigin.pathname === "/" &&
+    !callbackOrigin.username && !callbackOrigin.password &&
+    !callbackOrigin.search && !callbackOrigin.hash;
+} catch {}
+if (!callbackOriginIsValid) {
+  console.error("ELITZE_CALLBACK_ORIGIN must be an HTTPS origin without a path, credentials, query, or fragment");
   process.exit(1);
 }
 if (!ALLOWED_HOSTS.length) {
@@ -32,11 +54,13 @@ if (!ALLOWED_HOSTS.length) {
 const jobs = new Map();
 const queue = [];
 const handshakeNonces = new Map();
+const MAX_HANDSHAKE_NONCES = 10_000;
 
 function authOk(req) {
   if (!RUNNER_TOKEN) return true;
-  const value = req.headers.authorization ?? "";
-  return value === "Bearer " + RUNNER_TOKEN;
+  const expected = Buffer.from("Bearer " + RUNNER_TOKEN, "utf8");
+  const supplied = Buffer.from(String(req.headers.authorization ?? ""), "utf8");
+  return supplied.length === expected.length && timingSafeEqual(supplied, expected);
 }
 
 function signature(body, timestamp) {
@@ -74,29 +98,18 @@ async function readBody(req) {
 function validCallback(url) {
   try {
     const parsed = new URL(url);
-    return parsed.protocol === "https:" && url.startsWith(CALLBACK_ORIGIN + "/api/security/pentest");
+    return (
+      parsed.protocol === "https:" &&
+      parsed.origin === CALLBACK_ORIGIN &&
+      parsed.pathname === "/api/security/pentest" &&
+      !parsed.username &&
+      !parsed.password &&
+      !parsed.search &&
+      !parsed.hash
+    );
   } catch {
     return false;
   }
-}
-
-function hostAuthorized(hostname) {
-  const host = hostname.toLowerCase().replace(/\.$/, "");
-  if (ALLOWED_HOSTS.some((allowed) => host === allowed || host.endsWith("." + allowed))) return true;
-  return false;
-}
-
-function isPrivateIp(address) {
-  const value = address.toLowerCase();
-  if (value === "::1" || value === "0:0:0:0:0:0:0:1") return true;
-  if (value.includes(":")) {
-    return value.startsWith("fc") || value.startsWith("fd") || value.startsWith("fe80:");
-  }
-  const match = value.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
-  if (!match) return true;
-  const [a,b] = match.slice(1).map(Number);
-  if ([a,b,...match.slice(3).map(Number)].some((n) => n > 255)) return true;
-  return a === 10 || a === 127 || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168) || (a === 169 && b === 254) || a === 0;
 }
 
 async function assertResolvedTargetSafe(hostname) {
@@ -109,20 +122,27 @@ async function assertResolvedTargetSafe(hostname) {
 
 async function validateJob(input) {
   if (!input || typeof input !== "object") throw new Error("invalid_job");
-  const required = ["jobId","tenantId","kind","executionMode","target","scope","profile","authorizationRef","callbackUrl"];
+  const required = ["jobId","tenantId","kind","executionMode","target","scope","profile","authorizationRef","callbackUrl","roeExpiresAt"];
   for (const key of required) if (typeof input[key] !== "string" || !input[key].trim()) throw new Error(key + "_required");
   if (!["PENTEST","RED_TEAM"].includes(input.kind)) throw new Error("invalid_kind");
   if (!["manual","automatic"].includes(input.executionMode)) throw new Error("invalid_execution_mode");
+  if (!RUNNER_SCOPES.has(input.scope)) throw new Error("scope_not_authorized");
+  if (!RUNNER_PROFILES.has(input.profile)) throw new Error("profile_not_authorized");
+  if (input.jobId.trim().length > 200 || input.tenantId.trim().length > 120) throw new Error("job_identity_invalid");
+  if (input.authorizationRef.trim().length > 240) throw new Error("authorization_ref_invalid");
   if (!validCallback(input.callbackUrl)) throw new Error("callback_not_allowed");
-  if (!/^(http|https):\/\//i.test(input.target)) throw new Error("invalid_target");
+  if (input.target.length > 2048 || !/^https:\/\//i.test(input.target)) throw new Error("https_target_required");
   const target = new URL(input.target);
   if (target.username || target.password) throw new Error("target_credentials_not_allowed");
-  if (!hostAuthorized(target.hostname)) throw new Error("target_not_in_authorized_allowlist");
+  if (!hostAuthorized(target.hostname, ALLOWED_HOSTS)) throw new Error("target_not_in_authorized_allowlist");
+  if (target.hash) throw new Error("target_fragment_not_allowed");
+  const targetPort = Number(target.port || "443");
+  if (!ALLOWED_PORTS.has(targetPort)) throw new Error("target_port_not_authorized");
   if (!ALLOW_PRIVATE) {
-    if (isPrivateIp(target.hostname)) throw new Error("private_target_blocked");
+    if (isIP(target.hostname) && isPrivateIp(target.hostname)) throw new Error("private_target_blocked");
     await assertResolvedTargetSafe(target.hostname);
   }
-  if (input.roeExpiresAt && Date.parse(input.roeExpiresAt) <= Date.now()) throw new Error("roe_expired");
+  if (!Number.isFinite(Date.parse(input.roeExpiresAt)) || Date.parse(input.roeExpiresAt) <= Date.now()) throw new Error("roe_expired");
   return {
     ...input,
     jobId: input.jobId.trim(),
@@ -152,7 +172,8 @@ async function callback(job, status, extra = {}) {
   };
   if (RUNNER_TOKEN) headers.authorization = "Bearer " + RUNNER_TOKEN;
   try {
-    await fetch(job.callbackUrl, { method: "POST", headers, body: payload, signal: AbortSignal.timeout(15_000) });
+    const response = await fetch(job.callbackUrl, { method: "POST", headers, body: payload, signal: AbortSignal.timeout(15_000) });
+    if (!response.ok) console.error("callback_rejected", job.jobId, response.status);
   } catch (error) {
     console.error("callback_failed", job.jobId, error instanceof Error ? error.message : String(error));
   }
@@ -166,6 +187,10 @@ function templateArgs(job) {
     "-rate-limit", String(DEFAULT_RATE),
     "-timeout", "10",
     "-retries", "1",
+    "-disable-redirects",
+    "-restrict-local-network-access",
+    "-disable-update-check",
+    "-no-interactsh",
   ];
   if (job.kind === "RED_TEAM") {
     args.push("-severity", "low,medium,high,critical");
@@ -198,8 +223,9 @@ async function execute(job) {
   } catch (error) {
     job.status = "FAILED";
     job.completedAt = new Date().toISOString();
-    job.result = { engine: "nuclei", error: error instanceof Error ? error.message : String(error) };
-    await callback(job, "FAILED", { events: [{ level: "ERROR", eventType: "RUN_FAILED", message: "Scanner template preparation failed." }], result: job.result });
+    job.result = { engine: "nuclei", error: "scanner_template_preparation_failed" };
+    job.events = [{ level: "ERROR", eventType: "RUN_FAILED", message: "Scanner template preparation failed." }];
+    await callback(job, "FAILED", { events: job.events, result: job.result });
     return;
   }
   job.startedAt = new Date().toISOString();
@@ -211,6 +237,18 @@ async function execute(job) {
   const child = spawn(NUCLEI_BIN, args, { stdio: ["ignore", "pipe", "pipe"], windowsHide: true });
   job.child = child;
   const findings = [];
+  let timedOut = false;
+  let forcedKillTimer;
+  const executionTimeout = setTimeout(() => {
+    timedOut = true;
+    job.cancelReason = "timeout";
+    child.kill("SIGTERM");
+    forcedKillTimer = setTimeout(() => {
+      if (job.child === child) child.kill("SIGKILL");
+    }, CANCEL_GRACE_MS);
+    forcedKillTimer.unref?.();
+  }, JOB_TIMEOUT_MS);
+  executionTimeout.unref?.();
   let stdoutBuffer = "";
   let stderr = "";
 
@@ -265,10 +303,14 @@ async function execute(job) {
   });
   if (stdoutBuffer) flush(stdoutBuffer);
   clearInterval(heartbeat);
+  clearTimeout(executionTimeout);
+  clearTimeout(forcedKillTimer);
   delete job.child;
   job.heartbeatAt = new Date().toISOString();
 
-  if (job.cancelRequested) {
+  if (timedOut) {
+    job.status = "FAILED";
+  } else if (job.cancelRequested) {
     job.status = "CANCELLED";
   } else if (exitCode === 0) {
     job.status = "COMPLETED";
@@ -282,14 +324,16 @@ async function execute(job) {
     engine: "nuclei",
     exitCode,
     findingCount: findings.length,
+    timedOut,
+    cancelReason: job.cancelReason ?? null,
     stderr: stderr ? stderr.slice(0, 2000) : null,
   };
   job.events = [
     ...(job.events ?? []),
     {
       level: job.status === "COMPLETED" ? "SUCCESS" : job.status === "CANCELLED" ? "WARN" : "ERROR",
-      eventType: "RUN_COMPLETED",
-      message: "Scanner finished with status " + job.status + ".",
+      eventType: timedOut ? "RUN_TIMEOUT" : job.status === "CANCELLED" ? "RUN_CANCELLED" : "RUN_COMPLETED",
+      message: timedOut ? "Scanner exceeded its execution deadline and was terminated." : job.status === "CANCELLED" ? "Scanner was cancelled and terminated." : "Scanner finished with status " + job.status + ".",
       payload: job.result,
     },
   ];
@@ -314,7 +358,19 @@ function pump() {
   }
 }
 
+function pruneJobs(maxSize = MAX_RETAINED_JOBS) {
+  if (jobs.size <= maxSize) return;
+  for (const [jobId, job] of jobs) {
+    if (jobs.size <= maxSize) break;
+    if (["COMPLETED", "FAILED", "CANCELLED"].includes(job.status)) jobs.delete(jobId);
+  }
+}
+
 function enqueue(job) {
+  if (queue.length >= MAX_QUEUE) throw new Error("runner_queue_full");
+  pruneJobs(MAX_RETAINED_JOBS - 1);
+  if (jobs.size >= MAX_RETAINED_JOBS) throw new Error("runner_retained_job_limit_reached");
+  if (jobs.has(job.jobId)) throw new Error("runner_job_id_conflict");
   jobs.set(job.jobId, job);
   queue.push(job);
   pump();
@@ -340,6 +396,7 @@ async function handle(req, res) {
     const now = Date.now();
     for (const [seenNonce, seenAt] of handshakeNonces) if (now - seenAt > 300000) handshakeNonces.delete(seenNonce);
     if (handshakeNonces.has(nonce)) return json(res, 409, { ok: false, error: "handshake_nonce_replayed" });
+    if (handshakeNonces.size >= MAX_HANDSHAKE_NONCES) return json(res, 429, { ok: false, error: "handshake_nonce_capacity" });
     handshakeNonces.set(nonce, now);
     const responseTimestamp = String(now);
     const responseBody = JSON.stringify({ ok: true, action: "handshake", nonce, timestamp: now });
@@ -355,9 +412,22 @@ async function handle(req, res) {
   if (req.method === "POST" && url.pathname === "/v1/jobs") {
     try {
       const job = await validateJob(JSON.parse(body));
-      if (jobs.has(job.jobId)) return json(res, 200, { ok: true, jobId: job.jobId, status: jobs.get(job.jobId).status });
+      const existing = jobs.get(job.jobId);
+      if (existing) {
+        const sameIdentity = existing.tenantId === job.tenantId &&
+          existing.kind === job.kind && existing.target === job.target &&
+          existing.scope === job.scope && existing.profile === job.profile &&
+          existing.authorizationRef === job.authorizationRef;
+        if (!sameIdentity) return json(res, 409, { ok: false, error: "runner_job_id_conflict" });
+        return json(res, 200, { ok: true, jobId: existing.jobId, status: existing.status });
+      }
       const record = { ...job, status: "QUEUED", createdAt: new Date().toISOString(), heartbeatAt: null, startedAt: null, completedAt: null, findings: [], events: [], result: null, cancelRequested: false };
-      enqueue(record);
+      if (queue.length >= MAX_QUEUE) return json(res, 429, { ok: false, error: "runner_queue_full" });
+      try {
+        enqueue(record);
+      } catch (error) {
+        return json(res, 503, { ok: false, error: error instanceof Error ? error.message : "runner_enqueue_failed" });
+      }
       return json(res, 202, { ok: true, jobId: record.jobId, status: record.status });
     } catch (error) {
       return json(res, 400, { ok: false, error: error instanceof Error ? error.message : "invalid_job" });
@@ -383,9 +453,27 @@ async function handle(req, res) {
       });
     }
     if (req.method === "DELETE") {
+      if (["COMPLETED", "FAILED", "CANCELLED"].includes(job.status)) {
+        return json(res, 200, { ok: true, status: job.status });
+      }
       job.cancelRequested = true;
-      if (job.child) job.child.kill("SIGTERM");
-      if (job.status === "QUEUED") job.status = "CANCELLED";
+      job.cancelReason = "requested";
+      if (job.status === "QUEUED") {
+        job.status = "CANCELLED";
+        job.completedAt = new Date().toISOString();
+        await callback(job, "CANCELLED", {
+          evidenceState: "UNAVAILABLE",
+          events: [{ level: "WARN", eventType: "RUN_CANCELLED", message: "Queued scanner job cancelled before execution." }],
+          result: { engine: "nuclei", cancelledBeforeStart: true },
+        });
+      } else if (job.child) {
+        const child = job.child;
+        child.kill("SIGTERM");
+        const killTimer = setTimeout(() => {
+          if (job.child === child) child.kill("SIGKILL");
+        }, CANCEL_GRACE_MS);
+        killTimer.unref?.();
+      }
       return json(res, 200, { ok: true, status: job.status });
     }
   }
@@ -395,7 +483,10 @@ async function handle(req, res) {
 
 http.createServer((req, res) => {
   void handle(req, res).catch((error) => {
-    console.error("runner_request_failed", error);
+    if (error instanceof Error && error.message === "request_too_large") {
+      return json(res, 413, { ok: false, error: "request_too_large" });
+    }
+    console.error("runner_request_failed", error instanceof Error ? error.message : String(error));
     json(res, 500, { ok: false, error: "runner_internal_error" });
   });
 }).listen(PORT, "0.0.0.0", () => {

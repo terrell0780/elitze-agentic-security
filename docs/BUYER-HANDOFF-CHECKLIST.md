@@ -1,5 +1,12 @@
 # ELITZE Buyer Handoff Checklist
 
+## Transaction and service handoff
+
+- [ ] Transaction documents describe an outright B2B asset acquisition, transferred intellectual property, exclusions, closing date, and any agreed transition assistance.
+- [ ] Confirm account ownership and transferability for IONOS domain management, Vercel, the ELITZE Runner component/service and its hosting/origin, and Resend.
+- [ ] Buyer-controlled rotation/creation of production credentials is scheduled for closing; secret values are not included in repository files or this checklist.
+- [ ] Disclose that the current inventory does not contain the runner URL in GitHub or Vercel settings and that production handshake / end-to-end scanner evidence remains unverified.
+
 ## Source
 
 - [ ] Exact transfer commit identified

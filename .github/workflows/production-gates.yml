@@ -301,7 +301,7 @@ jobs:
           if-no-files-found: error
 
   release-green-light:
-    name: Final release green light
+    name: ${{ github.event_name == 'pull_request' && 'PR validation complete (production handshake not run)' || 'Final release green light' }}
     needs:
       - code-review
       - verify
@@ -309,7 +309,13 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - name: Confirm all release gates passed
+      - name: Report validation scope
+        shell: bash
         run: |
-          echo "GREEN LIGHT — code review, security verification, sale readiness, security fabric, live validation, typecheck, lint, build, dependency audit, and SBOM gates passed."
-          echo "This commit is eligible for merge evaluation and production promotion."
+          if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
+            echo "CI GREEN — code review, isolated database/security verification, sale readiness, typecheck, lint, build, dependency audit, and SBOM checks passed."
+            echo "PRODUCTION RELEASE NOT APPROVED — the live production runner handshake is intentionally skipped for pull requests and has not been verified by this run."
+          else
+            echo "GREEN LIGHT — code review, security verification, sale readiness, live runner handshake, typecheck, lint, build, dependency audit, and SBOM gates passed."
+            echo "This commit is eligible for merge evaluation and production promotion."
+          fi

@@ -4,6 +4,19 @@
 
 The repository is the canonical ELITZE Agentic Security product source. Acquisition materials must identify the exact commit being transferred and distinguish implemented functionality from dependencies, configuration requirements, planned work, and unmeasurable outcomes.
 
+## Transaction framing
+
+ELITZE is being prepared for an outright B2B asset acquisition, not an ongoing managed SaaS commitment. Buyer and seller should agree the transferred assets, rights, access, handover date, and any post-close assistance in the purchase documents. This repository does not imply that third-party account ownership or vendor contracts automatically transfer with the source code.
+
+The operating footprint identified for handoff is IONOS (domain), Vercel (application hosting/deployment), the ELITZE Runner component/service (hosting and public origin to be confirmed), and Resend (transactional email). Account ownership, transferability, billing responsibility, live credentials, and post-close rotation must be confirmed as transaction items; no account access or secret values are recorded here.
+
+## Current evidence snapshot — 2026-10-10
+
+- The most recent recorded production health observation returned HTTP 200 and reported database connectivity healthy with all 33 expected migrations applied. This verifies that health-check observation only.
+- GitHub currently has a repository secret named `ELITZE_RUNNER_HMAC_SECRET`; Vercel has a Production environment-variable entry named `ELITZE_SECURITY_RUNNER_HMAC_SECRET`. Secret contents were not read, so matching values are not verified.
+- The actual runner origin is not present as `ELITZE_RUNNER_URL` in GitHub or `ELITZE_SECURITY_RUNNER_URL` in Vercel. The live runner handshake and real scan/callback remain UNVERIFIED. Do not claim live scanning is operational until an existing authorized runner URL is configured and the production handshake plus an authorized end-to-end scan pass.
+- Local code/self-tests do not replace external security review, disaster-recovery evidence, or production lifecycle verification.
+
 ## Included product assets
 
 - ELITZE Agentic Security application source
