@@ -34,7 +34,7 @@ The proposed acquisition package, subject to a definitive agreement and verifica
 - Deployment configuration and documentation.
 - Sales/acquisition materials.
 - Transferable cloud, communications, analytics, and social accounts only where legally and contractually transferable.
-- 30 days of transition support capped at 10 hours, unless separately agreed.
+- No ongoing managed service or SaaS operation is included. Any optional transition assistance must be separately scoped and agreed in the definitive transaction documents.
 
 The seller's personal GitHub account, personal email and financial accounts, unrelated repositories/projects, non-transferable vendor accounts, and third-party IP not owned by the seller are excluded.
 
@@ -47,6 +47,10 @@ The repository was previously public. This is disclosed for diligence. Making it
 ## Technical stack
 
 The repository uses a Next.js/TypeScript application with Drizzle database configuration, environment-driven secrets, database-backed APIs, tests, typechecking, linting, and production build workflows.
+
+## Technical evidence boundary
+
+The application has a production deployment and a recorded health check reporting database connectivity and migrations healthy. That health check does not establish that the external runner handshake, a real Nuclei scan, or the signed production callback has completed end to end. Those items remain buyer-diligence checks; no claim of independently verified live scanning is made here.
 
 ## Current commercial status
 
