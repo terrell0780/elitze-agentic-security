@@ -46,6 +46,9 @@ Ranking is based on the publicly stated strategic fit, not on private informatio
 |---|---|---|
 | ServiceNow | Investor Relations replied on 14 September 2026 that the earlier inquiry had been passed to Corporate Development. A follow-up was sent 11 October correcting the canonical domain to elitze.info and requesting a status/contact. | Referral confirmed; no acquisition interest or offer confirmed. Follow-up response pending. |
 | Zscaler | An acquisition enquiry was sent 11 October to publicly listed M&A/Divestiture/PE practice contacts Stephen Singh and Akshay Grover (stephen.singh@zscaler.com, akshay.grover@zscaler.com) with a request to route to the appropriate acquisition team. The public contact listing is [Zscaler's M&A/Divestiture and PE practice material](https://www.zscaler.com/de/resources/brochures/zscaler-private-equity-placemat.pdf); these are not verified as corporate-development acquisition officers. | Sent; no response or offer confirmed. |
+| Cisco | An acquisition-routing request was sent 11 October to Cisco's published Investor Relations contact (investor-relations@cisco.com), asking for forwarding to Corporate Development / strategic cybersecurity acquisitions. | Routing request sent; no response or offer confirmed. |
+| Palo Alto Networks | An acquisition-routing request was sent 11 October to the published general Investor Relations contact (ir@paloaltonetworks.com), asking for forwarding to Corporate Development / M&A. | Routing request sent; no response or offer confirmed. |
+| Fortinet | An acquisition-routing request was sent 11 October to the published Investor Relations contact (Investors@Fortinet.com), asking for forwarding to Corporate Development / M&A. | Routing request sent; no response or offer confirmed. |
 
 No buyer has confirmed interest, price, or intent to acquire ELITZE. The US$250,000 figure remains a negotiable seller-side opening target, not an independent valuation or offer.
 
@@ -59,4 +62,4 @@ No buyer has confirmed interest, price, or intent to acquire ELITZE. The US$250,
 
 ## Sources & verification boundary
 
-Research reflects publicly available company announcements checked on 11 October 2026. Fit ratings are analyst judgment from those public facts. No buyer outreach was sent as part of preparing this document, and no buyer response or offer is implied.
+Research reflects publicly available company announcements checked on 11 October 2026. Fit ratings are analyst judgment from those public facts. Outreach was sent to the routes documented above; sending is not a buyer endorsement. ServiceNow's prior forwarding to Corporate Development is the only confirmed positive response so far. No acquisition interest or offer is confirmed.
