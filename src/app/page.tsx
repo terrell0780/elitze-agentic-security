@@ -7,6 +7,7 @@ import { ArrowRight, Check, Crosshair, Menu, ShieldCheck, X } from "lucide-react
 import GlobalThemeToggle from "@/components/global-theme-toggle";
 import AcquisitionCta from "@/components/acquisition-cta";
 import LiveControlPlane from "@/components/live-control-plane";
+import GodsEyeGlobe from "@/components/gods-eye-globe";
 import SecurityWorkspacePreview from "@/components/security-workspace-preview";
 import SecurityCapabilityAtlas from "@/components/security-capability-atlas";
 
@@ -73,6 +74,23 @@ export default function HomePage() {
 
       <section className="mx-auto max-w-[1400px] px-4 py-10 sm:px-7 sm:py-14">
         <LiveControlPlane />
+      </section>
+
+      <section id="global-security" className="mx-auto max-w-[1400px] scroll-mt-24 px-4 py-10 sm:px-7 sm:py-14">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">God’s Eye View · Global Threat Surface</div>
+            <h2 className="mt-2 text-3xl font-black tracking-[-.045em] sm:text-5xl">One global view of security, reach and evidence.</h2>
+            <p className="mt-4 max-w-3xl text-sm leading-6 text-[var(--muted-strong)]">Explore the security graph and control layers. Tenant metrics depend on authenticated, connected sources; unavailable evidence remains explicitly unavailable.</p>
+          </div>
+        </div>
+        <GodsEyeGlobe />
+        <nav aria-label="Core ELITZE security modules" className="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          <Link href="/search" className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-4 text-sm font-semibold transition hover:border-[var(--accent-border)]">Global Search <span className="mt-1 block text-xs font-normal text-[var(--muted)]">Search ELITZE capabilities and sourced public intelligence.</span></Link>
+          <Link href="/console/vulnerabilities" className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-4 text-sm font-semibold transition hover:border-[var(--accent-border)]">CVE & Threat Intelligence <span className="mt-1 block text-xs font-normal text-[var(--muted)]">NVD, CISA KEV, EPSS and vulnerability context.</span></Link>
+          <Link href="/console/pentesting" className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-4 text-sm font-semibold transition hover:border-[var(--accent-border)]">Red Team & Penetration Testing <span className="mt-1 block text-xs font-normal text-[var(--muted)]">Authorized scope, Rules of Engagement and retesting.</span></Link>
+          <Link href="/console" className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-4 text-sm font-semibold transition hover:border-[var(--accent-border)]">Agent Reach & Security Graph <span className="mt-1 block text-xs font-normal text-[var(--muted)]">Review observed identities, relationships and policy evidence.</span></Link>
+        </nav>
       </section>
 
       <SecurityCapabilityAtlas />
