@@ -32,7 +32,7 @@
 | CC0-1.0 | 1 |
 | Python-2.0 | 1 |
 
-## Focused review lis
+## Focused review list
 
 These entries are not automatically prohibited. Their exact license texts, usage paths, binary distribution, notices and any applicable conditions must be reviewed before a proprietary acquisition transfer.
 
