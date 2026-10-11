@@ -39,7 +39,9 @@
 ## Commercial / IP
 
 - [ ] Existing sales package reviewed
-- [ ] Third-party licenses and attribution notices reviewed
+- [ ] Run `npm run licenses:inventory` and review `sales/THIRD-PARTY-LICENSE-INVENTORY-2026-10-11.md`; confirm authoritative license texts and applicable notices
+- [ ] Third-party licenses and attribution notices reviewed by the responsible owner/counsel
+- [ ] Resolve/document missing root-level `LICENSE` and ownership/contributor-history before claiming exclusive title
 - [ ] Public-history disclosure completed where applicable
 - [ ] Buyer receives only rights actually owned and transferable
 - [ ] Exact handoff artifact/commit archived

@@ -35,6 +35,9 @@ See `docs/ELITZE-CATEGORY-LEADER-MANIFEST.md` for the project's acceptance stand
 - `MARKETPLACE-LISTING.md` — ready-to-use marketplace listing copy.
 - `SALES-PITCH.md` — buyer conversation pitch.
 - `SALES-EMAILS.md` — three buyer outreach emails.
+- `BUYER-ACQUISITION-RESEARCH-2026-10-11.md` — prioritized strategic acquirers, official contact paths, evidence-linked rationale, overlap risks, current release blockers, and explicit no-contact/no-offer disclaimer.
+- `THIRD-PARTY-LICENSE-INVENTORY-2026-10-11.md` — lockfile-matched package-license inventory, focused review list, and legal transfer caveats. Regenerate after dependency changes with `npm run licenses:inventory`.
+- `../docs/READINESS-REPORT-2026-10-11.md` — exact current release decision, live test evidence, integration/runner blockers, and test-fixture cleanup scope.
 
 ## Acquisition scope
 

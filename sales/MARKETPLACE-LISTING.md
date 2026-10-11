@@ -20,7 +20,7 @@ Its documented security surface spans AI and agentic security, MCP and tool gove
 
 A central design principle is that the model or agent is not the security boundary. Security actions are designed to require explicit authorization and protected internal controls. Containment is designed to fail closed when the required infrastructure executor is unavailable.
 
-The repository does not seed synthetic records on startup and explicitly distinguishes observed evidence from unavailable state.
+Application startup does not intentionally seed demonstration telemetry and explicitly distinguishes observed evidence from unavailable state. Separate database diligence identified historical E2E/CI test fixtures on the Neon default branch; those are not customer or security observations and require owner-authorized cleanup before the asset is described as having a clean production database.
 
 ## What is included
 

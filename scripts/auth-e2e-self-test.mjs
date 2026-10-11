@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import { createServer } from "node:http";
 import { once } from "node:events";
-import { execFileSync, spawn } from "node:child_process";
+import { spawn } from "node:child_process";
 import path from "node:path";
 import pg from "pg";
 
@@ -11,41 +11,23 @@ const appPort = 3010;
 const origin = `http://${host}:${appPort}`;
 const runId = Date.now().toString(36) + randomBytes(4).toString("hex");
 const testEmail = `e2e-auth-${runId}@example.invalid`;
+let secondEmail = null;
 const primaryPassword = ["E2EAuth", runId, "PrimaryPass12"].join("-");
 const resetPassword = ["E2EReset", Date.now().toString(), "ResetPass12"].join("-");
 
-try {
-  process.loadEnvFile?.(path.resolve(process.cwd(), ".env.local"));
-} catch {}
-
-let configuredDatabaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.POSTGRES_URL_NON_POOLING;
-if (!configuredDatabaseUrl && process.env.NEON_PROJECT_ID) {
-  try {
-    const command = process.platform === "win32" ? process.env.ComSpec : "npx";
-    const args = process.platform === "win32"
-      ? ["/d", "/s", "/c", "npx neonctl connection-string --project-id " + process.env.NEON_PROJECT_ID]
-      : ["neonctl", "connection-string", "--project-id", process.env.NEON_PROJECT_ID];
-    configuredDatabaseUrl = execFileSync(command, args, { encoding: "utf8", windowsHide: true })
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .findLast((line) => line.startsWith("postgres")) || "";
-  } catch {}
-}
-if (configuredDatabaseUrl && (!process.env.PGUSER || !process.env.PGPASSWORD || !process.env.PGHOST || !process.env.PGPORT || !process.env.PGDATABASE)) {
-  const parsed = new URL(configuredDatabaseUrl);
-  process.env.PGHOST ||= parsed.hostname;
-  process.env.PGPORT ||= parsed.port || "5432";
-  process.env.PGUSER ||= decodeURIComponent(parsed.username);
-  process.env.PGPASSWORD ||= decodeURIComponent(parsed.password);
-  process.env.PGDATABASE ||= decodeURIComponent(parsed.pathname.slice(1));
-  process.env.PGSSLMODE ||= "require";
-}
-
 if (!process.env.PGUSER || !process.env.PGPASSWORD || !process.env.PGHOST || !process.env.PGPORT || !process.env.PGDATABASE) {
-  throw new Error("PG environment or project DATABASE_URL is required for auth E2E");
+  throw new Error("Explicit PostgreSQL environment variables are required for auth E2E; .env.local and implicit Neon project discovery are intentionally not loaded.");
 }
 
-const databaseUrl = ["postgresql:", "//", process.env.PGUSER, ":", process.env.PGPASSWORD, "@", process.env.PGHOST, ":", process.env.PGPORT, "/", process.env.PGDATABASE].join("");
+const normalizedPgHost = process.env.PGHOST.toLowerCase().replace(/^\[|\]$/g, "");
+if (!["127.0.0.1", "localhost", "::1"].includes(normalizedPgHost)) {
+  throw new Error("Refusing authentication E2E against a remote database. Use local/CI PostgreSQL only; hosted Neon and production databases must never receive test fixtures.");
+}
+
+const databaseHost = normalizedPgHost === "::1" ? "[::1]" : normalizedPgHost;
+const databaseUrl = new URL(
+  `postgresql://${encodeURIComponent(process.env.PGUSER)}:${encodeURIComponent(process.env.PGPASSWORD)}@${databaseHost}:${process.env.PGPORT}/${encodeURIComponent(process.env.PGDATABASE)}`,
+).toString();
 
 let deliveredEmail;
 const mailServer = createServer(async (request, response) => {
@@ -314,7 +296,7 @@ try {
     cookie = sessionCookie(newLogin.response);
     assert(cookie.includes("elitze_session="), "post-reset login did not issue a fresh ELITZE session cookie");
 
-    const secondEmail = `e2e-auth-second-${Date.now()}@example.invalid`;
+    secondEmail = `e2e-auth-second-${Date.now()}@example.invalid`;
     const secondPassword = ["E2EAuthSecond", Date.now().toString(), "PrimaryPass12"].join("-");
     const secondRegistration = await jsonRequest("/api/auth/register", {
       method: "POST",
@@ -455,7 +437,39 @@ try {
 
     console.log("ELITZE real-auth E2E: PASS — clean PostgreSQL account creation, verification email contract, verification, login, database session creation, password reset, session revocation, and cross-tenant graph/evidence isolation verified");
   } finally {
-    await db.end();
+    try {
+      const fixtureEmails = [testEmail, secondEmail].filter((email) => typeof email === "string");
+      if (fixtureEmails.length > 0) {
+        const fixtureTenants = await db.query(
+          "SELECT DISTINCT tenant_id FROM public.auth_users WHERE email_normalized = ANY($1::text[])",
+          [fixtureEmails],
+        );
+        const tenantIds = [...new Set(fixtureTenants.rows.map((row) => String(row.tenant_id)))];
+        if (tenantIds.length > 0) {
+          await db.query("BEGIN");
+          try {
+            // Remove rows with RESTRICT references before deleting test tenants.
+            await db.query(
+              "DELETE FROM public.mcp_gateway_decisions WHERE tenant_id = ANY($1::uuid[])",
+              [tenantIds],
+            );
+            // The tenant's FK cascade removes its test users, sessions, tokens, graph fixtures,
+            // agent/MCP records, channels, attachments, and any other tenant-owned test state.
+            await db.query(
+              "DELETE FROM public.auth_tenants WHERE id = ANY($1::uuid[])",
+              [tenantIds],
+            );
+            await db.query("COMMIT");
+            console.log(`ELITZE auth E2E cleanup: PASS — removed ${tenantIds.length} test tenant(s) and all tenant-scoped fixtures`);
+          } catch (error) {
+            await db.query("ROLLBACK").catch(() => {});
+            throw error;
+          }
+        }
+      }
+    } finally {
+      await db.end();
+    }
   }
 } finally {
   await stop();

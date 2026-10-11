@@ -7,6 +7,7 @@
 - Repository: private GitHub repository, disclosed to qualified buyers during diligence
 - Default repository branch: `main`
 - Commercial status: pre-revenue product asset unless separately verified
+- Current readiness: see `../docs/READINESS-REPORT-2026-10-11.md`; production release remains blocked pending a live security-runner handshake/scan and owner-authorized cleanup of historical E2E/CI records on the Neon default branch.
 
 ## 2. Source-access protocol
 

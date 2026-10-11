@@ -286,6 +286,9 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Authentication E2E database-safety contract
+        run: npm run auth:e2e-safety-self-test
+
       - name: Real authentication DB E2E
         timeout-minutes: 5
         run: npm run auth:e2e-self-test
