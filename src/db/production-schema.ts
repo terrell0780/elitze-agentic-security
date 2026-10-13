@@ -35,3 +35,31 @@ export const users = pgTable("users", {
   uniqueIndex("users_org_email_uq").on(table.organizationId, table.email),
   index("users_email_idx").on(table.email),
 ]);
+
+export const sessions = pgTable("sessions", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  tokenHash: varchar("token_hash", { length: 64 }).notNull(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  lastSeenAt: timestamp("last_seen_at", { withTimezone: true }).defaultNow().notNull(),
+  revokedAt: timestamp("revoked_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+  uniqueIndex("sessions_token_hash_uq").on(table.tokenHash),
+  index("sessions_user_idx").on(table.userId),
+]);
+
+export const authTokens = pgTable("auth_tokens", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  tenantId: uuid("tenant_id").notNull(),
+  tokenHash: varchar("token_hash", { length: 64 }).notNull(),
+  purpose: text("purpose").notNull(),
+  kind: varchar("kind", { length: 40 }).notNull(),
+  expiresAt: timestamp("expires_at", { withTimezone: true }).notNull(),
+  consumedAt: timestamp("consumed_at", { withTimezone: true }),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+}, (table) => [
+  uniqueIndex("auth_tokens_hash_uq").on(table.tokenHash),
+  index("auth_tokens_user_kind_idx").on(table.userId, table.kind),
+]);
