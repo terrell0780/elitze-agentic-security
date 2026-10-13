@@ -1,0 +1,91 @@
+# ELITZE Agentic Security — Readiness Report
+
+**Assessment date:** 2026-10-10
+**Governing standard:** Enterprise Full-Stack Cybersecurity Program Standard v2.0
+**Assessment branch:** `work/readiness-20261010`
+**Assessment basis:** repository inspection, local checks, live public-route checks, Vercel runtime-error summary, and GitHub Actions logs.
+**Overall status:** **BLOCKED — NOT APPROVED FOR PRODUCTION RELEASE**
+
+## Summary
+
+The application has a production deployment and the live health endpoint reported HTTP 200 during this assessment. The health response reported database connectivity as healthy, 33 expected migrations applied, no missing migrations, and no missing or malformed required production configuration entries. Vercel's grouped runtime-error check returned no errors for the latest 24-hour window. These are bounded observations, not an independent security assessment or a full product-readiness determination.
+
+The inspected production-gates workflow run, [38078783511](https://github.com/terrell0780/elitze-agentic-security/actions/runs/38078783511), failed at the live runner handshake because the GitHub Actions secret `ELITZE_RUNNER_URL` was absent from the job environment; at that time, `ELITZE_RUNNER_HMAC_SECRET` was absent too. The subsequent read-only inventory on 2026-10-10 confirmed that the GitHub repository now has a secret named `ELITZE_RUNNER_HMAC_SECRET`. The Vercel Production environment now has an entry named `ELITZE_SECURITY_RUNNER_HMAC_SECRET`. Neither secret value was retrieved, so this check does not prove the values match or that the Vercel entry is populated correctly. The current GitHub secret-name inventory does not include `ELITZE_RUNNER_URL`, and the Vercel environment-name inventory does not include `ELITZE_SECURITY_RUNNER_URL`. The real runner origin remains unconfigured in those control-plane settings, so the production handshake remains blocked. The latest pull-request production-gates run, [38099756967](https://github.com/terrell0780/elitze-agentic-security/actions/runs/38099756967), passed its configured pull-request checks, but its live production handshake is skipped by the workflow's pull-request condition and therefore does not resolve the production runner blocker. Runner-side and control-plane challenge-response self-tests prove only local protocol behavior, not reachability of the existing hosted runner. No endpoint was guessed, no secret value was read, and no production configuration or deployment was changed.
+
+## Verified observations
+
+| Area | Status | Evidence and limitation |
+|---|---|---|
+| Production health endpoint | VERIFIED for the observation time | `https://www.elitze.info/api/health` returned HTTP 200. |
+| Production database/schema | VERIFIED for the health check only | Health response reported database `ok`, 33 expected migrations, 33 applied, zero missing. No database writes were made during this assessment. |
+| Required production configuration | VERIFIED by health response | Reported zero missing and zero malformed required configuration entries. Secret values were not retrieved or displayed. |
+| Recent grouped runtime errors | VERIFIED for the queried window | Vercel grouped runtime errors reported none in the latest 24 hours. A separate seven-day report had older PostgreSQL SSL-mode warnings and connection-termination errors; historical recurrence is not ruled out. |
+| Public route response behavior | VERIFIED for the checked URLs | Public sitemap URLs checked returned HTTP 200; a random nonexistent route returned HTTP 404. `/api/console/overview` returned HTTP 401 without a session. Local production build checks returned HTTP 200 for `/security-disclosure`, `/accessibility`, and `/sitemap.xml`; titles, canonical URLs, H1s, and sitemap entries were verified. |
+| TypeScript typecheck | PASS locally | `npm run typecheck` passed after the final metadata and title edits. |
+| ESLint | PASS locally | `npm run lint` passed after the final metadata and title edits. |
+| Database/production config contracts | PASS locally | `npm run db:config-self-test`, `npm run production-config:self-test`. |
+| Tenant overview boundary | PASS locally | `npm run tenant-overview:self-test`. |
+| Sale readiness and branding | PASS locally on the final staged tree | `npm run sale:readiness` passed against 492 tracked files and the brand self-test passed for 170 public/reference text files. |
+| Security, authentication static gate, data bridge, workload identity, policy evidence, phase 5–6, global compliance catalog, legal controls, progressive proofing, evidence expression, pentest request, security fabric, RAG, agent workflow, contact/acquisition, live validation, runner, runner handshake, and vulnerability intelligence | PASS locally | Each corresponding repository self-test completed successfully. These tests do not substitute for external or production end-to-end evidence. |
+| Production dependency audit | PASS locally | `npm audit --omit=dev --audit-level=high` reported zero vulnerabilities. This is scoped to production dependencies and the audit time. |
+| Production build | PASS locally on the final staged tree | `npm run build` completed successfully and generated 55/55 static pages plus the route manifest; includes the pentest API route and sale/readiness pages. |
+| Final local verification | PASS | On the final staged tree: `git diff --cached --check`, both runner JavaScript syntax checks, runner scope/IP self-test, runner handshake integration self-test, control-plane handshake self-test, pentest callback/cancellation contract self-test, sale-readiness/brand checks, TypeScript typecheck, ESLint, `npm test`, `npm run build`, `npm audit --audit-level=high`, and `npm audit --omit=dev --audit-level=high` all exited 0. The control-plane test emitted a Node module-type warning but passed. |
+
+## Changes in this readiness branch
+
+- Added `/security-disclosure` with a real contact route, safe-research boundaries, and no invented response-time or reward commitments.
+- Added `/accessibility` with accessibility goals and an explicit `UNVERIFIED` conformance status because no independent conformance assessment has been established by this work.
+- Added both public routes to the sitemap.
+- Expanded the homepage security relationship map canvas and nodes for clearer enterprise presentation; it remains explicitly labeled conceptual and not live telemetry.
+- Hardened runner request validation, public-target policy, resource limits, signed callbacks, timeouts, and job retention; added IP/scope/hostname boundary tests.
+- Updated the pentest/runner handoff path to reserve callback IDs before dispatch, guard terminal-state races, use HTTPS-only targets, bound runner requests, and avoid falsely confirming cancellation.
+- Updated the sale-readiness, marketplace listing, direct acquisition pitch, L-SPARK copy, and buyer-handoff checklist for an outright B2B asset sale rather than an ongoing SaaS/pilot commitment. Optional transition assistance is now explicitly negotiable, not promised.
+- Documented the existing provider footprint, current secret-name inventory, and the unverified live runner origin without including secret values.
+- The readiness commit is local to `work/readiness-20261010`. This pass did not push, merge, or deploy it.
+
+These routes have not been deployed to production; their live 404 responses observed before the branch change remain the current production behavior until an approved release is built and promoted.
+
+## Release blockers
+
+| Priority | Status | Required evidence or action |
+|---|---|---|
+| Critical for claims of live scanning | BLOCKED / UNVERIFIED | Identify the existing authorized ELITZE Runner's actual HTTPS origin from its current hosting/configuration, set that origin in the relevant existing settings, confirm the intended HMAC key is consistently configured without exposing values, and pass the signed production handshake plus an authorized end-to-end scan/callback. The checked GitHub and Vercel settings do not currently list the runner URL; this is not evidence that a new host or additional vendor is needed. |
+| Critical | CI TEST PASS; production-specific lifecycle UNVERIFIED | `auth:e2e-self-test` passed against the workflow's isolated PostgreSQL service in run [38092252885](https://github.com/terrell0780/elitze-agentic-security/actions/runs/38092252885), alongside clean migration, typecheck, lint, build, security self-tests, and SBOM generation. The local run could not start because this workstation has no local PostgreSQL service or `DATABASE_URL` and Docker Engine was not running. CI evidence proves only the tested workflow against its isolated database; production email delivery and complete live account lifecycle still require authorized end-to-end verification. Production data was not used for test records. |
+| High | UNVERIFIED | Verify signup, email delivery, verification, login, session lifecycle, password recovery, revocation, and privileged authorization end to end using isolated authorized test records. |
+| High | UNVERIFIED | Obtain independent security review/penetration-test evidence covering application, APIs, authorization, tenant isolation, policy enforcement, evidence integrity, and administration. |
+| High | UNVERIFIED | Perform and retain evidence for backup restoration, recovery objectives, failover, disaster recovery, and incident-response exercises. No such operational exercise was performed in this assessment. |
+| High | UNVERIFIED | Verify each external security-data/integration connector against a real authorized source and retain source/time/scope/provenance evidence. Local adapter tests do not prove every connector is operational. |
+| High | PARTIALLY VERIFIED | Reassess PostgreSQL SSL warnings and prior connection terminations after the current deployment, using a recent runtime-log window and a sustained, bounded database-health observation. The latest 24-hour grouped error check was clear; the longer historical report had errors. |
+| Medium | BLOCKED pending release | Deploy the new policy pages only after release gates pass, then verify live status, canonical metadata, sitemap membership, and crawlability. |
+| Medium | UNVERIFIED | Define a non-branded and branded Google query set with geography, language, device, target URL, and intent; capture a baseline and use repeatable independent rank measurements. No top-five ranking claim is supported by this assessment. |
+| Medium | UNVERIFIED | Complete an evidence-backed control-to-requirement-to-evidence matrix, named ownership/RACI, asset/data/integration inventories, risk/exception register, and residual-risk approval for the target release scope. |
+
+## Asset-sale decision
+
+**The existing source, documentation, and sale-handoff package can be presented to prospective buyers with the limitations stated plainly.** This is not a claim that ELITZE is a fully verified production service. In diligence, describe the existing IONOS/Vercel/Runner/Resend footprint and make the runner-origin/production-handshake evidence gap explicit. Buyer handoff should specify which domain, repository, provider accounts, contracts, and credentials actually transfer; do not promise automatic transferability of vendor accounts.
+
+## Release decision
+
+**Do not promote this branch to production yet.** The live runner handshake is a mandatory production release gate. A GitHub HMAC-secret entry and a Vercel HMAC-secret entry now exist by name, but their values were not read and their equality is unverified; the actual runner URL remains absent from the checked GitHub and Vercel settings. The isolated authentication database E2E test passed in CI, but that does not verify production email delivery or the complete live account lifecycle. A passing CI suite cannot override the missing live runner or the remaining unverified operational and security evidence.
+
+No production files, production database records, Vercel settings, GitHub secrets, commits on `main`, or production deployments were changed by this assessment. No ranking, certification, compliance, independent-penetration-test, or enterprise-readiness claim is made.
+
+## Reproduction commands
+
+Run from the project root in a controlled environment:
+
+- `npm ci`
+- `npm run typecheck`
+- `npm run lint`
+- `npm run db:config-self-test`
+- `npm run production-config:self-test`
+- `npm run tenant-overview:self-test`
+- `npm run sale:readiness`
+- `npm run auth:security-self-test`
+- `npm run auth:e2e-self-test` (requires an isolated PostgreSQL test database)
+- `npm run runner:self-test`
+- `npm run runner:handshake-self-test`
+- `npm audit --omit=dev --audit-level=high`
+- `npm run build`
+
+Record the exact source revision, environment, tool versions, timestamp, complete outputs, failures, and evidence scope when reproducing these checks.

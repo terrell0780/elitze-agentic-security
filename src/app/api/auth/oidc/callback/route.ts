@@ -4,6 +4,7 @@ import { discoverOidc, oidcRedirectUri } from "@/lib/oidc";
 import { createSession } from "@/lib/auth";
 import { decryptAuthSecret } from "@/lib/auth-mfa";
 import { getPgPool } from "@/db";
+import { isReservedNonDeliverableEmail } from "@/lib/elitze-secure/auth-email-policy";
 import crypto from "node:crypto";
 import { cookies } from "next/headers";
 
@@ -49,7 +50,9 @@ export async function GET(request: Request) {
     const userinfo = accessToken ? await fetchUserInfo(config, accessToken, subject) : undefined;
     const email = String(userinfo?.email ?? claims?.email ?? "").trim().toLowerCase();
     const emailVerified = Boolean(userinfo?.email_verified ?? claims?.email_verified);
-    if (!email || !emailVerified) return NextResponse.json({ error: "oidc_identity_unverified" }, { status: 403 });
+    if (!email || !emailVerified || isReservedNonDeliverableEmail(email)) {
+      return NextResponse.json({ error: "oidc_identity_unverified" }, { status: 403 });
+    }
 
     const userResult = await getPgPool().query(
       "SELECT id, tenant_id AS \"tenantId\", email, display_name AS \"displayName\", role, status FROM auth_users WHERE email_normalized=$1 AND status='active' LIMIT 1",

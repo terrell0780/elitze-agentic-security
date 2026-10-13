@@ -39,7 +39,7 @@ export default function HomePage() {
             <span><b className="block text-sm tracking-[.12em]">ELITZE</b><span className="block text-[8px] uppercase tracking-[.26em] text-[var(--muted)]">Agentic Security</span></span>
           </Link>
           <nav className="hidden items-center gap-7 text-[12px] font-semibold text-[var(--muted)] lg:flex" aria-label="Primary navigation">
-            {[[ "Platform","/platform" ],[ "Security","/security" ],[ "REO","/reo" ],[ "Chat","/chat" ],[ "Search","/search" ],[ "Help","/help" ],[ "FAQ","/faq" ],[ "Legal","/legal" ]].map(([label,href]) => <Link key={href} href={href} className="transition hover:text-[var(--text)]">{label}</Link>)}
+            {[[ "Platform","/platform" ],[ "Security","/security" ],[ "SOC","/agentic-soc" ],[ "Threat Detection","/threat-detection" ],[ "Emulation","/adversary-emulation" ],[ "Integrations","/integrations" ],[ "Recursive Agents","/recursive-agents" ],[ "REO / SEO","/reo" ],[ "Chat","/chat" ],[ "FAQ","/faq" ],[ "About","/about" ],[ "Docs","/docs/faq.md" ]].map(([label,href]) => <Link key={href} href={href} className="transition hover:text-[var(--text)]">{label}</Link>)}
           </nav>
           <div className="flex items-center gap-2 pr-12 sm:pr-0">
             <Link href="/sales" className="hidden rounded-xl border border-[var(--border)] bg-[var(--panel)] px-4 py-2.5 text-xs font-semibold sm:inline-flex">Acquisition</Link>
@@ -48,7 +48,7 @@ export default function HomePage() {
             <GlobalThemeToggle embedded />
           </div>
         </div>
-        {mobileOpen && <nav className="border-t border-[var(--border)] px-4 py-3 lg:hidden"><div className="mx-auto flex max-w-[1400px] flex-col gap-1">{[["Platform","/platform"],["Security","/security"],["REO","/reo"],["Chat","/chat"],["Search","/search"],["Help","/help"],["FAQ","/faq"],["Legal","/legal"],["Contact","/contact"],["Control Plane","/console"],["Acquisition","/sales"]].map(([label,href]) => <Link key={href} href={href} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-sm text-[var(--muted)] hover:bg-[var(--panel)] hover:text-[var(--text)]">{label}</Link>)}</div></nav>}
+        {mobileOpen && <nav className="border-t border-[var(--border)] px-4 py-3 lg:hidden"><div className="mx-auto flex max-w-[1400px] flex-col gap-1">{[["Platform","/platform"],["Security","/security"],["SOC","/agentic-soc"],["Threat Detection","/threat-detection"],["Emulation","/adversary-emulation"],["Integrations","/integrations"],["Recursive Agents","/recursive-agents"],["REO / SEO","/reo"],["Chat","/chat"],["Help","/help"],["FAQ","/faq"],["About","/about"],["Contributing","/contributing"],["Legal","/legal"],["Contact","/contact"],["Control Plane","/console"],["Acquisition","/sales"]].map(([label,href]) => <Link key={href} href={href} onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-sm text-[var(--muted)] hover:bg-[var(--panel)] hover:text-[var(--text)]">{label}</Link>)}</div></nav>}
       </header>
 
       <section className="relative overflow-hidden border-b border-[var(--border)]">

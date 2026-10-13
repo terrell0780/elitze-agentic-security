@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from "node:crypto";
 import { createServer } from "node:http";
 import { once } from "node:events";
-import { execFileSync, spawn } from "node:child_process";
+import { spawn } from "node:child_process";
 import path from "node:path";
 import pg from "pg";
 
@@ -11,43 +11,30 @@ const appPort = 3010;
 const origin = `http://${host}:${appPort}`;
 const runId = Date.now().toString(36) + randomBytes(4).toString("hex");
 const testEmail = `e2e-auth-${runId}@example.invalid`;
+let secondEmail = null;
 const primaryPassword = ["E2EAuth", runId, "PrimaryPass12"].join("-");
 const resetPassword = ["E2EReset", Date.now().toString(), "ResetPass12"].join("-");
 
-try {
-  process.loadEnvFile?.(path.resolve(process.cwd(), ".env.local"));
-} catch {}
-
-let configuredDatabaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL || process.env.POSTGRES_URL_NON_POOLING;
-if (!configuredDatabaseUrl && process.env.NEON_PROJECT_ID) {
-  try {
-    const command = process.platform === "win32" ? process.env.ComSpec : "npx";
-    const args = process.platform === "win32"
-      ? ["/d", "/s", "/c", "npx neonctl connection-string --project-id " + process.env.NEON_PROJECT_ID]
-      : ["neonctl", "connection-string", "--project-id", process.env.NEON_PROJECT_ID];
-    configuredDatabaseUrl = execFileSync(command, args, { encoding: "utf8", windowsHide: true })
-      .split(/\r?\n/)
-      .map((line) => line.trim())
-      .findLast((line) => line.startsWith("postgres")) || "";
-  } catch {}
-}
-if (configuredDatabaseUrl && (!process.env.PGUSER || !process.env.PGPASSWORD || !process.env.PGHOST || !process.env.PGPORT || !process.env.PGDATABASE)) {
-  const parsed = new URL(configuredDatabaseUrl);
-  process.env.PGHOST ||= parsed.hostname;
-  process.env.PGPORT ||= parsed.port || "5432";
-  process.env.PGUSER ||= decodeURIComponent(parsed.username);
-  process.env.PGPASSWORD ||= decodeURIComponent(parsed.password);
-  process.env.PGDATABASE ||= decodeURIComponent(parsed.pathname.slice(1));
-  process.env.PGSSLMODE ||= "require";
-}
-
 if (!process.env.PGUSER || !process.env.PGPASSWORD || !process.env.PGHOST || !process.env.PGPORT || !process.env.PGDATABASE) {
-  throw new Error("PG environment or project DATABASE_URL is required for auth E2E");
+  throw new Error("Explicit PostgreSQL environment variables are required for auth E2E; .env.local and implicit Neon project discovery are intentionally not loaded.");
 }
 
-const databaseUrl = ["postgresql:", "//", process.env.PGUSER, ":", process.env.PGPASSWORD, "@", process.env.PGHOST, ":", process.env.PGPORT, "/", process.env.PGDATABASE].join("");
+const normalizedPgHost = process.env.PGHOST.toLowerCase().replace(/^\[|\]$/g, "");
+if (!["127.0.0.1", "localhost", "::1"].includes(normalizedPgHost)) {
+  throw new Error("Refusing authentication E2E against a remote database. Use local/CI PostgreSQL only; hosted Neon and production databases must never receive test fixtures.");
+}
+if (process.env.ELITZE_AUTH_E2E_DISPOSABLE_DB !== "true" || !/(^|[_-])(ci|test|e2e)([_-]|$)/i.test(process.env.PGDATABASE)) {
+  throw new Error("Refusing authentication E2E unless ELITZE_AUTH_E2E_DISPOSABLE_DB=true and PGDATABASE is explicitly named as a disposable CI/test/E2E database.");
+}
+
+const databaseHost = normalizedPgHost === "::1" ? "[::1]" : normalizedPgHost;
+const databaseUrl = new URL(
+  `postgresql://${encodeURIComponent(process.env.PGUSER)}:${encodeURIComponent(process.env.PGPASSWORD)}@${databaseHost}:${process.env.PGPORT}/${encodeURIComponent(process.env.PGDATABASE)}`,
+).toString();
 
 let deliveredEmail;
+let fixtureA;
+let fixtureB;
 const mailServer = createServer(async (request, response) => {
   if (request.method !== "POST" || request.url !== "/emails") {
     response.writeHead(404);
@@ -76,6 +63,9 @@ const env = {
   ELITZE_EMAIL_PROVIDER: "test",
   ELITZE_EMAIL_FROM: "ELITZE E2E <e2e@example.invalid>",
   ELITZE_EMAIL_TEST_ENDPOINT: `http://${host}:${mailPort}/emails`,
+  // This E2E verifies that uploads fail closed without an explicitly configured private scanner.
+  ELITZE_MALWARE_SCANNER_PROVIDER: "",
+  ELITZE_VIRUSTOTAL_PRIVATE_API_KEY: "",
 };
 
 const nextCli = path.resolve(process.cwd(), "node_modules/next/dist/bin/next");
@@ -314,7 +304,7 @@ try {
     cookie = sessionCookie(newLogin.response);
     assert(cookie.includes("elitze_session="), "post-reset login did not issue a fresh ELITZE session cookie");
 
-    const secondEmail = `e2e-auth-second-${Date.now()}@example.invalid`;
+    secondEmail = `e2e-auth-second-${Date.now()}@example.invalid`;
     const secondPassword = ["E2EAuthSecond", Date.now().toString(), "PrimaryPass12"].join("-");
     const secondRegistration = await jsonRequest("/api/auth/register", {
       method: "POST",
@@ -354,31 +344,36 @@ try {
     });
     assert(channel.response.status === 201 && channel.body.ok === true, "file E2E channel creation failed");
 
+    const attachmentsBefore = await db.query(
+      "SELECT count(*)::int AS count FROM public.chat_attachments WHERE tenant_id=$1 AND channel_id=$2",
+      [userRecord.rows[0].tenant_id, channel.body.channel.id],
+    );
+
     const uploadForm = new FormData();
     uploadForm.set("channelId", String(channel.body.channel.id));
-    uploadForm.append("files", new Blob(["ELITZE real file sharing E2E"], { type: "text/plain" }), "elitze-file-e2e.txt");
+    uploadForm.append("files", new Blob(["ELITZE malware-scan fail-closed E2E"], { type: "text/plain" }), "elitze-file-e2e.txt");
     const upload = await fetch(`${origin}/api/chat/files`, {
       method: "POST",
       headers: { origin, cookie },
       body: uploadForm,
     });
     const uploadBody = await upload.json();
-    assert(upload.status === 201 && uploadBody.ok === true, `file upload failed: ${upload.status} ${JSON.stringify(uploadBody)}`);
-    const attachmentId = uploadBody.attachments?.[0]?.id;
-    const attachmentHash = uploadBody.attachments?.[0]?.sha256;
-    assert(typeof attachmentId === "string" && /^[0-9a-f-]{36}$/i.test(attachmentId), "upload did not return an attachment id");
+    assert(
+      upload.status === 503
+        && uploadBody.ok === false
+        && uploadBody.state === "NOT_CONFIGURED"
+        && uploadBody.error === "malware_scanner_not_configured",
+      `unconfigured private malware scanner did not fail closed: ${upload.status} ${JSON.stringify(uploadBody)}`,
+    );
 
-    const anonymousDownload = await fetch(`${origin}/api/chat/files/${attachmentId}`, { cache: "no-store" });
-    assert(anonymousDownload.status === 401, "anonymous file download was not blocked");
-
-    const tenantWideDownload = await fetch(`${origin}/api/chat/files/${attachmentId}`, {
-      headers: { cookie },
-      cache: "no-store",
-    });
-    assert(tenantWideDownload.status === 200, `same-tenant download failed: ${tenantWideDownload.status}`);
-    const downloaded = await tenantWideDownload.text();
-    assert(downloaded === "ELITZE real file sharing E2E", "downloaded file content did not match uploaded content");
-    assert(tenantWideDownload.headers.get("x-elitze-sha256") === attachmentHash, "download SHA-256 digest did not match upload");
+    const attachmentsAfter = await db.query(
+      "SELECT count(*)::int AS count FROM public.chat_attachments WHERE tenant_id=$1 AND channel_id=$2",
+      [userRecord.rows[0].tenant_id, channel.body.channel.id],
+    );
+    assert(
+      Number(attachmentsAfter.rows[0].count) === Number(attachmentsBefore.rows[0].count),
+      "upload stored an attachment without a successful private malware verdict",
+    );
 
     const tenants = await db.query(
       "SELECT id, email_normalized, tenant_id FROM auth_users WHERE email_normalized IN ($1,$2) ORDER BY email_normalized",
@@ -426,8 +421,8 @@ try {
       return { nodeKey: `ci-only:${suffix}`, decisionRef: `ci-decision-${suffix}` };
     };
 
-    const fixtureA = await seed({ tenantId: tenantA.tenant_id, suffix: `A-${runId}` });
-    const fixtureB = await seed({ tenantId: tenantB.tenant_id, suffix: `B-${runId}` });
+    fixtureA = await seed({ tenantId: tenantA.tenant_id, suffix: `A-${runId}` });
+    fixtureB = await seed({ tenantId: tenantB.tenant_id, suffix: `B-${runId}` });
 
     const graphA = await jsonWithTimeout("/api/console/security-graph", cookie);
     const graphABody = await graphA.json();
@@ -453,9 +448,37 @@ try {
     assert(evidenceBBody.records.some((record) => record.decisionRef === fixtureB.decisionRef), "tenant B evidence missing");
     assert(!evidenceBBody.records.some((record) => record.decisionRef === fixtureA.decisionRef), "tenant B evidence exposed tenant A data");
 
-    console.log("ELITZE real-auth E2E: PASS — clean PostgreSQL account creation, verification email contract, verification, login, database session creation, password reset, session revocation, and cross-tenant graph/evidence isolation verified");
+    console.log("ELITZE real-auth E2E: PASS — account creation, email verification, login, database sessions, recovery/session revocation, fail-closed malware upload without scanner configuration, and cross-tenant graph/evidence isolation verified");
   } finally {
-    await db.end();
+    try {
+      // Security decisions are an append-only audit trail; deleting them is correctly denied
+      // by deny_mcp_gateway_decision_mutation(). This E2E uses a dedicated disposable CI DB.
+      // Its PostgreSQL service is destroyed by the workflow after this job, retaining immutable
+      // evidence for the complete test run without leaking fixtures into any persistent database.
+      const fixtureEmails = [testEmail, secondEmail].filter((email) => typeof email === "string");
+      const fixtureCounts = await db.query(
+        `SELECT
+           (SELECT count(*)::int FROM public.auth_users WHERE email_normalized = ANY($1::text[])) AS users,
+           (SELECT count(*)::int FROM public.security_graph_nodes WHERE subject_key = ANY($2::text[])) AS graph_nodes,
+           (SELECT count(*)::int FROM public.agent_identities WHERE name = ANY($3::text[])) AS agents,
+           (SELECT count(*)::int FROM public.mcp_gateway_servers WHERE name = ANY($4::text[])) AS servers,
+           (SELECT count(*)::int FROM public.mcp_gateway_decisions WHERE decision_ref = ANY($5::text[])) AS decisions`,
+        [
+          fixtureEmails,
+          [`ci-only:A-${runId}`, `ci-only:B-${runId}`],
+          [`ci-agent-A-${runId}`, `ci-agent-B-${runId}`],
+          [`ci-server-A-${runId}`, `ci-server-B-${runId}`],
+          [`ci-decision-A-${runId}`, `ci-decision-B-${runId}`],
+        ],
+      );
+      const counts = fixtureCounts.rows[0];
+      console.log(
+        "ELITZE auth E2E fixture accounting: PASS — append-only audit rows retained only in the disposable CI database until service teardown; " +
+        Object.entries(counts).map(([key, value]) => `${key}=${value}`).join(", "),
+      );
+    } finally {
+      await db.end();
+    }
   }
 } finally {
   await stop();

@@ -33,7 +33,9 @@ const files = execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8" })
     file.startsWith("sales/") ||
     file === "README.md"
   )
-  .filter((file) => file !== "scripts/brand-self-test.mjs");
+  .filter((file) => file !== "scripts/brand-self-test.mjs")
+  // A CycloneDX SBOM records real third-party package names; those are inventory metadata, not ELITZE branding claims.
+  .filter((file) => !/^sales\/ELITZE-SBOM-.*\.cdx\.json$/.test(file));
 
 const failures = [];
 for (const rel of files) {

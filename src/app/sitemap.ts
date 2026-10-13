@@ -14,12 +14,21 @@ const routes = [
   "/reo",
   "/privacy",
   "/terms",
+  "/security-disclosure",
+  "/accessibility",
   "/legal",
   "/legal/ownership",
   "/sales",
   "/help",
   "/contact",
   "/search",
+  "/agentic-soc",
+  "/threat-detection",
+  "/adversary-emulation",
+  "/integrations",
+  "/recursive-agents",
+  "/docs",
+  "/contributing",
 ] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {

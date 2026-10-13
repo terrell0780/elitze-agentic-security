@@ -16,10 +16,11 @@ const bodySchema = z.object({
   baseUrl: z.string().trim().min(8).max(2000),
   model: z.string().trim().max(160).optional(),
   secret: z.string().min(1).max(8000),
+  provider: z.enum(["OPENAI_COMPATIBLE", "NVIDIA_NIM"]).default("OPENAI_COMPATIBLE"),
 });
 
-function metadataFor(protocol: string, kind: string) {
-  return { protocol, kind, secretStored: true, clientExposure: "never" };
+function metadataFor(protocol: string, kind: string, provider: string) {
+  return { protocol, kind, provider, secretStored: true, clientExposure: "never" };
 }
 
 export async function GET() {
@@ -34,6 +35,7 @@ export async function GET() {
       protocol: aiConnections.protocol,
       baseUrl: aiConnections.baseUrl,
       model: aiConnections.model,
+      provider: aiConnections.metadata,
       enabled: aiConnections.enabled,
       createdAt: aiConnections.createdAt,
       updatedAt: aiConnections.updatedAt,
@@ -71,6 +73,16 @@ export async function POST(request: NextRequest) {
       ? "ELITZE_AGENT"
       : "ELITZE_BOT";
 
+  if (parsed.data.provider === "NVIDIA_NIM") {
+    if (parsed.data.kind !== "model" || !parsed.data.model?.trim()) {
+      return NextResponse.json({ ok: false, error: "nvidia_nim_requires_model_connection_and_model_id" }, { status: 400 });
+    }
+    const nimPath = url.pathname.endsWith("/") ? url.pathname.slice(0, -1) : url.pathname;
+    if (!nimPath.endsWith("/v1")) {
+      return NextResponse.json({ ok: false, error: "nvidia_nim_base_url_must_end_in_v1" }, { status: 400 });
+    }
+  }
+
   try {
     const encryptedSecret = encryptIntegrationSecret(parsed.data.secret);
     const [connection] = await getDb().insert(aiConnections).values({
@@ -81,7 +93,7 @@ export async function POST(request: NextRequest) {
       baseUrl: url.toString(),
       model: parsed.data.model || null,
       encryptedSecret,
-      metadata: metadataFor(protocol, parsed.data.kind),
+      metadata: metadataFor(protocol, parsed.data.kind, parsed.data.provider),
       createdBy: user.id,
     }).returning({
       id: aiConnections.id,
@@ -98,6 +110,7 @@ export async function POST(request: NextRequest) {
       name: connection.name,
       kind: connection.kind,
       protocol: connection.protocol,
+      provider: parsed.data.provider,
       baseUrl: connection.baseUrl,
     });
 

@@ -34,11 +34,7 @@ Public 2026 guidance from CISA, NSA, ASD/ACSC, NCSC-UK and the Canadian Cyber Ce
 
 ELITZE is designed to operationalize that control loop.
 
-Potential transaction paths:
-- outright technology/IP acquisition
-- enterprise licensing
-- strategic partnership/OEM
-- investment or technology transaction
+**Preferred transaction:** outright acquisition of the software/product assets and the specific IP, domains, and accounts that the seller owns and the parties expressly include. This is an asset sale, not a commitment by the seller to operate an ongoing SaaS or managed service.
 
 Repository and implementation diligence are available to qualified buyers under a controlled access process. No synthetic metrics or invented production claims are used as diligence evidence.
 
@@ -89,7 +85,7 @@ Proposed scope, subject to definitive agreement and diligence:
 - deployment configuration
 - sales materials
 - transferable cloud/social/communications accounts only where legally and contractually transferable
-- 30 days of transition support, capped at 10 hours
+- no ongoing managed service; any optional transition assistance is separately negotiated and documented
 
 Excluded:
 

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Position ELITZE for an enterprise SaaS/cybersecurity accelerator conversation using a concrete product-control walkthrough and a controlled corporate pilot ask.
+Position ELITZE for an outright B2B software/IP acquisition discussion. The goal is to find a strategic buyer or a direct path to a buyer, not to commit the seller to running a SaaS company, delivering a pilot, or building a recurring-revenue business.
 
 ## Executive opening
 
@@ -80,17 +80,9 @@ Say:
 
 > “This is the control-plane opportunity for agentic enterprise security: govern what agents can reach, what they are allowed to do, what actually happened, and whether the security fix was verified.”
 
-## L-SPARK pilot ask
+## L-SPARK acquisition ask
 
-Propose a controlled 60–90 day enterprise validation:
-
-**Phase 1 — Connect:** identity → agent → MCP → tools → resources → security telemetry.
-
-**Phase 2 — Observe:** reachability, authorization context, policy decisions, runtime outcomes and evidence.
-
-**Phase 3 — Enforce:** unauthorized tool access, excessive reach, privileged actions, sensitive-data access and other agreed control boundaries.
-
-**Phase 4 — Verify:** remediation → retest → evidence-backed closure.
+The request is straightforward: help identify a suitable strategic acquirer or introduce ELITZE to cybersecurity and AI-security companies that may want to acquire the existing software/IP outright. A buyer can review the repository, architecture, build evidence, security boundaries, dependencies, and known gaps under an agreed diligence process. No pilot, ongoing SaaS operation, or recurring service commitment is being offered by the seller.
 
 ## Application positioning
 
@@ -104,19 +96,11 @@ The platform brings AI security, enterprise SecOps, policy enforcement, security
 
 ### Why L-SPARK
 
-ELITZE sits at the intersection of enterprise SaaS, cybersecurity and agentic AI governance. The immediate objective is enterprise validation: design partners, strategic enterprise relationships, channel opportunities and real production environments where agentic-AI security controls can be tested against enterprise requirements.
-
-L-SPARK's SaaS ecosystem, enterprise network, mentorship and potential customer/channel connections are relevant to moving ELITZE from technically validated product foundation toward enterprise adoption.
+ELITZE sits at the intersection of cybersecurity and agentic AI governance. The immediate objective is an outright asset sale to a strategic buyer that wants the existing software/IP foundation. L-SPARK's network may help surface potential acquirers or route the opportunity to an appropriate corporate-development contact. This is not a request for a customer pilot or an accelerator-led recurring-revenue journey.
 
 ### Anything else
 
-ELITZE is seeking a controlled enterprise pilot focused on agent identity, MCP/tool reachability, policy enforcement, runtime decisions, evidence integrity and verification of security fixes.
-
-The commercial path is:
-
-**Pilot → technical validation → security review → procurement/vendor onboarding → enterprise deployment → recurring revenue**
-
-Strategic investment or acquisition is secondary to proving enterprise value through real deployment.
+ELITZE is being offered for outright acquisition by a cybersecurity, AI-security, enterprise software, or security-platform buyer. The asset scope, price, domain and account transfer, IP assignment, closing conditions, and any optional transition assistance would be agreed in the transaction documents. The seller is not offering ongoing SaaS operations or managed security services.
 
 ## Submission data guardrail
 
