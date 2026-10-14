@@ -36,17 +36,43 @@ export const stablePayloadHash = (value: unknown) =>
 export async function probeSecurityConnector(id: SecurityConnectorId) {
   const definition = getSecurityConnector(id);
   if (definition.mode === "COLLECTOR" || definition.mode === "SCANNER") {
+    const runnerUrl = definition.endpointEnv ? env(definition.endpointEnv) : "";
+    if (!runnerUrl) {
+      return {
+        id,
+        health: "NOT_CONFIGURED" as const,
+        integrationState: "IMPLEMENTED" as const,
+        evidenceState: "UNKNOWN" as const,
+        detail: "An authorized external collector or isolated runner is required; no live execution is claimed.",
+      };
+    }
+    const parsedRunnerUrl = new URL(runnerUrl);
+    if (parsedRunnerUrl.protocol !== "https:" && parsedRunnerUrl.hostname !== "localhost") {
+      throw new Error(id + "_runner_https_required");
+    }
+    const response = await timeoutFetch(new URL("/health", parsedRunnerUrl).toString(), {
+      headers: { Accept: "application/json" },
+    });
+    if (!response.ok) throw new Error(id + "_runner_health_http_" + response.status);
+    const healthBody = await response.json().catch(() => null) as { ok?: boolean; status?: string } | null;
+    if (!healthBody || !(healthBody.ok === true || healthBody.status === "ok" || healthBody.status === "healthy")) {
+      throw new Error(id + "_runner_health_unverified");
+    }
     return {
       id,
-      health: "NOT_CONFIGURED" as const,
-      integrationState: "IMPLEMENTED" as const,
-      evidenceState: "UNKNOWN" as const,
-      detail: "An external collector or isolated runner is required.",
+      health: "CONNECTED" as const,
+      integrationState: "INTEGRATED" as const,
+      evidenceState: "OBSERVED" as const,
+      detail: "Authorized runner health endpoint responded and reported healthy; this does not assert a scan has run.",
     };
   }
 
   const url = definition.endpointEnv ? env(definition.endpointEnv) : definition.defaultEndpoint;
   if (!url) throw new Error(id + "_endpoint_unconfigured");
+  const parsedUrl = new URL(url);
+  if (parsedUrl.protocol !== "https:" && parsedUrl.hostname !== "localhost") {
+    throw new Error(id + "_https_required");
+  }
 
   const headers: Record<string, string> = { Accept: "application/json" };
   const token = definition.credentialEnv[0] ? env(definition.credentialEnv[0]) : "";
@@ -59,6 +85,8 @@ export async function probeSecurityConnector(id: SecurityConnectorId) {
       body: JSON.stringify({ query: "{ about { version } }" }),
     });
     if (!response.ok) throw new Error("opencti_http_" + response.status);
+    const body = await response.json().catch(() => null) as { errors?: unknown[]; data?: unknown } | null;
+    if (!body || body.errors?.length || !body.data) throw new Error("opencti_response_unverified");
   } else if (id === "wazuh") {
     const username = env("ELITZE_WAZUH_USERNAME");
     const password = env("ELITZE_WAZUH_PASSWORD");
@@ -77,18 +105,57 @@ export async function probeSecurityConnector(id: SecurityConnectorId) {
   } else if (id === "fleetdm") {
     const response = await timeoutFetch(url.replace(/\/$/, "") + "/api/v1/fleet/me", { headers });
     if (!response.ok) throw new Error("fleetdm_http_" + response.status);
+    const body = await response.json().catch(() => null) as { host_count?: unknown } | null;
+    if (!body || typeof body !== "object") throw new Error("fleetdm_response_unverified");
   } else if (id === "misp") {
     const response = await timeoutFetch(url.replace(/\/$/, "") + "/servers/getPyMISPVersion.json", {
       headers: { Accept: "application/json", Authorization: env("ELITZE_MISP_TOKEN") },
     });
     if (!response.ok) throw new Error("misp_http_" + response.status);
+    const body = await response.json().catch(() => null);
+    if (!body || typeof body !== "object") throw new Error("misp_response_unverified");
   } else if (id === "thehive") {
     const statusPath = env("ELITZE_THEHIVE_STATUS_PATH") || "/api/v1/status";
     const response = await timeoutFetch(url.replace(/\/$/, "") + statusPath, { headers });
     if (!response.ok) throw new Error("thehive_http_" + response.status);
+    const body = await response.json().catch(() => null);
+    if (!body || typeof body !== "object") throw new Error("thehive_response_unverified");
+  } else if (id === "cisa-kev") {
+    const response = await timeoutFetch(url, { headers });
+    if (!response.ok) throw new Error("cisa_kev_http_" + response.status);
+    const body = await response.json().catch(() => null) as { vulnerabilities?: unknown[] } | null;
+    if (!body || !Array.isArray(body.vulnerabilities)) throw new Error("cisa_kev_response_unverified");
+  } else if (id === "epss") {
+    const response = await timeoutFetch(url + (url.includes("?") ? "&" : "?") + "cve=CVE-2021-44228", { headers });
+    if (!response.ok) throw new Error("epss_http_" + response.status);
+    const body = await response.json().catch(() => null) as { data?: unknown[] } | null;
+    if (!body || !Array.isArray(body.data)) throw new Error("epss_response_unverified");
+  } else if (id === "nvd") {
+    const response = await timeoutFetch(url + (url.includes("?") ? "&" : "?") + "resultsPerPage=1", { headers });
+    if (!response.ok) throw new Error("nvd_http_" + response.status);
+    const body = await response.json().catch(() => null) as { vulnerabilities?: unknown[] } | null;
+    if (!body || !Array.isArray(body.vulnerabilities)) throw new Error("nvd_response_unverified");
+  } else if (id === "github-advisories") {
+    const response = await timeoutFetch(url + (url.includes("?") ? "&" : "?") + "per_page=1", { headers });
+    if (!response.ok) throw new Error("github_advisories_http_" + response.status);
+    const body = await response.json().catch(() => null);
+    if (!Array.isArray(body)) throw new Error("github_advisories_response_unverified");
+  } else if (id === "mitre-attack") {
+    const response = await timeoutFetch(url, { headers });
+    if (!response.ok) throw new Error("mitre_attack_http_" + response.status);
+    const body = await response.json().catch(() => null) as { objects?: unknown[] } | null;
+    if (!body || !Array.isArray(body.objects) || body.objects.length === 0) throw new Error("mitre_attack_response_unverified");
   } else {
     const response = await timeoutFetch(url, { headers });
     if (!response.ok) throw new Error(id + "_http_" + response.status);
+    const contentType = response.headers.get("content-type") ?? "";
+    if (!contentType.includes("json") && id !== "sigma" && id !== "yara") {
+      throw new Error(id + "_content_type_unverified");
+    }
+    if (id === "sigma" || id === "yara") {
+      const text = await response.text();
+      if (text.length < 200) throw new Error(id + "_content_unverified");
+    }
   }
 
   return {
@@ -96,7 +163,7 @@ export async function probeSecurityConnector(id: SecurityConnectorId) {
     health: "CONNECTED" as const,
     integrationState: "INTEGRATED" as const,
     evidenceState: "OBSERVED" as const,
-    detail: "Live provider path responded successfully.",
+    detail: "Live provider response and expected response shape were verified; no customer findings are inferred from a health probe.",
   };
 }
 
