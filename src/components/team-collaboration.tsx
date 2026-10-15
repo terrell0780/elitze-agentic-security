@@ -5,7 +5,7 @@ import { FileUp, Hash, MessageSquare, Paperclip, Plus, RefreshCw, Send, ShieldCh
 import VoiceRoom from "@/components/voice-room";
 
 type Channel = { id: number; name: string; description: string | null; channelType: string };
-type Attachment = { id: string; fileName: string; contentType: string; sizeBytes: number; sha256: string; scanState: string };
+type Attachment = { id: string; fileName: string; contentType: string; sizeBytes: number; sha256: string };
 type Message = {
   id: number;
   authorId: string;
@@ -141,7 +141,6 @@ export default function TeamCollaboration() {
           metadata: uploaded.length ? {
             attachmentIds: uploaded.map((item) => item.id),
             attachmentNames: uploaded.map((item) => item.fileName),
-            attachmentScanStates: uploaded.map((item) => item.scanState),
           } : {},
         }),
       });
@@ -233,7 +232,7 @@ export default function TeamCollaboration() {
                 <button type="button" onClick={() => inputRef.current?.click()} aria-label="Attach files" className="self-end rounded-xl border border-[var(--border)] p-3 text-[var(--muted-strong)]"><FileUp className="h-4 w-4" /></button>
                 <button type="submit" disabled={busy || (!body.trim() && files.length === 0)} aria-label="Send message" className="self-end rounded-xl bg-[var(--accent)] p-3 text-slate-950 disabled:cursor-not-allowed disabled:opacity-50"><Send className="h-4 w-4" /></button>
               </div>
-              <div className="mt-2 flex items-center gap-2 text-[9px] text-[var(--muted)]"><Paperclip className="h-3 w-3" />Up to 6 files, 10 MB each. Executable/script extensions are blocked. Malware scanning is shown as NOT_CONFIGURED until a real scanner is connected.</div>
+              <div className="mt-2 flex items-center gap-2 text-[9px] text-[var(--muted)]"><Paperclip className="h-3 w-3" />Up to 6 files, 10 MB each. Executable and script extensions are blocked. File contents are not scanned.</div>
             </form>
           )}
         </div>

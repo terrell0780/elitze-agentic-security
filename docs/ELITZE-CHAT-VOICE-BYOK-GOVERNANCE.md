@@ -30,7 +30,7 @@ Uploads are authenticated and tenant/channel scoped, hashed with SHA-256, bounde
 
 Authenticated members of the same tenant can upload and download files in active tenant channels; anonymous public file access remains disabled. Download authorization is still policy-gated and audited, and returned content includes the SHA-256 digest.
 
-Malware scanning is not claimed as active unless a real scanner is connected. Current new uploads are therefore recorded as `NOT_CONFIGURED` for malware scan state.
+New attachments are stored with the explicit state `NOT_SCANNED`. Uploads enforce tenant/channel authorization, policy checks, size limits, active-content extension restrictions, and SHA-256 hashing; file bytes are not sent to a scanning provider or inspected for malware. Downloads remain tenant-scoped, policy-gated, and audited. Users should upload only files from trusted sources.
 
 ## Voice
 
