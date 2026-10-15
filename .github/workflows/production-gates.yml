@@ -68,6 +68,8 @@ jobs:
 
       - name: Security fabric self-test
         run: npm run security-fabric:self-test
+      - name: MCP upstream address hardening self-test
+        run: npm run mcp-upstream-address:self-test
       - name: RAG and vector search self-test
         run: npm run rag:self-test
       - name: Persistent agent workflow self-test
