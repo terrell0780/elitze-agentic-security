@@ -162,6 +162,9 @@ jobs:
       - name: MCP workload identity self-test
         run: npm run mcp-workload-identity:self-test
 
+      - name: MCP upstream address self-test
+        run: npm run mcp-upstream-address:self-test
+
       - name: Policy evidence self-test
         run: npm run policy-evidence:self-test
 
