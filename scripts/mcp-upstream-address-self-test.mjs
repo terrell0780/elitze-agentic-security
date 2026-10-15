@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
-import { isBlockedMcpAddress } from "../src/lib/elitze-secure/mcp-gateway.ts";
+import fs from "node:fs";
+import { createPinnedLookup, isBlockedMcpAddress } from "../src/lib/elitze-secure/mcp-gateway.ts";
 
 const blocked = [
   "0.0.0.0",
@@ -50,4 +51,31 @@ for (const address of allowed) {
   assert.equal(isBlockedMcpAddress(address), false, `must allow public address: ${address}`);
 }
 
-console.log(`MCP upstream address hardening self-test: PASS (${blocked.length} blocked, ${allowed.length} public)`);
+const pinnedAddresses = [
+  { address: "8.8.8.8", family: 4 },
+  { address: "2606:4700:4700::1111", family: 6 },
+];
+const pinnedLookup = createPinnedLookup(pinnedAddresses);
+
+const allResults = await new Promise((resolve, reject) => {
+  pinnedLookup("attacker-controlled.example", { all: true }, (error, addresses) => {
+    if (error) reject(error);
+    else resolve(addresses);
+  });
+});
+assert.deepEqual(allResults, pinnedAddresses, "all-address lookup must return only the validated pinned answers");
+
+const firstResult = await new Promise((resolve, reject) => {
+  pinnedLookup("attacker-controlled.example", 4, (error, address, family) => {
+    if (error) reject(error);
+    else resolve({ address, family });
+  });
+});
+assert.deepEqual(firstResult, pinnedAddresses[0], "single-address lookup must return a validated pinned answer");
+
+const route = fs.readFileSync(new URL("../src/app/api/mcp-gateway/route.ts", import.meta.url), "utf8");
+assert.match(route, /lookup:\\s*createPinnedLookup\\(validated\\.addresses\\)/, "upstream HTTPS request must pin validated DNS answers");
+assert.match(route, /https\\.request\\(/, "upstream calls must use the pinned HTTPS transport");
+assert.doesNotMatch(route, /fetch\\(url/, "upstream calls must not perform a second DNS resolution through fetch");
+
+console.log(`MCP upstream address hardening self-test: PASS (${blocked.length} blocked, ${allowed.length} public, DNS pinning verified)`);
