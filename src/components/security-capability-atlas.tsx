@@ -35,11 +35,11 @@ export type Capability = {
   detail: string;
   href: string;
   icon: typeof Activity;
-  state: "LIVE SURFACE" | "CONTROL" | "VALIDATION" | "INTELLIGENCE";
+  state: "APP SURFACE" | "CONTROL" | "VALIDATION" | "INTELLIGENCE";
 };
 
 export const capabilities: Capability[] = [
-  { id: "global-view", category: "Command", title: "Global Security View", detail: "Spatial security context across identity, agents, MCP, APIs, cloud and data.", href: "/console", icon: Globe2, state: "LIVE SURFACE" },
+  { id: "global-view", category: "Command", title: "Global Security View", detail: "Spatial security context across identity, agents, MCP, APIs, cloud and data.", href: "/console", icon: Globe2, state: "APP SURFACE" },
   { id: "global-search", category: "Command", title: "Global Search", detail: "Search external security intelligence through an untrusted-data broker.", href: "/search", icon: Search, state: "INTELLIGENCE" },
   { id: "agent-security", category: "AI Security", title: "Agent Security", detail: "Agent identity, delegation, reachability and execution boundaries.", href: "/security", icon: Bot, state: "CONTROL" },
   { id: "mcp-security", category: "AI Security", title: "MCP & Tool Governance", detail: "MCP server, tool authorization and controlled gateway execution.", href: "/console", icon: Wrench, state: "CONTROL" },
@@ -51,14 +51,14 @@ export const capabilities: Capability[] = [
   { id: "cloud", category: "Cloud", title: "Cloud & Runtime", detail: "Cloud identity, workload context and runtime reachability.", href: "/platform", icon: Cloud, state: "CONTROL" },
   { id: "data", category: "Data", title: "Sensitive Data Reachability", detail: "Track governed paths toward protected data and credentials.", href: "/security", icon: Database, state: "CONTROL" },
   { id: "secops", category: "SecOps", title: "Exposure & Vulnerability", detail: "Exposure, vulnerability priority and security operations context.", href: "/console/vulnerabilities", icon: Radar, state: "INTELLIGENCE" },
-  { id: "graph", category: "SecOps", title: "Security Graph", detail: "Observed nodes, relationships, reachability and evidence state.", href: "/console", icon: GitBranch, state: "LIVE SURFACE" },
+  { id: "graph", category: "SecOps", title: "Security Graph", detail: "Observed nodes, relationships, reachability and evidence state.", href: "/console", icon: GitBranch, state: "APP SURFACE" },
   { id: "analyst", category: "SecOps", title: "Autonomous Analyst", detail: "Evidence-driven analysis surface for authenticated operators.", href: "/console/analyst", icon: Activity, state: "INTELLIGENCE" },
   { id: "pentest", category: "Validation", title: "Automated Security Testing", detail: "Authorized security-test requests, release validation and retesting.", href: "/console/pentesting", icon: Crosshair, state: "VALIDATION" },
   { id: "manual", category: "Validation", title: "Manual Pentesting", detail: "Authorized manual assessment workflow with explicit scope and evidence.", href: "/control-room", icon: ShieldEllipsis, state: "VALIDATION" },
   { id: "reo", category: "Validation", title: "REO", detail: "Evidence-backed retesting of reachable security conditions.", href: "/reo", icon: ShieldCheck, state: "VALIDATION" },
   { id: "orchestration", category: "Runtime", title: "Orchestration Defense", detail: "Governed workflows for high-impact autonomous actions.", href: "/orchestration", icon: Workflow, state: "CONTROL" },
   { id: "mcp", category: "Runtime", title: "Runtime Gateway", detail: "Policy and identity boundary before sensitive tool execution.", href: "/console", icon: TerminalSquare, state: "CONTROL" },
-  { id: "integrations", category: "Integrations", title: "Security Integrations", detail: "Provider adapter paths for reviewed enterprise security ecosystems.", href: "/platform", icon: ServerCog, state: "LIVE SURFACE" },
+  { id: "integrations", category: "Integrations", title: "Security Integrations", detail: "Provider adapter paths for reviewed enterprise security ecosystems.", href: "/platform", icon: ServerCog, state: "APP SURFACE" },
   { id: "compliance", category: "Governance", title: "Global Compliance", detail: "Governance, legal controls and evidence-backed publishing discipline.", href: "/compliance", icon: Boxes, state: "CONTROL" },
   { id: "google", category: "Governance", title: "Google Ads Governance", detail: "Truthful publishing and advertising control checks.", href: "/console/google-ads", icon: Sparkles, state: "CONTROL" },
 ];
@@ -82,14 +82,14 @@ export default function SecurityCapabilityAtlas() {
           <div className="max-w-3xl">
             <div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">ELITZE SECURITY ATLAS</div>
             <h2 className="mt-3 text-3xl font-black tracking-[-.045em] sm:text-5xl">Every security control, one visible surface.</h2>
-            <p className="mt-5 text-sm leading-7 text-[var(--muted-strong)]">Explore the product by security domain. Each tile is a live application surface or documented control path, not a decorative claim of unverified telemetry.</p>
+            <p className="mt-5 text-sm leading-7 text-[var(--muted-strong)]">Explore the product by security domain. Labels identify application surfaces and documented control paths; operational status still depends on verified, connected evidence.</p>
           </div>
           <Link href="/search" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--accent-soft)] px-4 py-3 text-xs font-bold text-[var(--accent)]"><Search className="h-4 w-4" /> Open Global Search</Link>
         </div>
 
         <div className="mt-8 flex gap-2 overflow-x-auto pb-2">
           {categories.map((item) => (
-            <button key={item} type="button" onClick={() => setCategory(item)} className={`shrink-0 rounded-full border px-3 py-2 text-[9px] font-bold uppercase tracking-[.16em] transition ${category === item ? "border-cyan-300/45 bg-cyan-300/10 text-cyan-100" : "border-[var(--border)] bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)]"}`}>
+            <button key={item} type="button" aria-pressed={category === item} onClick={() => setCategory(item)} className={`shrink-0 rounded-full border px-3 py-2 text-[9px] font-bold uppercase tracking-[.16em] transition ${category === item ? "border-cyan-300/45 bg-cyan-300/10 text-cyan-100" : "border-[var(--border)] bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)]"}`}>
               {item}
             </button>
           ))}
@@ -100,7 +100,7 @@ export default function SecurityCapabilityAtlas() {
             {filtered.map((item, index) => {
               const Icon = item.icon;
               return (
-                <button key={item.id} type="button" onClick={() => setActive(item.id)} className={`group relative overflow-hidden rounded-2xl border p-5 text-left transition hover:-translate-y-1 ${active === item.id ? "border-cyan-300/45 bg-cyan-300/[.06] shadow-[0_18px_55px_rgba(34,211,238,.08)]" : "border-[var(--border)] bg-[var(--panel)]"}`}>
+                <button key={item.id} type="button" aria-pressed={active === item.id} onClick={() => setActive(item.id)} className={`group relative overflow-hidden rounded-2xl border p-5 text-left transition hover:-translate-y-1 ${active === item.id ? "border-cyan-300/45 bg-cyan-300/[.06] shadow-[0_18px_55px_rgba(34,211,238,.08)]" : "border-[var(--border)] bg-[var(--panel)]"}`}>
                   <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-cyan-300/[.06] blur-2xl transition group-hover:bg-cyan-300/[.12]" />
                   <div className="relative flex items-start justify-between gap-3">
                     <span className="grid h-9 w-9 place-items-center rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent)]"><Icon className="h-4 w-4" /></span>
@@ -126,7 +126,7 @@ export default function SecurityCapabilityAtlas() {
                 <div><div className="text-lg font-black tracking-[-.03em]">{selected.title}</div><div className="mt-1 text-[9px] uppercase tracking-[.14em] text-slate-500">{selected.category}</div></div>
               </div>
               <p className="mt-5 text-xs leading-6 text-slate-400">{selected.detail}</p>
-              <Link href={selected.href} className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-300 px-4 py-3 text-xs font-bold text-slate-950">Open control <span aria-hidden="true">Open</span></Link>
+              <Link href={selected.href} className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-300 px-4 py-3 text-xs font-bold text-slate-950">Open selected surface</Link>
 
               <div className="mt-7 grid grid-cols-2 gap-2 text-center">
                 <div className="rounded-xl border border-white/8 bg-white/[.025] p-3"><div className="font-mono text-lg">{capabilities.length}</div><div className="mt-1 text-[8px] uppercase tracking-[.14em] text-slate-600">Mapped surfaces</div></div>
