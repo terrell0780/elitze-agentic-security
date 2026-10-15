@@ -89,7 +89,7 @@ export default function SecurityCapabilityAtlas() {
 
         <div className="mt-8 flex gap-2 overflow-x-auto pb-2">
           {categories.map((item) => (
-            <button key={item} type="button" onClick={() => setCategory(item)} className={`shrink-0 rounded-full border px-3 py-2 text-[9px] font-bold uppercase tracking-[.16em] transition ${category === item ? "border-cyan-300/45 bg-cyan-300/10 text-cyan-100" : "border-[var(--border)] bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)]"}`}>
+            <button key={item} type="button" aria-pressed={category === item} onClick={() => setCategory(item)} className={`shrink-0 rounded-full border px-3 py-2 text-[9px] font-bold uppercase tracking-[.16em] transition ${category === item ? "border-cyan-300/45 bg-cyan-300/10 text-cyan-100" : "border-[var(--border)] bg-[var(--panel)] text-[var(--muted)] hover:text-[var(--text)]"}`}>
               {item}
             </button>
           ))}
@@ -100,7 +100,7 @@ export default function SecurityCapabilityAtlas() {
             {filtered.map((item, index) => {
               const Icon = item.icon;
               return (
-                <button key={item.id} type="button" onClick={() => setActive(item.id)} className={`group relative overflow-hidden rounded-2xl border p-5 text-left transition hover:-translate-y-1 ${active === item.id ? "border-cyan-300/45 bg-cyan-300/[.06] shadow-[0_18px_55px_rgba(34,211,238,.08)]" : "border-[var(--border)] bg-[var(--panel)]"}`}>
+                <button key={item.id} type="button" aria-pressed={active === item.id} onClick={() => setActive(item.id)} className={`group relative overflow-hidden rounded-2xl border p-5 text-left transition hover:-translate-y-1 ${active === item.id ? "border-cyan-300/45 bg-cyan-300/[.06] shadow-[0_18px_55px_rgba(34,211,238,.08)]" : "border-[var(--border)] bg-[var(--panel)]"}`}>
                   <div className="pointer-events-none absolute -right-8 -top-8 h-24 w-24 rounded-full bg-cyan-300/[.06] blur-2xl transition group-hover:bg-cyan-300/[.12]" />
                   <div className="relative flex items-start justify-between gap-3">
                     <span className="grid h-9 w-9 place-items-center rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent)]"><Icon className="h-4 w-4" /></span>
