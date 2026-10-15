@@ -147,6 +147,34 @@ Use an authorized disposable test environment with a known agent and MCP server.
 
 A successful unit test or adapter self-test proves the tested code contract; it does not, by itself, prove a live external provider connection or customer deployment. Do not publish compliance certification, customer outcomes, coverage percentages, or acquisition value without supporting evidence.
 
+## Buyer walkthrough and readiness artifacts
+
+The supporting documents provide reusable detail for the demo and transfer steps:
+
+- [Buyer demo walkthrough](acquisition/BUYER-DEMO-WALKTHROUGH.md) — preflight, discovery, identity, reachability, allowed/denied execution, evidence inspection, retest, export, and an explicit `Not run` result sheet.
+- [Buyer readiness checklist](acquisition/BUYER-READINESS-CHECKLIST.md) — product boundary, demonstration, technical proof, ownership and transfer, acquisition proposition, and an evidence-index template.
+
+These are procedures and checklists, not assertions that the walkthrough or transfer has already been completed.
+
+## Metrics
+
+Track these only when there is a reliable denominator and source:
+
+- Percentage of discovered agents and MCP servers with a known owner and identity.
+- Percentage of observed tool relationships with source provenance and freshness.
+- Percentage of sensitive execution paths covered by pre-execution policy enforcement.
+- Allowed/denied test pass rate and count of enforcement bypasses found.
+- Percentage of security events with source, tenant, timestamps, decision, outcome, and evidence reference.
+- Mean time to triage during tabletop exercises, with the scenario and timing method recorded.
+- Restore-test success rate and time to restore in the test environment.
+- Number of unknown or unmeasurable coverage gaps and their assigned owners.
+
+Do not publish a metric when its denominator is unknown or the underlying data is simulated.
+
+## Compliance alignment
+
+Use NIST CSF 2.0 to organize governance and technical outcomes. For a company pursuing SOC 2, map controls and evidence to the applicable Trust Services Criteria and engagement scope with the auditor. For GDPR, include privacy roles, data minimization, access controls, retention, processor/subprocessor obligations, and a breach assessment and notification workflow. A roadmap or tool does not itself establish SOC 2 attestation or GDPR compliance.
+
 ## Reference frameworks
 
 - NIST Cybersecurity Framework 2.0: https://www.nist.gov/cyberframework
