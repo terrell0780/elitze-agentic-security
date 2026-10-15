@@ -37,7 +37,6 @@ export async function GET(
 
     const row = rows[0];
     if (!row) return NextResponse.json({ ok: false, error: "Attachment not found." }, { status: 404 });
-    if (row.scanState !== "CLEAN") return NextResponse.json({ ok: false, error: "Attachment is not cleared for download." }, { status: 403 });
 
     const decision = evaluatePolicy({
       actorId: user.id,
@@ -65,6 +64,7 @@ export async function GET(
         "x-elitze-sha256": row.sha256,
         "cache-control": "private, no-store",
         "x-content-type-options": "nosniff",
+        "x-elitze-malware-scan": "not-performed",
       },
     });
   } catch {
