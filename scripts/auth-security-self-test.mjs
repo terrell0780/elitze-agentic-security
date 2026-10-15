@@ -29,6 +29,8 @@ assert.match(auth, /sameSite:\s*"lax"/);
 assert.match(auth, /SESSION_IDLE_HOURS/);
 assert.match(auth, /SESSION_ROTATION_HOURS/);
 assert.match(auth, /assertSameOrigin/);
+assert.match(auth, /return normalizeHostHeader\(request\.headers\.get\("host"\)\);/);
+assert.doesNotMatch(auth, /request\.headers\.get\("x-forwarded-host"\)/);
 assert.match(auth, /timingSafeEqual/);
 assert.match(auth, /issueMfaLoginChallenge/);
 assert.match(auth, /issuePrivilegedReauthChallenge/);
