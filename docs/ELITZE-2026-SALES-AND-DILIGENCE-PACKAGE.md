@@ -34,26 +34,29 @@ Do not claim competitors secretly lack a capability unless verified. Do not publ
 5. Evidence-backed verification
 6. Explicit uncertainty: observed / inferred / simulated / stale / unknown / unmeasurable
 
-## Buyer segments
+## B2B buyer segments
 
-### Solo security operator
+### Cybersecurity platform
 
-One workspace for investigation, exposure, agent inventory, policy checks and evidence.
+Existing security vendors can evaluate the control-plane foundation for integration into an established security portfolio.
 
-### Security team / SOC
+### Enterprise software group
 
-Shared cases, incident response, analyst collaboration, approvals, assignments, evidence and controlled automation.
+Software groups can evaluate the product/IP as an acquired security capability rather than commissioning a greenfield build.
 
-### Enterprise
+### MSSP / security service provider
 
-Tenant boundaries, RBAC, identity integration, policy governance, integrations, auditability, security graph and operational evidence.
+Security service providers can evaluate the technology for internal integration or a separately operated service offering under their own commercial model.
 
-## Acquisition / licensing paths
+### Strategic technology acquirer
 
-- Outright technology/IP acquisition
-- Strategic enterprise license
-- OEM / embedded security-control-plane partnership
-- Strategic investment / partnership
+A strategic buyer can evaluate the repository, architecture and transferable IP for integration with an existing product or security business.
+
+## Acquisition model
+
+- Outright software/IP acquisition only in the seller's current commercial process
+
+The seller is not offering an ongoing SaaS subscription, managed hosting, billing operation, customer-success function, renewal program or support organization. Any post-transfer operating model is buyer-controlled and should be documented separately by the buyer.
 
 No valuation, revenue, customer, traffic, ranking or implementation claim should be stated without diligence evidence.
 

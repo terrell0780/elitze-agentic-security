@@ -30,6 +30,10 @@ ELITZE is not positioned as another alert dashboard. The intended control-plane 
 
 The project is designed to reduce the gap between finding a security problem and proving that it was actually resolved. Its acceptance standard explicitly favors evidence, reachability, identity, asset criticality, attack-path context, policy authorization, safe action, retesting, and audit evidence over raw alert volume.
 
+## Operating model for this transaction
+
+This is an outright software/IP acquisition. The seller is not offering an ongoing SaaS subscription, managed hosting, billing, customer support, renewals or customer-success operation. The buyer controls post-transfer deployment, commercialization and customer operations.
+
 ## Buyer should understand
 
 The repository is software and product IP. It is not automatically a complete operating company, customer base, revenue stream, managed service, or transferable infrastructure account. Any such assets must be verified and included separately in a transaction.

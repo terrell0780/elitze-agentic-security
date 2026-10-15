@@ -65,9 +65,11 @@ Buyer should review:
 - Runtime containment configuration.
 - Secret-scanning results and any historical secret exposure.
 
-## 6. Commercial review
+## 6. Commercial and customer review
 
 Revenue, customers, contracts, traffic, retention, valuation, certifications, regulatory status, security attestations, and production performance should be treated as **unverified unless supporting evidence is provided separately**.
+
+The seller is offering an outright software/IP asset acquisition, not an ongoing SaaS subscription or managed customer operation. Buyer diligence should distinguish transferable product/IP assets from any customer relationships, contracts, infrastructure accounts, support commitments, billing arrangements, renewals, or other operating obligations. None should be assumed to exist or transfer without documentary evidence and express inclusion in the definitive agreement.
 
 ## 7. Asset-transfer review
 

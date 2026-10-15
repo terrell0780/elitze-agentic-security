@@ -44,7 +44,9 @@ See `docs/ELITZE-CATEGORY-LEADER-MANIFEST.md` for the project's acceptance stand
 
 The proposed asset package is **ELITZE Agentic Security — complete pre-revenue product asset acquisition**, subject to a definitive agreement and verification. Potential transfer items include the ELITZE product/source IP, owned brand/visual assets, `elitze.info` if transferable, application/database migrations/SDK/documentation, deployment configuration, sales materials, and other expressly listed transferable assets.
 
-A proposed transition period is **30 days capped at 10 hours**, unless separately agreed in writing.
+The seller may provide up to **30 days of technical handoff assistance capped at 10 hours**, limited to transfer and repository questions unless separately agreed in writing.
+
+This is an outright software/IP transaction. The seller is not offering an ongoing hosted subscription, managed service, billing operation, customer-support program, renewal book, or customer-success organization. Post-transfer operation is buyer-owned.
 
 The seller's personal GitHub account, personal email and financial accounts, unrelated repositories/projects, non-transferable vendor accounts, and third-party IP not owned by the seller are excluded.
 

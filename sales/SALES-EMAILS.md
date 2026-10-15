@@ -6,7 +6,7 @@
 
 Hello,
 
-I’m reaching out regarding ELITZE Agentic Security, an enterprise-focused security product built around a governed control plane for AI agents, MCP, LLM applications, APIs, software, cloud, identity, data, and runtime behavior.
+I’m reaching out regarding ELITZE Agentic Security, an enterprise-focused security product offered for outright software/IP acquisition, not an ongoing seller-managed SaaS service. It is built around a governed control plane for AI agents, MCP, LLM applications, APIs, software, cloud, identity, data, and runtime behavior.
 
 The product is designed around a simple security loop: Detect → Explain → Authorize → Act → Retest → Evidence.
 
@@ -25,7 +25,7 @@ Terrell
 
 Hello,
 
-I have an existing ELITZE Agentic Security product build available for acquisition.
+I have an existing ELITZE Agentic Security product build available for acquisition. The transaction is for the agreed software/IP asset set; the seller is not offering ongoing SaaS operations, hosting, billing or customer support.
 
 Its core premise is that the model or agent is not the security boundary. ELITZE is designed to put policy enforcement, authorization, containment, continuous validation, and evidence around AI agents, MCP, APIs, software, cloud, identity, and runtime behavior.
 
@@ -44,7 +44,7 @@ Terrell
 
 Hello,
 
-I’m offering ELITZE Agentic Security as a software/product acquisition opportunity.
+I’m offering ELITZE Agentic Security as an outright software/product acquisition opportunity. The seller is not offering an ongoing SaaS subscription or managed customer operation.
 
 This is not being presented as a revenue claim or a manufactured customer story. It is an existing security product build with documented architecture and a defined enterprise security direction.
 

@@ -4,6 +4,8 @@
 
 **Discover every agent and MCP server, map what each identity can reach, enforce policy before sensitive tool execution, and preserve verifiable evidence of every decision.**
 
+**Transaction model:** outright software/IP acquisition. The seller is not offering an ongoing SaaS subscription, managed hosting, billing, customer support, renewals, or customer-success operation. Buyer-owned operating responsibilities begin after transfer.
+
 ELITZE is narrowing its initial commercial proof to a real, evidence-backed control path for agent identity, MCP servers, tools, reachability, policy enforcement, authorized execution, runtime observation, retesting, and tamper-evident evidence.
 
 ## Frontier enterprise security vision
