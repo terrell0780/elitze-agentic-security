@@ -4,7 +4,7 @@ import { BookOpen, KeyRound, LockKeyhole, MessageCircle, Radio, Search, ShieldCh
 const topics = [
   ["Governed Chat", "Authenticated tenant sessions, policy evaluation, source-aware responses, and no fabricated live telemetry.", MessageCircle],
   ["BYOK / BYOA / BYOB", "Connect your own model, agent, or bot endpoint. Secrets are encrypted server-side and never returned to the client.", KeyRound],
-  ["Files", "Tenant-scoped attachments are hashed, access-controlled, and downloadable only to authorized members. Executable and script extensions are blocked. Malware scanning remains explicitly NOT_CONFIGURED until a real scanner is connected.", LockKeyhole],
+  ["Files", "Tenant-scoped attachments are hashed, access-controlled, and downloadable only to authorized members. Size limits and executable/script extension restrictions apply. File contents are not scanned.", LockKeyhole],
   ["Voice", "Browser voice uses WebRTC with tenant-isolated signaling. Microphone permission remains under the user's control.", Radio],
   ["TeamSpeak", "ELITZE can store a tenant TeamSpeak Web Query configuration and encrypted API key. It never labels the integration connected without a verified connection.", ShieldCheck],
   ["Global Search", "ELITZE local capability search is first-party. Public web results are untrusted data and never become policy instructions.", Search],
