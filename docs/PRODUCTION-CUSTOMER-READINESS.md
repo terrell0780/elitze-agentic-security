@@ -1,4 +1,6 @@
-# ELITZE production customer readiness
+# ELITZE Post-Transfer Customer Readiness
+
+> Buyer-run operational checklist. This document does not establish that the seller currently operates a customer-facing SaaS business or has active customer evidence.
 
 Production state is evidence-gated. The application does not seed customer records, create synthetic telemetry, or turn a missing dependency into a success state.
 
