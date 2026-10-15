@@ -165,7 +165,28 @@ export function isBlockedMcpAddress(address: string): boolean {
   );
 }
 
-export async function validateMcpUpstreamUrl(raw: string): Promise<URL> {
+export function createPinnedLookup(
+  addresses: Array<{ address: string; family: number }>,
+): import("node:dns").LookupFunction {
+  const pinned = addresses.filter(({ address, family }) =>
+    (family === 4 || family === 6) && !isBlockedMcpAddress(address),
+  );
+  return (( _hostname, options, callback ) => {
+    if (!pinned.length) {
+      callback(Object.assign(new Error("mcp_upstream_address_unavailable"), { code: "ENOTFOUND" }), "", 0);
+      return;
+    }
+    if (typeof options === "object" && options !== null && "all" in options && options.all) {
+      callback(null, pinned);
+      return;
+    }
+    callback(null, pinned[0].address, pinned[0].family);
+  }) as import("node:dns").LookupFunction;
+}
+
+export async function validateMcpUpstreamUrl(
+  raw: string,
+): Promise<{ url: URL; addresses: Array<{ address: string; family: number }> }> {
   let url: URL;
   try {
     url = new URL(raw);
@@ -202,7 +223,9 @@ export async function validateMcpUpstreamUrl(raw: string): Promise<URL> {
     throw new Error("mcp_upstream_private_address_blocked");
   }
 
-  return url;
+  // Return the exact validated DNS answers so the caller can pin the connection
+  // to these addresses instead of resolving the hostname a second time.
+  return { url, addresses };
 }
 
 export function maxUpstreamResponseBytes() {
