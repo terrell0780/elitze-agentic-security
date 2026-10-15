@@ -74,8 +74,8 @@ const firstResult = await new Promise((resolve, reject) => {
 assert.deepEqual(firstResult, pinnedAddresses[0], "single-address lookup must return a validated pinned answer");
 
 const route = fs.readFileSync(new URL("../src/app/api/mcp-gateway/route.ts", import.meta.url), "utf8");
-assert.match(route, /lookup:\\s*createPinnedLookup\\(validated\\.addresses\\)/, "upstream HTTPS request must pin validated DNS answers");
-assert.match(route, /https\\.request\\(/, "upstream calls must use the pinned HTTPS transport");
-assert.doesNotMatch(route, /fetch\\(url/, "upstream calls must not perform a second DNS resolution through fetch");
+assert.match(route, /lookup:\s*createPinnedLookup\(validated\.addresses\)/, "upstream HTTPS request must pin validated DNS answers");
+assert.match(route, /https\.request\(/, "upstream calls must use the pinned HTTPS transport");
+assert.doesNotMatch(route, /fetch\(url/, "upstream calls must not perform a second DNS resolution through fetch");
 
 console.log(`MCP upstream address hardening self-test: PASS (${blocked.length} blocked, ${allowed.length} public, DNS pinning verified)`);
