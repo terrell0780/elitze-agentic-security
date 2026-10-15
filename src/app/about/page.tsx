@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowRight, Bot, Fingerprint, Network, ShieldCheck, Crosshair, FileCheck2 } from "lucide-react";
 import SeoFeaturePage from "@/components/seo-feature-page";
+import SecurityCapabilityAtlas from "@/components/security-capability-atlas";
 import { productionConfig } from "@/config/production";
 
 const url = productionConfig.canonicalOrigin + "/about";
@@ -98,6 +99,15 @@ export default function Page() {
           <p className="mt-6 text-xs leading-5 text-[var(--muted)]">Evidence states stay explicit: OBSERVED, DECLARED, INFERRED, UNKNOWN, or UNMEASURABLE. ELITZE does not present missing telemetry as a confirmed secure state.</p>
         </div>
       </section>
+
+      <section className="border-t border-[var(--border)]">
+        <div className="mx-auto max-w-7xl px-4 pt-12 sm:px-7 sm:pt-16">
+          <p className="text-[9px] font-bold uppercase tracking-[.22em] text-[var(--accent)]">Detailed capability map</p>
+          <h2 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">Explore the full ELITZE product surface</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-[var(--muted-strong)]">Use the interactive catalog below when you need capability-level detail. The homepage stays focused on the core value proposition.</p>
+        </div>
+      </section>
+      <SecurityCapabilityAtlas />
     </>
   );
 }
