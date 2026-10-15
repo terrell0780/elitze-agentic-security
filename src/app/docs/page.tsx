@@ -6,7 +6,7 @@ const url = productionConfig.canonicalOrigin + "/docs";
 
 export const metadata: Metadata = {
   title: "Technical Documentation",
-  description: "ELITZE Agentic Security documentation for architecture, security boundaries, source evidence and malware scanning.",
+  description: "ELITZE Agentic Security documentation for architecture, security boundaries and source evidence.",
   alternates: { canonical: url },
   openGraph: {
     type: "website",
@@ -39,17 +39,11 @@ export default function DocumentationPage() {
           body: "Development, disposable test databases, tenant isolation, source-only evidence, quality gates and release requirements.",
           state: "Public",
         },
-        {
-          title: "Malware scanning",
-          body: "Private scanner configuration, fail-closed upload behavior, verdict handling, retention and external data-transfer boundaries.",
-          state: "Security policy",
-        },
       ]}
       links={[
         { title: "FAQ", href: "/docs/faq.md", description: "Product and architecture answers." },
         { title: "About ELITZE", href: "/docs/about.md", description: "Product mission and control model." },
         { title: "Contributing", href: "/docs/contributing.md", description: "Secure development guide." },
-        { title: "Malware scanning", href: "/docs/malware-scanning.md", description: "Upload scanning requirements and limitations." },
         { title: "Threat detection", href: "/threat-detection", description: "Source-bound detection logic." },
         { title: "Security architecture", href: "/security", description: "Identity, policy, execution and evidence." },
       ]}
