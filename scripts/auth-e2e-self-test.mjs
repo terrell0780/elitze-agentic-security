@@ -63,9 +63,6 @@ const env = {
   ELITZE_EMAIL_PROVIDER: "test",
   ELITZE_EMAIL_FROM: "ELITZE E2E <e2e@example.invalid>",
   ELITZE_EMAIL_TEST_ENDPOINT: `http://${host}:${mailPort}/emails`,
-  // This E2E verifies that uploads fail closed without an explicitly configured private scanner.
-  ELITZE_MALWARE_SCANNER_PROVIDER: "",
-  ELITZE_VIRUSTOTAL_PRIVATE_API_KEY: "",
 };
 
 const nextCli = path.resolve(process.cwd(), "node_modules/next/dist/bin/next");
@@ -359,11 +356,12 @@ try {
     });
     const uploadBody = await upload.json();
     assert(
-      upload.status === 503
-        && uploadBody.ok === false
-        && uploadBody.state === "NOT_CONFIGURED"
-        && uploadBody.error === "malware_scanner_not_configured",
-      `unconfigured private malware scanner did not fail closed: ${upload.status} ${JSON.stringify(uploadBody)}`,
+      upload.status === 201
+        && uploadBody.ok === true
+        && uploadBody.state === "STORED"
+        && uploadBody.fileHandling?.state === "NOT_SCANNED"
+        && uploadBody.attachmentCount === 1,
+      `attachment upload did not return the expected stored/not-scanned state: ${upload.status} ${JSON.stringify(uploadBody)}`,
     );
 
     const attachmentsAfter = await db.query(
@@ -371,9 +369,14 @@ try {
       [userRecord.rows[0].tenant_id, channel.body.channel.id],
     );
     assert(
-      Number(attachmentsAfter.rows[0].count) === Number(attachmentsBefore.rows[0].count),
-      "upload stored an attachment without a successful private malware verdict",
+      Number(attachmentsAfter.rows[0].count) === Number(attachmentsBefore.rows[0].count) + 1,
+      "valid attachment was not stored",
     );
+    const storedAttachment = await db.query(
+      "SELECT scan_state FROM public.chat_attachments WHERE tenant_id=$1 AND channel_id=$2 ORDER BY created_at DESC LIMIT 1",
+      [userRecord.rows[0].tenant_id, channel.body.channel.id],
+    );
+    assert(storedAttachment.rows[0]?.scan_state === "NOT_SCANNED", "attachment state must not claim a scan was performed");
 
     const tenants = await db.query(
       "SELECT id, email_normalized, tenant_id FROM auth_users WHERE email_normalized IN ($1,$2) ORDER BY email_normalized",
@@ -448,7 +451,7 @@ try {
     assert(evidenceBBody.records.some((record) => record.decisionRef === fixtureB.decisionRef), "tenant B evidence missing");
     assert(!evidenceBBody.records.some((record) => record.decisionRef === fixtureA.decisionRef), "tenant B evidence exposed tenant A data");
 
-    console.log("ELITZE real-auth E2E: PASS — account creation, email verification, login, database sessions, recovery/session revocation, fail-closed malware upload without scanner configuration, and cross-tenant graph/evidence isolation verified");
+    console.log("ELITZE real-auth E2E: PASS — account creation, email verification, login, database sessions, recovery/session revocation, attachment upload state, and cross-tenant graph/evidence isolation verified");
   } finally {
     try {
       // Security decisions are an append-only audit trail; deleting them is correctly denied
