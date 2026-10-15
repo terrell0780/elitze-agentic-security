@@ -126,7 +126,7 @@ export default function SecurityCapabilityAtlas() {
                 <div><div className="text-lg font-black tracking-[-.03em]">{selected.title}</div><div className="mt-1 text-[9px] uppercase tracking-[.14em] text-slate-500">{selected.category}</div></div>
               </div>
               <p className="mt-5 text-xs leading-6 text-slate-400">{selected.detail}</p>
-              <Link href={selected.href} className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-300 px-4 py-3 text-xs font-bold text-slate-950">Open control <span aria-hidden="true">Open</span></Link>
+              <Link href={selected.href} className="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-300 px-4 py-3 text-xs font-bold text-slate-950">Open selected surface</Link>
 
               <div className="mt-7 grid grid-cols-2 gap-2 text-center">
                 <div className="rounded-xl border border-white/8 bg-white/[.025] p-3"><div className="font-mono text-lg">{capabilities.length}</div><div className="mt-1 text-[8px] uppercase tracking-[.14em] text-slate-600">Mapped surfaces</div></div>
