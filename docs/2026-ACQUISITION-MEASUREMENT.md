@@ -8,6 +8,8 @@ ELITZE uses acquisition measurement to improve discoverability and buyer convers
 
 `Discover → Landing page → Qualified intent → Acquisition inquiry → Diligence → Transaction`
 
+This measurement model is for the seller's acquisition process only. It is not a SaaS growth, subscription, renewal or customer-success program.
+
 The public site may measure the first four stages. Diligence and transaction status are not inferred from page analytics.
 
 ## Search-intent architecture
