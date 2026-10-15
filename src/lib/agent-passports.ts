@@ -16,12 +16,9 @@ export type AgentPassport = {
 };
 
 /**
- * ELITZE presentation of the 24 roles documented in the supplied Python source archive.
- * Source-derived role descriptions are catalog declarations, not proof of active agents,
- * permissions, execution windows, real findings or claimed performance metrics.
+ * The public agent roster is intentionally limited to ELITZE and Sara.
+ * Declared capabilities are not proof of active runtime, permissions, or execution.
  */
-const sourceReference = "supplied Python source archive: static/index.html and app.py agent prompt catalog";
-
 export const agentPassports: AgentPassport[] = [
   {
     id: "ELITZE",
