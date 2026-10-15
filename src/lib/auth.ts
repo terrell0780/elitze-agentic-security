@@ -94,8 +94,10 @@ function normalizeHostHeader(value: string | null) {
 }
 
 function requestHeadersHost(request: Request) {
-  return normalizeHostHeader(request.headers.get("x-forwarded-host"))
-    || normalizeHostHeader(request.headers.get("host"));
+  // Forwarded headers are only trustworthy when a trusted edge strips and
+  // rewrites them. The application cannot establish that from the request,
+  // so use the origin-facing Host header for same-origin fallback checks.
+  return normalizeHostHeader(request.headers.get("host"));
 }
 
 export async function assertSameOrigin(request: Request) {
