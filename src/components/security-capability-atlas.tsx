@@ -35,11 +35,11 @@ export type Capability = {
   detail: string;
   href: string;
   icon: typeof Activity;
-  state: "LIVE SURFACE" | "CONTROL" | "VALIDATION" | "INTELLIGENCE";
+  state: "APP SURFACE" | "CONTROL" | "VALIDATION" | "INTELLIGENCE";
 };
 
 export const capabilities: Capability[] = [
-  { id: "global-view", category: "Command", title: "Global Security View", detail: "Spatial security context across identity, agents, MCP, APIs, cloud and data.", href: "/console", icon: Globe2, state: "LIVE SURFACE" },
+  { id: "global-view", category: "Command", title: "Global Security View", detail: "Spatial security context across identity, agents, MCP, APIs, cloud and data.", href: "/console", icon: Globe2, state: "APP SURFACE" },
   { id: "global-search", category: "Command", title: "Global Search", detail: "Search external security intelligence through an untrusted-data broker.", href: "/search", icon: Search, state: "INTELLIGENCE" },
   { id: "agent-security", category: "AI Security", title: "Agent Security", detail: "Agent identity, delegation, reachability and execution boundaries.", href: "/security", icon: Bot, state: "CONTROL" },
   { id: "mcp-security", category: "AI Security", title: "MCP & Tool Governance", detail: "MCP server, tool authorization and controlled gateway execution.", href: "/console", icon: Wrench, state: "CONTROL" },
@@ -51,14 +51,14 @@ export const capabilities: Capability[] = [
   { id: "cloud", category: "Cloud", title: "Cloud & Runtime", detail: "Cloud identity, workload context and runtime reachability.", href: "/platform", icon: Cloud, state: "CONTROL" },
   { id: "data", category: "Data", title: "Sensitive Data Reachability", detail: "Track governed paths toward protected data and credentials.", href: "/security", icon: Database, state: "CONTROL" },
   { id: "secops", category: "SecOps", title: "Exposure & Vulnerability", detail: "Exposure, vulnerability priority and security operations context.", href: "/console/vulnerabilities", icon: Radar, state: "INTELLIGENCE" },
-  { id: "graph", category: "SecOps", title: "Security Graph", detail: "Observed nodes, relationships, reachability and evidence state.", href: "/console", icon: GitBranch, state: "LIVE SURFACE" },
+  { id: "graph", category: "SecOps", title: "Security Graph", detail: "Observed nodes, relationships, reachability and evidence state.", href: "/console", icon: GitBranch, state: "APP SURFACE" },
   { id: "analyst", category: "SecOps", title: "Autonomous Analyst", detail: "Evidence-driven analysis surface for authenticated operators.", href: "/console/analyst", icon: Activity, state: "INTELLIGENCE" },
   { id: "pentest", category: "Validation", title: "Automated Security Testing", detail: "Authorized security-test requests, release validation and retesting.", href: "/console/pentesting", icon: Crosshair, state: "VALIDATION" },
   { id: "manual", category: "Validation", title: "Manual Pentesting", detail: "Authorized manual assessment workflow with explicit scope and evidence.", href: "/control-room", icon: ShieldEllipsis, state: "VALIDATION" },
   { id: "reo", category: "Validation", title: "REO", detail: "Evidence-backed retesting of reachable security conditions.", href: "/reo", icon: ShieldCheck, state: "VALIDATION" },
   { id: "orchestration", category: "Runtime", title: "Orchestration Defense", detail: "Governed workflows for high-impact autonomous actions.", href: "/orchestration", icon: Workflow, state: "CONTROL" },
   { id: "mcp", category: "Runtime", title: "Runtime Gateway", detail: "Policy and identity boundary before sensitive tool execution.", href: "/console", icon: TerminalSquare, state: "CONTROL" },
-  { id: "integrations", category: "Integrations", title: "Security Integrations", detail: "Provider adapter paths for reviewed enterprise security ecosystems.", href: "/platform", icon: ServerCog, state: "LIVE SURFACE" },
+  { id: "integrations", category: "Integrations", title: "Security Integrations", detail: "Provider adapter paths for reviewed enterprise security ecosystems.", href: "/platform", icon: ServerCog, state: "APP SURFACE" },
   { id: "compliance", category: "Governance", title: "Global Compliance", detail: "Governance, legal controls and evidence-backed publishing discipline.", href: "/compliance", icon: Boxes, state: "CONTROL" },
   { id: "google", category: "Governance", title: "Google Ads Governance", detail: "Truthful publishing and advertising control checks.", href: "/console/google-ads", icon: Sparkles, state: "CONTROL" },
 ];
@@ -82,7 +82,7 @@ export default function SecurityCapabilityAtlas() {
           <div className="max-w-3xl">
             <div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">ELITZE SECURITY ATLAS</div>
             <h2 className="mt-3 text-3xl font-black tracking-[-.045em] sm:text-5xl">Every security control, one visible surface.</h2>
-            <p className="mt-5 text-sm leading-7 text-[var(--muted-strong)]">Explore the product by security domain. Each tile is a live application surface or documented control path, not a decorative claim of unverified telemetry.</p>
+            <p className="mt-5 text-sm leading-7 text-[var(--muted-strong)]">Explore the product by security domain. Labels identify application surfaces and documented control paths; operational status still depends on verified, connected evidence.</p>
           </div>
           <Link href="/search" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border-strong)] bg-[var(--accent-soft)] px-4 py-3 text-xs font-bold text-[var(--accent)]"><Search className="h-4 w-4" /> Open Global Search</Link>
         </div>
