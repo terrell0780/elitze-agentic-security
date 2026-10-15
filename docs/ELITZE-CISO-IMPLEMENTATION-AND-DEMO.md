@@ -83,7 +83,7 @@ npm sbom --sbom-format cyclonedx --sbom-type application --omit=dev > sbom.cdx.j
 npm run licenses:inventory
 ```
 
-The MCP upstream address regression command for PR #97 is `npm run mcp-upstream-address:self-test`; verify it exists and passes on the release candidate. Commands above describe the verification plan; they are not a claim that every command was run in this authoring pass. A PR CI run skips the production runner handshake and is not release approval.
+The MCP upstream address regression command is `npm run mcp-upstream-address:self-test`; verify it exists and passes on the release candidate. Commands above describe the verification plan; they are not a claim that every command was run in this authoring pass. A PR CI run skips the production runner handshake and is not release approval.
 
 ## Deployment procedure
 
