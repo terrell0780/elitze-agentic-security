@@ -52,9 +52,11 @@ for (const address of allowed) {
 }
 
 const pinnedAddresses = [
+  { address: "127.0.0.1", family: 4 },
   { address: "8.8.8.8", family: 4 },
   { address: "2606:4700:4700::1111", family: 6 },
 ];
+const expectedPinnedAddresses = pinnedAddresses.slice(1);
 const pinnedLookup = createPinnedLookup(pinnedAddresses);
 
 const allResults = await new Promise((resolve, reject) => {
@@ -63,7 +65,7 @@ const allResults = await new Promise((resolve, reject) => {
     else resolve(addresses);
   });
 });
-assert.deepEqual(allResults, pinnedAddresses, "all-address lookup must return only the validated pinned answers");
+assert.deepEqual(allResults, expectedPinnedAddresses, "all-address lookup must return only the validated pinned answers");
 
 const firstResult = await new Promise((resolve, reject) => {
   pinnedLookup("attacker-controlled.example", 4, (error, address, family) => {
@@ -71,7 +73,7 @@ const firstResult = await new Promise((resolve, reject) => {
     else resolve({ address, family });
   });
 });
-assert.deepEqual(firstResult, pinnedAddresses[0], "single-address lookup must return a validated pinned answer");
+assert.deepEqual(firstResult, expectedPinnedAddresses[0], "single-address lookup must return a validated pinned answer");
 
 const route = fs.readFileSync(new URL("../src/app/api/mcp-gateway/route.ts", import.meta.url), "utf8");
 assert.match(route, /lookup:\s*createPinnedLookup\(validated\.addresses\)/, "upstream HTTPS request must pin validated DNS answers");
