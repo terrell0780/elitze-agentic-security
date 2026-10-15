@@ -44,7 +44,7 @@ This is a source-tree review, not a live deployment audit.
 | Integration architecture | `docs/ELITZE-PRODUCTION-INTEGRATIONS.md` and adapter paths for MCP, GitHub, AWS, Entra ID and Kubernetes | Live authenticated provider access and persistence must be proven per provider. |
 | Database lifecycle | `scripts/production-migrate.mjs`, `scripts/production-db-health.mjs`, `drizzle/` | Scripts exist; production migration and health output must be captured on the target DB. |
 | CI/release controls | `package.json`, `.github/workflows/production-gates.yml` | The workflow defines dependency audit, self-tests, typecheck, lint, build, auth E2E, SBOM, and a runner handshake for eligible non-PR runs. Check the exact release SHA's CI result before claiming green status. |
-| MCP upstream hardening | [PR #97](https://github.com/terrell0780/elitze-agentic-security/pull/97) | Address filtering, pinned DNS and bounded HTTPS behavior are proposed in an open PR. Treat as unverified until checks pass, review is resolved and the change is merged. |
+| MCP upstream hardening | [PR #99](https://github.com/terrell0780/elitze-agentic-security/pull/99) and its CI checks | Track address filtering, pinned DNS and bounded HTTPS behavior on the current candidate. Verify merge state and successful regression/production gates against the exact candidate SHA before making an operational or release claim. |
 | Dependency licensing | `npm run licenses:inventory`, package lock, `scripts/license-inventory.mjs` | Generate the inventory from the exact candidate lockfile and review unknown/nonstandard licenses. |
 
 ## Walkthrough: a real controlled demonstration
