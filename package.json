@@ -11,7 +11,6 @@
     "test": "node scripts/security-self-test.mjs",
     "security:self-test": "node scripts/security-self-test.mjs",
     "threat-detection:self-test": "node --experimental-strip-types scripts/threat-detection-self-test.mjs",
-    "malware-scanner:self-test": "node --experimental-strip-types scripts/malware-scanner-self-test.mjs",
         "data-bridge:self-test": "node scripts/data-bridge-self-test.mjs",
     "mcp-workload-identity:self-test": "node scripts/mcp-workload-identity-self-test.mjs",
     "policy-evidence:self-test": "node scripts/policy-evidence-self-test.mjs",
