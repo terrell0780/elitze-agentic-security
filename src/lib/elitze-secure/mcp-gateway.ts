@@ -164,7 +164,6 @@ export function isBlockedMcpAddress(address: string): boolean {
     groups.slice(0, 6).every((group) => group === 0)
   );
 }
-}
 
 export async function validateMcpUpstreamUrl(raw: string): Promise<URL> {
   let url: URL;
