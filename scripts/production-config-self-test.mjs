@@ -37,7 +37,10 @@ assert.ok((workflow.match(/run: npm ci/g) ?? []).length >= 2, "production gates 
 assert.match(workflow, /production-config:self-test/);
 
 assert.match(read(".gitignore"), /^tsconfig\.tsbuildinfo$/m);
-assert.match(read("src/app/api/health/route.ts"), /build: "Elitze-Agentic-Security"/);
+const publicHealth = read("src/app/api/health/route.ts");
+assert.doesNotMatch(publicHealth, /missingMigrations|configurationSource|canonicalOrigin|malformedCount|version:/, "public health must not expose internal diagnostics");
+assert.match(read("src/app/api/console/health/route.ts"), /getCurrentUser/);
+assert.match(read("src/app/console/page.tsx"), /fetch\("\/api\/console\/health"/);
 assert.match(read("src/app/api/elitze/route.ts"), /agent: ELITZE_AGENT_NAME/);
 assert.match(read("src/app/api/elitze/route.ts"), /assistant: ELITZE_AGENT_ASSISTANT/);
 assert.match(read("src/lib/elitze-secure/elitze-agent.ts"), /ELITZE_AGENT_NAME = "ELITZE"/);
