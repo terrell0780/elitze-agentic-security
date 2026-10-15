@@ -348,7 +348,7 @@ try {
 
     const uploadForm = new FormData();
     uploadForm.set("channelId", String(channel.body.channel.id));
-    uploadForm.append("files", new Blob(["ELITZE malware-scan fail-closed E2E"], { type: "text/plain" }), "elitze-file-e2e.txt");
+    uploadForm.append("files", new Blob(["ELITZE attachment upload E2E"], { type: "text/plain" }), "elitze-file-e2e.txt");
     const upload = await fetch(`${origin}/api/chat/files`, {
       method: "POST",
       headers: { origin, cookie },
