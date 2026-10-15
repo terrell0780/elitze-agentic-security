@@ -130,7 +130,7 @@ export function isBlockedMcpAddress(address: string): boolean {
       (a === 100 && b >= 64 && b <= 127) ||
       (a === 169 && b === 254) ||
       (a === 172 && b >= 16 && b <= 31) ||
-      (a === 192 && ((b === 0 && (c === 0 || c === 2)) || b === 168)) ||
+      (a === 192 && ((b === 0 && (c === 0 || c === 2)) || b === 168 || (b === 88 && c === 99))) ||
       (a === 198 && (b === 18 || b === 19 || (b === 51 && c === 100))) ||
       (a === 203 && b === 0 && c === 113) ||
       a >= 224 ||
@@ -153,19 +153,54 @@ export function isBlockedMcpAddress(address: string): boolean {
   }
 
   const first = groups[0];
+
+  // Only permit IPv6 global-unicast space here. Treat all other address
+  // classes as non-public unless the explicit IPv4-mapped case above applies.
+  if ((first & 0xe000) !== 0x2000) return true;
+
   return (
-    groups.every((group) => group === 0) ||
-    (groups.slice(0, 7).every((group) => group === 0) && groups[7] === 1) ||
-    (first & 0xfe00) === 0xfc00 ||
-    (first & 0xffc0) === 0xfe80 ||
-    (first & 0xffc0) === 0xfec0 ||
-    (first & 0xff00) === 0xff00 ||
-    (first === 0x2001 && groups[1] === 0x0db8) ||
-    groups.slice(0, 6).every((group) => group === 0)
+    // IANA special-purpose and transition ranges that sit inside 2000::/3.
+    (first === 0x2001 && groups[1] <= 0x01ff) || // 2001::/23
+    (first === 0x2001 && groups[1] === 0x0db8) || // documentation
+    first === 0x2002 || // 6to4
+    first === 0x3ffe || // deprecated 6bone
+    (first === 0x3fff && (groups[1] & 0xf000) === 0) // documentation prefix
   );
 }
 
-export async function validateMcpUpstreamUrl(raw: string): Promise<URL> {
+export function createPinnedLookup(
+  addresses: Array<{ address: string; family: number }>,
+): NonNullable<import("node:https").RequestOptions["lookup"]> {
+  const pinned = addresses.filter(({ address, family }) =>
+    (family === 4 || family === 6) && !isBlockedMcpAddress(address),
+  );
+  const lookup: NonNullable<import("node:https").RequestOptions["lookup"]> = (
+    _hostname,
+    options,
+    callback,
+  ) => {
+    if (!pinned.length) {
+      callback(Object.assign(new Error("mcp_upstream_address_unavailable"), { code: "ENOTFOUND" }), "", 0);
+      return;
+    }
+    const requestedFamily = typeof options === "number" ? options : options?.family ?? 0;
+    const eligible = pinned.filter(({ family }) => requestedFamily === 0 || family === requestedFamily);
+    if (!eligible.length) {
+      callback(Object.assign(new Error("mcp_upstream_address_unavailable"), { code: "ENOTFOUND" }), "", 0);
+      return;
+    }
+    if (typeof options === "object" && options !== null && "all" in options && options.all) {
+      callback(null, eligible);
+      return;
+    }
+    callback(null, eligible[0].address, eligible[0].family);
+  };
+  return lookup;
+}
+
+export async function validateMcpUpstreamUrl(
+  raw: string,
+): Promise<{ url: URL; addresses: Array<{ address: string; family: number }> }> {
   let url: URL;
   try {
     url = new URL(raw);
@@ -202,7 +237,9 @@ export async function validateMcpUpstreamUrl(raw: string): Promise<URL> {
     throw new Error("mcp_upstream_private_address_blocked");
   }
 
-  return url;
+  // Return the exact validated DNS answers so the caller can pin the connection
+  // to these addresses instead of resolving the hostname a second time.
+  return { url, addresses };
 }
 
 export function maxUpstreamResponseBytes() {
