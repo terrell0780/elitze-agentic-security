@@ -72,7 +72,7 @@ export default function ConsolePage() {
     setRefreshing(true);
     try {
       const [healthResponse, overviewResponse, graphResponse] = await Promise.all([
-        fetch("/api/health", { cache: "no-store" }),
+        fetch("/api/console/health", { cache: "no-store" }),
         fetch("/api/console/overview", { cache: "no-store" }),
         fetch("/api/console/security-graph", { cache: "no-store" }),
       ]);

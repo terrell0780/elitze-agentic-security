@@ -52,7 +52,7 @@ export default function SeoFeaturePage({
       <section className="mx-auto max-w-7xl px-4 py-12 sm:px-7 sm:py-16">
         <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
           <div><p className="text-[9px] font-bold uppercase tracking-[.2em] text-[var(--accent)]">Control plane</p><h2 className="mt-2 text-2xl font-semibold tracking-tight">{sectionTitle}</h2></div>
-          <p className="max-w-md text-xs leading-5 text-[var(--muted)]">Unavailable integrations stay NOT_CONFIGURED. Missing source evidence stays UNKNOWN or UNMEASURABLE.</p>
+          <p className="max-w-md text-xs leading-5 text-[var(--muted)]">Unavailable integrations are labeled not configured. Missing evidence is described as not verified or not measurable.</p>
         </div>
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {panels.map((panel) => (
