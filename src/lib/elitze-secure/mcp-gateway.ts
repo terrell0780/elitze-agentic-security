@@ -85,33 +85,85 @@ export function moreRestrictiveDecision(
   return DECISION_RANK[left] >= DECISION_RANK[right] ? left : right;
 }
 
-function blockedIp(address: string): boolean {
-  const normalized = address.toLowerCase();
-  if (normalized === "::" || normalized === "::1" || normalized === "0.0.0.0") return true;
-  if (net.isIPv4(normalized)) {
-    const octets = normalized.split(".").map(Number);
-    const [a, b] = octets;
+function ipv4Octets(address: string): number[] | null {
+  if (!net.isIPv4(address)) return null;
+  const octets = address.split(".").map(Number);
+  return octets.length === 4 && octets.every((octet) => Number.isInteger(octet) && octet >= 0 && octet <= 255)
+    ? octets
+    : null;
+}
+
+function expandIpv6(address: string): number[] | null {
+  let normalized = address.toLowerCase().split("%")[0];
+  if (!net.isIPv6(normalized)) return null;
+
+  if (normalized.includes(".")) {
+    const separator = normalized.lastIndexOf(":");
+    const octets = ipv4Octets(normalized.slice(separator + 1));
+    if (!octets) return null;
+    const high = ((octets[0] << 8) | octets[1]).toString(16);
+    const low = ((octets[2] << 8) | octets[3]).toString(16);
+    normalized = `${normalized.slice(0, separator)}:${high}:${low}`;
+  }
+
+  const halves = normalized.split("::");
+  if (halves.length > 2) return null;
+  const left = halves[0] ? halves[0].split(":") : [];
+  const right = halves.length === 2 && halves[1] ? halves[1].split(":") : [];
+  const missing = 8 - left.length - right.length;
+  if ((halves.length === 1 && missing !== 0) || (halves.length === 2 && missing < 1)) return null;
+  const groups = [...left, ...Array(missing).fill("0"), ...right];
+  if (groups.length !== 8 || groups.some((group) => !/^[0-9a-f]{1,4}$/.test(group))) return null;
+  return groups.map((group) => Number.parseInt(group, 16));
+}
+
+export function isBlockedMcpAddress(address: string): boolean {
+  const normalized = address.toLowerCase().split("%")[0];
+
+  const octets = ipv4Octets(normalized);
+  if (octets) {
+    const [a, b, c, d] = octets;
     return (
+      a === 0 ||
       a === 10 ||
       a === 127 ||
+      (a === 100 && b >= 64 && b <= 127) ||
       (a === 169 && b === 254) ||
       (a === 172 && b >= 16 && b <= 31) ||
-      (a === 192 && b === 168) ||
-      (a === 100 && b >= 64 && b <= 127) ||
-      (a === 198 && (b === 18 || b === 19)) ||
-      a >= 224
+      (a === 192 && ((b === 0 && (c === 0 || c === 2)) || b === 168)) ||
+      (a === 198 && (b === 18 || b === 19 || (b === 51 && c === 100))) ||
+      (a === 203 && b === 0 && c === 113) ||
+      a >= 224 ||
+      (a === 255 && b === 255 && c === 255 && d === 255)
     );
   }
-  if (net.isIPv6(normalized)) {
-    return normalized === "::1" ||
-      normalized.startsWith("fc") ||
-      normalized.startsWith("fd") ||
-      normalized.startsWith("fe8") ||
-      normalized.startsWith("fe9") ||
-      normalized.startsWith("fea") ||
-      normalized.startsWith("feb");
+
+  const groups = expandIpv6(normalized);
+  if (!groups) return true;
+
+  const allFirstFiveZero = groups.slice(0, 5).every((group) => group === 0);
+  if (allFirstFiveZero && groups[5] === 0xffff) {
+    const mapped = [
+      groups[6] >> 8,
+      groups[6] & 0xff,
+      groups[7] >> 8,
+      groups[7] & 0xff,
+    ].join(".");
+    return isBlockedMcpAddress(mapped);
   }
-  return true;
+
+  const first = groups[0];
+  return (
+    groups.every((group) => group === 0) ||
+    (groups.slice(0, 7).every((group) => group === 0) && groups[7] === 1) ||
+    (first & 0xfe00) === 0xfc00 ||
+    (first & 0xffc0) === 0xfe80 ||
+    (first & 0xffc0) === 0xfec0 ||
+    (first & 0xff00) === 0xff00 ||
+    (first === 0x2001 && groups[1] === 0x0db8) ||
+    groups.slice(0, 6).every((group) => group === 0)
+  );
+}
 }
 
 export async function validateMcpUpstreamUrl(raw: string): Promise<URL> {
@@ -147,7 +199,7 @@ export async function validateMcpUpstreamUrl(raw: string): Promise<URL> {
   }
 
   const addresses = await dns.lookup(host, { all: true });
-  if (!addresses.length || addresses.some(({ address }) => blockedIp(address))) {
+  if (!addresses.length || addresses.some(({ address }) => isBlockedMcpAddress(address))) {
     throw new Error("mcp_upstream_private_address_blocked");
   }
 
