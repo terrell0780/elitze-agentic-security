@@ -75,6 +75,18 @@ const firstResult = await new Promise((resolve, reject) => {
 });
 assert.deepEqual(firstResult, expectedPinnedAddresses[0], "single-address lookup must return a validated pinned answer");
 
+const blockedOnlyLookup = createPinnedLookup([{ address: "127.0.0.1", family: 4 }]);
+await assert.rejects(
+  new Promise((resolve, reject) => {
+    blockedOnlyLookup("attacker-controlled.example", 4, (error, address, family) => {
+      if (error) reject(error);
+      else resolve({ address, family });
+    });
+  }),
+  { code: "ENOTFOUND" },
+  "lookup must fail closed when no public pinned address remains",
+);
+
 const route = fs.readFileSync(new URL("../src/app/api/mcp-gateway/route.ts", import.meta.url), "utf8");
 assert.match(route, /lookup:\s*createPinnedLookup\(validated\.addresses\)/, "upstream HTTPS request must pin validated DNS answers");
 assert.match(route, /https\.request\(/, "upstream calls must use the pinned HTTPS transport");
