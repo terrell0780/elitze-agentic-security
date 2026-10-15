@@ -96,7 +96,7 @@ export default function Page() {
               Open control plane <ArrowRight className="h-4 w-4" />
             </Link>
           </div>
-          <p className="mt-6 text-xs leading-5 text-[var(--muted)]">Evidence states stay explicit: OBSERVED, DECLARED, INFERRED, UNKNOWN, or UNMEASURABLE. ELITZE does not present missing telemetry as a confirmed secure state.</p>
+          <p className="mt-6 text-xs leading-5 text-[var(--muted)]">Evidence remains clearly labeled as observed, declared, inferred, not verified, or not measurable. ELITZE never presents missing telemetry as proof of a secure state.</p>
         </div>
       </section>
 
