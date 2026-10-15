@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import https from "node:https";
 import crypto from "node:crypto";
 import { createApproval } from "@/lib/elitze-secure/approval-workflow";
 import { getPgPool, isDatabaseConfigured } from "@/db";
 import {
   capabilityAllows,
+  createPinnedLookup,
   evaluateMcpCall,
   maxUpstreamResponseBytes,
   moreRestrictiveDecision,
@@ -153,8 +155,12 @@ async function callMcpUpstream(
   credentialEnv: string | null,
   bodyText: string,
 ) {
-  const url = await validateMcpUpstreamUrl(endpoint);
-  const headers: Record<string, string> = { "content-type": "application/json" };
+  const validated = await validateMcpUpstreamUrl(endpoint);
+  const url = validated.url;
+  const headers: Record<string, string> = {
+    "content-type": "application/json",
+    "accept-encoding": "identity",
+  };
 
   if (credentialEnv) {
     if (!allowedCredentialEnv(credentialEnv)) {
@@ -165,26 +171,96 @@ async function callMcpUpstream(
     headers.authorization = `Bearer ${credential}`;
   }
 
-  const response = await fetch(url, {
-    method: "POST",
-    headers,
-    body: bodyText,
-    cache: "no-store",
-    redirect: "error",
-    signal: AbortSignal.timeout(30_000),
+  type UpstreamResponse = {
+    ok: boolean;
+    status: number;
+    headers: { get(name: string): string | null };
+  };
+
+  return await new Promise<{ response: UpstreamResponse; raw: string }>((resolve, reject) => {
+    let settled = false;
+    const fail = (error: Error) => {
+      if (settled) return;
+      settled = true;
+      reject(error);
+    };
+
+    const upstreamRequest = https.request(
+      url,
+      {
+        method: "POST",
+        headers,
+        lookup: createPinnedLookup(validated.addresses),
+        servername: url.hostname,
+        rejectUnauthorized: true,
+        timeout: 30_000,
+      },
+      (upstreamResponse) => {
+        const status = upstreamResponse.statusCode ?? 502;
+        if (status >= 300 && status < 400) {
+          upstreamResponse.resume();
+          fail(new Error("mcp_upstream_redirect_blocked"));
+          return;
+        }
+
+        const contentLength = Number(upstreamResponse.headers["content-length"] ?? 0);
+        if (contentLength > maxUpstreamResponseBytes()) {
+          upstreamResponse.destroy();
+          fail(new Error("mcp_upstream_response_too_large"));
+          return;
+        }
+
+        const encoding = String(upstreamResponse.headers["content-encoding"] ?? "identity").toLowerCase();
+        if (encoding !== "identity") {
+          upstreamResponse.destroy();
+          fail(new Error("mcp_upstream_content_encoding_unsupported"));
+          return;
+        }
+
+        const chunks: Buffer[] = [];
+        let totalBytes = 0;
+        upstreamResponse.on("data", (chunk: Buffer | string) => {
+          const buffer = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk);
+          totalBytes += buffer.byteLength;
+          if (totalBytes > maxUpstreamResponseBytes()) {
+            upstreamResponse.destroy();
+            upstreamRequest.destroy();
+            fail(new Error("mcp_upstream_response_too_large"));
+            return;
+          }
+          chunks.push(buffer);
+        });
+
+        upstreamResponse.on("end", () => {
+          if (settled) return;
+          settled = true;
+          const raw = Buffer.concat(chunks).toString("utf8");
+          resolve({
+            response: {
+              ok: status >= 200 && status < 300,
+              status,
+              headers: {
+                get(name: string) {
+                  const value = upstreamResponse.headers[name.toLowerCase()];
+                  if (Array.isArray(value)) return value.join(", ");
+                  return value ?? null;
+                },
+              },
+            },
+            raw,
+          });
+        });
+
+        upstreamResponse.on("error", fail);
+      },
+    );
+
+    upstreamRequest.on("error", fail);
+    upstreamRequest.on("timeout", () => {
+      upstreamRequest.destroy(new Error("mcp_upstream_timeout"));
+    });
+    upstreamRequest.end(bodyText);
   });
-
-  const contentLength = Number(response.headers.get("content-length") ?? 0);
-  if (contentLength > maxUpstreamResponseBytes()) {
-    throw new Error("mcp_upstream_response_too_large");
-  }
-
-  const raw = await response.text();
-  if (Buffer.byteLength(raw, "utf8") > maxUpstreamResponseBytes()) {
-    throw new Error("mcp_upstream_response_too_large");
-  }
-
-  return { response, raw };
 }
 
 async function appendDecision(
