@@ -167,11 +167,15 @@ export function isBlockedMcpAddress(address: string): boolean {
 
 export function createPinnedLookup(
   addresses: Array<{ address: string; family: number }>,
-): import("node:dns").LookupFunction {
+): NonNullable<import("node:https").RequestOptions["lookup"]> {
   const pinned = addresses.filter(({ address, family }) =>
     (family === 4 || family === 6) && !isBlockedMcpAddress(address),
   );
-  return (( _hostname, options, callback ) => {
+  const lookup: NonNullable<import("node:https").RequestOptions["lookup"]> = (
+    _hostname,
+    options,
+    callback,
+  ) => {
     if (!pinned.length) {
       callback(Object.assign(new Error("mcp_upstream_address_unavailable"), { code: "ENOTFOUND" }), "", 0);
       return;
@@ -181,7 +185,8 @@ export function createPinnedLookup(
       return;
     }
     callback(null, pinned[0].address, pinned[0].family);
-  }) as import("node:dns").LookupFunction;
+  };
+  return lookup;
 }
 
 export async function validateMcpUpstreamUrl(
