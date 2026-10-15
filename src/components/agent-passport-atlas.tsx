@@ -84,7 +84,7 @@ export default function AgentPassportAtlas() {
           </div>
         )}
         <p className="mt-4 text-xs leading-5 text-[var(--muted)]">
-          Evidence states remain precise internally: runtime state is UNKNOWN until a connected source verifies it. Missing telemetry is never presented as successful execution.
+          When runtime evidence is absent, the platform records an unverified state instead of claiming that an agent is active or has executed.
         </p>
       </div>
     </section>
