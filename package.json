@@ -13,6 +13,7 @@
     "threat-detection:self-test": "node --experimental-strip-types scripts/threat-detection-self-test.mjs",
         "data-bridge:self-test": "node scripts/data-bridge-self-test.mjs",
     "mcp-workload-identity:self-test": "node scripts/mcp-workload-identity-self-test.mjs",
+    "mcp-upstream-address:self-test": "node --experimental-strip-types scripts/mcp-upstream-address-self-test.mjs",
     "policy-evidence:self-test": "node scripts/policy-evidence-self-test.mjs",
     "phase5-6:self-test": "node scripts/phase5-6-self-test.mjs",
     "global-compliance:self-test": "node scripts/global-compliance-self-test.mjs",
