@@ -69,7 +69,12 @@ for (const marker of [
   "createApproval",
   "approvalIsValid",
   "pg_advisory_xact_lock",
-  "redirect: \"error\"",
+  "mcp_upstream_redirect_blocked",
+  "https.request(",
+  "lookup: createPinnedLookup(validated.addresses)",
+  "rejectUnauthorized: true",
+  "mcp_upstream_content_encoding_unsupported",
+  "maxUpstreamResponseBytes()",
   "consumed_at",
 ]) {
   if (!gateway.includes(marker)) throw new Error(`gateway_enforcement_missing:${marker}`);
