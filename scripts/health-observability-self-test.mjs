@@ -41,7 +41,7 @@ assert.deepEqual(diagnostic, {
     missingMigrationCount: 1,
   },
 });
-assert.doesNotMatch(JSON.stringify(diagnostic), /secret@|postgresql:///, "diagnostic must never log connection strings or credentials");
+assert.doesNotMatch(JSON.stringify(diagnostic), /secret@|postgresql:\/\//, "diagnostic must never log connection strings or credentials");
 
 const route = fs.readFileSync(new URL("../src/app/api/health/route.ts", import.meta.url), "utf8");
 assert.match(route, /buildSanitizedReadinessDiagnostic/);
