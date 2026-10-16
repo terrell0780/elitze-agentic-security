@@ -57,12 +57,13 @@ jobs:
           set -euo pipefail
           image="elitze-security-runner:${GITHUB_RUN_ID}"
           container="elitze-security-runner-smoke-${GITHUB_RUN_ID}"
+          ci_secret="$(openssl rand -hex 32)"
           docker build -t "$image" runner/
           cleanup() { docker rm -f "$container" >/dev/null 2>&1 || true; }
           trap cleanup EXIT
           docker run --detach --name "$container" \
             --publish 127.0.0.1:18787:8787 \
-            --env ELITZE_RUNNER_HMAC_SECRET="ci-only-secret-with-at-least-32-bytes" \
+            --env ELITZE_RUNNER_HMAC_SECRET="$ci_secret" \
             --env ELITZE_CALLBACK_ORIGIN="https://elitze.info" \
             --env ELITZE_RUNNER_ALLOWED_HOSTS="example.com" \
             --env ELITZE_RUNNER_ALLOW_PRIVATE_TARGETS="false" \
