@@ -64,14 +64,45 @@ jobs:
           docker run --detach --name "$container" \
             --publish 127.0.0.1:18787:8787 \
             --env ELITZE_RUNNER_HMAC_SECRET="$ci_secret" \
-            --env ELITZE_CALLBACK_ORIGIN="https://www.elitze.info" \
+            --env ELITZE_CALLBACK_ORIGIN="https://elitze.info" \
             --env ELITZE_RUNNER_ALLOWED_HOSTS="example.com" \
             --env ELITZE_RUNNER_ALLOW_PRIVATE_TARGETS="false" \
             "$image"
           for attempt in $(seq 1 20); do
             if curl --fail --silent --show-error http://127.0.0.1:18787/health; then
               printf '\\nRunner container health: PASS\\n'
-              exit 0
+              RUNNER_URL="http://127.0.0.1:18787" RUNNER_SECRET="$ci_secret" node <<'NODE'
+              const { createHmac, randomBytes, timingSafeEqual } = require("node:crypto");
+              const url = process.env.RUNNER_URL + "/api/handshake";
+              const secret = process.env.RUNNER_SECRET;
+              const nonce = randomBytes(16).toString("hex");
+              const timestamp = String(Date.now());
+              const body = JSON.stringify({ action: "handshake", timestamp: Number(timestamp), nonce });
+              const signature = (ts, payload) => createHmac("sha256", secret).update(ts + "." + payload).digest("hex");
+              const headers = { "content-type": "application/json", "x-elitze-timestamp": timestamp, "x-elitze-signature": signature(timestamp, body) };
+              (async () => {
+                const response = await fetch(url, { method: "POST", headers, body });
+                const responseBody = await response.text();
+                if (response.status !== 200) throw new Error("signed handshake returned HTTP " + response.status);
+                const responseTimestamp = response.headers.get("x-elitze-timestamp") || "";
+                const responseSignature = response.headers.get("x-elitze-signature") || "";
+                if (!/^\\d{13}$/.test(responseTimestamp) || !/^[a-f0-9]{64}$/i.test(responseSignature)) throw new Error("response signature headers missing or invalid");
+                const expected = Buffer.from(signature(responseTimestamp, responseBody), "hex");
+                const supplied = Buffer.from(responseSignature, "hex");
+                if (expected.length !== supplied.length || !timingSafeEqual(expected, supplied)) throw new Error("response HMAC did not verify");
+                const parsed = JSON.parse(responseBody);
+                if (parsed.ok !== true || parsed.action !== "handshake" || parsed.nonce !== nonce) throw new Error("signed nonce challenge did not verify");
+                const replay = await fetch(url, { method: "POST", headers, body });
+                if (replay.status !== 409) throw new Error("nonce replay was not rejected (HTTP " + replay.status + ")");
+                const invalidTimestamp = String(Date.now());
+                const invalidNonce = randomBytes(16).toString("hex");
+                const invalidBody = JSON.stringify({ action: "handshake", timestamp: Number(invalidTimestamp), nonce: invalidNonce });
+                const invalid = await fetch(url, { method: "POST", headers: { "content-type": "application/json", "x-elitze-timestamp": invalidTimestamp, "x-elitze-signature": "0".repeat(64) }, body: invalidBody });
+                if (invalid.status !== 401) throw new Error("invalid HMAC was not rejected (HTTP " + invalid.status + ")");
+                console.log("Runner container signed handshake: PASS (response HMAC, nonce, replay rejection, invalid-signature rejection)");
+              })().catch((error) => { console.error(error.message); process.exitCode = 1; });
+              NODE
+              exit $?
             fi
             if [ "$(docker inspect -f '{{.State.Running}}' "$container" 2>/dev/null || true)" != "true" ]; then
               docker logs "$container"
