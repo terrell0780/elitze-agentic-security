@@ -179,9 +179,16 @@ async function callMcpUpstream(
 
   return await new Promise<{ response: UpstreamResponse; raw: string }>((resolve, reject) => {
     let settled = false;
+    let deadline: NodeJS.Timeout | undefined;
+    const clearDeadline = () => {
+      if (!deadline) return;
+      clearTimeout(deadline);
+      deadline = undefined;
+    };
     const fail = (error: Error) => {
       if (settled) return;
       settled = true;
+      clearDeadline();
       reject(error);
     };
 
@@ -234,6 +241,7 @@ async function callMcpUpstream(
         upstreamResponse.on("end", () => {
           if (settled) return;
           settled = true;
+          clearDeadline();
           const raw = Buffer.concat(chunks).toString("utf8");
           resolve({
             response: {
@@ -259,6 +267,14 @@ async function callMcpUpstream(
     upstreamRequest.on("timeout", () => {
       upstreamRequest.destroy(new Error("mcp_upstream_timeout"));
     });
+
+    // The socket timeout above is inactivity-based. Enforce an absolute
+    // deadline too, so a slow-drip upstream cannot hold the request open.
+    deadline = setTimeout(() => {
+      upstreamRequest.destroy(new Error("mcp_upstream_deadline_exceeded"));
+    }, 30_000);
+    deadline.unref();
+
     upstreamRequest.end(bodyText);
   });
 }
