@@ -28,6 +28,8 @@ These integrations are not decorative data imports. Each adapter has a specific 
 
 The adapter targets the MCP `2026-07-28` wire/authentication model; authorization failures and unavailable servers remain explicit integration failures, not inferred success. Reference: https://blog.modelcontextprotocol.io/posts/2026-07-28/
 
+**Fail-closed default:** the checked-in `.env.example` sets both `ELITZE_MCP_GATEWAY_ENABLED` and `ELITZE_MCP_GATEWAY_EXECUTION_ENABLED` to `false`. Enabling the gateway is an explicit operator decision; enabling tool execution requires the approved upstream host allowlist, server-side credentials where required, and a harmless staging test. The example configuration itself does not authorize production execution.
+
 ### GitHub + GitHub Actions
 
 **Discovery:** repository and workflow metadata.
