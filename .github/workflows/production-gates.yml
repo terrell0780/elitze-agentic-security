@@ -45,6 +45,9 @@ jobs:
       - name: Production configuration contract
         run: npm run production-config:self-test
 
+      - name: Sanitized readiness diagnostics self-test
+        run: npm run health-observability:self-test
+
       - name: Tenant overview data boundary
         run: npm run tenant-overview:self-test
 
