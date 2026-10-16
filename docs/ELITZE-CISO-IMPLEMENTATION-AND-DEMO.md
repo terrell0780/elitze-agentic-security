@@ -5,6 +5,8 @@
 
 ## Positioning
 
+**Companion architecture and threat model:** [Zero-Trust Architecture, STRIDE Threat Model, and ATT&CK Scenario](./ZERO-TRUST-STRIDE-ATTACK-MODEL.md) provides the network zones, identity/data-flow boundaries, ranked risks, CIS/NIST control mapping, and defensive ATT&CK exercise.
+
 ELITZE Agentic Security protects agent identities, MCP servers, tool access, and sensitive execution paths. The control loop is:
 
 `Discover → Identify → Map Reach → Evaluate Policy → Decide → Authorize Execution → Observe → Retest → Prove`
