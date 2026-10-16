@@ -58,6 +58,8 @@ assert.match(authEmail, /RESEND_API_KEY/);
 assert.doesNotMatch(authEmail, /POSTMARK_SERVER_TOKEN/);
 assert.match(env, /^ELITZE_EMAIL_PROVIDER=resend$/m);
 assert.match(env, /^RESEND_API_KEY=$/m);
+assert.match(env, /^ELITZE_MCP_GATEWAY_ENABLED=false$/m, "MCP gateway must default off in the environment template");
+assert.match(env, /^ELITZE_MCP_GATEWAY_EXECUTION_ENABLED=false$/m, "MCP tool execution must default off in the environment template");
 console.log("ELITZE production configuration self-test: PASS");
 
 const legacyIdentity = ["myt", "hos"].join("");
