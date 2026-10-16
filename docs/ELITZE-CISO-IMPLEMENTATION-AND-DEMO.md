@@ -11,6 +11,8 @@ ELITZE Agentic Security protects agent identities, MCP servers, tool access, and
 
 Operational claims must be supported by implementation, configuration, real observations, and test evidence. Adapter code is not proof of a live integration. Missing evidence stays `UNKNOWN`, `UNMEASURABLE`, or `INSUFFICIENT_REACH`. Production does not use mock telemetry, fake records, or placeholder success states.
 
+**Framework mapping:** this build plan uses the requested five-function operational view: Identify, Protect, Detect, Respond, and Recover. NIST CSF 2.0 adds a sixth function, Govern; its ownership, risk strategy, policy, oversight, and supply-chain governance requirements apply across all five implementation tracks rather than being omitted.
+
 ## NIST functions and implementation priorities
 
 | Function | Key architectural components and tools | Top two priorities | Blind spot / failure mode |
