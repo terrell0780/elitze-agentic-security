@@ -117,4 +117,11 @@ for (const marker of [
   if (!env.includes(marker)) throw new Error(`env_missing:${marker}`);
 }
 
+if (!/^ELITZE_MCP_GATEWAY_ENABLED=false$/m.test(env)) {
+  throw new Error("mcp_gateway_must_default_disabled_in_example_env");
+}
+if (!/^ELITZE_MCP_GATEWAY_EXECUTION_ENABLED=false$/m.test(env)) {
+  throw new Error("mcp_execution_must_default_disabled_in_example_env");
+}
+
 console.log("MCP workload identity/control-plane lockdown self-test: PASS");
