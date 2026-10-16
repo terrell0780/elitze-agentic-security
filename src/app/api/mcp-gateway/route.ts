@@ -203,6 +203,8 @@ async function callMcpUpstream(
         timeout: 30_000,
       },
       (upstreamResponse) => {
+        // Attach before any rejection path destroys or drains the response stream.
+        upstreamResponse.on("error", fail);
         const status = upstreamResponse.statusCode ?? 502;
         if (status >= 300 && status < 400) {
           upstreamResponse.resume();
@@ -259,7 +261,6 @@ async function callMcpUpstream(
           });
         });
 
-        upstreamResponse.on("error", fail);
       },
     );
 
