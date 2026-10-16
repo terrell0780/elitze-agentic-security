@@ -167,7 +167,7 @@ Ranking is an architecture assessment using likelihood (L) and impact (I) from 1
 | **4** | Overprivileged or compromised CI/runner identity → code/artifact/job manipulation → trusted deployment or customer-side action | 3 × 5 = **15** | GitHub repo, runner, deployment secrets, customer integrations | CI and runners can be an alternate path into production even when web login is secure | OIDC with strict claims, protected environments, isolated/ephemeral runners, signed provenance, scoped job tokens, separate deploy approvals |
 | **5** | Overbroad RAG/API/log/evidence access → sensitive retrieval or export → external exfiltration | 4 × 3 = **12** | RAG documents/chunks, audit data, integration results, exports | Aggregated evidence can contain sensitive topology, identity relationships or customer-specific information | Tenant-aware retrieval, source ACL inheritance, output minimization, secret/PII redaction, export allowlist, access anomaly and volume alerts |
 
-**Availability risk to track alongside the top five:** request floods, long-running upstreams or query storms can make the application and evidence pipeline unavailable. Initial rating is L=3, I=4 (12). Apply rate limits, absolute deadlines, response caps, pool/concurrency limits, retries with jitter and circuit breakers; test these under safe load.
+**Availability risk to track alongside the top five:** request floods, long-running upstreams or query storms can make the application and evidence pipeline unavailable. Initial rating is L=3, I=3 (9). Apply rate limits, absolute deadlines, response caps, pool/concurrency limits, retries with jitter and circuit breakers; test these under safe load.
 
 ## 7. Technical Control Mapping — Top Five Paths
 
