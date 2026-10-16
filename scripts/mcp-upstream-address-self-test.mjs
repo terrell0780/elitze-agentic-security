@@ -130,5 +130,12 @@ const route = fs.readFileSync(new URL("../src/app/api/mcp-gateway/route.ts", imp
 assert.match(route, /lookup:\s*createPinnedLookup\(validated\.addresses\)/, "upstream HTTPS request must pin validated DNS answers");
 assert.match(route, /https\.request\(/, "upstream calls must use the pinned HTTPS transport");
 assert.doesNotMatch(route, /fetch\(url/, "upstream calls must not perform a second DNS resolution through fetch");
+const responseHandlerStart = route.indexOf("(upstreamResponse) => {");
+const responseErrorHandler = route.indexOf('upstreamResponse.on("error", fail);', responseHandlerStart);
+const responseStatusRead = route.indexOf("const status = upstreamResponse.statusCode", responseHandlerStart);
+assert.ok(
+  responseHandlerStart >= 0 && responseErrorHandler > responseHandlerStart && responseErrorHandler < responseStatusRead,
+  "upstream response errors must be handled before any redirect, size, or encoding rejection path",
+);
 
 console.log(`MCP upstream address hardening self-test: PASS (${blocked.length} blocked, ${allowed.length} public, DNS pinning verified)`);
