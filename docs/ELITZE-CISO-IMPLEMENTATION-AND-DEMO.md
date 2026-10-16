@@ -11,6 +11,8 @@ ELITZE Agentic Security protects agent identities, MCP servers, tool access, and
 
 Operational claims must be supported by implementation, configuration, real observations, and test evidence. Adapter code is not proof of a live integration. Missing evidence stays `UNKNOWN`, `UNMEASURABLE`, or `INSUFFICIENT_REACH`. Production does not use mock telemetry, fake records, or placeholder success states.
 
+**Framework mapping:** this build plan uses the requested five-function operational view: Identify, Protect, Detect, Respond, and Recover. NIST CSF 2.0 adds a sixth function, Govern; its ownership, risk strategy, policy, oversight, and supply-chain governance requirements apply across all five implementation tracks rather than being omitted.
+
 ## NIST functions and implementation priorities
 
 | Function | Key architectural components and tools | Top two priorities | Blind spot / failure mode |
@@ -44,7 +46,7 @@ This is a source-tree review, not a live deployment audit.
 | Integration architecture | `docs/ELITZE-PRODUCTION-INTEGRATIONS.md` and adapter paths for MCP, GitHub, AWS, Entra ID and Kubernetes | Live authenticated provider access and persistence must be proven per provider. |
 | Database lifecycle | `scripts/production-migrate.mjs`, `scripts/production-db-health.mjs`, `drizzle/` | Scripts exist; production migration and health output must be captured on the target DB. |
 | CI/release controls | `package.json`, `.github/workflows/production-gates.yml` | The workflow defines dependency audit, self-tests, typecheck, lint, build, auth E2E, SBOM, and a runner handshake for eligible non-PR runs. Check the exact release SHA's CI result before claiming green status. |
-| MCP upstream hardening | [PR #97](https://github.com/terrell0780/elitze-agentic-security/pull/97) | Address filtering, pinned DNS and bounded HTTPS behavior are proposed in an open PR. Treat as unverified until checks pass, review is resolved and the change is merged. |
+| MCP upstream hardening | [PR #99](https://github.com/terrell0780/elitze-agentic-security/pull/99) and its CI checks | Track address filtering, pinned DNS and bounded HTTPS behavior on the current candidate. Verify merge state and successful regression/production gates against the exact candidate SHA before making an operational or release claim. |
 | Dependency licensing | `npm run licenses:inventory`, package lock, `scripts/license-inventory.mjs` | Generate the inventory from the exact candidate lockfile and review unknown/nonstandard licenses. |
 
 ## Walkthrough: a real controlled demonstration
@@ -83,7 +85,7 @@ npm sbom --sbom-format cyclonedx --sbom-type application --omit=dev > sbom.cdx.j
 npm run licenses:inventory
 ```
 
-The MCP upstream address regression command for PR #97 is `npm run mcp-upstream-address:self-test`; verify it exists and passes on the release candidate. Commands above describe the verification plan; they are not a claim that every command was run in this authoring pass. A PR CI run skips the production runner handshake and is not release approval.
+The MCP upstream address regression command is `npm run mcp-upstream-address:self-test`; verify it exists and passes on the release candidate. Commands above describe the verification plan; they are not a claim that every command was run in this authoring pass. A PR CI run skips the production runner handshake and is not release approval.
 
 ## Deployment procedure
 

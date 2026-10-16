@@ -47,6 +47,8 @@ These adapters participate in the ELITZE control-plane path rather than function
 
 **Important:** adapter code is not the same thing as a live customer integration. A connector is `INTEGRATED` only after real credentials/configuration and a live authenticated provider path have been verified. Without those conditions, its runtime state remains `BLOCKED`, `UNKNOWN`, or `UNMEASURABLE` as appropriate.
 
+**MCP execution safety default:** `.env.example` keeps `ELITZE_MCP_GATEWAY_ENABLED=false` and `ELITZE_MCP_GATEWAY_EXECUTION_ENABLED=false`. Operators must explicitly enable a controlled staging path only after setting an exact upstream host allowlist and the required server-side credentials. Tool execution remains off until the authorized execution test is approved.
+
 ## Initial security surface
 
 - Agent discovery and inventory.

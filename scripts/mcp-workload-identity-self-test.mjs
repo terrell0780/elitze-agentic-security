@@ -69,7 +69,14 @@ for (const marker of [
   "createApproval",
   "approvalIsValid",
   "pg_advisory_xact_lock",
-  "redirect: \"error\"",
+  "mcp_upstream_redirect_blocked",
+  "https.request(",
+  "lookup: createPinnedLookup(validated.addresses)",
+  "rejectUnauthorized: true",
+  "mcp_upstream_content_encoding_unsupported",
+  "maxUpstreamResponseBytes()",
+  "mcp_upstream_deadline_exceeded",
+  "clearDeadline()",
   "consumed_at",
 ]) {
   if (!gateway.includes(marker)) throw new Error(`gateway_enforcement_missing:${marker}`);
@@ -110,6 +117,13 @@ for (const marker of [
   "ELITZE_MCP_CREDENTIAL_ENV_ALLOWLIST",
 ]) {
   if (!env.includes(marker)) throw new Error(`env_missing:${marker}`);
+}
+
+if (!/^ELITZE_MCP_GATEWAY_ENABLED=false$/m.test(env)) {
+  throw new Error("mcp_gateway_must_default_disabled_in_example_env");
+}
+if (!/^ELITZE_MCP_GATEWAY_EXECUTION_ENABLED=false$/m.test(env)) {
+  throw new Error("mcp_execution_must_default_disabled_in_example_env");
 }
 
 console.log("MCP workload identity/control-plane lockdown self-test: PASS");
