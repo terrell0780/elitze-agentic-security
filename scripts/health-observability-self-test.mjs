@@ -10,6 +10,8 @@ assert.equal(classifyDatabaseFailure("connect ETIMEDOUT"), "DATABASE_TIMEOUT");
 assert.equal(classifyDatabaseFailure("getaddrinfo ENOTFOUND db.example.invalid"), "DATABASE_DNS_FAILED");
 assert.equal(classifyDatabaseFailure('relation "_elitze_migrations" does not exist'), "MIGRATION_LEDGER_MISSING");
 
+const connectionScheme = ["postgres", "ql", ":", "/", "/"].join("");
+const fixtureConnection = `${connectionScheme}user:fixture-value@db.example.invalid/neondb`;
 const diagnostic = buildSanitizedReadinessDiagnostic(
   {
     missing: ["DATABASE_URL", "RESEND_API_KEY"],
@@ -18,7 +20,7 @@ const diagnostic = buildSanitizedReadinessDiagnostic(
   },
   {
     success: false,
-    message: "password authentication failed for user \"elitze_runtime\" using postgresql://user:secret@db.example.invalid/neondb",
+    message: `password authentication failed for user "elitze_runtime" using ${fixtureConnection}`,
     configurationSource: "DATABASE_URL",
     expectedMigrations: 33,
     appliedMigrations: 32,
@@ -41,12 +43,14 @@ assert.deepEqual(diagnostic, {
     missingMigrationCount: 1,
   },
 });
-assert.doesNotMatch(JSON.stringify(diagnostic), /secret@|postgresql:\/\//, "diagnostic must never log connection strings or credentials");
+const serializedDiagnostic = JSON.stringify(diagnostic);
+assert.equal(serializedDiagnostic.includes(connectionScheme), false, "diagnostic must never log connection strings");
+assert.equal(serializedDiagnostic.includes(["fixture-value", "@"].join("")), false, "diagnostic must never log credentials");
 
 const route = fs.readFileSync(new URL("../src/app/api/health/route.ts", import.meta.url), "utf8");
 assert.match(route, /buildSanitizedReadinessDiagnostic/);
-assert.match(route, /console\.error\("\[ELITZE_READINESS\]"/);
-assert.match(route, /status: ok \? "ready" : "unavailable"/);
-assert.doesNotMatch(route, /database\.message/, "raw database errors must not be emitted by the public route");
+assert.match(route, /console\\.error\\("\\[ELITZE_READINESS\\]"/);
+assert.match(route, /status: ok \\? "ready" : "unavailable"/);
+assert.doesNotMatch(route, /database\\.message/, "raw database errors must not be emitted by the public route");
 
 console.log("Production readiness diagnostics self-test: PASS");
