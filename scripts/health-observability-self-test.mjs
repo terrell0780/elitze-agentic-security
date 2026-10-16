@@ -49,8 +49,8 @@ assert.equal(serializedDiagnostic.includes(["fixture-value", "@"].join("")), fal
 
 const route = fs.readFileSync(new URL("../src/app/api/health/route.ts", import.meta.url), "utf8");
 assert.match(route, /buildSanitizedReadinessDiagnostic/);
-assert.match(route, /console\\.error\\("\\[ELITZE_READINESS\\]"/);
-assert.match(route, /status: ok \\? "ready" : "unavailable"/);
-assert.doesNotMatch(route, /database\\.message/, "raw database errors must not be emitted by the public route");
+assert.match(route, /console\.error\("\[ELITZE_READINESS\]"/);
+assert.match(route, /status: ok \? "ready" : "unavailable"/);
+assert.doesNotMatch(route, /database\.message/, "raw database errors must not be emitted by the public route");
 
 console.log("Production readiness diagnostics self-test: PASS");
