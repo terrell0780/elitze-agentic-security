@@ -75,6 +75,8 @@ for (const marker of [
   "rejectUnauthorized: true",
   "mcp_upstream_content_encoding_unsupported",
   "maxUpstreamResponseBytes()",
+  "mcp_upstream_deadline_exceeded",
+  "clearDeadline()",
   "consumed_at",
 ]) {
   if (!gateway.includes(marker)) throw new Error(`gateway_enforcement_missing:${marker}`);
