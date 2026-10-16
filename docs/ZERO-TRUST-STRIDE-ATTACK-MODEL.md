@@ -1,9 +1,9 @@
 # ELITZE Agentic Security — Zero-Trust Architecture, STRIDE Threat Model, and ATT&CK Scenario
 
-**Document status:** Architecture and threat-model baseline  
-**Assessment date:** 2026-10-16  
-**System in scope:** ELITZE Agentic Security, an enterprise agent-identity and MCP-runtime-security application  
-**Control objective:** Every identity, workload, tool invocation, integration, and data access decision is explicitly authenticated, authorized, attributable, least-privileged, observable, and revocable.
+- **Document status:** Architecture and threat-model baseline
+- **Assessment date:** 2026-10-16
+- **System in scope:** ELITZE Agentic Security, an enterprise agent-identity and MCP-runtime-security application
+- **Control objective:** Every identity, workload, tool invocation, integration, and data access decision is explicitly authenticated, authorized, attributable, least-privileged, observable, and revocable.
 
 ## 1. Executive Summary
 
