@@ -86,7 +86,7 @@ jobs:
                 if (response.status !== 200) throw new Error("signed handshake returned HTTP " + response.status);
                 const responseTimestamp = response.headers.get("x-elitze-timestamp") || "";
                 const responseSignature = response.headers.get("x-elitze-signature") || "";
-                if (!/^\\d{13}$/.test(responseTimestamp) || !/^[a-f0-9]{64}$/i.test(responseSignature)) throw new Error("response signature headers missing or invalid");
+                if (!/^\d{13}$/.test(responseTimestamp) || !/^[a-f0-9]{64}$/i.test(responseSignature)) throw new Error("response signature headers missing or invalid");
                 const expected = Buffer.from(signature(responseTimestamp, responseBody), "hex");
                 const supplied = Buffer.from(responseSignature, "hex");
                 if (expected.length !== supplied.length || !timingSafeEqual(expected, supplied)) throw new Error("response HMAC did not verify");
