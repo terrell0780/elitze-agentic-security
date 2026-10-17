@@ -82,22 +82,18 @@ export default function LiveControlPlane() {
           </div>
           <div className="mt-5 rounded-[26px] border border-cyan-300/10 bg-[radial-gradient(circle_at_center,rgba(34,211,238,.10),transparent_55%)] p-5 sm:p-8">
             <div className="flex flex-wrap items-center gap-2 text-[9px] font-bold uppercase tracking-[.18em] text-slate-500">
-              <span className={`h-1.5 w-1.5 rounded-full ${health ? "bg-emerald-300" : "bg-amber-300"}`} />
-              {health ? "Database reachable" : "Database unavailable"}
+              <span className="h-1.5 w-1.5 rounded-full bg-cyan-300" />
+              ELITZE SECURITY CONTROL PLANE
               <span className="mx-1 text-slate-700">·</span>
-              {signedIn ? (graph?.ok ? "Protected graph response received" : "Protected graph unavailable") : "Protected telemetry withheld"}
+              Identity · Reachability · Policy · Evidence
             </div>
           </div>
         </div>
 
         <aside className="bg-[#060a10] p-5 sm:p-7">
-          <div className="flex items-center gap-2"><Activity className="h-4 w-4 text-cyan-300" /><span className="text-[10px] font-bold uppercase tracking-[.2em] text-slate-500">Evidence state</span></div>
+          <div className="flex items-center gap-2"><Activity className="h-4 w-4 text-cyan-300" /><span className="text-[10px] font-bold uppercase tracking-[.2em] text-slate-500">Security operations</span></div>
           <div className="mt-4 rounded-2xl border border-white/10 bg-white/[.025] p-4 text-xs leading-5 text-slate-400">
-            {signedIn
-              ? graph?.ok
-                ? "Observed graph data is available to the authenticated tenant."
-                : "The authenticated tenant has no available graph response."
-              : "UNAVAILABLE — sign in to inspect protected telemetry."}
+            Inspect agent identities, map access paths, govern sensitive actions, and review security evidence in the protected control plane.
           </div>
           <Link href={signedIn ? "/console" : "/login?next=%2Fconsole"} className="mt-5 inline-flex w-full items-center justify-between rounded-xl border border-cyan-300/20 bg-cyan-300/[.05] px-4 py-3 text-xs font-semibold text-cyan-100">
             {signedIn ? "Open full console" : "Sign in to control plane"} <ArrowUpRight className="h-4 w-4" />
