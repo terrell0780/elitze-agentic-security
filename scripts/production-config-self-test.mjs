@@ -50,6 +50,13 @@ assert.match(orchestrationRoute, /tenantId:\s*user\.tenantId/, "ELITZE orchestra
 assert.match(orchestrationRoute, /actorId:\s*user\.id/, "ELITZE orchestrator must bind actor to the authenticated session");
 assert.match(orchestrationRoute, /SELECT id FROM agent_identities WHERE id=\$1::uuid AND tenant_id=\$2::uuid AND kind='AGENT' AND active=true/i, "ELITZE orchestrator must verify an active agent identity in the same tenant");
 assert.doesNotMatch(orchestrationRoute, /tenantId:\s*z\.string|actorId:\s*z\.string/, "ELITZE orchestrator must not trust client-supplied tenant or actor identities");
+const mergeManifest = read("docs/ELITZE-AGENTIC-SECURITY-MERGE-MANIFEST.md");
+const orchestrationManifest = read("docs/ELITZE-ORCHESTRATION-DEFENSE.md");
+assert.match(mergeManifest, /ELITZE runtime orchestrator/);
+assert.match(mergeManifest, /Sentinel security layer[^\n]*not a separate product or separate control plane/);
+assert.match(mergeManifest, /generated\/elitze_orchestrator\.py` is a bounded CI self-test\/evidence wrapper/);
+assert.match(orchestrationManifest, /Sentinel is the integrated security-protection layer within this platform, not a separate product or control plane/);
+assert.match(orchestrationManifest, /src\/lib\/elitze-secure\/elitze-agent\.ts` — ELITZE runtime planning\/orchestration/);
 assert.match(read("src/lib/elitze-secure/elitze-agent.ts"), /ELITZE_AGENT_NAME = "ELITZE"/);
 assert.match(read("src/lib/elitze-secure/elitze-agent.ts"), /ELITZE_AGENT_ASSISTANT = "SARA"/);
 assert.match(read("src/app/api/public/health/route.ts"), /export \{ GET \}/);
