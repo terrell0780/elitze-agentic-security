@@ -8,7 +8,7 @@ RUN git init /tmp/nuclei-templates \
     && printf '/http/\\n' > /tmp/nuclei-templates/.git/info/sparse-checkout \
     && git -C /tmp/nuclei-templates fetch --depth 1 --filter=blob:none origin "${NUCLEI_TEMPLATES_REF}" \
     && git -C /tmp/nuclei-templates checkout --detach FETCH_HEAD \
-    && test -s /tmp/nuclei-templates/http/misconfiguration/README.md \
+    && test -s /tmp/nuclei-templates/http/misconfiguration/ace-admin-dashboard.yaml \
     && rm -rf /tmp/nuclei-templates/.git
 
 FROM node:22-alpine
