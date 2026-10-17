@@ -5,7 +5,7 @@ RUN CGO_ENABLED=0 go install github.com/projectdiscovery/nuclei/v3/cmd/nuclei@v3
 RUN git init /tmp/nuclei-templates \
     && git -C /tmp/nuclei-templates remote add origin https://github.com/projectdiscovery/nuclei-templates.git \
     && git -C /tmp/nuclei-templates config core.sparseCheckout true \
-    && printf '/http/\\n' > /tmp/nuclei-templates/.git/info/sparse-checkout \
+    && printf '/http/\n' > /tmp/nuclei-templates/.git/info/sparse-checkout \
     && git -C /tmp/nuclei-templates fetch --depth 1 --filter=blob:none origin "${NUCLEI_TEMPLATES_REF}" \
     && git -C /tmp/nuclei-templates checkout --detach FETCH_HEAD \
     && test -s /tmp/nuclei-templates/http/misconfiguration/ace-admin-dashboard.yaml \
