@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const DEFAULT_CANONICAL_ORIGIN = "https://elitze.info";
+const DEFAULT_CANONICAL_ORIGIN = "https://www.elitze.info";
 const DEFAULT_ALLOWED_ORIGINS = [
   "https://elitze.info",
   "https://www.elitze.info",
@@ -67,7 +67,7 @@ const canonicalOrigin =
     : configuredCanonicalOrigin === DEFAULT_CANONICAL_ORIGIN
       ? configuredCanonicalOrigin
       : (() => {
-          throw new Error("ELITZE canonical production origin must be https://elitze.info.");
+          throw new Error("ELITZE canonical production origin must be https://www.elitze.info.");
         })();
 
 export const allowedOrigins = Array.from(
