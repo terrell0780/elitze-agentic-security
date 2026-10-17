@@ -26,6 +26,7 @@ const CANCEL_GRACE_MS = boundedNumber(process.env.ELITZE_RUNNER_CANCEL_GRACE_MS,
 const NUCLEI_BIN = process.env.NUCLEI_BIN?.trim() || "nuclei";
 const DEFAULT_RATE = boundedNumber(process.env.ELITZE_RUNNER_RATE_LIMIT, 20, 1, 200);
 const TEMPLATE_UPDATE = /^(1|true|yes)$/i.test(process.env.ELITZE_RUNNER_UPDATE_TEMPLATES ?? "false");
+const TEMPLATE_REVISION = process.env.NUCLEI_TEMPLATES_REF?.trim() ?? "";
 const ALLOWED_PORTS = new Set((process.env.ELITZE_RUNNER_ALLOWED_PORTS ?? "443")
   .split(",").map((value) => Number(value.trim())).filter((value) => Number.isInteger(value) && value > 0 && value <= 65535));
 
@@ -223,7 +224,11 @@ async function execute(job) {
   } catch (error) {
     job.status = "FAILED";
     job.completedAt = new Date().toISOString();
-    job.result = { engine: "nuclei", error: "scanner_template_preparation_failed" };
+    job.result = {
+      engine: "nuclei",
+      templateRevision: TEMPLATE_UPDATE ? null : TEMPLATE_REVISION || null,
+      error: "scanner_template_preparation_failed",
+    };
     job.events = [{ level: "ERROR", eventType: "RUN_FAILED", message: "Scanner template preparation failed." }];
     await callback(job, "FAILED", { events: job.events, result: job.result });
     return;
@@ -322,6 +327,7 @@ async function execute(job) {
   job.findings = findings;
   job.result = {
     engine: "nuclei",
+    templateRevision: TEMPLATE_UPDATE ? null : TEMPLATE_REVISION || null,
     exitCode,
     findingCount: findings.length,
     timedOut,
@@ -352,7 +358,11 @@ function pump() {
     void execute(job).catch(async (error) => {
       job.status = "FAILED";
       job.completedAt = new Date().toISOString();
-      job.result = { engine: "nuclei", error: error instanceof Error ? error.message : String(error) };
+      job.result = {
+        engine: "nuclei",
+        templateRevision: TEMPLATE_UPDATE ? null : TEMPLATE_REVISION || null,
+        error: error instanceof Error ? error.message : String(error),
+      };
       await callback(job, "FAILED", { events: [{ level: "ERROR", eventType: "RUN_FAILED", message: "Runner execution failed." }], result: job.result });
     }).finally(pump);
   }
@@ -378,7 +388,15 @@ function enqueue(job) {
 
 async function handle(req, res) {
   const url = new URL(req.url ?? "/", "http://runner.local");
-  if (url.pathname === "/health") return json(res, 200, { ok: true, runner: "ELITZE", engine: "nuclei", active: [...jobs.values()].filter((j) => j.status === "RUNNING").length, queued: queue.length });
+  if (url.pathname === "/health") return json(res, 200, {
+    ok: true,
+    runner: "ELITZE",
+    engine: "nuclei",
+    templateRevision: TEMPLATE_UPDATE ? null : TEMPLATE_REVISION || null,
+    templateUpdatesEnabled: TEMPLATE_UPDATE,
+    active: [...jobs.values()].filter((j) => j.status === "RUNNING").length,
+    queued: queue.length,
+  });
   if (!authOk(req)) return json(res, 401, { ok: false, error: "unauthorized" });
   const body = await readBody(req);
   if (!requestSignatureOk(req, body)) return json(res, 401, { ok: false, error: "invalid_signature" });
