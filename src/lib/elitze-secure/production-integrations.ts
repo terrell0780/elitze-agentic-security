@@ -204,8 +204,89 @@ const kubernetesConnector: DataBridgeConnector = {
   },
 };
 
+
+type SentinelOneConnectionConfig = DataBridgeConnectionConfig & {
+  /** SentinelOne Management Console origin, e.g. https://tenant.sentinelone.net */
+  endpoint?: string;
+};
+
+function sentinelOneBaseUrl(config: SentinelOneConnectionConfig): URL | null {
+  if (!config.endpoint || !config.token) return null;
+  try {
+    const parsed = new URL(config.endpoint);
+    if (parsed.protocol !== "https:" || parsed.username || parsed.password || !parsed.hostname) return null;
+    if (parsed.pathname !== "/" && parsed.pathname !== "" && parsed.pathname !== "/web/api/v2.1") return null;
+    parsed.pathname = "/web/api/v2.1/";
+    parsed.search = "";
+    parsed.hash = "";
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+
+async function sentinelOneGet(config: SentinelOneConnectionConfig, path: string): Promise<{ status: number; body: unknown }> {
+  const base = sentinelOneBaseUrl(config);
+  if (!base) return { status: 0, body: null };
+  const url = new URL(path.replace(/^\//, ""), base);
+  return fetchJson(url.toString(), {
+    method: "GET",
+    headers: {
+      Authorization: `ApiToken ${config.token}`,
+      Accept: "application/json",
+      ...(config.headers ?? {}),
+    },
+  }, config.timeoutMs);
+}
+
+function sentinelOneItems(payload: unknown): unknown[] {
+  if (!isJson(payload)) return [];
+  const data = payload.data;
+  if (Array.isArray(data)) return data;
+  if (isJson(data)) {
+    for (const key of ["threats", "agents", "items"]) {
+      if (Array.isArray(data[key])) return data[key] as unknown[];
+    }
+  }
+  return [];
+}
+
+async function connectSentinelOne(config: DataBridgeConnectionConfig): Promise<DataBridgeConnectionResult> {
+  const sentinelConfig = config as SentinelOneConnectionConfig;
+  if (!sentinelOneBaseUrl(sentinelConfig)) {
+    return { ok: false, status: "INVALID_CONFIG", detail: "sentinelone_https_console_endpoint_and_api_token_required" };
+  }
+  // Read-only least-privilege smoke checks. No remediation or endpoint-control actions are issued.
+  const threats = await sentinelOneGet(sentinelConfig, "threats?limit=1");
+  if (threats.status !== 200) return authFailure(threats.status, "sentinelone_threats");
+  const agents = await sentinelOneGet(sentinelConfig, "agents?limit=1");
+  if (agents.status !== 200) return authFailure(agents.status, "sentinelone_agents");
+  return { ok: true, status: "CONNECTED", detail: "sentinelone_threats_and_agents_api_verified_read_only" };
+}
+
+const sentinelOneConnector: DataBridgeConnector = {
+  id: "sentinelone-singularity",
+  displayName: "SentinelOne Singularity Endpoint Security",
+  version: "2.1",
+  transports: ["REST_PULL"],
+  capabilities: ["INGEST", "HEALTH", "DISCOVERY", "NORMALIZE"],
+  connect: async (config) => connectSentinelOne(config),
+  health: async (config) => connectSentinelOne(config),
+  normalize(payload, context) {
+    const records = sentinelOneItems(payload);
+    if (!records.length) {
+      return [event(context.sourceId, `${context.sourceId}:sentinelone:empty`, "sentinelone.observation", "SentinelOne returned no records in this response", { observed: true, recordCount: 0 })];
+    }
+    return records.map((record, index) => {
+      const item = isJson(record) ? record : { value: record };
+      const id = String(item.id ?? item.threatId ?? item.uuid ?? index);
+      return event(context.sourceId, `${context.sourceId}:sentinelone:${id}`, "sentinelone.threat", "Observed SentinelOne threat or endpoint record", item);
+    });
+  },
+};
+
 export function getProductionIntegrationConnectors(): DataBridgeConnector[] {
-  return [mcpConnector, githubConnector, awsConnector, azureConnector, kubernetesConnector];
+  return [mcpConnector, githubConnector, awsConnector, azureConnector, kubernetesConnector, sentinelOneConnector];
 }
 
 export const PRODUCTION_INTEGRATION_SCOPE = [
@@ -214,6 +295,7 @@ export const PRODUCTION_INTEGRATION_SCOPE = [
   { id: "aws-iam-cloudtrail", title: "AWS IAM + CloudTrail", value: "discover IAM principals and CloudTrail activity, correlate reachability and identity, preserve API evidence" },
   { id: "microsoft-entra-azure", title: "Microsoft Entra ID + Azure", value: "discover identities/apps and Azure activity, correlate authorization and runtime evidence" },
   { id: "kubernetes", title: "Kubernetes", value: "discover workloads/RBAC/API resources, map workload identity and reachable execution surfaces, verify runtime events" },
+  { id: "sentinelone-singularity", title: "SentinelOne Singularity Endpoint Security", value: "read-only connection validation, ingest real threat and endpoint records, preserve source evidence; response actions are not enabled by this connector" },
 ] as const;
 
 export function productionIntegrationStatus(configured: Set<string>) {
