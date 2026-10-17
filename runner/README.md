@@ -21,7 +21,7 @@ The production gate sends a fresh signed challenge with a random nonce to `/api/
 ## Required runner configuration
 
 - `ELITZE_RUNNER_HMAC_SECRET`: at least 32 UTF-8 bytes; must match `ELITZE_SECURITY_RUNNER_HMAC_SECRET` on the control plane and the `ELITZE_RUNNER_HMAC_SECRET` GitHub Actions secret.
-- `ELITZE_CALLBACK_ORIGIN=https://elitze.info`: restricts callbacks to the canonical ELITZE production control plane.
+- `ELITZE_CALLBACK_ORIGIN=https://www.elitze.info`: restricts callbacks to the canonical ELITZE production control plane.
 - `ELITZE_RUNNER_ALLOWED_HOSTS`: comma-separated customer-owned hostnames explicitly authorized for testing. Keep empty until the approved targets are known; the runner refuses to start without at least one hostname.
 - `ELITZE_RUNNER_ALLOW_PRIVATE_TARGETS=false`: blocks localhost, private, and link-local targets unless the runner is intentionally deployed inside an authorized private network.
 - `ELITZE_SECURITY_RUNNER_TOKEN`: optional shared bearer token, configured identically on the runner and control plane if enabled.
