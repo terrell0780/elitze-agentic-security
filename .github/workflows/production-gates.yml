@@ -257,6 +257,9 @@ jobs:
             if (parsed.protocol !== "https:" || parsed.username || parsed.password || parsed.search || parsed.hash) {
               throw new Error("Runner URL must be an HTTPS origin without credentials, query, or fragment.");
             }
+            if (parsed.pathname !== "/") {
+              throw new Error("Runner URL must be an HTTPS origin without a path.");
+            }
             endpoint = new URL("/api/handshake", parsed.origin);
           } catch (error) {
             console.error("::error::Invalid ELITZE_RUNNER_URL:", error.message);
@@ -270,7 +273,7 @@ jobs:
           const timer = setTimeout(() => controller.abort(), 10000);
           (async () => {
             try {
-              console.log("Dispatching signed live challenge to runner endpoint.");
+              console.log("Dispatching signed live challenge to runner host:", endpoint.hostname);
               const response = await fetch(endpoint, {
                 method: "POST",
                 headers: {
@@ -309,7 +312,11 @@ jobs:
               }
               console.log("PASS: live runner challenge-response signature and nonce verified.");
             } catch (error) {
-              console.error("::error::Live runner handshake failed:", error.name === "AbortError" ? "request timed out" : error.message);
+              const causeCode = typeof error?.cause?.code === "string" ? error.cause.code : "";
+              const safeReason = error.name === "AbortError"
+                ? "request timed out"
+                : (causeCode || (typeof error?.cause?.name === "string" ? error.cause.name : error.message));
+              console.error("::error::Live runner handshake failed for host " + endpoint.hostname + ": " + safeReason);
               process.exitCode = 1;
             } finally {
               clearTimeout(timer);
