@@ -31,6 +31,28 @@ The production gate sends a fresh signed challenge with a random nonce to `/api/
 
 The runner image pins Nuclei v3.11.1 for reproducible builds. It does not accept arbitrary shell commands. It accepts signed job payloads, enforces the hostname allowlist and target safety checks, then invokes the fixed Nuclei engine.
 
+## Reproducible scanner contents
+
+The container pins Nuclei at `v3.11.1` and packages the templates repository at commit `17f5725dc10ced09f464dd2d255c19957aad51e7`. The runner reports this template revision from `/health` and in job results only while runtime template updates are disabled. Keep `ELITZE_RUNNER_UPDATE_TEMPLATES=false` for release verification; bump the pinned commit through review when updating templates. CI checks that the image contains and can enumerate the pinned HTTP misconfiguration templates.
+
+## Railway deployment
+
+1. Create a Railway service from the `terrell0780/elitze-agentic-security` repository and set **Root Directory** to `/runner`. Keep the service on a single replica because this implementation's job queue and handshake replay cache are process-local.
+2. Generate a public HTTPS domain for that service. The host must be stable and reachable from Vercel and GitHub Actions. Set Railway's health check path to `/health`.
+3. Set the following Railway service variables. Do not put secret values in repository files or build logs.
+
+   | Variable | Value |
+   | --- | --- |
+   | `ELITZE_RUNNER_HMAC_SECRET` | The exact same secret value already used by Vercel `ELITZE_SECURITY_RUNNER_HMAC_SECRET` and GitHub Actions `ELITZE_RUNNER_HMAC_SECRET`. Keep it secret and at least 32 UTF-8 bytes. |
+   | `ELITZE_CALLBACK_ORIGIN` | `https://elitze.info` |
+   | `ELITZE_RUNNER_ALLOWED_HOSTS` | `www.elitze.info,elitze.info` for the ELITZE-owned web assets; add a customer hostname only with written authorization. |
+   | `ELITZE_RUNNER_ALLOW_PRIVATE_TARGETS` | `false` |
+   | `ELITZE_RUNNER_UPDATE_TEMPLATES` | `false` to retain the image-pinned template revision. |
+
+4. Copy only the generated runner **origin** (no path, query or trailing slash) to Vercel production variable `ELITZE_SECURITY_RUNNER_URL` and GitHub Actions repository secret `ELITZE_RUNNER_URL`. Confirm that the HMAC secret values match exactly across all three locations. If `ELITZE_SECURITY_RUNNER_TOKEN` is enabled, configure the same token on Vercel and Railway too.
+5. Verify the runner's public `/health` returns HTTP 200 and reports the expected template revision with `templateUpdatesEnabled: false`. Then rerun the GitHub production gates. A live pass requires a signed challenge-response with a fresh nonce, response HMAC verification, and nonce equality; missing secrets or a failed check must remain a release blocker.
+6. After the handshake passes, run one separately authorized, low-impact validation through ELITZE and verify that the actual Nuclei engine completes and the control-plane callback is accepted. Do not interpret the handshake alone as proof that a scan or evidence callback worked.
+
 ## Deployment and acceptance criteria
 
 Deploy the runner to an authorized container host that provides a stable HTTPS origin and can reach the intended targets. Configure the matching HMAC secret in the runner, Vercel, and GitHub Actions. Configure the actual runner origin in Vercel and GitHub Actions. Do not substitute a mock URL or test secret for production values.
