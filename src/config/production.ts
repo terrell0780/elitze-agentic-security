@@ -61,14 +61,10 @@ function isLoopbackOrigin(value: string) {
   );
 }
 
-const canonicalOrigin =
-  isLoopbackOrigin(configuredCanonicalOrigin)
-    ? configuredCanonicalOrigin
-    : configuredCanonicalOrigin === DEFAULT_CANONICAL_ORIGIN
-      ? configuredCanonicalOrigin
-      : (() => {
-          throw new Error("ELITZE canonical production origin must be https://www.elitze.info.");
-        })();
+// Keep local development configurable; production always uses the one canonical host.
+const canonicalOrigin = isLoopbackOrigin(configuredCanonicalOrigin)
+  ? configuredCanonicalOrigin
+  : DEFAULT_CANONICAL_ORIGIN;
 
 export const allowedOrigins = Array.from(
   new Set([canonicalOrigin, ...parseAllowedOrigins(process.env.ELITZE_ALLOWED_ORIGINS)]),
