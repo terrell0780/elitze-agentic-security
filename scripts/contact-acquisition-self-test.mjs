@@ -73,10 +73,14 @@ assert.match(contactRoute, /website/);
 assert.match(contactForm, /\/api\/acquisition\/contact/);
 assert.match(contactForm, /tsh_cook@hotmail\.com/);
 assert.match(contactForm, /trackElitzeEvent/);
-assert.match(sales, /<AcquisitionContactForm/);
-assert.match(sales, /requestType="acquisition"/);
-assert.match(access, /<AcquisitionContactForm/);
-assert.match(access, /requestType="repository"/);
+assert.match(sales, /redirect\("\/workspace"\)/);
+assert.match(access, /redirect\("\/workspace"\)/);
+assert.match(read("src/app/workspace/page.tsx"), /redirect\("\/console"\)/);
+assert.doesNotMatch(read("src/app/page.tsx"), /href="\/sales"|>\s*Acquisition\s*</i);
+assert.doesNotMatch(read("src/app/platform/page.tsx"), /href="\/sales"|Enterprise \/ Acquisition/i);
+assert.doesNotMatch(read("src/components/seo-feature-page.tsx"), /href="\/sales"|Acquisition and technical review/i);
+assert.doesNotMatch(read("src/app/sitemap.ts"), /"\/sales"/);
+assert.doesNotMatch(read("src/app/sales/access/page.tsx"), /previously public|was public/i);
 assert.match(email, /export async function sendEmail/);
 assert.match(email, /reply_to/);
 assert.match(email, /tsh_cook@hotmail\.com/);
@@ -87,7 +91,7 @@ assert.equal(
   "the contact form must retain the direct-email fallback",
 );
 
-console.log("ELITZE contact/acquisition self-test: PASS — stale-domain removal, inbound routing, repository-contact path, anti-abuse markers, and fallback email verified");
+console.log("ELITZE contact self-test: PASS — canonical contact routing, anti-abuse markers, workspace access entry, legacy commercial-route redirects, and fallback email verified");
 
 const businessProcessMigration = fs.readFileSync(path.join(root, "drizzle/0028_acquisition_pipeline.sql"), "utf8");
 const businessProcessRoute = fs.readFileSync(path.join(root, "src/app/api/acquisition/leads/route.ts"), "utf8");
