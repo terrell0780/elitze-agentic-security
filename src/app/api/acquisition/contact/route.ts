@@ -114,7 +114,6 @@ export async function POST(request: NextRequest) {
         to: DESTINATION(),
         subject: subjectFor(requestType),
         text: emailText,
-        replyTo: email,
       });
     } catch (error) {
       console.error("ELITZE contact email delivery failed", error);
