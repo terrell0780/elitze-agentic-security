@@ -75,7 +75,18 @@ assert.match(env, /^RESEND_API_KEY=$/m);
 assert.match(env, /^ELITZE_MCP_GATEWAY_ENABLED=false$/m, "MCP gateway must default off in the environment template");
 assert.match(env, /^ELITZE_MCP_GATEWAY_EXECUTION_ENABLED=false$/m, "MCP tool execution must default off in the environment template");
 const workspaceEntry = read("src/app/workspace/page.tsx");
-const homePage = read("src/app/page.tsx");
+const homePage = [
+  "src/app/page.tsx",
+  "src/components/home/site-header.tsx",
+  "src/components/home/hero-section.tsx",
+  "src/components/home/brand-marquee.tsx",
+  "src/components/home/control-model-section.tsx",
+  "src/components/home/endpoint-integration-section.tsx",
+  "src/components/home/about-promo-section.tsx",
+  "src/components/home/validation-section.tsx",
+  "src/components/home/workspace-cta-section.tsx",
+  "src/components/home/site-footer.tsx",
+].map(read).join("\n");
 const platformPage = read("src/app/platform/page.tsx");
 const featurePage = read("src/components/seo-feature-page.tsx");
 assert.match(workspaceEntry, /getCurrentUser/, "workspace entry must verify authentication");
