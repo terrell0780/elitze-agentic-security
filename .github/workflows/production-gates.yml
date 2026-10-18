@@ -248,7 +248,7 @@ jobs:
         timeout-minutes: 1
         shell: bash
         env:
-          ELITZE_RUNNER_URL: https://elitze-sentinal-production.up.railway.app
+          ELITZE_RUNNER_URL: https://elitze-security-runner.onrender.com
         run: |
           set -euo pipefail
           node <<'NODE'
