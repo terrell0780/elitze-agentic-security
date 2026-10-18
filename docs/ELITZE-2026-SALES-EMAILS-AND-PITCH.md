@@ -97,7 +97,6 @@ Excluded:
 
 Source access is controlled. A prospective buyer must be identified, demonstrate ability to fund the transaction, execute an appropriate NDA, and receive temporary read-only access during diligence.
 
-The repository was previously public. This is disclosed to buyers; making it private does not represent that previously downloaded copies do not exist.
 
 ## X / LinkedIn short post
 

@@ -9,6 +9,7 @@ import AcquisitionCta from "@/components/acquisition-cta";
 import SecurityWorkspacePreview from "@/components/security-workspace-preview";
 
 const primaryLinks = [
+  ["Workspace", "/workspace"],
   ["Platform", "/platform"],
   ["Security", "/security"],
   ["Validation", "/console/pentesting"],
@@ -69,15 +70,12 @@ export default function HomePage() {
           </nav>
 
           <div className="flex shrink-0 items-center gap-2">
-            <Link href="/sales" className="hidden rounded-xl border border-[var(--border)] bg-[var(--panel)] px-4 py-2.5 text-xs font-semibold transition hover:border-[var(--border-strong)] sm:inline-flex">
-              Acquisition
-            </Link>
-            <AcquisitionCta
-              href="/console"
+<AcquisitionCta
+              href="/workspace"
               event="console_open"
               className="hidden rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-slate-950 transition hover:brightness-110 sm:inline-flex"
             >
-              Open control plane
+              Open workspace
             </AcquisitionCta>
             <button
               type="button"
@@ -106,11 +104,8 @@ export default function HomePage() {
                   {label}
                 </Link>
               ))}
-              <Link href="/sales" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-sm text-[var(--muted)] transition hover:bg-[var(--panel)] hover:text-[var(--text)]">
-                Acquisition
-              </Link>
-              <Link href="/console" onClick={() => setMobileOpen(false)} className="rounded-xl bg-[var(--accent-soft)] px-3 py-3 text-sm font-semibold text-[var(--accent)]">
-                Open control plane
+<Link href="/workspace" onClick={() => setMobileOpen(false)} className="rounded-xl bg-[var(--accent-soft)] px-3 py-3 text-sm font-semibold text-[var(--accent)]">
+                Open workspace
               </Link>
             </div>
           </nav>
@@ -135,11 +130,11 @@ export default function HomePage() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <AcquisitionCta
-                href="/console"
+                href="/workspace"
                 event="console_open"
                 className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950 transition hover:brightness-110"
               >
-                Open control plane <ArrowRight className="h-4 w-4" />
+                Open workspace <ArrowRight className="h-4 w-4" />
               </AcquisitionCta>
               <Link href="/security" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold transition hover:border-[var(--border-strong)]">
                 Explore the security model <ArrowRight className="h-4 w-4" />
@@ -252,14 +247,14 @@ export default function HomePage() {
       <section className="mx-auto max-w-[1400px] px-4 py-14 sm:px-7 sm:py-20">
         <div className="rounded-[28px] border border-[var(--accent-border)] bg-[var(--accent-soft)] p-7 sm:p-10 lg:flex lg:items-center lg:justify-between lg:gap-10">
           <div>
-            <div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">Enterprise and acquisition</div>
-            <h2 className="mt-3 text-3xl font-black tracking-[-.04em] sm:text-4xl">Built for scrutiny. Ready for diligence.</h2>
+            <div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">Secure workspace</div>
+            <h2 className="mt-3 text-3xl font-black tracking-[-.04em] sm:text-4xl">Operate from one governed workspace.</h2>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-[var(--muted-strong)]">
-              Review the product scope, security architecture, and transfer materials. Operational claims remain tied to verified sources and evidence.
+              Open the ELITZE workspace to inspect tenant posture, agent identities, policy decisions, authorized validation, and source-bound evidence.
             </p>
           </div>
-          <Link href="/sales" className="mt-7 inline-flex shrink-0 items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950 transition hover:brightness-110 lg:mt-0">
-            Explore acquisition details <ArrowRight className="h-4 w-4" />
+          <Link href="/workspace" className="mt-7 inline-flex shrink-0 items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950 transition hover:brightness-110 lg:mt-0">
+            Open workspace <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
       </section>

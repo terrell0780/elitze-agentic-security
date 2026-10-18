@@ -18,7 +18,6 @@ const routes = [
   "/accessibility",
   "/legal",
   "/legal/ownership",
-  "/sales",
   "/help",
   "/contact",
   "/search",
@@ -35,6 +34,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return routes.map((path) => ({
     url: `${productionConfig.canonicalOrigin}${path}`,
     changeFrequency: path === "/" ? "weekly" : "monthly",
-    priority: path === "/" ? 1 : path === "/sales" || path === "/security" || path === "/compliance" || path === "/platform" ? 0.9 : 0.7,
+    priority: path === "/" ? 1 : path === "/security" || path === "/compliance" || path === "/platform" ? 0.9 : 0.7,
   }));
 }

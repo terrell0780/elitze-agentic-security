@@ -43,8 +43,7 @@ export default function SeoFeaturePage({
           <h1 className="mt-6 max-w-4xl text-4xl font-semibold leading-[1.05] tracking-[-.055em] sm:text-6xl">{title}</h1>
           <p className="mt-6 max-w-3xl text-base leading-8 text-[var(--muted-strong)] sm:text-lg">{description}</p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Link href="/login?next=%2Fconsole" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950">Open security console <ArrowRight className="h-4 w-4" /></Link>
-            <Link href="/sales" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold">Acquisition and technical review <ArrowUpRight className="h-4 w-4" /></Link>
+            <Link href="/workspace" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950">Open workspace <ArrowRight className="h-4 w-4" /></Link>
           </div>
         </div>
       </section>
