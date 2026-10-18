@@ -74,6 +74,22 @@ assert.match(env, /^ELITZE_EMAIL_PROVIDER=resend$/m);
 assert.match(env, /^RESEND_API_KEY=$/m);
 assert.match(env, /^ELITZE_MCP_GATEWAY_ENABLED=false$/m, "MCP gateway must default off in the environment template");
 assert.match(env, /^ELITZE_MCP_GATEWAY_EXECUTION_ENABLED=false$/m, "MCP tool execution must default off in the environment template");
+const workspaceEntry = read("src/app/workspace/page.tsx");
+const homePage = read("src/app/page.tsx");
+const platformPage = read("src/app/platform/page.tsx");
+const featurePage = read("src/components/seo-feature-page.tsx");
+assert.match(workspaceEntry, /redirect\("\/console"\)/, "workspace URL must redirect to the authenticated console");
+assert.match(homePage, /\["Workspace", "\/workspace"\]/, "workspace must be in primary navigation");
+assert.match(homePage, /Open workspace/i, "homepage must expose a clear workspace action");
+assert.doesNotMatch(homePage, /href="\/sales"|>\s*Acquisition\s*</i, "homepage must not expose sales navigation");
+assert.doesNotMatch(platformPage, /href="\/sales"|Enterprise \/ Acquisition/i, "platform page must not expose sales navigation");
+assert.doesNotMatch(featurePage, /href="\/sales"|Acquisition and technical review/i, "feature template must not expose sales navigation");
+assert.doesNotMatch(read("src/app/sitemap.ts"), /"\/sales"/, "sitemap must not publish sales");
+assert.match(read("src/app/robots.ts"), /"\/workspace"/, "workspace must be excluded from indexing");
+for (const legacyPath of ["src/app/sales/page.tsx", "src/app/sales/access/page.tsx", "src/app/acquisition/page.tsx", "src/app/buyers/page.tsx"]) {
+  assert.match(read(legacyPath), /redirect\("\/workspace"\)/, "legacy commercial URL must route to the private workspace: " + legacyPath);
+}
+assert.doesNotMatch(read("src/app/sales/access/page.tsx"), /previously public|was public/i, "old repository history must not appear on public route");
 console.log("ELITZE production configuration self-test: PASS");
 
 const legacyIdentity = ["myt", "hos"].join("");
