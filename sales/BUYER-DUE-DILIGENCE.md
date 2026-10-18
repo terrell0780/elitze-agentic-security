@@ -20,7 +20,6 @@ Read-only source access may be granted only after:
 3. An appropriate NDA is executed.
 4. Access is limited to the agreed diligence scope and duration.
 
-The repository was previously public. This fact is disclosed for diligence. Making the repository private does not erase historical distribution or represent that no third-party copies exist.
 
 ## 3. Code and build review
 
