@@ -132,10 +132,6 @@ export default function HomePage() {
 
       <ControlModelSection />
 
-
-
-      <ControlModelSection />
-
       <EndpointIntegrationSection />
 
       <section className="mx-auto max-w-[1400px] px-4 py-10 sm:px-7 sm:py-12">
