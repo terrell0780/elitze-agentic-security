@@ -249,8 +249,6 @@ jobs:
         shell: bash
         env:
           ELITZE_RUNNER_URL: https://elitze-sentinal-production.up.railway.app
-          ACTIONS_ID_TOKEN_REQUEST_URL: ${{ env.ACTIONS_ID_TOKEN_REQUEST_URL }}
-          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ env.ACTIONS_ID_TOKEN_REQUEST_TOKEN }}
         run: |
           set -euo pipefail
           node <<'NODE'
