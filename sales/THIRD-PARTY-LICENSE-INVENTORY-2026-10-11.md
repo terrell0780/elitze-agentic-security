@@ -677,6 +677,6 @@ These entries are not automatically prohibited. Their exact license texts, usage
 
 - License fields in package metadata can be incomplete or inaccurate; inspect authoritative license texts and publisher notices.
 - Confirm whether optional platform binaries are shipped in production artifacts and review each applicable LGPL/MIT/Apache or combined-license obligation.
-- Review the project's prior public distribution and full contributor history; a private repository and this inventory do not establish exclusive title.
+- Review full contributor history and applicable license obligations; a private repository and this inventory do not by themselves establish exclusive title.
 - Produce the definitive third-party notices bundle and have counsel verify transfer/redistribution rights before signing an asset sale.
 - Re-run this inventory after dependency changes and regenerate the CycloneDX SBOM from the same lockfile.
