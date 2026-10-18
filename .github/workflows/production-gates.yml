@@ -107,7 +107,7 @@ jobs:
         run: npm run build
 
       - name: Code review green light
-        run: echo "GREEN LIGHT — review integrity, sale readiness, security fabric, live validation, typecheck, lint, and production build passed."
+        run: echo "GREEN LIGHT — review integrity, workspace readiness, security fabric, live validation, typecheck, lint, and production build passed."
 
   verify:
     needs: code-review
@@ -240,90 +240,89 @@ jobs:
     if: github.event_name != 'pull_request'
     runs-on: ubuntu-24.04
     timeout-minutes: 3
+    permissions:
+      contents: read
+      id-token: write
     steps:
-      - name: Verify Live Runner Handshake and Execution Gate
-        if: github.event_name != 'pull_request'
+      - name: Verify GitHub OIDC identity and live runner challenge
         timeout-minutes: 1
         shell: bash
         env:
-          ELITZE_RUNNER_URL: ${{ secrets.ELITZE_RUNNER_URL }}
-          ELITZE_RUNNER_HMAC_SECRET: ${{ secrets.ELITZE_RUNNER_HMAC_SECRET }}
+          ELITZE_RUNNER_URL: https://elitze-sentinal-production.up.railway.app
+          ACTIONS_ID_TOKEN_REQUEST_URL: ${{ env.ACTIONS_ID_TOKEN_REQUEST_URL }}
+          ACTIONS_ID_TOKEN_REQUEST_TOKEN: ${{ env.ACTIONS_ID_TOKEN_REQUEST_TOKEN }}
         run: |
           set -euo pipefail
           node <<'NODE'
-          const { createHmac, randomBytes, timingSafeEqual } = require("node:crypto");
+          const { randomBytes } = require("node:crypto");
           const base = process.env.ELITZE_RUNNER_URL?.trim();
-          const secret = process.env.ELITZE_RUNNER_HMAC_SECRET ?? "";
+          const tokenRequestUrl = process.env.ACTIONS_ID_TOKEN_REQUEST_URL?.trim();
+          const tokenRequestToken = process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN?.trim();
           if (!base) {
-            console.error("::error::Production blocker: ELITZE_RUNNER_URL is missing.");
+            console.error("::error::Production blocker: runner URL is missing.");
             process.exit(1);
           }
-          if (Buffer.byteLength(secret, "utf8") < 32) {
-            console.error("::error::Production blocker: ELITZE_RUNNER_HMAC_SECRET is missing or shorter than 32 bytes.");
+          if (!tokenRequestUrl || !tokenRequestToken) {
+            console.error("::error::Production blocker: GitHub OIDC token request is unavailable.");
             process.exit(1);
           }
           let endpoint;
           try {
             const parsed = new URL(base);
-            if (parsed.protocol !== "https:" || parsed.username || parsed.password || parsed.search || parsed.hash) {
-              throw new Error("Runner URL must be an HTTPS origin without credentials, query, or fragment.");
+            if (parsed.protocol !== "https:" || parsed.username || parsed.password || parsed.pathname !== "/" || parsed.search || parsed.hash) {
+              throw new Error("Runner URL must be an HTTPS origin without credentials, path, query, or fragment.");
             }
-            endpoint = new URL("/api/handshake", parsed.origin);
+            endpoint = new URL("/api/github/handshake", parsed.origin);
           } catch (error) {
-            console.error("::error::Invalid ELITZE_RUNNER_URL:", error.message);
+            console.error("::error::Invalid runner URL:", error.message);
             process.exit(1);
           }
-          const hmac = (timestamp, body) => createHmac("sha256", secret).update(timestamp + "." + body).digest("hex");
-          const timestamp = String(Date.now());
-          const nonce = randomBytes(16).toString("hex");
-          const payload = JSON.stringify({ action: "handshake", timestamp: Number(timestamp), nonce });
-          const controller = new AbortController();
-          const timer = setTimeout(() => controller.abort(), 10000);
           (async () => {
             try {
-              console.log("Dispatching signed live challenge to runner endpoint.");
+              const oidcUrl = new URL(tokenRequestUrl);
+              oidcUrl.searchParams.set("audience", "elitze-runner-handshake");
+              const tokenResponse = await fetch(oidcUrl, {
+                headers: { authorization: "Bearer " + tokenRequestToken, accept: "application/json" },
+                signal: AbortSignal.timeout(10000),
+              });
+              if (!tokenResponse.ok) {
+                console.error("::error::GitHub OIDC token request failed with HTTP " + tokenResponse.status + ".");
+                process.exitCode = 1;
+                return;
+              }
+              const tokenPayload = await tokenResponse.json();
+              if (typeof tokenPayload.value !== "string" || !tokenPayload.value) {
+                console.error("::error::GitHub OIDC response did not contain a token.");
+                process.exitCode = 1;
+                return;
+              }
+              const nonce = randomBytes(16).toString("hex");
+              const payload = JSON.stringify({ action: "github-handshake", timestamp: Date.now(), nonce });
               const response = await fetch(endpoint, {
                 method: "POST",
-                headers: {
-                  "content-type": "application/json",
-                  "x-elitze-timestamp": timestamp,
-                  "x-elitze-signature": hmac(timestamp, payload),
-                },
+                headers: { "content-type": "application/json", authorization: "Bearer " + tokenPayload.value },
                 body: payload,
-                signal: controller.signal,
+                signal: AbortSignal.timeout(10000),
               });
-              const body = await response.text();
               if (response.status !== 200) {
-                console.error("::error::Runner handshake returned HTTP " + response.status + ". Response body suppressed.");
+                console.error("::error::Live runner OIDC handshake returned HTTP " + response.status + ". Response body suppressed.");
                 process.exitCode = 1;
                 return;
               }
-              const responseTimestamp = response.headers.get("x-elitze-timestamp") ?? "";
-              const responseSignature = response.headers.get("x-elitze-signature") ?? "";
-              if (!/^\d{13}$/.test(responseTimestamp) || !/^[a-f0-9]{64}$/i.test(responseSignature)) {
-                console.error("::error::Runner response omitted a valid cryptographic signature.");
+              const result = await response.json();
+              const age = Math.abs(Date.now() - Number(result.timestamp));
+              if (result.ok !== true || result.action !== "github-handshake" || result.nonce !== nonce ||
+                  result.repository !== "terrell0780/elitze-agentic-security" ||
+                  result.workflowRef !== "terrell0780/elitze-agentic-security/.github/workflows/production-gates.yml@refs/heads/main" ||
+                  !Number.isFinite(age) || age > 60000) {
+                console.error("::error::Live runner did not attest the authorized GitHub workflow challenge.");
                 process.exitCode = 1;
                 return;
               }
-              const expected = Buffer.from(hmac(responseTimestamp, body), "hex");
-              const supplied = Buffer.from(responseSignature, "hex");
-              if (expected.length !== supplied.length || !timingSafeEqual(expected, supplied)) {
-                console.error("::error::Runner response signature verification failed.");
-                process.exitCode = 1;
-                return;
-              }
-              const parsed = JSON.parse(body);
-              if (parsed.ok !== true || parsed.action !== "handshake" || parsed.nonce !== nonce) {
-                console.error("::error::Runner did not authenticate the challenge nonce.");
-                process.exitCode = 1;
-                return;
-              }
-              console.log("PASS: live runner challenge-response signature and nonce verified.");
+              console.log("PASS: GitHub OIDC identity, authorized workflow, HTTPS runner reachability, and challenge nonce verified.");
             } catch (error) {
-              console.error("::error::Live runner handshake failed:", error.name === "AbortError" ? "request timed out" : error.message);
+              console.error("::error::Live runner OIDC handshake failed:", error.name === "AbortError" ? "request timed out" : error.message);
               process.exitCode = 1;
-            } finally {
-              clearTimeout(timer);
             }
           })();
           NODE
@@ -343,9 +342,9 @@ jobs:
         shell: bash
         run: |
           if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
-            echo "CI GREEN — code review, isolated database/security verification, sale readiness, typecheck, lint, build, dependency audit, and SBOM checks passed."
+            echo "CI GREEN — code review, isolated database/security verification, workspace readiness, typecheck, lint, build, dependency audit, and SBOM checks passed."
             echo "PRODUCTION RELEASE NOT APPROVED — the live production runner handshake is intentionally skipped for pull requests and has not been verified by this run."
           else
-            echo "GREEN LIGHT — code review, security verification, sale readiness, live runner handshake, typecheck, lint, build, dependency audit, and SBOM gates passed."
+            echo "GREEN LIGHT — code review, security verification, workspace readiness, live runner handshake, typecheck, lint, build, dependency audit, and SBOM gates passed."
             echo "This commit is eligible for merge evaluation and production promotion."
           fi
