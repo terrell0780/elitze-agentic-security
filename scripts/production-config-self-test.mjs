@@ -79,19 +79,36 @@ const homePage = read("src/app/page.tsx");
 const platformPage = read("src/app/platform/page.tsx");
 const featurePage = read("src/components/seo-feature-page.tsx");
 assert.match(workspaceEntry, /getCurrentUser/, "workspace entry must verify authentication");
-assert.match(workspaceEntry, /if \(!user\) redirect\("\/login/, "unauthenticated visitors must be sent to sign-in");
+assert.match(workspaceEntry, /if \(!user\) redirect\("\/login/, "anonymous visitors must be sent to sign-in");
 assert.match(workspaceEntry, /redirect\("\/console"\)/, "authenticated visitors must enter the console");
 assert.match(homePage, /\["Workspace", "\/workspace"\]/, "workspace must be in primary navigation");
 assert.match(homePage, /Open workspace/i, "homepage must expose a clear workspace action");
-assert.doesNotMatch(homePage, /href="\/sales"|>\s*Acquisition\s*</i, "homepage must not expose sales navigation");
-assert.doesNotMatch(platformPage, /href="\/sales"|Enterprise \/ Acquisition/i, "platform page must not expose sales navigation");
-assert.doesNotMatch(featurePage, /href="\/sales"|Acquisition and technical review/i, "feature template must not expose sales navigation");
-assert.doesNotMatch(read("src/app/sitemap.ts"), /"\/sales"/, "sitemap must not publish sales");
+assert.doesNotMatch(homePage, /\/sales|Acquisition|acquisition/i, "homepage must be security-workspace product copy");
+assert.doesNotMatch(platformPage, /\/sales|Acquisition|acquisition/i, "platform page must be security product copy");
+assert.doesNotMatch(featurePage, /\/sales|Acquisition|acquisition/i, "feature template must be security product copy");
 assert.match(read("src/app/robots.ts"), /"\/workspace"/, "workspace must be excluded from indexing");
-for (const legacyPath of ["src/app/sales/page.tsx", "src/app/sales/access/page.tsx", "src/app/acquisition/page.tsx", "src/app/buyers/page.tsx"]) {
-  assert.match(read(legacyPath), /redirect\("\/workspace"\)/, "legacy commercial URL must route to authenticated workspace: " + legacyPath);
+for (const removedPath of [
+  "sales",
+  "src/app/sales/page.tsx",
+  "src/app/sales/access/page.tsx",
+  "src/app/acquisition/page.tsx",
+  "src/app/api/acquisition",
+  "src/app/buyers/page.tsx",
+  "src/components/acquisition-contact-form.tsx",
+  "src/components/acquisition-cta.tsx",
+  "drizzle/0028_acquisition_pipeline.sql",
+  "scripts/sale-readiness.mjs",
+  "scripts/sale-readiness-self-test.mjs",
+  "scripts/contact-acquisition-self-test.mjs",
+  "scripts/business-process-self-test.mjs"
+]) {
+  assert.equal(fs.existsSync(path.join(root, removedPath)), false, "obsolete commercial module must be deleted: " + removedPath);
 }
-assert.doesNotMatch(read("src/app/sales/access/page.tsx"), /AcquisitionContactForm|Request repository access|Repository-access questions/i, "legacy route must not render a public commercial form");
+const packageJson = JSON.parse(read("package.json"));
+assert.equal(Object.keys(packageJson.scripts).some(name => /sale:readiness|contact-acquisition|business-process:self-test/i.test(name)), false);
+assert.doesNotMatch(read("src/lib/analytics-events.ts"), /sales_cta|acquisition_inquiry|repository_access_request/);
+assert.match(read("drizzle/0029_remove_legacy_lead_pipeline.sql"), /DROP TABLE IF EXISTS acquisition_lead_events/i);
+assert.match(read("drizzle/0029_remove_legacy_lead_pipeline.sql"), /DROP TABLE IF EXISTS acquisition_leads/i);
 console.log("ELITZE production configuration self-test: PASS");
 
 const legacyIdentity = ["myt", "hos"].join("");
