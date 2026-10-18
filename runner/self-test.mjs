@@ -7,6 +7,10 @@ const dockerfile = fs.readFileSync("runner/Dockerfile", "utf8");
 
 assert.match(source, /ELITZE_RUNNER_HMAC_SECRET/);
 assert.match(source, /\/api\/handshake/);
+assert.match(source, /\/api\/github\/handshake/);
+assert.match(source, /token\.actions\.githubusercontent\.com/);
+assert.match(source, /GITHUB_OIDC_AUDIENCE/);
+assert.match(source, /workflow_ref/);
 assert.match(source, /handshake_nonce_replayed/);
 assert.match(source, /invalid_handshake_challenge/);
 assert.match(source, /ELITZE_RUNNER_ALLOWED_HOSTS/);
