@@ -56,7 +56,7 @@ const output = [
   "",
   "## Focused review list",
   "",
-  "These entries are not automatically prohibited. Their exact license texts, usage paths, binary distribution, notices and any applicable conditions must be reviewed before a proprietary acquisition transfer.",
+  "These entries are not automatically prohibited. Their exact license texts, usage paths, binary distribution, notices and any applicable conditions must be reviewed before proprietary software distribution.",
   "",
   "| Package | Version | Declared license expression |",
   "|---|---|---|",
@@ -78,6 +78,6 @@ const output = [
   "",
 ].join("\n");
 
-const outputPath = path.join(root, "sales", "THIRD-PARTY-LICENSE-INVENTORY-2026-10-11.md");
+const outputPath = path.join(root, "docs", "security", "THIRD-PARTY-LICENSE-INVENTORY-2026-10-11.md");
 fs.writeFileSync(outputPath, output, "utf8");
 console.log("Wrote " + path.relative(root, outputPath) + ": " + rows.length + " packages; " + restrictedReview.length + " need focused license review.");
