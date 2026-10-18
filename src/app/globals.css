@@ -52,16 +52,50 @@ html[data-theme="light"] {
 }
 html, body { min-height: 100%; background: var(--bg); }
 body {
+  font-family: "Space Grotesk", "Avenir Next", Avenir, sans-serif;
   background-image: radial-gradient(900px 500px at 50% -10%, var(--accent-glow), transparent 65%);
   background-attachment: fixed;
 }
 
 .hero-grid {
-  background-image:
-    linear-gradient(rgba(34,211,238,.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34,211,238,.035) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: linear-gradient(to bottom, black, transparent 80%);
+  background:
+    radial-gradient(ellipse at 18% 15%, rgba(178,255,217,.12), transparent 38%),
+    radial-gradient(ellipse at 82% 28%, rgba(216,223,121,.11), transparent 34%);
+  mask-image: linear-gradient(to bottom, black, transparent 88%);
+}
+.display-type {
+  font-family: "Syncopate", "Arial Black", sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -.075em;
+}
+.elitze-marquee {
+  overflow: hidden;
+  border-block: 3px solid #080914;
+  background: #f8fff9;
+  color: #11121b;
+}
+.elitze-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: elitze-marquee-scroll 42s linear infinite;
+}
+.elitze-marquee-item {
+  flex: none;
+  padding: .18em .34em .24em;
+  font-family: "Syncopate", "Arial Black", sans-serif;
+  font-size: clamp(1.55rem, 4.2vw, 4.2rem);
+  font-weight: 700;
+  letter-spacing: -.06em;
+  white-space: nowrap;
+}
+.elitze-marquee-item span { color: #777d2b; padding-inline: .18em; }
+@keyframes elitze-marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .elitze-marquee-track { animation: none; }
 }
 
 :where(a, button, input, textarea, select):focus-visible {
