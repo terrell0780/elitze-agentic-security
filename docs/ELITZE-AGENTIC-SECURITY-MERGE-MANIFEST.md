@@ -1,7 +1,8 @@
 # ELITZE Agentic Security — Architecture and Deployment Manifest
 
-**Canonical repository:** [`terrell0780/elitze-agentic-security`](https://github.com/terrell0780/elitze-agentic-security)  
-**Canonical product:** ELITZE Agentic Security  
+**Canonical repository:** [`terrell0780/elitze-agentic-security`](https://github.com/terrell0780/elitze-agentic-security)
+
+**Canonical product:** ELITZE Agentic Security
 **Production web domain:** [`https://www.elitze.info`](https://www.elitze.info) (the apex domain `https://elitze.info` redirects to www)
 
 This document defines the intended architecture and deployment boundaries. It is not, by itself, proof that a production integration is connected or a service is healthy. Use runtime checks and source-attributed evidence for operational claims.
