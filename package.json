@@ -97,5 +97,18 @@
     "esbuild": "0.25.0",
     "braces": "file:vendor/braces",
     "sharp": "0.35.5"
+  },
+  "description": "Identity-aware security controls for AI agents, MCP servers, tools, and sensitive execution paths.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/terrell0780/elitze-agentic-security.git"
+  },
+  "homepage": "https://www.elitze.info",
+  "bugs": {
+    "url": "https://github.com/terrell0780/elitze-agentic-security/issues"
+  },
+  "engines": {
+    "node": ">=24",
+    "npm": ">=10"
   }
 }
