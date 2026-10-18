@@ -46,8 +46,8 @@ jobs:
       - name: Verify control-plane challenge-response
         run: npm run runner:control-plane-handshake-self-test
 
-      - name: Verify sale-readiness gate
-        run: npm run sale:readiness
+      - name: Verify enterprise platform readiness
+        run: npm run platform:readiness
 
       - name: Build production application
         run: npm run build
