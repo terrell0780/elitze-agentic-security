@@ -92,7 +92,7 @@ for (const removedPath of [
   "src/app/sales/page.tsx",
   "src/app/sales/access/page.tsx",
   "src/app/acquisition/page.tsx",
-  "src/app/api/acquisition",
+  "src/app/api/acquisition/contact/route.ts",
   "src/app/buyers/page.tsx",
   "src/components/acquisition-contact-form.tsx",
   "src/components/acquisition-cta.tsx",
@@ -109,6 +109,8 @@ assert.equal(Object.keys(packageJson.scripts).some(name => /sale:readiness|conta
 assert.doesNotMatch(read("src/lib/analytics-events.ts"), /sales_cta|acquisition_inquiry|repository_access_request/);
 assert.match(read("drizzle/0029_remove_legacy_lead_pipeline.sql"), /DROP TABLE IF EXISTS acquisition_lead_events/i);
 assert.match(read("drizzle/0029_remove_legacy_lead_pipeline.sql"), /DROP TABLE IF EXISTS acquisition_leads/i);
+assert.match(read("src/app/api/acquisition/leads/route.ts"), /status: 404/);
+assert.match(read("src/app/api/acquisition/leads/route.ts"), /not_found/);
 console.log("ELITZE production configuration self-test: PASS");
 
 const legacyIdentity = ["myt", "hos"].join("");
