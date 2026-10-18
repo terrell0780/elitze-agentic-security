@@ -19,7 +19,7 @@ assert.equal(fs.existsSync(path.join(root, "src/config/secrets-assert.ts")), tru
 assert.equal(fs.existsSync(path.join(root, "src/lib/database-verify.ts")), true);
 
 const env = read(".env.example");
-assert.match(env, /^NEXT_PUBLIC_SITE_URL=https:\/\/elitze\.info$/m);
+assert.match(env, /^NEXT_PUBLIC_SITE_URL=https:\/\/(?:www\.)?elitze\.info$/m);
 assert.match(env, /^ELITZE_SAML_SP_ENTITY_ID=https:\/\/elitze\.info\/api\/auth\/saml\/metadata$/m);
 assert.match(env, /^ELITZE_SAML_ACS_URL=https:\/\/elitze\.info\/api\/auth\/saml\/callback$/m);
 assert.match(env, /^ELITZE_WEBAUTHN_RP_ID=elitze\.info$/m);
@@ -27,7 +27,7 @@ assert.match(env, /^ELITZE_CONTACT_EMAIL=tsh_cook@hotmail\.com$/m);
 assert.doesNotMatch(env, /^(?:CANONICAL_DOMAIN|ALLOWED_ORIGINS)=/m);
 
 const productionConfig = read("src/config/production.ts");
-assert.match(productionConfig, /DEFAULT_CANONICAL_ORIGIN = "https:\/\/elitze\.info"/);
+assert.match(productionConfig, /DEFAULT_CANONICAL_ORIGIN = "https:\/\/(?:www\.)?elitze\.info"/);
 assert.match(productionConfig, /ELITZE_ALLOWED_ORIGINS/);
 assert.match(productionConfig, /Stale .* production origin is forbidden/);
 
@@ -74,6 +74,24 @@ assert.match(env, /^ELITZE_EMAIL_PROVIDER=resend$/m);
 assert.match(env, /^RESEND_API_KEY=$/m);
 assert.match(env, /^ELITZE_MCP_GATEWAY_ENABLED=false$/m, "MCP gateway must default off in the environment template");
 assert.match(env, /^ELITZE_MCP_GATEWAY_EXECUTION_ENABLED=false$/m, "MCP tool execution must default off in the environment template");
+const workspaceEntry = read("src/app/workspace/page.tsx");
+const homePage = read("src/app/page.tsx");
+const platformPage = read("src/app/platform/page.tsx");
+const featurePage = read("src/components/seo-feature-page.tsx");
+assert.match(workspaceEntry, /getCurrentUser/, "workspace entry must verify authentication");
+assert.match(workspaceEntry, /if \(!user\) redirect\("\/login/, "unauthenticated visitors must be sent to sign-in");
+assert.match(workspaceEntry, /redirect\("\/console"\)/, "authenticated visitors must enter the console");
+assert.match(homePage, /\["Workspace", "\/workspace"\]/, "workspace must be in primary navigation");
+assert.match(homePage, /Open workspace/i, "homepage must expose a clear workspace action");
+assert.doesNotMatch(homePage, /href="\/sales"|>\s*Acquisition\s*</i, "homepage must not expose sales navigation");
+assert.doesNotMatch(platformPage, /href="\/sales"|Enterprise \/ Acquisition/i, "platform page must not expose sales navigation");
+assert.doesNotMatch(featurePage, /href="\/sales"|Acquisition and technical review/i, "feature template must not expose sales navigation");
+assert.doesNotMatch(read("src/app/sitemap.ts"), /"\/sales"/, "sitemap must not publish sales");
+assert.match(read("src/app/robots.ts"), /"\/workspace"/, "workspace must be excluded from indexing");
+for (const legacyPath of ["src/app/sales/page.tsx", "src/app/sales/access/page.tsx", "src/app/acquisition/page.tsx", "src/app/buyers/page.tsx"]) {
+  assert.match(read(legacyPath), /redirect\("\/workspace"\)/, "legacy commercial URL must route to authenticated workspace: " + legacyPath);
+}
+assert.doesNotMatch(read("src/app/sales/access/page.tsx"), /AcquisitionContactForm|Request repository access|Repository-access questions/i, "legacy route must not render a public commercial form");
 console.log("ELITZE production configuration self-test: PASS");
 
 const legacyIdentity = ["myt", "hos"].join("");
