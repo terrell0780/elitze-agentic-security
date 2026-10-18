@@ -1,5 +1,3 @@
-import Link from "next/link";
-
 const controlPoints = [
   {
     number: "01",
