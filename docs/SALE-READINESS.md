@@ -49,4 +49,4 @@ Never commit production credentials, API keys, database URLs, customer data, pri
 
 ## Exclusivity statement
 
-An acquisition can transfer ELITZE-owned source and rights held by the seller. It cannot retroactively make third-party or previously public material exclusive. Prior public distribution must be disclosed where material to the transaction.
+A transfer can convey only source, assets, and rights held by the seller. Third-party licenses, contributor rights, and included asset permissions must be verified before exclusivity is claimed.
