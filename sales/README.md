@@ -10,7 +10,6 @@ The canonical source repository is private. The public sales experience does **n
 
 Qualified buyer diligence may receive temporary read-only repository access only after the buyer is identified, demonstrates ability to fund the proposed transaction, and executes an appropriate NDA. Access scope and duration are controlled separately.
 
-The repository was previously public. That history is disclosed for diligence. Making the repository private does not erase historical distribution or represent that no third-party copies exist.
 
 ## Important status rule
 
