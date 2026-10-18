@@ -35,6 +35,14 @@ async function waitForHealth() {
 
 try {
   await waitForHealth();
+
+  const unauthenticatedGithubProbe = await fetch("http://127.0.0.1:" + port + "/api/github/handshake", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ action: "github-handshake", timestamp: Date.now(), nonce: randomBytes(16).toString("hex") }),
+  });
+  assert.equal(unauthenticatedGithubProbe.status, 401, "runner probe must reject missing GitHub OIDC identity");
+
   const timestamp = String(Date.now());
   const nonce = randomBytes(16).toString("hex");
   const payload = JSON.stringify({ action: "handshake", timestamp: Number(timestamp), nonce });

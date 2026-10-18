@@ -1,0 +1,49 @@
+name: Render runner URL probe
+
+on:
+  push:
+    branches:
+      - fix/oidc-runner-live-gate
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check Render health endpoint
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://elitze-security-runner.onrender.com"
+          echo "Checking public health endpoint."
+          body="$(curl --fail --silent --show-error --max-time 90 "$base/health")"
+          printf '%s' "$body" | node -e '
+            let raw = "";
+            process.stdin.on("data", c => raw += c);
+            process.stdin.on("end", () => {
+              const data = JSON.parse(raw);
+              if (data.ok !== true) process.exit(1);
+              console.log("PASS: Render runner health endpoint returned ok=true.");
+            });
+          '
+      - name: Confirm anonymous handshake is rejected
+        shell: bash
+        run: |
+          set -euo pipefail
+          base="https://elitze-security-runner.onrender.com"
+          code="$(curl --silent --show-error --max-time 30 -o /tmp/response.json -w '%{http_code}' \
+            -X POST "$base/api/github/handshake" \
+            -H 'content-type: application/json' \
+            --data '{"action":"github-handshake","timestamp":0,"nonce":"00000000000000000000000000000000"}')"
+          if [[ "$code" != "401" ]]; then
+            echo "::error::Expected unauthenticated handshake to return 401, got HTTP $code."
+            exit 1
+          fi
+          echo "PASS: unauthenticated handshake rejected with HTTP 401."
