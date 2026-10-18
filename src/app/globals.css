@@ -7,61 +7,95 @@
 }
 
 :root {
-  --bg: #061018;
-  --section: #08131c;
-  --panel: rgba(255,255,255,.035);
-  --panel-strong: #0b1923;
-  --header: rgba(6,16,24,.90);
-  --text: #f4f8fb;
-  --muted: #8fa1af;
-  --muted-strong: #c1cdd5;
-  --border: rgba(148,163,184,.14);
-  --border-strong: rgba(34,211,238,.34);
-  --accent: #22d3ee;
-  --accent-strong: #67e8f9;
-  --accent-soft: rgba(34,211,238,.09);
-  --accent-border: rgba(34,211,238,.30);
-  --accent-glow: rgba(34,211,238,.11);
-  --secondary: #a78bfa;
-  --success: #4ade80;
-  --success-soft: rgba(34,197,94,.09);
-  --success-border: rgba(34,197,94,.25);
+  /* Lumina-inspired indigo, mint, and acid-lime identity */
+  --bg: #34366f;
+  --section: #2b2e61;
+  --panel: rgba(19, 22, 62, .30);
+  --panel-strong: #292b5c;
+  --header: rgba(40, 42, 94, .94);
+  --text: #e8fff4;
+  --muted: #c0c9e0;
+  --muted-strong: #e0e5f5;
+  --border: rgba(221, 235, 255, .18);
+  --border-strong: rgba(184, 255, 220, .62);
+  --accent: #b2ffd9;
+  --accent-strong: #e2fff1;
+  --accent-soft: rgba(178, 255, 217, .12);
+  --accent-border: rgba(178, 255, 217, .42);
+  --accent-glow: rgba(181, 178, 255, .20);
+  --secondary: #d8df79;
+  --success: #b2ffd9;
+  --success-soft: rgba(178, 255, 217, .12);
+  --success-border: rgba(178, 255, 217, .34);
 }
 
 html[data-theme="light"] {
-  --bg: #f6fafc;
-  --section: #edf4f7;
-  --panel: rgba(255,255,255,.90);
+  --bg: #f6f7ff;
+  --section: #eceeff;
+  --panel: rgba(255,255,255,.88);
   --panel-strong: #ffffff;
-  --header: rgba(246,250,252,.92);
-  --text: #10202b;
-  --muted: #5f7381;
-  --muted-strong: #3f5563;
-  --border: rgba(15,45,60,.13);
-  --border-strong: rgba(8,145,178,.30);
-  --accent: #0891b2;
-  --accent-strong: #0e7490;
-  --accent-soft: rgba(8,145,178,.08);
-  --accent-border: rgba(8,145,178,.25);
-  --accent-glow: rgba(8,145,178,.08);
-  --secondary: #7c3aed;
-  --success: #15803d;
-  --success-soft: rgba(22,163,74,.08);
-  --success-border: rgba(22,163,74,.22);
+  --header: rgba(246,247,255,.94);
+  --text: #282a5b;
+  --muted: #5d638a;
+  --muted-strong: #454b76;
+  --border: rgba(40,42,94,.15);
+  --border-strong: rgba(76,79,153,.42);
+  --accent: #34366f;
+  --accent-strong: #282a5b;
+  --accent-soft: rgba(52,54,111,.08);
+  --accent-border: rgba(52,54,111,.26);
+  --accent-glow: rgba(181,178,255,.22);
+  --secondary: #737a21;
+  --success: #236b52;
+  --success-soft: rgba(35,107,82,.08);
+  --success-border: rgba(35,107,82,.22);
 }
-
 html, body { min-height: 100%; background: var(--bg); }
 body {
+  font-family: "Space Grotesk", "Avenir Next", Avenir, sans-serif;
   background-image: radial-gradient(900px 500px at 50% -10%, var(--accent-glow), transparent 65%);
   background-attachment: fixed;
 }
 
 .hero-grid {
-  background-image:
-    linear-gradient(rgba(34,211,238,.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(34,211,238,.035) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: linear-gradient(to bottom, black, transparent 80%);
+  background:
+    radial-gradient(ellipse at 18% 15%, rgba(178,255,217,.12), transparent 38%),
+    radial-gradient(ellipse at 82% 28%, rgba(216,223,121,.11), transparent 34%);
+  mask-image: linear-gradient(to bottom, black, transparent 88%);
+}
+.display-type {
+  font-family: "Syncopate", "Arial Black", sans-serif;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -.075em;
+}
+.elitze-marquee {
+  overflow: hidden;
+  border-block: 3px solid #080914;
+  background: #f8fff9;
+  color: #11121b;
+}
+.elitze-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: elitze-marquee-scroll 42s linear infinite;
+}
+.elitze-marquee-item {
+  flex: none;
+  padding: .18em .34em .24em;
+  font-family: "Syncopate", "Arial Black", sans-serif;
+  font-size: clamp(1.55rem, 4.2vw, 4.2rem);
+  font-weight: 700;
+  letter-spacing: -.06em;
+  white-space: nowrap;
+}
+.elitze-marquee-item span { color: #777d2b; padding-inline: .18em; }
+@keyframes elitze-marquee-scroll {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .elitze-marquee-track { animation: none; }
 }
 
 :where(a, button, input, textarea, select):focus-visible {
