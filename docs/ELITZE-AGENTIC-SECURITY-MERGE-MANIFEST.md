@@ -8,7 +8,7 @@ This document defines the intended architecture and deployment boundaries. It is
 
 ## System boundaries
 
-- **ELITZE control plane:** The core orchestration and policy boundary. The runtime orchestrator is `src/lib/elitze-secure/elitze-agent.ts`; `POST /api/elitze` is the governed planning/API entry point.
+- **ELITZE runtime orchestrator:** The core orchestration and policy boundary. The runtime orchestrator is `src/lib/elitze-secure/elitze-agent.ts`; `POST /api/elitze` is the governed planning/API entry point.
 - **SARA supervisory layer:** Provides operator-facing assistance and supervisory assurance within ELITZE's authenticated identity, tenant, policy, approval, and evidence controls. SARA does not create independent execution authority.
 - **Security enforcement:** Gateway checks, deterministic policy decisions, enforcement points, the audit ledger, configured adapters, and the scoped runner form the security-protection layer within the same product.
 - **Persistent workflows:** `src/lib/elitze-secure/agent-workflow.ts` and the related database migrations persist tenant-scoped workflow state, identity checks, approval gates, delegation limits, provenance, and evidence/retest state. A stored schedule is not proof that a production scheduler is running.
