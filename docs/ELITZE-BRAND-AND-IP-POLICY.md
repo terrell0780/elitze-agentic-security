@@ -20,4 +20,4 @@ Do not copy third-party repositories, libraries, documentation, skill packs, ima
 
 ## Acquisition rule
 
-A buyer receives the ELITZE assets and rights that the seller actually owns and can legally transfer. No sale document may claim that third-party assets or previously public material became exclusive merely because they appear in or connect to the product.
+A buyer receives only assets and rights that the seller actually owns and can legally transfer. No sale document may claim that third-party or licensed assets became exclusive merely because they appear in or connect to the product.
