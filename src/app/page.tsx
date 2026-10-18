@@ -23,7 +23,11 @@ export default function HomePage() {
 
       <AboutPromoSection />
 
-      <ValidationSection />      <WorkspaceCtaSection />      <SiteFooter />
+      <ValidationSection />
+
+      <WorkspaceCtaSection />
+
+      <SiteFooter />
     </main>
   );
 }
