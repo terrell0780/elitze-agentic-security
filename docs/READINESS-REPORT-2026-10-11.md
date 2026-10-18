@@ -50,9 +50,8 @@ The auth E2E workflow is configured to run against an isolated CI PostgreSQL ser
 ### 5. IP and dependency licensing — LEGAL REVIEW REQUIRED
 
 - No root-level project LICENSE file was found.
-- The repository was previously public; making it private does not erase historical distribution.
 - The generated inventory covers 595 npm packages. Fourteen package entries use LGPL or combined license expressions and need focused legal/notice review. The inventory relies on declared package metadata and is not legal advice.
-- Contributor ownership, prior public distribution, trademark/brand rights, authoritative package license texts, third-party notices and transfer rights must be reviewed before claiming exclusive title.
+- Contributor ownership, trademark/brand rights, authoritative package license texts, third-party notices and transfer rights must be reviewed before claiming exclusive title.
 
 ### 6. Operational assurances — NOT EVIDENCED
 
