@@ -1,7 +1,4 @@
 export type ElitzeAnalyticsEvent =
-  | "sales_cta"
-  | "acquisition_inquiry"
-  | "repository_access_request"
   | "console_open"
   | "privacy_consent_granted"
   | "privacy_consent_denied";

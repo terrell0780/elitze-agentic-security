@@ -1,120 +1,92 @@
 # ELITZE Agentic Security
 
-**Agent Identity and MCP Runtime Security**
+**Enterprise cybersecurity workspace for agent identities, MCP execution, policy enforcement, vulnerability validation, and evidence-backed security operations.**
 
-**Discover every agent and MCP server, map what each identity can reach, enforce policy before sensitive tool execution, and preserve verifiable evidence of every decision.**
+The model is not the security boundary. ELITZE binds agent and workload identity, tenant context, authorization, controlled execution, observation, retesting, and audit evidence into one security control plane.
 
-**Transaction model:** outright software/IP acquisition. The seller is not offering an ongoing SaaS subscription, managed hosting, billing, customer support, renewals, or customer-success operation. Buyer-owned operating responsibilities begin after transfer.
+ELITZE is built to compete for the security workloads handled by leading enterprise cybersecurity platforms. That is a product direction, not a claim of independent ranking, certification, or full parity. Capabilities are reported as operational only when the corresponding connected control path and evidence have been verified.
 
-ELITZE is narrowing its initial commercial proof to a real, evidence-backed control path for agent identity, MCP servers, tools, reachability, policy enforcement, authorized execution, runtime observation, retesting, and tamper-evident evidence.
+## Unified architecture
 
-## Frontier enterprise security vision
+- **ELITZE runtime orchestrator** — executive routing and governed task planning.
+- **SARA** — assistant and supervisory assurance layer operating inside ELITZE identity, policy, approval, and evidence controls.
+- **Sentinel security layer** — integrated protection within ELITZE Agentic Security, not a separate product.
+- **Private workspace** — authenticated console for tenant-scoped security operations, agent identity, policy decisions, validation, and evidence review.
+- **Security runner** — separate, scope-constrained execution tier for authorized checks and signed control-plane handshakes.
+- **Security data plane** — PostgreSQL persistence, tenant controls, Data Bridge, adapter registry, evidence ledger, and workflow state.
 
-ELITZE is being built toward a unified enterprise security control plane spanning AI, identity, endpoint, cloud, network, application/API, data, SaaS/email, threat intelligence, SecOps, governance, and evidence. The long-term target is to compete for the security workloads addressed by major enterprise security platforms while keeping ELITZE's production-truth rules: no fake telemetry, no unsupported claims, and no capability marked operational without real verification.
-
-See [`docs/ELITZE-FRONTIER-ENTERPRISE-SECURITY-VISION.md`](docs/ELITZE-FRONTIER-ENTERPRISE-SECURITY-VISION.md) for the full capability and execution standard.
-
-## Initial control loop
+## Core control loop
 
 `Discover → Identify → Map Reach → Evaluate Policy → Decide → Authorize Execution → Observe → Retest → Prove`
 
-The system is not complete because a dashboard state changes. The underlying tenant-scoped records, authorization decision, execution result, retest result, and evidence must exist in the connected control path.
+A task plan is not proof of execution. A connector implementation is not proof of a live provider connection. A passing self-test is not a substitute for a real production handshake, an authorized scan, or tenant-scoped evidence.
 
-## Production truth
+## Workspace
 
-ELITZE production mode uses **real connected records only**.
+- `/workspace` — authenticated entry to the workspace.
+- `/console` — protected security console.
+- `/login` and `/register` — identity entry points.
 
-- No mock data.
-- No fake telemetry.
-- No synthetic operational metrics.
-- No simulated security events presented as real.
-- No counterfactual/copy-of-graph simulation represented as an operational security control.
-- No placeholder success states.
-- No invented customers, agents, assets, findings, reachability, remediation, savings, rankings, or integrations.
-- Missing or unavailable evidence remains `UNKNOWN`, `UNMEASURABLE`, or `INSUFFICIENT_REACH` as appropriate.
+Workspace and security API routes must derive actor and tenant identity from an authenticated server session, not from client-supplied tenant IDs. High-impact actions require the applicable policy and approval boundaries.
 
-## Initial production integration wave
+## Security capabilities
 
-ELITZE now has provider-specific adapter paths for five initial ecosystems:
+The codebase provides the foundations for agent/MCP discovery, reachability mapping, deterministic policy decisions, security graph analysis, vulnerability intelligence, authorized validation requests, runner callbacks, tenant-scoped workflows, audit evidence, RAG/vector retrieval, and controlled external data ingestion.
 
-1. **MCP Gateway / Server** — discover MCP servers/tools and perform authenticated server discovery using the 2026-07-28 protocol path.
-2. **GitHub + GitHub Actions** — observe repositories and workflow runs for source/release identity and evidence.
-3. **AWS IAM + CloudTrail** — observe authenticated CloudTrail activity for AWS identity and runtime evidence.
-4. **Microsoft Entra ID + Azure** — observe Microsoft Graph directory context for identity and authorization evidence.
-5. **Kubernetes** — observe authenticated Kubernetes API/RBAC context for workload identity and runtime reachability.
+Integration state must distinguish **implemented**, **configured**, **connected**, and **verified**. No fake telemetry, synthetic incidents, invented customers, fabricated results, unsupported rankings, or unverified integrations may be presented as production truth. Unknown evidence remains `UNKNOWN`, `UNMEASURABLE`, or `INSUFFICIENT_REACH`.
 
-These adapters participate in the ELITZE control-plane path rather than functioning as passive data imports. See [`docs/ELITZE-PRODUCTION-INTEGRATIONS.md`](docs/ELITZE-PRODUCTION-INTEGRATIONS.md).
+See:
+- [Unified architecture manifest](docs/ELITZE-AGENTIC-SECURITY-MERGE-MANIFEST.md)
+- [Production integrations](docs/ELITZE-PRODUCTION-INTEGRATIONS.md)
+- [Enterprise security vision](docs/ELITZE-FRONTIER-ENTERPRISE-SECURITY-VISION.md)
+- [Enterprise security control status](docs/ENTERPRISE-SECURITY-CONTROL-STATUS.md)
+- [Third-party license inventory](docs/security/THIRD-PARTY-LICENSE-INVENTORY-2026-10-11.md)
+- [SBOM](docs/security/ELITZE-SBOM-2026-10-11.cdx.json)
 
-**Important:** adapter code is not the same thing as a live customer integration. A connector is `INTEGRATED` only after real credentials/configuration and a live authenticated provider path have been verified. Without those conditions, its runtime state remains `BLOCKED`, `UNKNOWN`, or `UNMEASURABLE` as appropriate.
+## Development and release validation
 
-**MCP execution safety default:** `.env.example` keeps `ELITZE_MCP_GATEWAY_ENABLED=false` and `ELITZE_MCP_GATEWAY_EXECUTION_ENABLED=false`. Operators must explicitly enable a controlled staging path only after setting an exact upstream host allowlist and the required server-side credentials. Tool execution remains off until the authorized execution test is approved.
+Use the repository's lockfile and Node version declared by the Vercel project.
 
-## Initial security surface
+```bash
+npm ci
+npm run typecheck
+npm run lint
+npm run test
+npm run workspace-platform:self-test
+npm run platform:readiness
+npm run production-config:self-test
+npm run runner:self-test
+npm run runner:handshake-self-test
+npm run runner:control-plane-handshake-self-test
+npm run build
+```
 
-- Agent discovery and inventory.
-- MCP server and tool inventory.
-- Workload / non-human identity.
-- Identity-to-capability and reachability mapping.
-- Secrets and sensitive-data reachability.
-- Policy enforcement before sensitive tool execution.
-- Approval boundaries for high-impact actions.
-- Separately authorized gateway execution.
-- Tamper-evident decision evidence.
-- Observed runtime outcomes.
-- Retesting and evidence-backed closure.
+Before production deployment:
+1. Provide production database and authentication secrets through the deployment secret manager.
+2. Apply the SQL migrations with `npm run db:production-migrate` using the explicitly approved production database.
+3. Verify authentication, tenant isolation, recovery/session controls, migration state, and internal health diagnostics.
+4. Verify each external connector with real authorized credentials and source-attributed records.
+5. Verify the runner public health endpoint and signed handshake; separately authorize and verify any actual scan.
+6. Promote only a build whose required release gates have passed.
 
-Broader security domains may exist in the architecture, but they are not claimed as simultaneously proven product scope unless the relevant live control path is implemented, connected, and verified.
+The deployment must not invent data or seed synthetic security records. An absent or disconnected source stays explicitly unknown.
 
-## REO / RIO / ROE
+## Useful endpoints
 
-**REO** is evidence-backed retesting of a real reachable/exploitable condition and proof of the resulting security state.
-
-**RIO** separates observed security outcomes from customer-approved financial assumptions. No financial result is invented when the required inputs are unavailable.
-
-**ROE** governs authorized validation activity, scope, approvals, evidence, and release/runtime testing boundaries.
-
-These are evidence controls, not marketing labels.
-
-## Google 2026 publishing standard
-
-ELITZE public content and advertising must describe what is actually available at the destination. We do not claim Google endorsement, partnership, preferred placement, guaranteed ranking, guaranteed traffic, guaranteed conversion, or special Google access without a real authorized relationship. We do not publish fabricated reviews, customer counts, rankings, performance statistics, or trust signals.
-
-Google Search requires helpful, reliable, people-first content and prohibits spam practices including scaled low-value generated content. Google Ads policies prohibit misleading representation, unreliable claims, unclear relevance, and unavailable offers. Google Search guidance for AI features likewise relies on normal Search eligibility and people-first quality requirements. 
-
-## Data Bridge
-
-The ELITZE Data Bridge is the controlled path for authorized external security data entering the ELITZE control plane:
-
-`External source → source authentication → tenant binding → validation → normalization → idempotent persistence → audit evidence → ObservedSignal`
-
-The bridge remains vendor-neutral and supports reviewed transports including `WEBHOOK`, `REST_PULL`, `EVENT_STREAM`, `MCP`, and `CUSTOM`.
-
-## Security boundary
-
-The model or agent is not the security boundary. Identity, policy, authorization, execution controls, evidence, and verified runtime outcomes form the security boundary.
-
-## Production path
-
-1. Provide `DATABASE_URL` and required internal authentication secrets through the deployment environment.
-2. Run the database migrations against the production database.
-3. Verify the connected tenant and identity path.
-4. Run typecheck, lint, tests, Data Bridge self-test, build, and sale-readiness checks.
-5. Deploy the application with the same database and secret configuration.
-
-The repository does not seed synthetic records on startup. Empty or disconnected production state remains empty or explicitly unavailable.
-
-## Core endpoints
-
-- `GET /api/health` — database readiness.
+- `GET /api/health` — minimal health response.
+- `GET /api/console/health` — authenticated operational checks.
 - `GET /api/security/skills` — governed ELITZE security skills.
 - `POST /api/security/decision` — authenticated policy evaluation and persistence.
-- `POST /api/data-bridge/ingest` — authenticated security-event ingestion.
+- `POST /api/data-bridge/ingest` — authenticated source ingestion.
 - `GET /api/data-bridge/observe` — normalized observed security signals.
-- `GET /api/data-bridge/health` — bridge health for an authorized tenant.
-- `GET /api/data-bridge/adapters` — internal authenticated connector capability manifest.
+- `GET /api/data-bridge/health` — tenant-authorized bridge health.
+- `GET /api/data-bridge/adapters` — authenticated connector capability manifest.
+- `POST /api/elitze` — authenticated ELITZE orchestration planning.
 
-## Secrets
+## Secrets and tenant boundary
 
-Real secrets must be supplied through the deployment environment or secret manager. Never commit `.env`, database URLs, API keys, credentials, or generated secret material.
+Supply real secrets through environment configuration or the secret manager. Never commit deployment tokens, private keys, database URLs, API credentials, customer information, or secret material. Tenant-scoped APIs must enforce authorization server-side and return no sensitive diagnostics to anonymous callers.
 
-See [`docs/ELITZE-CATEGORY-LEADER-MANIFEST.md`](docs/ELITZE-CATEGORY-LEADER-MANIFEST.md) and [`docs/ELITZE-PRODUCTION-INTEGRATIONS.md`](docs/ELITZE-PRODUCTION-INTEGRATIONS.md).
+## Product truth
+
+ELITZE prioritizes verified controls over impressive-looking dashboards. Do not claim independent ranking, certification, customer outcomes, security coverage percentages, or live integration status without current, independently reviewable evidence. Distinguish the platform's implemented code from capabilities whose providers or production execution remain unconnected.

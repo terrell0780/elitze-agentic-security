@@ -66,21 +66,4 @@ Canonical origin: https://elitze.info
 
 Secondary canonical host: https://www.elitze.info
 
-Public contact and acquisition email: tsh_cook@hotmail.com
-
 No alternate production domain or public contact email is part of the ELITZE product surface.
-
-## Sale-readiness evidence
-
-A buyer diligence package should verify:
-
-1. Source repository and commit history.
-2. Production database connectivity and applied migrations.
-3. Real authentication/session/recovery tests.
-4. Security, lint, typecheck, build and dependency audit results.
-5. Live integration states and their exact evidence.
-6. Domain ownership and canonical routing.
-7. IP ownership and transfer documents.
-8. Customer/revenue claims only where independently evidenced.
-9. Acquisition contact routing.
-10. Production runtime verification after the final deployment.

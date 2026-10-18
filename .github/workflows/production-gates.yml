@@ -66,8 +66,8 @@ jobs:
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
 
-      - name: Sale readiness review
-        run: npm run sale:readiness
+      - name: Enterprise platform readiness
+        run: npm run platform:readiness
 
       - name: Security fabric self-test
         run: npm run security-fabric:self-test
@@ -75,8 +75,8 @@ jobs:
         run: npm run rag:self-test
       - name: Persistent agent workflow self-test
         run: npm run agent-workflow:self-test
-      - name: Contact and acquisition routing self-test
-        run: npm run contact-acquisition:self-test
+      - name: Workspace and security platform boundary self-test
+        run: npm run workspace-platform:self-test
       - name: Live validation self-test
         run: npm run live-validation:self-test
       - name: Security runner self-test
@@ -161,8 +161,8 @@ jobs:
       - name: Security self-test
         run: npm run security:self-test
 
-      - name: Contact and acquisition routing self-test
-        run: npm run contact-acquisition:self-test
+      - name: Workspace and security platform boundary self-test
+        run: npm run workspace-platform:self-test
 
       - name: Production configuration contract
         run: npm run production-config:self-test

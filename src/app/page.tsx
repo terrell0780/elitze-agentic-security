@@ -5,7 +5,6 @@ import { useState } from "react";
 import Image from "next/image";
 import { ArrowRight, Crosshair, Menu, ShieldCheck, X } from "lucide-react";
 import GlobalThemeToggle from "@/components/global-theme-toggle";
-import AcquisitionCta from "@/components/acquisition-cta";
 import SecurityWorkspacePreview from "@/components/security-workspace-preview";
 
 const primaryLinks = [
@@ -70,13 +69,10 @@ export default function HomePage() {
           </nav>
 
           <div className="flex shrink-0 items-center gap-2">
-<AcquisitionCta
-              href="/workspace"
-              event="console_open"
-              className="hidden rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-slate-950 transition hover:brightness-110 sm:inline-flex"
+<Link href="/workspace" className="hidden rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-slate-950 transition hover:brightness-110 sm:inline-flex"
             >
               Open workspace
-            </AcquisitionCta>
+            </Link>
             <button
               type="button"
               onClick={() => setMobileOpen((open) => !open)}
@@ -129,13 +125,10 @@ export default function HomePage() {
               Discover agent and MCP identities, map what they can reach, enforce policy before sensitive tool execution, and preserve evidence you can verify.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <AcquisitionCta
-                href="/workspace"
-                event="console_open"
-                className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950 transition hover:brightness-110"
+              <Link href="/workspace" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950 transition hover:brightness-110"
               >
                 Open workspace <ArrowRight className="h-4 w-4" />
-              </AcquisitionCta>
+              </Link>
               <Link href="/security" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold transition hover:border-[var(--border-strong)]">
                 Explore the security model <ArrowRight className="h-4 w-4" />
               </Link>

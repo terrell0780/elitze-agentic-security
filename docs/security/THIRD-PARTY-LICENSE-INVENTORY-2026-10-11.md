@@ -34,7 +34,7 @@
 
 ## Focused review list
 
-These entries are not automatically prohibited. Their exact license texts, usage paths, binary distribution, notices and any applicable conditions must be reviewed before a proprietary acquisition transfer.
+These entries are not automatically prohibited. Their exact license texts, usage paths, binary distribution, notices and any applicable conditions must be reviewed before a proprietary software distribution.
 
 | Package | Version | Declared license expression |
 |---|---|---|
