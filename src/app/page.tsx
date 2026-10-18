@@ -116,7 +116,7 @@ export default function HomePage() {
             <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent-border)] bg-[var(--accent-soft)] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[.2em] text-[var(--accent)]">
               Agent identity · MCP runtime security
             </div>
-            <h1 className="mt-7 max-w-3xl text-[3.25rem] font-semibold leading-[.98] tracking-[-.065em] sm:text-6xl lg:text-[4.65rem]">
+            <h1 className="display-type mt-7 max-w-4xl text-[2.8rem] leading-[.98] sm:text-6xl lg:text-[5.1rem]">
               Govern AI agents
               <br />
               <span className="text-[var(--accent)]">before they act.</span>
@@ -140,6 +140,18 @@ export default function HomePage() {
           <SecurityWorkspacePreview />
         </div>
       </section>
+
+      <div className="elitze-marquee" aria-label="ELITZE Agentic Security — identity, reachability, policy, evidence">
+        <div className="elitze-marquee-track" aria-hidden="true">
+          {Array.from({ length: 2 }, (_, index) => (
+            <div key={index} className="flex">
+              {["ELITZE AGENTIC SECURITY", "IDENTITY FIRST", "POLICY BEFORE EXECUTION", "EVIDENCE THAT HOLDS"].map((item) => (
+                <span key={item} className="elitze-marquee-item">{item}<span>●</span></span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
 
       <section className="mx-auto max-w-[1400px] px-4 py-14 sm:px-7 sm:py-20">
         <div className="max-w-3xl">
