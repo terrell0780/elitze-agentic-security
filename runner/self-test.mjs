@@ -8,6 +8,7 @@ const dockerfile = fs.readFileSync("runner/Dockerfile", "utf8");
 assert.match(source, /ELITZE_RUNNER_HMAC_SECRET/);
 assert.match(source, /\/api\/handshake/);
 assert.match(source, /\/api\/github\/handshake/);
+assert.ok(source.includes(String.raw`authorization.match(/^Bearer\s+(\S+)$/i)`), "Bearer authorization parser must accept standard whitespace-separated tokens");
 assert.match(source, /token\.actions\.githubusercontent\.com/);
 assert.match(source, /GITHUB_OIDC_AUDIENCE/);
 assert.match(source, /workflow_ref/);
