@@ -75,6 +75,8 @@ assert.match(contactForm, /tsh_cook@hotmail\.com/);
 assert.match(contactForm, /trackElitzeEvent/);
 assert.match(sales, /redirect\("\/workspace"\)/);
 assert.match(access, /redirect\("\/workspace"\)/);
+assert.match(read("src/app/workspace/page.tsx"), /getCurrentUser/);
+assert.match(read("src/app/workspace/page.tsx"), /if \(!user\) redirect\("\/login/);
 assert.match(read("src/app/workspace/page.tsx"), /redirect\("\/console"\)/);
 assert.doesNotMatch(read("src/app/page.tsx"), /href="\/sales"|>\s*Acquisition\s*</i);
 assert.doesNotMatch(read("src/app/platform/page.tsx"), /href="\/sales"|Enterprise \/ Acquisition/i);
