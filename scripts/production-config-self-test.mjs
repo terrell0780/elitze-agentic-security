@@ -91,7 +91,7 @@ assert.match(read("src/app/robots.ts"), /"\/workspace"/, "workspace must be excl
 for (const legacyPath of ["src/app/sales/page.tsx", "src/app/sales/access/page.tsx", "src/app/acquisition/page.tsx", "src/app/buyers/page.tsx"]) {
   assert.match(read(legacyPath), /redirect\("\/workspace"\)/, "legacy commercial URL must route to the private workspace: " + legacyPath);
 }
-assert.doesNotMatch(read("src/app/sales/access/page.tsx"), /previously public|was public/i, "old repository history must not appear on public route");
+assert.doesNotMatch(read("src/app/sales/access/page.tsx"), /AcquisitionContactForm|Repository was|historical distribution/i, "legacy commercial route must not render a public repository page");
 console.log("ELITZE production configuration self-test: PASS");
 
 const legacyIdentity = ["myt", "hos"].join("");
