@@ -42,7 +42,6 @@ The seller's personal GitHub account, personal email and financial accounts, unr
 
 The source repository is private and is not distributed from the public listing. Qualified buyer diligence may receive temporary read-only access only after buyer identification, demonstration of ability to fund the proposed transaction, and execution of an appropriate NDA.
 
-The repository was previously public. This is disclosed for diligence. Making it private does not erase historical distribution or represent that no third-party copies exist.
 
 ## Technical stack
 
