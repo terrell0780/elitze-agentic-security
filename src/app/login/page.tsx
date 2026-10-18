@@ -167,7 +167,7 @@ function LoginContent() {
               <span className="text-sm font-black tracking-[0.18em] text-[#111827]">E</span>
             </div>
             <h1 className="mt-5 text-[26px] font-semibold tracking-[-0.025em]">Sign in to your account</h1>
-            <p className="mt-2 text-sm leading-6 text-[#6B7280]">Access your ELITZE security control plane.</p>
+            <p className="mt-2 text-sm leading-6 text-[#6B7280]">Access your ELITZE security workspace.</p>
           </div>
 
           {params.get("verified") && (
