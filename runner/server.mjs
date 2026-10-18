@@ -1,6 +1,6 @@
 import http from "node:http";
 import { spawn } from "node:child_process";
-import { createHmac, timingSafeEqual, randomUUID } from "node:crypto";
+import { createHmac, createPublicKey, verify as verifySignature, timingSafeEqual, randomUUID } from "node:crypto";
 import dns from "node:dns/promises";
 import { isIP } from "node:net";
 import { URL } from "node:url";
@@ -53,7 +53,76 @@ if (!ALLOWED_HOSTS.length) {
 
 const jobs = new Map();
 const queue = [];
+
 const handshakeNonces = new Map();
+const GITHUB_OIDC_ISSUER = "https://token.actions.githubusercontent.com";
+const GITHUB_OIDC_AUDIENCE = "elitze-runner-handshake";
+const GITHUB_REPOSITORY = "terrell0780/elitze-agentic-security";
+const GITHUB_MAIN_REF = "refs/heads/main";
+const GITHUB_PRODUCTION_WORKFLOW = "terrell0780/elitze-agentic-security/.github/workflows/production-gates.yml@refs/heads/main";
+let githubOidcJwksCache = null;
+let githubOidcJwksFetchedAt = 0;
+
+async function getGithubOidcJwks() {
+  if (githubOidcJwksCache && Date.now() - githubOidcJwksFetchedAt < 5 * 60_000) {
+    return githubOidcJwksCache;
+  }
+  const response = await fetch(GITHUB_OIDC_ISSUER + "/.well-known/jwks", {
+    signal: AbortSignal.timeout(5_000),
+    headers: { accept: "application/json" },
+  });
+  if (!response.ok) throw new Error("github_oidc_jwks_unavailable");
+  const document = await response.json();
+  if (!Array.isArray(document.keys)) throw new Error("github_oidc_jwks_invalid");
+  const keys = document.keys.filter((key) => key && key.kid && key.kty === "RSA" && (!key.use || key.use === "sig") && (!key.alg || key.alg === "RS256"));
+  if (!keys.length) throw new Error("github_oidc_signing_keys_missing");
+  githubOidcJwksCache = keys;
+  githubOidcJwksFetchedAt = Date.now();
+  return keys;
+}
+
+async function validateGithubOidcToken(token) {
+  const parts = String(token ?? "").split(".");
+  if (parts.length !== 3 || parts.some((part) => !part)) throw new Error("github_oidc_token_invalid");
+  let header;
+  let claims;
+  try {
+    header = JSON.parse(Buffer.from(parts[0], "base64url").toString("utf8"));
+    claims = JSON.parse(Buffer.from(parts[1], "base64url").toString("utf8"));
+  } catch {
+    throw new Error("github_oidc_token_invalid");
+  }
+  if (header.alg !== "RS256" || typeof header.kid !== "string") throw new Error("github_oidc_algorithm_not_allowed");
+  const jwk = (await getGithubOidcJwks()).find((key) => key.kid === header.kid);
+  if (!jwk) throw new Error("github_oidc_signing_key_unknown");
+  const signedContent = Buffer.from(parts[0] + "." + parts[1], "utf8");
+  const signatureBytes = Buffer.from(parts[2], "base64url");
+  const validSignature = verifySignature(
+    "RSA-SHA256",
+    signedContent,
+    createPublicKey({ key: jwk, format: "jwk" }),
+    signatureBytes,
+  );
+  if (!validSignature) throw new Error("github_oidc_signature_invalid");
+
+  const now = Math.floor(Date.now() / 1000);
+  const audiences = Array.isArray(claims.aud) ? claims.aud : [claims.aud];
+  if (claims.iss !== GITHUB_OIDC_ISSUER || !audiences.includes(GITHUB_OIDC_AUDIENCE)) {
+    throw new Error("github_oidc_issuer_or_audience_invalid");
+  }
+  if (!Number.isFinite(claims.exp) || claims.exp <= now ||
+      !Number.isFinite(claims.iat) || claims.iat > now + 30 || now - claims.iat > 600 ||
+      (Number.isFinite(claims.nbf) && claims.nbf > now + 30)) {
+    throw new Error("github_oidc_token_time_invalid");
+  }
+  if (claims.repository !== GITHUB_REPOSITORY ||
+      claims.ref !== GITHUB_MAIN_REF ||
+      claims.workflow_ref !== GITHUB_PRODUCTION_WORKFLOW ||
+      !["push", "workflow_dispatch"].includes(claims.event_name)) {
+    throw new Error("github_oidc_workload_not_authorized");
+  }
+  return claims;
+}
 const MAX_HANDSHAKE_NONCES = 10_000;
 
 function authOk(req) {
@@ -379,6 +448,45 @@ function enqueue(job) {
 async function handle(req, res) {
   const url = new URL(req.url ?? "/", "http://runner.local");
   if (url.pathname === "/health") return json(res, 200, { ok: true, runner: "ELITZE", engine: "nuclei", active: [...jobs.values()].filter((j) => j.status === "RUNNING").length, queued: queue.length });
+
+  if (req.method === "POST" && url.pathname === "/api/github/handshake") {
+    const authorization = String(req.headers.authorization ?? "");
+    const tokenMatch = authorization.match(/^Bearer\\s+(\\S+)$/i);
+    if (!tokenMatch) return json(res, 401, { ok: false, error: "github_oidc_required" });
+    let challenge;
+    try {
+      challenge = JSON.parse(await readBody(req));
+    } catch {
+      return json(res, 400, { ok: false, error: "invalid_json" });
+    }
+    if (challenge?.action !== "github-handshake" ||
+        !Number.isSafeInteger(challenge?.timestamp) ||
+        Math.abs(Date.now() - challenge.timestamp) > 5 * 60_000 ||
+        typeof challenge?.nonce !== "string" ||
+        !/^[a-f0-9]{32}$/i.test(challenge.nonce)) {
+      return json(res, 400, { ok: false, error: "invalid_github_handshake_challenge" });
+    }
+    let claims;
+    try {
+      claims = await validateGithubOidcToken(tokenMatch[1]);
+    } catch {
+      return json(res, 401, { ok: false, error: "github_oidc_not_authorized" });
+    }
+    const now = Date.now();
+    for (const [seenNonce, seenAt] of handshakeNonces) if (now - seenAt > 300000) handshakeNonces.delete(seenNonce);
+    if (handshakeNonces.has(challenge.nonce)) return json(res, 409, { ok: false, error: "handshake_nonce_replayed" });
+    if (handshakeNonces.size >= MAX_HANDSHAKE_NONCES) return json(res, 429, { ok: false, error: "handshake_nonce_capacity" });
+    handshakeNonces.set(challenge.nonce, now);
+    return json(res, 200, {
+      ok: true,
+      action: "github-handshake",
+      nonce: challenge.nonce,
+      timestamp: now,
+      repository: claims.repository,
+      workflowRef: claims.workflow_ref,
+    });
+  }
+
   if (!authOk(req)) return json(res, 401, { ok: false, error: "unauthorized" });
   const body = await readBody(req);
   if (!requestSignatureOk(req, body)) return json(res, 401, { ok: false, error: "invalid_signature" });
