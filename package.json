@@ -54,7 +54,7 @@
     "agent-passports:self-test": "node --experimental-strip-types scripts/agent-passports-self-test.mjs",
     "vulnerability-triage:self-test": "node --experimental-strip-types scripts/vulnerability-triage-self-test.mjs",
     "evidence-snapshot:self-test": "node scripts/evidence-snapshot-self-test.mjs",
-    "platform:readiness": "node scripts/platform-readiness-self-test.mjs && node scripts/platform-readiness.mjs && node scripts/brand-self-test.mjs",
+    "platform:readiness": "node scripts/security-self-test.mjs && node scripts/production-config-self-test.mjs && node scripts/brand-self-test.mjs",
     "workspace-platform:self-test": "node scripts/workspace-platform-self-test.mjs"
   },
   "dependencies": {
