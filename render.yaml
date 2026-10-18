@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: elitze-security-runner
+    runtime: docker
+    plan: free
+    region: ohio
+    branch: fix/oidc-runner-live-gate
+    dockerfilePath: ./runner/Dockerfile
+    dockerContext: ./runner
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: ELITZE_CALLBACK_ORIGIN
+        value: https://www.elitze.info
+      - key: ELITZE_RUNNER_ALLOWED_HOSTS
+        value: www.elitze.info,elitze.info
+      - key: ELITZE_RUNNER_ALLOWED_PORTS
+        value: "443"
+      - key: ELITZE_RUNNER_ALLOW_PRIVATE_TARGETS
+        value: "false"
+      - key: ELITZE_RUNNER_UPDATE_TEMPLATES
+        value: "false"
+      - key: ELITZE_RUNNER_HMAC_SECRET
+        sync: false
