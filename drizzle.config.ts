@@ -14,6 +14,7 @@ function normalizeConnectionString(value: string): string {
 }
 
 const databaseUrl =
+  process.env.DATABASE_MIGRATION_URL?.trim() ||
   process.env.DATABASE_URL?.trim() ||
   process.env.POSTGRES_URL?.trim() ||
   process.env.POSTGRES_URL_NON_POOLING?.trim();
@@ -31,7 +32,7 @@ const connectionString = databaseUrl ? normalizeConnectionString(databaseUrl) : 
   const database = process.env.PGDATABASE?.trim();
   const port = Number(process.env.PGPORT ?? 5432);
   if (!host || !user || !password || !database) {
-    throw new Error("DATABASE_URL or PGHOST/PGPORT/PGUSER/PGPASSWORD/PGDATABASE is required to run Drizzle migrations");
+    throw new Error("DATABASE_MIGRATION_URL, DATABASE_URL or PGHOST/PGPORT/PGUSER/PGPASSWORD/PGDATABASE is required to run Drizzle migrations");
   }
   const ssl = explicitSsl ?? (/\.neon\.tech$/i.test(host) ? true : undefined);
   return `postgresql://${encodeURIComponent(user)}:${encodeURIComponent(password)}@${host}:${port}/${database}${ssl ? "?sslmode=verify-full" : ""}`;

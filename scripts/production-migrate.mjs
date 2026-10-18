@@ -15,8 +15,8 @@ function normalizeConnectionString(value) {
   return value;
 }
 
-const rawUrl = process.env.DATABASE_URL?.trim();
-if (!rawUrl) throw new Error("DATABASE_URL is required for production migration.");
+const rawUrl = process.env.DATABASE_MIGRATION_URL?.trim() || process.env.DATABASE_URL?.trim();
+if (!rawUrl) throw new Error("DATABASE_MIGRATION_URL or DATABASE_URL is required for production migration.");
 const url = normalizeConnectionString(rawUrl);
 
 const client = new pg.Client({
@@ -36,6 +36,27 @@ try {
   } catch (error) {
     await client.query("ROLLBACK");
     throw error;
+  }
+
+  const runtimeRole = process.env.DATABASE_RUNTIME_ROLE?.trim();
+  if (runtimeRole) {
+    if (!/^[a-z_][a-z0-9_]{0,62}$/i.test(runtimeRole)) {
+      throw new Error("DATABASE_RUNTIME_ROLE is not a valid PostgreSQL role identifier");
+    }
+    await client.query("BEGIN");
+    try {
+      await client.query(`GRANT USAGE ON SCHEMA public TO "${runtimeRole}"`);
+      await client.query(`GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO "${runtimeRole}"`);
+      await client.query(`GRANT USAGE, SELECT, UPDATE ON ALL SEQUENCES IN SCHEMA public TO "${runtimeRole}"`);
+      await client.query(`GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO "${runtimeRole}"`);
+      await client.query(`ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO "${runtimeRole}"`);
+      await client.query(`ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT, UPDATE ON SEQUENCES TO "${runtimeRole}"`);
+      await client.query(`ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT EXECUTE ON FUNCTIONS TO "${runtimeRole}"`);
+      await client.query("COMMIT");
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    }
   }
 
   const required = [
