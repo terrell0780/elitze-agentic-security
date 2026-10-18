@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - fix/oidc-runner-live-gate
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
