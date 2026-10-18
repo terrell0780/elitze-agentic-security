@@ -55,7 +55,7 @@ npm run build
 npm run start
 ```
 
-Use `npm run dev` for local development. Keep `package-lock.json) in sync with `package.json`; use `npm ci` for reproducible installs.
+Use `npm run dev` for local development. Keep `package-lock.json` in sync with `package.json`; use `npm ci` for reproducible installs.
 
 ## Configuration and deployment
 
