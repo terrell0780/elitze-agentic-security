@@ -65,7 +65,6 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json().catch(() => null) as Record<string, unknown> | null;
     if (!body) return Response.json({ error: "invalid_request" }, { status: 400 });
-
     if (normalize(body.website, 200)) return Response.json({ ok: true });
 
     const requestTypeRaw = normalize(body.requestType, 20) as RequestType;
@@ -77,35 +76,27 @@ export async function POST(request: NextRequest) {
     const email = normalize(body.email, MAX_EMAIL).toLowerCase();
     const message = normalize(body.message, MAX_MESSAGE);
 
-    if (!name || !email || !message || !validEmail(email)) {
+    if (!name || !email || !message || !validEmail(email) || message.length < 10) {
       return Response.json({ error: "name_email_message_required" }, { status: 400 });
     }
 
-    const key = await getRateLimitKey("acquisition-contact", email);
-    if (!(await consumeRateLimit(key, 5, 60 * 60))) {
-      return Response.json({ error: "too_many_requests" }, {
-        status: 429,
-        headers: { "Retry-After": "3600" },
-      });
+    // Apply the database-backed rate limit when available, without making email delivery
+    // depend on database uptime. The form still validates and bounds every field.
+    try {
+      const key = await getRateLimitKey("acquisition-contact", email);
+      if (!(await consumeRateLimit(key, 5, 60 * 60))) {
+        return Response.json({ error: "too_many_requests" }, {
+          status: 429,
+          headers: { "Retry-After": "3600" },
+        });
+      }
+    } catch (error) {
+      console.error("ELITZE contact rate-limit store unavailable", error);
     }
 
-    const lead = await getPgPool().query(
-      "INSERT INTO acquisition_leads (request_type,name,organization,email,message,source) VALUES ($1,$2,$3,$4,$5,$6) RETURNING id,created_at AS \"createdAt\"",
-      [
-        requestType,
-        name,
-        organization || "Not provided",
-        email,
-        message,
-        productionConfig.canonicalOrigin,
-      ],
-    );
-
-    const leadId = lead.rows[0]?.id ?? "unavailable";
-    const submittedAt = lead.rows[0]?.createdAt ?? new Date().toISOString();
+    const submittedAt = new Date().toISOString();
     const emailText = [
       "ELITZE contact type: " + labelFor(requestType),
-      "Lead ID: " + leadId,
       "Submitted: " + submittedAt,
       "",
       "Name: " + name,
@@ -119,22 +110,27 @@ export async function POST(request: NextRequest) {
     ].join("\n");
 
     try {
-      if (!process.env.ELITZE_EMAIL_PROVIDER?.trim() || !process.env.ELITZE_EMAIL_FROM?.trim()) {
-        return Response.json(
-          { error: "email_delivery_not_configured", leadRecorded: true, leadId },
-          { status: 503 },
-        );
-      }
-      await sendEmail({ to: DESTINATION(), subject: subjectFor(requestType), text: emailText });
+      await sendEmail({
+        to: DESTINATION(),
+        subject: subjectFor(requestType),
+        text: emailText,
+      });
     } catch (error) {
-      console.error("ELITZE contact email delivery failed after lead persistence", error);
-      return Response.json(
-        { error: "email_delivery_failed", leadRecorded: true, leadId },
-        { status: 503 },
-      );
+      console.error("ELITZE contact email delivery failed", error);
+      return Response.json({ error: "email_delivery_failed" }, { status: 503 });
     }
 
-    return Response.json({ ok: true, leadRecorded: true, leadId });
+    // Email is the primary delivery path; the database stores a secondary copy.
+    try {
+      await getPgPool().query(
+        "INSERT INTO acquisition_leads (request_type,name,organization,email,message,source) VALUES ($1,$2,$3,$4,$5,$6)",
+        [requestType, name, organization || "Not provided", email, message, productionConfig.canonicalOrigin],
+      );
+      return Response.json({ ok: true, delivered: true, leadRecorded: true });
+    } catch (error) {
+      console.error("ELITZE contact email delivered; database copy unavailable", error);
+      return Response.json({ ok: true, delivered: true, leadRecorded: false });
+    }
   } catch (error) {
     console.error("ELITZE contact intake failed", error);
     return Response.json({ error: "contact_intake_unavailable" }, { status: 503 });
