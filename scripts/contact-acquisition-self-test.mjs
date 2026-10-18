@@ -82,7 +82,7 @@ assert.doesNotMatch(read("src/app/page.tsx"), /href="\/sales"|>\s*Acquisition\s*
 assert.doesNotMatch(read("src/app/platform/page.tsx"), /href="\/sales"|Enterprise \/ Acquisition/i);
 assert.doesNotMatch(read("src/components/seo-feature-page.tsx"), /href="\/sales"|Acquisition and technical review/i);
 assert.doesNotMatch(read("src/app/sitemap.ts"), /"\/sales"/);
-assert.doesNotMatch(read("src/app/sales/access/page.tsx"), /previously public|was public/i);
+assert.doesNotMatch(read("src/app/sales/access/page.tsx"), /AcquisitionContactForm|Repository was|historical distribution/i);
 assert.match(email, /export async function sendEmail/);
 assert.match(email, /reply_to/);
 assert.match(email, /tsh_cook@hotmail\.com/);
