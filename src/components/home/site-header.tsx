@@ -28,7 +28,7 @@ export default function SiteHeader() {
     <span className="block text-[8px] uppercase tracking-[.26em] text-[var(--muted)]">Agentic Security</span>
     </span>
     </Link>
-    
+
     <nav className="hidden items-center gap-6 text-xs font-semibold text-[var(--muted)] xl:flex" aria-label="Primary navigation">
     {primaryLinks.map(([label, href]) => (
     <Link key={href} href={href} className="transition hover:text-[var(--text)]">
@@ -36,7 +36,7 @@ export default function SiteHeader() {
     </Link>
     ))}
     </nav>
-    
+
     <div className="flex shrink-0 items-center gap-2">
     <Link href="/workspace" className="hidden rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-slate-950 transition hover:brightness-110 sm:inline-flex"
     >
@@ -55,7 +55,7 @@ export default function SiteHeader() {
     <GlobalThemeToggle embedded />
     </div>
     </div>
-    
+
     {mobileOpen && (
     <nav id="mobile-navigation" className="border-t border-[var(--border)] px-4 py-3 xl:hidden" aria-label="Mobile navigation">
     <div className="mx-auto flex max-w-[1400px] flex-col gap-1">
