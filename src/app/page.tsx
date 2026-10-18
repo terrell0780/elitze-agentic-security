@@ -6,6 +6,7 @@ import Image from "next/image";
 import { ArrowRight, Crosshair, Menu, ShieldCheck, X } from "lucide-react";
 import GlobalThemeToggle from "@/components/global-theme-toggle";
 import SecurityWorkspacePreview from "@/components/security-workspace-preview";
+import ControlModelSection from "@/components/home/control-model-section";
 
 const primaryLinks = [
   ["Workspace", "/workspace"],
@@ -131,6 +132,8 @@ export default function HomePage() {
       <ControlModelSection />
 
 
+
+      <ControlModelSection />
 
       <section className="border-y border-[var(--border)] bg-[var(--section)]">
         <div className="mx-auto grid max-w-[1400px] gap-8 px-4 py-14 sm:px-7 sm:py-18 lg:grid-cols-[1fr_1fr] lg:items-center">
