@@ -451,7 +451,7 @@ async function handle(req, res) {
 
   if (req.method === "POST" && url.pathname === "/api/github/handshake") {
     const authorization = String(req.headers.authorization ?? "");
-    const tokenMatch = authorization.match(/^Bearer\\s+(\\S+)$/i);
+    const tokenMatch = authorization.match(/^Bearer\s+(\S+)$/i);
     if (!tokenMatch) return json(res, 401, { ok: false, error: "github_oidc_required" });
     let challenge;
     try {
