@@ -10,7 +10,7 @@
 - **Objective:** Outright acquisition of the product/source IP and expressly agreed transferable assets, not a claim of a revenue-generating company.
 - **Deal proof required:** no verified revenue, paying customers, signed customer contracts, independent security certification, independent penetration-test report, or confirmed buyer interest is included in the evidence inspected to date.
 - **Material technical disclosure:** production web deployment and DB/schema health are verified, but the live security-runner service has not been deployed and cryptographically accepted in production. Customer-specific security integrations are not individually verified end-to-end. These cannot be represented as operational today.
-- **IP disclosure:** the repository is currently private but was previously public; privacy does not erase earlier distribution. No root-level project LICENSE file was found. Ownership, contributor agreements, third-party dependency licenses, and rights to any included assets require a documented legal review before promising exclusivity.
+- **IP disclosure:** No root-level project LICENSE file was found. Ownership, contributor agreements, third-party dependency licenses, and rights to included assets require documented legal review before promising exclusivity.
 - **Do not distribute production credentials.** Provide time-limited, read-only diligence access only to a qualified prospective buyer under suitable confidentiality terms.
 
 ## Prioritized prospective acquirers
@@ -57,7 +57,7 @@ No buyer has confirmed interest, price, or intent to acquire ELITZE. The US$250,
 - Live Nuclei security runner: not yet deployed at a stable, approved HTTPS host; production HMAC handshake and a genuinely authorized end-to-end scan remain required.
 - Customer-source integrations: each provider requires its own valid authorization and runtime probe; a credential variable or a code adapter alone does not constitute a working connection.
 - Authentication production lifecycle: isolated CI E2E is evidence for the tested workflow, not a substitute for authorized production lifecycle verification. Do not create artificial auth records in a production DB.
-- IP chain and license review: previously public history and absence of a root LICENSE need legal review.
+- IP chain and license review: absence of a root LICENSE and ownership of included assets require legal review.
 - Operational readiness: independent security assessment, backup restoration, disaster recovery and incident-response exercises have not been evidenced by this assessment.
 
 ## Sources & verification boundary
