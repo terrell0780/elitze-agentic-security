@@ -11,13 +11,16 @@ export type ReadinessDatabaseStatus = {
   expectedMigrations?: number;
   appliedMigrations?: number;
   missingMigrations?: string[];
+  unexpectedMigrations?: string[];
 };
 
 export function classifyDatabaseFailure(message: string): string {
   const value = message.toLowerCase();
 
   if (value.includes("not configured")) return "DATABASE_UNCONFIGURED";
-  if (value.includes("migration") && value.includes("missing")) return "MIGRATIONS_MISSING";
+  if (value.includes("migration") && (value.includes("missing") || value.includes("ledger parity"))) {
+    return "MIGRATIONS_MISSING";
+  }
   if (/password authentication failed|no password supplied|authentication failed/.test(value)) {
     return "DATABASE_AUTHENTICATION_FAILED";
   }
@@ -59,6 +62,7 @@ export function buildSanitizedReadinessDiagnostic(
       expectedMigrations: database.expectedMigrations ?? null,
       appliedMigrations: database.appliedMigrations ?? null,
       missingMigrationCount: database.missingMigrations?.length ?? null,
+      unexpectedMigrationCount: database.unexpectedMigrations?.length ?? null,
     },
   };
 }

@@ -9,6 +9,7 @@ export type ProductionDatabaseVerification = {
   expectedMigrations?: number;
   appliedMigrations?: number;
   missingMigrations?: string[];
+  unexpectedMigrations?: string[];
   configurationSource: string;
 };
 
@@ -32,17 +33,24 @@ export async function verifyProductionDatabase(): Promise<ProductionDatabaseVeri
       .filter((file) => /^\d+_.*\.sql$/.test(file))
       .sort();
     const applied = new Set(migrationResult.rows.map((row) => String(row.id)));
+    const expectedSet = new Set(expected);
     const missing = expected.filter((file) => !applied.has(file));
+    const unexpected = [...applied].filter((id) => !expectedSet.has(id)).sort();
     const version = String(versionResult.rows[0]?.version ?? "unknown");
 
-    if (missing.length > 0) {
+    if (missing.length > 0 || unexpected.length > 0) {
+      const drift = [
+        missing.length ? `${missing.length} repository migration(s) missing from the ledger` : "",
+        unexpected.length ? `${unexpected.length} ledger migration ID(s) not present in this repository` : "",
+      ].filter(Boolean).join("; ");
       return {
         success: false,
-        message: `Database connected, but ${missing.length} migration(s) are missing.`,
+        message: `Database connected, but migration ledger parity failed: ${drift}.`,
         version,
         expectedMigrations: expected.length,
         appliedMigrations: applied.size,
         missingMigrations: missing,
+        unexpectedMigrations: unexpected,
         configurationSource,
       };
     }
@@ -54,6 +62,7 @@ export async function verifyProductionDatabase(): Promise<ProductionDatabaseVeri
       expectedMigrations: expected.length,
       appliedMigrations: applied.size,
       missingMigrations: [],
+      unexpectedMigrations: [],
       configurationSource,
     };
   } catch (error) {

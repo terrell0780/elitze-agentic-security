@@ -4,6 +4,7 @@ import { buildSanitizedReadinessDiagnostic, classifyDatabaseFailure } from "../s
 
 assert.equal(classifyDatabaseFailure("Production database is not configured."), "DATABASE_UNCONFIGURED");
 assert.equal(classifyDatabaseFailure("Database connected, but 2 migration(s) are missing."), "MIGRATIONS_MISSING");
+assert.equal(classifyDatabaseFailure("Database connected, but migration ledger parity failed: 1 ledger migration ID(s) not present in this repository."), "MIGRATIONS_MISSING");
 assert.equal(classifyDatabaseFailure('password authentication failed for user "elitze_runtime"'), "DATABASE_AUTHENTICATION_FAILED");
 assert.equal(classifyDatabaseFailure("self-signed certificate in certificate chain"), "DATABASE_TLS_FAILED");
 assert.equal(classifyDatabaseFailure("connect ETIMEDOUT"), "DATABASE_TIMEOUT");
@@ -25,6 +26,7 @@ const diagnostic = buildSanitizedReadinessDiagnostic(
     expectedMigrations: 33,
     appliedMigrations: 32,
     missingMigrations: ["0032_validation_kinds.sql"],
+    unexpectedMigrations: ["legacy_migration.sql"],
   },
 );
 assert.deepEqual(diagnostic, {
@@ -41,6 +43,7 @@ assert.deepEqual(diagnostic, {
     expectedMigrations: 33,
     appliedMigrations: 32,
     missingMigrationCount: 1,
+    unexpectedMigrationCount: 1,
   },
 });
 const serializedDiagnostic = JSON.stringify(diagnostic);
