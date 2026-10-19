@@ -11,7 +11,6 @@ const controls = [
   ["Terms of Service", "Customer and AI-specific service terms", "/terms"],
   ["Privacy Notice", "Privacy, measurement consent and data-processing boundary", "/privacy"],
   ["Security Architecture", "Visible technical controls and evidence boundary", "/security"],
-  ["Vulnerability Disclosure", "Report security vulnerabilities through the approved disclosure process", "/security"],
 ];
 
 export default function LegalPage() {
