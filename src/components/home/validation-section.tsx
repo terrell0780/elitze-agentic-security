@@ -19,9 +19,7 @@ export default function ValidationSection() {
     </span>
     ))}
     </div>
-    <Link href="/console/pentesting" className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950 transition hover:brightness-110">
-    <Crosshair className="h-4 w-4" /> Open validation workbench <ArrowRight className="h-4 w-4" />
-    </Link>
+
     </div>
     <div className="overflow-hidden rounded-[24px] border border-[var(--accent-border)] bg-black/20 shadow-[0_30px_100px_rgba(0,0,0,.25)]">
     <Image src="/elitze-security-validation.svg" alt="ELITZE authorized security validation, evidence collection, and retest workflow" width={1600} height={900} className="h-auto w-full" />
