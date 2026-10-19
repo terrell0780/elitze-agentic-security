@@ -59,7 +59,6 @@ export default function Page() {
           { title: "Security model", href: "/security", description: "Identity, policy boundaries, evidence states, and runtime controls." },
           { title: "Integrations", href: "/integrations", description: "Review supported connections and their operational boundaries." },
           { title: "Documentation", href: "/docs", description: "Technical guides and operator workflows." },
-          { title: "Acquisition", href: "/sales", description: "Product scope, technical diligence, and asset-transfer information." },
         ]}
       />
 
