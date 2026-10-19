@@ -1,47 +1,103 @@
 # ELITZE Agentic Security
 
-**Identity-aware security controls for AI agents, MCP servers, tools, and sensitive execution paths.**
+**Identity-aware security for AI agents, MCP servers, tools, and sensitive execution paths.**
 
 > The model is not the security boundary.
 
-ELITZE Agentic Security brings identity, tenant isolation, policy evaluation, authorized execution, observation, retesting, and audit evidence into one control plane. The product's canonical site is [elitze.info](https://www.elitze.info).
+ELITZE Agentic Security is a security control plane designed to connect agent identity, tenant boundaries, policy decisions, controlled execution, runtime observation, and auditable evidence. It is built around a simple principle: every consequential action should have a clear identity, an explicit authorization path, and a traceable decision.
 
-## Security control loop
+**Product:** [elitze.info](https://www.elitze.info) · **Repository:** [Source code](https://github.com/terrell0780/elitze-agentic-security)
 
-`Discover → Identify → Map Reach → Evaluate Policy → Decide → Authorize Execution → Observe → Retest → Prove`
+## What ELITZE is built to do
 
-Every action must be tied to an authenticated actor, tenant boundary, policy decision, authorized scope, and attributable evidence. A planned action is not proof of execution; code for an integration is not proof that the provider is connected.
+- **Govern agent identity and access** across AI agents, MCP servers, tools, and sensitive execution paths.
+- **Evaluate policy before action** with a defined decision and authorization flow.
+- **Map execution reach** across identities, tools, integrations, and tenant boundaries.
+- **Coordinate controlled execution** through scoped runner and integration patterns.
+- **Observe and retest** security-relevant behavior as part of a repeatable control loop.
+- **Preserve decision evidence** for review, investigation, and operational accountability.
+- **Support enterprise security workflows** through authenticated workspaces, a security console, data-bridge adapters, and integration health endpoints.
+
+## The ELITZE control loop
+
+```text
+Discover
+   ↓
+Identify
+   ↓
+Map Reach
+   ↓
+Evaluate Policy
+   ↓
+Decide
+   ↓
+Authorize Execution
+   ↓
+Observe
+   ↓
+Retest
+   ↓
+Prove
+```
+
+The workflow links what an agent can reach to who or what is acting, which policy applies, what decision was made, and what evidence is available afterward.
 
 ## Architecture
 
-- **ELITZE** — core control plane and governed orchestration.
-- **SARA** — supervisory assurance layer operating within ELITZE's identity, policy, approval, and evidence boundaries.
-- **Security enforcement** — gateway, deterministic policy decisions, scoped runner, and audit ledger.
-- **Private workspace** — authenticated tenant-scoped security workflows and evidence review.
-- **Data plane** — PostgreSQL-backed state, Data Bridge, adapters, workflow state, and audit evidence.
+- **ELITZE Control Plane** — coordinates identity-aware security workflows and governed orchestration.
+- **SARA Supervisory Layer** — provides supervisory assurance within the control plane's identity, policy, approval, and evidence boundaries.
+- **Policy and Execution Controls** — evaluates decisions and governs scoped runner execution.
+- **Security Workspace** — provides authenticated workspace and console entry points for security operations.
+- **Data Bridge** — organizes source ingestion, observed signals, adapter capabilities, and integration health.
+- **Evidence and Audit** — supports attributable security decisions and reviewable operational records.
+- **Persistence** — uses PostgreSQL-backed application state and documented database migrations.
 
-See the [architecture and deployment manifest](docs/ELITZE-AGENTIC-SECURITY-MERGE-MANIFEST.md) for component boundaries and deployment requirements.
+## Application surface
 
-## Application routes
+| Route | Purpose |
+| --- | --- |
+| `/login` and `/register` | Account access |
+| `/workspace` and `/console` | Authenticated workspace and security console |
+| `GET /api/health` | Service health |
+| `POST /api/security/decision` | Policy decision workflow |
+| `POST /api/data-bridge/ingest` | Source ingestion |
+| `GET /api/data-bridge/observe` | Security signal observation |
+| `GET /api/data-bridge/health` | Data Bridge health |
+| `GET /api/data-bridge/adapters` | Connector capability manifest |
+| `POST /api/elitze` | Governed orchestration planning |
 
-- `/login` and `/register` — account entry points.
-- `/workspace` and `/console` — authenticated workspace and security console.
-- `GET /api/health` — minimal service health.
-- `POST /api/security/decision` — policy evaluation.
-- `POST /api/data-bridge/ingest` — authenticated source ingestion.
-- `GET /api/data-bridge/observe` — observed security signals.
-- `GET /api/data-bridge/health` — authorized Data Bridge health.
-- `GET /api/data-bridge/adapters` — connector capability manifest.
-- `POST /api/elitze` — governed orchestration planning.
+## Technology
 
-Protected routes must derive actor and tenant identity from the server-authenticated session. Do not trust client-supplied tenant identifiers.
+- Next.js and React application
+- TypeScript
+- Node.js 24+
+- PostgreSQL with Drizzle ORM
+- npm lockfile for reproducible dependency installation
+- Dedicated scripts for security, authentication, tenant, policy, runner, data-bridge, and configuration checks
 
-## Local development
+## Run locally
 
-Requirements: the Node.js version configured for the deployment (currently Node.js 24) and npm.
+### Requirements
+
+- Node.js 24 or newer
+- npm 10 or newer
+
+### Setup
 
 ```bash
+git clone https://github.com/terrell0780/elitze-agentic-security.git
+cd elitze-agentic-security
 npm ci
+npm run dev
+```
+
+The development server starts the Next.js application. Configure the environment variables required by the selected workflows using [`.env.example`](.env.example).
+
+### Engineering checks
+
+Run the checks relevant to your change:
+
+```bash
 npm run typecheck
 npm run lint
 npm run test
@@ -52,26 +108,32 @@ npm run runner:self-test
 npm run runner:handshake-self-test
 npm run runner:control-plane-handshake-self-test
 npm run build
-npm run start
 ```
 
-Use `npm run dev` for local development. Keep `package-lock.json` in sync with `package.json`; use `npm ci` for reproducible installs.
+## Security model
 
-## Configuration and deployment
+ELITZE is organized around identity, tenant isolation, explicit policy, scoped execution, and attributable evidence.
 
-1. Copy only the required variables from [`.env.example`](.env.example) into your local environment or deployment secret manager.
-2. Never commit real credentials, private keys, database URLs, customer data, or deployment tokens.
-3. Apply migrations only to the explicitly approved database using the documented production migration procedure.
-4. Verify authentication, tenant isolation, session/recovery controls, migration state, and the runner's signed handshake before release.
-5. Verify external integrations using authorized credentials and source-attributed records. A self-test alone is not live-provider proof.
-6. Deploy only a commit that passes the required CI and release gates.
+- Derive actor and tenant identity from the authenticated server-side session.
+- Apply authorization and scope checks before consequential actions.
+- Keep integrations within explicitly configured and authorized connections.
+- Protect credentials in environment configuration or a deployment secret manager.
+- Preserve security-relevant decisions and execution records for review.
+- Use retesting to connect remediation work with follow-up evidence.
 
-## Evidence and security claims
+## Documentation
 
-Integration state must distinguish **implemented**, **configured**, **connected**, and **verified**. Do not add fabricated telemetry, synthetic incidents, invented customers, unsupported certifications, rankings, coverage percentages, or unverified provider status. Missing evidence must remain `UNKNOWN`, `UNMEASURABLE`, or `INSUFFICIENT_REACH`.
-
-Read [SECURITY.md](SECURITY.md) for vulnerability reporting. See [production integrations](docs/ELITZE-PRODUCTION-INTEGRATIONS.md), [enterprise security control status](docs/ENTERPRISE-SECURITY-CONTROL-STATUS.md), and the [third-party license inventory](docs/security/THIRD-PARTY-LICENSE-INVENTORY-2026-10-11.md) for additional project documentation.
+- [Security reporting](SECURITY.md)
+- [Contribution guide](CONTRIBUTING.md)
+- [Architecture and deployment manifest](docs/ELITZE-AGENTIC-SECURITY-MERGE-MANIFEST.md)
+- [Production integrations](docs/ELITZE-PRODUCTION-INTEGRATIONS.md)
+- [Enterprise security controls](docs/ENTERPRISE-SECURITY-CONTROL-STATUS.md)
+- [Third-party license inventory](docs/security/THIRD-PARTY-LICENSE-INVENTORY-2026-10-11.md)
 
 ## Contributing
 
-See [CONTRIBUTING.md](CONTRIBUTING.md). Keep changes focused, preserve tenant and identity boundaries, add or update tests, and document evidence for security-relevant behavior.
+Focused contributions are welcome. Start with [CONTRIBUTING.md](CONTRIBUTING.md), keep changes scoped, add relevant tests, and preserve the project's identity, tenant, authorization, and audit boundaries.
+
+---
+
+**ELITZE Agentic Security** — control the path from agent intent to authorized action.
