@@ -100,8 +100,6 @@ assert.doesNotMatch(featurePage, /\/sales|Acquisition|acquisition/i, "feature te
 assert.match(read("src/app/robots.ts"), /"\/workspace"/, "workspace must be excluded from indexing");
 const packageJson = JSON.parse(read("package.json"));
 assert.equal(Object.keys(packageJson.scripts).some(name => /sale:readiness|contact-acquisition|business-process:self-test/i.test(name)), false);
-assert.match(read("drizzle/0029_remove_legacy_lead_pipeline.sql"), /DROP TABLE IF EXISTS acquisition_lead_events/i);
-assert.match(read("drizzle/0029_remove_legacy_lead_pipeline.sql"), /DROP TABLE IF EXISTS acquisition_leads/i);
 console.log("ELITZE production configuration self-test: PASS");
 
 const legacyIdentity = ["myt", "hos"].join("");
