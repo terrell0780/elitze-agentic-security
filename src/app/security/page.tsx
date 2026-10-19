@@ -42,7 +42,7 @@ export default function SecurityPage() {
             <h1 className="mt-4 text-4xl font-black tracking-[-.055em] sm:text-6xl">The security boundary stays outside the agent.</h1>
             <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--muted-strong)]">ELITZE connects identity, reachability, policy, authorized execution, runtime observation, remediation and evidence without pretending missing telemetry is real.</p>
             <div className="mt-7 flex flex-wrap gap-3">
-              <Link href="/console/pentesting" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950"><Crosshair className="h-4 w-4" /> Open security validation</Link>
+              <Link href="/workspace" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950">Open workspace</Link>
               
             </div>
           </div>
