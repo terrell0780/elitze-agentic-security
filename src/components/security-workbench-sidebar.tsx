@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Activity, Bug, Crosshair, FileSearch, Globe2, LayoutDashboard, Radar, ShieldCheck, Siren, Workflow, ClipboardCheck, Bot } from "lucide-react";
+import { Activity, Bug, FileSearch, Globe2, LayoutDashboard, Radar, ShieldCheck, Siren, Workflow, ClipboardCheck, Bot } from "lucide-react";
 
 const groups = [
   {
