@@ -53,8 +53,6 @@ export const capabilities: Capability[] = [
   { id: "secops", category: "SecOps", title: "Exposure & Vulnerability", detail: "Exposure, vulnerability priority and security operations context.", href: "/console/vulnerabilities", icon: Radar, state: "INTELLIGENCE" },
   { id: "graph", category: "SecOps", title: "Security Graph", detail: "Observed nodes, relationships, reachability and evidence state.", href: "/console", icon: GitBranch, state: "APP SURFACE" },
   { id: "analyst", category: "SecOps", title: "Autonomous Analyst", detail: "Evidence-driven analysis surface for authenticated operators.", href: "/console/analyst", icon: Activity, state: "INTELLIGENCE" },
-  { id: "pentest", category: "Validation", title: "Automated Security Testing", detail: "Authorized security-test requests, release validation and retesting.", href: "/console/pentesting", icon: Crosshair, state: "VALIDATION" },
-  { id: "manual", category: "Validation", title: "Manual Pentesting", detail: "Authorized manual assessment workflow with explicit scope and evidence.", href: "/control-room", icon: ShieldEllipsis, state: "VALIDATION" },
   { id: "reo", category: "Validation", title: "REO", detail: "Evidence-backed retesting of reachable security conditions.", href: "/reo", icon: ShieldCheck, state: "VALIDATION" },
   { id: "orchestration", category: "Runtime", title: "Orchestration Defense", detail: "Governed workflows for high-impact autonomous actions.", href: "/orchestration", icon: Workflow, state: "CONTROL" },
   { id: "mcp", category: "Runtime", title: "Runtime Gateway", detail: "Policy and identity boundary before sensitive tool execution.", href: "/console", icon: TerminalSquare, state: "CONTROL" },
