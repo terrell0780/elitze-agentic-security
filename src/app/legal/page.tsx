@@ -11,7 +11,6 @@ const controls = [
   ["Terms of Service", "Customer and AI-specific service terms", "/terms"],
   ["Privacy Notice", "Privacy, measurement consent and data-processing boundary", "/privacy"],
   ["Security Architecture", "Visible technical controls and evidence boundary", "/security"],
-  ["IP Ownership & Provenance", "Diligence register for authorship, licenses, domains and transfer evidence", "/legal/ownership"],
 ];
 
 export default function LegalPage() {
@@ -44,7 +43,7 @@ export default function LegalPage() {
         <div className="mt-6 rounded-[26px] border border-[var(--accent-border)] bg-[var(--accent-soft)] p-7">
           <div className="flex items-center gap-3"><Gavel className="h-5 w-5 text-[var(--accent)]" /><h2 className="text-lg font-bold">Legal control pack</h2></div>
           <p className="mt-3 text-sm leading-6 text-[var(--muted-strong)]">The repository maintains controlled drafts for acceptable use, AI transparency, data processing, enterprise legal controls, incident response, security addendum, subprocessors, terms, and vulnerability disclosure. Applicability and final enforceability depend on the governing agreement, customer context, jurisdiction and qualified legal review.</p>
-          <p className="mt-4 text-xs leading-5 text-[var(--muted)]">Canonical identity: https://elitze.info · Primary host: https://www.elitze.info · Acquisition/legal contact: tsh_cook@hotmail.com</p>
+          <p className="mt-4 text-xs leading-5 text-[var(--muted)]">Canonical identity: https://elitze.info · Primary host: https://www.elitze.info</p>
         </div>
 
         <nav className="mt-8 flex flex-wrap gap-3">
