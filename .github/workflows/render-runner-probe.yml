@@ -3,6 +3,7 @@ name: Render runner URL probe
 on:
   push:
     branches:
+      - main
       - fix/oidc-runner-live-gate
   pull_request:
     branches:
