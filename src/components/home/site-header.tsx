@@ -9,7 +9,7 @@ const primaryLinks = [
   ["Workspace", "/workspace"],
   ["Platform", "/platform"],
   ["Security", "/security"],
-  ["Validation", "/console/pentesting"],
+  ["Threat Detection", "/console/threat-detection"],
   ["Integrations", "/integrations"],
   ["Documentation", "/docs"],
 ] as const;

@@ -25,7 +25,7 @@ export default function Page() {
     ]}
     links={[
       { title: "Adversary emulation workspace", href: "/console/adversary-emulation", description: "Choose official techniques and create an explicitly authorised validation request." },
-      { title: "Pentest / runner status", href: "/console/pentesting", description: "Review current request, runner, scope and evidence status." },
+      { title: "Runtime security", href: "/console/threat-detection", description: "Review authorized observations, response state and evidence." },
       { title: "Threat detection", href: "/console/threat-detection", description: "Correlate resulting observations without manufacturing coverage." },
       { title: "Read the security disclosure", href: "/security-disclosure", description: "Review responsible testing and disclosure boundaries." }
     ]}

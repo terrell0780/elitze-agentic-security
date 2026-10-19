@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Activity, Bug, Crosshair, FileSearch, Globe2, LayoutDashboard, Radar, ShieldCheck, Siren, Workflow, ClipboardCheck, Bot } from "lucide-react";
+import { Activity, Bug, FileSearch, Globe2, LayoutDashboard, Radar, ShieldCheck, Siren, Workflow, ClipboardCheck, Bot } from "lucide-react";
 
 const groups = [
   {
@@ -8,7 +8,7 @@ const groups = [
       { href: "/console", label: "Command Center", icon: LayoutDashboard, description: "Live identity, policy and evidence" },
       { href: "/console/analyst", label: "Autonomous SOC Analyst", icon: Bot, description: "Analyst workflow and investigation" },
       { href: "/control-room", label: "SecOps & Red Team", icon: Siren, description: "Attack, observe, prove and retest" },
-      { href: "/console/pentesting", label: "Penetration Testing", icon: Crosshair, description: "Authorized pentest and red-team runs" },
+      { href: "/console/threat-detection", label: "Runtime Threat Detection", icon: Siren, description: "Observed runtime signals and response evidence" },
       { href: "/console/vulnerabilities", label: "Vulnerability Intelligence", icon: Bug, description: "CVE, KEV and threat findings" },
       { href: "/console/readiness", label: "Release Readiness", icon: ClipboardCheck, description: "Production and security proof gates" },
     ],
