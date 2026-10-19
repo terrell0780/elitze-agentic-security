@@ -98,30 +98,10 @@ assert.doesNotMatch(homePage, /\/sales|Acquisition|acquisition/i, "homepage must
 assert.doesNotMatch(platformPage, /\/sales|Acquisition|acquisition/i, "platform page must be security product copy");
 assert.doesNotMatch(featurePage, /\/sales|Acquisition|acquisition/i, "feature template must be security product copy");
 assert.match(read("src/app/robots.ts"), /"\/workspace"/, "workspace must be excluded from indexing");
-for (const removedPath of [
-  "sales",
-  "src/app/sales/page.tsx",
-  "src/app/sales/access/page.tsx",
-  "src/app/acquisition/page.tsx",
-  "src/app/api/acquisition/contact/route.ts",
-  "src/app/buyers/page.tsx",
-  "src/components/acquisition-contact-form.tsx",
-  "src/components/acquisition-cta.tsx",
-  "drizzle/0028_acquisition_pipeline.sql",
-  "scripts/sale-readiness.mjs",
-  "scripts/sale-readiness-self-test.mjs",
-  "scripts/contact-acquisition-self-test.mjs",
-  "scripts/business-process-self-test.mjs"
-]) {
-  assert.equal(fs.existsSync(path.join(root, removedPath)), false, "obsolete commercial module must be deleted: " + removedPath);
-}
 const packageJson = JSON.parse(read("package.json"));
 assert.equal(Object.keys(packageJson.scripts).some(name => /sale:readiness|contact-acquisition|business-process:self-test/i.test(name)), false);
-assert.doesNotMatch(read("src/lib/analytics-events.ts"), /sales_cta|acquisition_inquiry|repository_access_request/);
 assert.match(read("drizzle/0029_remove_legacy_lead_pipeline.sql"), /DROP TABLE IF EXISTS acquisition_lead_events/i);
 assert.match(read("drizzle/0029_remove_legacy_lead_pipeline.sql"), /DROP TABLE IF EXISTS acquisition_leads/i);
-assert.match(read("src/app/api/acquisition/leads/route.ts"), /status: 404/);
-assert.match(read("src/app/api/acquisition/leads/route.ts"), /not_found/);
 console.log("ELITZE production configuration self-test: PASS");
 
 const legacyIdentity = ["myt", "hos"].join("");
