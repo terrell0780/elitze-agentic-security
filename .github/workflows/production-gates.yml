@@ -257,11 +257,11 @@ jobs:
           const tokenRequestUrl = process.env.ACTIONS_ID_TOKEN_REQUEST_URL?.trim();
           const tokenRequestToken = process.env.ACTIONS_ID_TOKEN_REQUEST_TOKEN?.trim();
           if (!base) {
-            console.error("::error::Production blocker: runner URL is missing.");
+            console.error("::error::Runner URL is missing.");
             process.exit(1);
           }
           if (!tokenRequestUrl || !tokenRequestToken) {
-            console.error("::error::Production blocker: GitHub OIDC token request is unavailable.");
+            console.error("::error::GitHub OIDC token request is unavailable.");
             process.exit(1);
           }
           let endpoint;
@@ -276,12 +276,13 @@ jobs:
             process.exit(1);
           }
           (async () => {
+            let stage = "requesting GitHub OIDC token";
             try {
               const oidcUrl = new URL(tokenRequestUrl);
               oidcUrl.searchParams.set("audience", "elitze-runner-handshake");
               const tokenResponse = await fetch(oidcUrl, {
                 headers: { authorization: "Bearer " + tokenRequestToken, accept: "application/json" },
-                signal: AbortSignal.timeout(10000),
+                signal: AbortSignal.timeout(15000),
               });
               if (!tokenResponse.ok) {
                 console.error("::error::GitHub OIDC token request failed with HTTP " + tokenResponse.status + ".");
@@ -296,17 +297,19 @@ jobs:
               }
               const nonce = randomBytes(16).toString("hex");
               const payload = JSON.stringify({ action: "github-handshake", timestamp: Date.now(), nonce });
+              stage = "posting authenticated challenge to Render runner";
               const response = await fetch(endpoint, {
                 method: "POST",
                 headers: { "content-type": "application/json", authorization: "Bearer " + tokenPayload.value },
                 body: payload,
-                signal: AbortSignal.timeout(10000),
+                signal: AbortSignal.timeout(25000),
               });
               if (response.status !== 200) {
-                console.error("::error::Live runner OIDC handshake returned HTTP " + response.status + ". Response body suppressed.");
+                console.error("::error::Authenticated runner handshake returned HTTP " + response.status + ". Response body suppressed.");
                 process.exitCode = 1;
                 return;
               }
+              stage = "validating runner attestation";
               const result = await response.json();
               const age = Math.abs(Date.now() - Number(result.timestamp));
               if (result.ok !== true || result.action !== "github-handshake" || result.nonce !== nonce ||
@@ -319,7 +322,8 @@ jobs:
               }
               console.log("PASS: GitHub OIDC identity, authorized workflow, HTTPS runner reachability, and challenge nonce verified.");
             } catch (error) {
-              console.error("::error::Live runner OIDC handshake failed:", error.name === "AbortError" ? "request timed out" : error.message);
+              const timedOut = error.name === "AbortError" || error.name === "TimeoutError";
+              console.error("::error::Live runner handshake failed during " + stage + ": " + (timedOut ? "request timed out" : error.message));
               process.exitCode = 1;
             }
           })();
