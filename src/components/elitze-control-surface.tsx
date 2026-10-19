@@ -186,8 +186,8 @@ export default function ElitzeControlSurface() {
             <Link href="/control-room" className="flex items-center justify-between rounded-xl border border-cyan-300/15 bg-cyan-300/[.04] px-3 py-3 text-xs font-semibold text-cyan-100 hover:bg-cyan-300/[.08]">
               <span><ScanLine className="mr-2 inline h-3.5 w-3.5" />Attack the Agent</span><ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
-            <Link href="/console/pentesting" className="flex items-center justify-between rounded-xl border border-white/8 px-3 py-3 text-xs font-semibold text-slate-300 hover:bg-white/[.03]">
-              <span><Radar className="mr-2 inline h-3.5 w-3.5" />Open Pentesting</span><ArrowUpRight className="h-3.5 w-3.5" />
+            <Link href="/console/threat-detection" className="flex items-center justify-between rounded-xl border border-white/8 px-3 py-3 text-xs font-semibold text-slate-300 hover:bg-white/[.03]">
+              <span><Radar className="mr-2 inline h-3.5 w-3.5" />Runtime Threat Detection</span><ArrowUpRight className="h-3.5 w-3.5" />
             </Link>
             <Link href="/console/vulnerabilities" className="flex items-center justify-between rounded-xl border border-white/8 px-3 py-3 text-xs font-semibold text-slate-300 hover:bg-white/[.03]">
               <span><Database className="mr-2 inline h-3.5 w-3.5" />Open Vulnerability Search</span><ArrowUpRight className="h-3.5 w-3.5" />
