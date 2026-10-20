@@ -25,6 +25,7 @@
     "db:migrate": "node scripts/migrate.mjs",
     "db:config-self-test": "node scripts/db-config-self-test.mjs",
     "production-config:self-test": "node scripts/production-config-self-test.mjs",
+    "public-exposure:self-test": "node scripts/public-exposure-self-test.mjs",
     "health-observability:self-test": "node --experimental-strip-types scripts/health-observability-self-test.mjs",
     "tenant-overview:self-test": "node scripts/tenant-overview-self-test.mjs",
     "mcp:github": "node src/lib/elitze-secure/github-control-mcp.mjs",
