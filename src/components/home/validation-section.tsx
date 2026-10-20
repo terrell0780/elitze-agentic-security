@@ -39,10 +39,10 @@ export default function ValidationSection() {
             The ELITZE operating model
           </div>
           <h2 className="mt-3 text-3xl font-black tracking-[-.045em] sm:text-4xl">
-            Three pillars. One evidence-governed loop.
+            Map. Enforce. Prove.
           </h2>
           <p className="mt-4 text-sm leading-7 text-[var(--muted-strong)]">
-            Continuous testing matters only when the scope is authorized, the agent boundary is governed, and the result can be verified.
+            Security works when exposed paths are mapped, policy is enforced before execution, and remediation is verified with observable evidence.
           </p>
         </div>
 
