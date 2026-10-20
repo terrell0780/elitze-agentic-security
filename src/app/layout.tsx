@@ -12,20 +12,20 @@ const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: "Continuous Pentesting, Governed by Evidence", template: "%s | ELITZE Agentic Security" },
-  description: "ELITZE Agentic Security connects release-assurance testing, identity-aware AI agent governance, tenant-aware authorization, and evidence-backed retesting. Live execution claims depend on verified runner results.",
+  description: "A continuous penetration testing platform for CI/CD: automate security testing every release, verify fixes with evidence-backed retests, and govern access through a multi-tenant security control plane. Live execution claims depend on verified runner results.",
   applicationName: "ELITZE Agentic Security",
   category: "cybersecurity",
-  keywords: ["ELITZE Agentic Security", "continuous pentesting", "release assurance", "AI agent security", "MCP security", "API security", "policy enforcement", "security retesting", "agent runtime security", "security control plane", "security evidence", "continuous security validation", "vulnerability management", "exposure management", "security operations"],
+  keywords: ["ELITZE Agentic Security", "continuous penetration testing platform", "pentest as a service for CI/CD", "automated security testing every release", "fix verification", "retest automation", "multi-tenant security control plane", "continuous pentesting", "release assurance", "API security testing", "security retesting", "vulnerability management", "security evidence", "continuous security validation", "exposure management"],
   creator: "ELITZE", publisher: "ELITZE", authors: [{ name: "ELITZE" }],
   ...(googleVerification ? { verification: { google: googleVerification } } : {}),
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
-  openGraph: { type: "website", siteName: "ELITZE Agentic Security", title: "Continuous Pentesting, Governed by Evidence", description: "Release-assurance testing, governed AI-agent actions, and evidence-backed security retesting.", locale: "en_CA" },
-  twitter: { card: "summary_large_image", title: "Continuous Pentesting, Governed by Evidence", description: "Release-assurance testing, governed AI-agent actions, and evidence-backed security retesting." },
+  openGraph: { type: "website", siteName: "ELITZE Agentic Security", title: "Continuous Pentesting, Governed by Evidence", description: "Continuous penetration testing for CI/CD, automated security testing on every release, evidence-backed fix verification, and a multi-tenant security control plane.", locale: "en_CA" },
+  twitter: { card: "summary_large_image", title: "Continuous Pentesting, Governed by Evidence", description: "Continuous penetration testing for CI/CD, automated security testing on every release, evidence-backed fix verification, and a multi-tenant security control plane." },
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#061018" }, { media: "(prefers-color-scheme: light)", color: "#f6fafc" }] };
 
-const organizationSchema = { "@context": "https://schema.org", "@type": "Organization", name: "ELITZE", alternateName: "ELITZE Agentic Security", url: siteUrl, description: "Evidence-governed security testing and identity-aware control for AI agents, APIs, and sensitive execution paths." };
+const organizationSchema = { "@context": "https://schema.org", "@type": "Organization", name: "ELITZE", alternateName: "ELITZE Agentic Security", url: siteUrl, description: "Continuous penetration testing, CI/CD security validation, evidence-backed retest automation, and a multi-tenant security control plane for sensitive execution paths." };
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
