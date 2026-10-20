@@ -47,7 +47,7 @@ export default function SecurityPage() {
             </div>
           </div>
           <div className="mt-10 overflow-hidden rounded-[30px] border border-[var(--accent-border)] bg-black/20 shadow-[0_30px_100px_rgba(0,0,0,.25)]">
-            <Image src="/elitze-command-plane.svg" alt="ELITZE control plane architecture: discovery, governance, validation and evidence" width={1600} height={1000} priority className="h-auto w-full" />
+            <Image src="/elitze-command-plane.svg" alt="ELITZE control plane architecture: discovery, governance, validation and evidence" width={1600} height={1000} sizes="100vw" priority className="h-auto w-full" />
           </div>
         </div>
       </section>
