@@ -48,6 +48,7 @@ assert.match(nextConfig, /X-Content-Type-Options/, "security headers must includ
 assert.match(nextConfig, /X-Frame-Options/, "security headers must prevent framing");
 assert.match(nextConfig, /source:\s*"\/api\/:path\*"/, "API routes must have a separate response header rule");
 assert.match(nextConfig, /X-Robots-Tag.*noindex, nofollow, nosnippet/, "API responses must instruct search engines not to index them");
+assert.match(nextConfig, /Cache-Control.*private, no-store/, "API responses must default to private no-store caching");
 
 const publicHealth = read("src/app/api/health/route.ts");
 assert.match(publicHealth, /cache-control.*no-store/i, "public health responses must not be cached");
