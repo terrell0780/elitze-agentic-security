@@ -1,0 +1,60 @@
+name: ELITZE public exposure audit
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-exposure-audit-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  public-exposure:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@v7
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          package-manager-cache: false
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Run source and authorization contracts
+        run: npm run public-exposure:self-test
+      - name: Verify production configuration and robots/sitemap
+        run: npm run production-config:self-test
+      - name: Typecheck
+        run: npm run typecheck
+      - name: Lint
+        run: npm run lint
+      - name: Build production application
+        run: npm run build
+      - name: Start built application for HTTP verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          (npm run start -- --hostname 127.0.0.1 > /tmp/elitze-public-audit.log 2>&1 & echo $! > /tmp/elitze-public-audit.pid)
+          for attempt in $(seq 1 45); do
+            status="$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3000/login || true)"
+            if [ "$status" = "200" ]; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/elitze-public-audit.log
+          echo "::error::Built application did not start for exposure verification."
+          exit 1
+      - name: Audit public HTML, browser bundles, source maps, headers, and anonymous APIs
+        env:
+          ELITZE_PUBLIC_AUDIT_URL: http://127.0.0.1:3000
+        run: npm run public-exposure:self-test
+      - name: Stop local application
+        if: always()
+        run: if [ -f /tmp/elitze-public-audit.pid ]; then kill "$(cat /tmp/elitze-public-audit.pid)" || true; fi

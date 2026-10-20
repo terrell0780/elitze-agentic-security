@@ -4,29 +4,29 @@ const pillars = [
   {
     number: "01",
     icon: Activity,
-    title: "Pentest every release",
-    summary: "Make release assurance part of the release path—not a once-a-year PDF.",
+    title: "Find exposure early",
+    summary: "Discover reachable assets and test only within an authorized scope.",
     detail:
-      "Define the HTTPS target, bounded scope, test profile, and authorization reference for release-assurance work. A test is reported as executed only when an authorized, configured runner returns its outcome.",
-    proof: "Scoped request · authorization · runner result",
+      "Define the target, boundaries, test profile, and authorization reference before testing. A request is reported as executed only after an authorized, configured runner returns an outcome.",
+    proof: "Asset discovery · bounded scope · verified result",
   },
   {
     number: "02",
     icon: Fingerprint,
-    title: "Govern every agent",
-    summary: "Keep agent actions behind authenticated identity, tenant context, and policy.",
+    title: "Enforce the access boundary",
+    summary: "Tie sensitive operations to authenticated identity, tenant, and policy.",
     detail:
-      "Security requests and decisions derive identity and tenant context on the server. TOTP MFA enrollment and verification have explicit flows; the application does not trust a tenant ID supplied by the browser.",
-    proof: "Authenticated session · tenant-aware authorization · MFA",
+      "Protected operations derive actor and tenant context on the server. Client-supplied tenant identifiers are not accepted as proof of authorization.",
+    proof: "Verified identity · tenant scope · policy decision",
   },
   {
     number: "03",
     icon: CheckCircle2,
-    title: "Verify every fix",
-    summary: "A finding is not resolved just because someone says it is.",
+    title: "Prove remediation",
+    summary: "Close findings with retest evidence, not an unsupported status label.",
     detail:
-      "Treat remediation as verified only when an authorized retest supplies an observable outcome and associated evidence. Queued work, missing telemetry, and unverified results stay distinct from a pass.",
-    proof: "Finding · retest · observed evidence",
+      "Remediation is verified only when an authorized retest supplies an observable outcome. Missing telemetry and unverified results remain distinct from a pass.",
+    proof: "Finding · retest · attributable evidence",
   },
 ] as const;
 
@@ -63,6 +63,14 @@ export default function ValidationSection() {
               </p>
             </article>
           ))}
+        </div>
+
+        <div className="mt-8 rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-6 sm:p-8" aria-labelledby="security-trust-heading">
+          <div className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">Security and evidence</div>
+          <h3 id="security-trust-heading" className="mt-3 text-xl font-bold tracking-tight">Security claims must be backed by evidence.</h3>
+          <p className="mt-3 max-w-4xl text-sm leading-7 text-[var(--muted-strong)]">
+            Public product pages do not need customer-specific operational records. Workspace data remains behind server-side authorization and tenant-scoped queries. A queued test is not a completed assessment, and missing telemetry is not presented as a pass.
+          </p>
         </div>
 
         <p className="mt-6 max-w-4xl text-xs leading-6 text-[var(--muted)]">

@@ -97,7 +97,14 @@ assert.match(homePage, /Open workspace/i, "homepage must expose a clear workspac
 assert.doesNotMatch(homePage, /\/sales|Acquisition|acquisition/i, "homepage must be security-workspace product copy");
 assert.doesNotMatch(platformPage, /\/sales|Acquisition|acquisition/i, "platform page must be security product copy");
 assert.doesNotMatch(featurePage, /\/sales|Acquisition|acquisition/i, "feature template must be security product copy");
-assert.match(read("src/app/robots.ts"), /"\/workspace"/, "workspace must be excluded from indexing");
+const robotsLines = read("public/robots.txt").trimEnd().split(/\r?\n/);
+assert.equal(robotsLines.length, 3, "public/robots.txt must contain exactly three lines");
+assert.equal(robotsLines[0], "User-agent: *");
+assert.equal(robotsLines[1], "Disallow: /api/");
+assert.equal(robotsLines[2], "Sitemap: https://www.elitze.info/sitemap.xml");
+const sitemapSource = read("src/app/sitemap.ts");
+assert.match(sitemapSource, /productionConfig\.canonicalOrigin/);
+assert.doesNotMatch(sitemapSource, /["']\/(?:api|console|workspace|login|register|forgot-password|reset-password)(?:\/|["'])/, "private and API routes must not be listed in the sitemap");
 const packageJson = JSON.parse(read("package.json"));
 assert.equal(Object.keys(packageJson.scripts).some(name => /sale:readiness|contact-acquisition|business-process:self-test/i.test(name)), false);
 console.log("ELITZE production configuration self-test: PASS");

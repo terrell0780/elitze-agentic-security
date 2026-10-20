@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import SiteHeader from "@/components/home/site-header";
 import HeroSection from "@/components/home/hero-section";
 import BrandMarquee from "@/components/home/brand-marquee";
@@ -7,6 +8,10 @@ import AboutPromoSection from "@/components/home/about-promo-section";
 import ValidationSection from "@/components/home/validation-section";
 import WorkspaceCtaSection from "@/components/home/workspace-cta-section";
 import SiteFooter from "@/components/home/site-footer";
+
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+};
 
 export default function HomePage() {
   return (
