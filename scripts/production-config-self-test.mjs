@@ -97,11 +97,11 @@ assert.match(homePage, /Open workspace/i, "homepage must expose a clear workspac
 assert.doesNotMatch(homePage, /\/sales|Acquisition|acquisition/i, "homepage must be security-workspace product copy");
 assert.doesNotMatch(platformPage, /\/sales|Acquisition|acquisition/i, "platform page must be security product copy");
 assert.doesNotMatch(featurePage, /\/sales|Acquisition|acquisition/i, "feature template must be security product copy");
-const robotsLines = read("public/robots.txt").trimEnd().split(/\\r?\\n/);
+const robotsLines = read("public/robots.txt").trimEnd().split(/\r?\n/);
 assert.deepEqual(robotsLines, ["User-agent: *", "Allow: /", "Sitemap: https://www.elitze.info/sitemap.xml"], "robots.txt must contain exactly the minimal three-line policy");
 const sitemap = read("src/app/sitemap.ts");
-assert.match(sitemap, /productionConfig\\.canonicalOrigin/, "sitemap must use the canonical origin");
-assert.doesNotMatch(sitemap, /["']\\/(?:api|console|workspace|login|register|forgot-password|reset-password|auth)(?:\\/|["'])/, "private routes must not appear in the sitemap");
+assert.match(sitemap, /productionConfig\.canonicalOrigin/, "sitemap must use the canonical origin");
+assert.doesNotMatch(sitemap, /["']\/(?:api|console|workspace|login|register|forgot-password|reset-password|auth)(?:\/|["'])/, "private routes must not appear in the sitemap");
 const packageJson = JSON.parse(read("package.json"));
 assert.equal(Object.keys(packageJson.scripts).some(name => /sale:readiness|contact-acquisition|business-process:self-test/i.test(name)), false);
 console.log("ELITZE production configuration self-test: PASS");
