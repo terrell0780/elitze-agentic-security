@@ -57,7 +57,7 @@ const websiteSchema = {
   "@type": "WebSite",
   name: "ELITZE Agentic Security",
   url: siteUrl,
-  description: "Continuous Pentesting, Governed by Evidence.",
+  description: "Enterprise cybersecurity that maps exposed execution paths, enforces identity-bound access, and verifies remediation with source-attributed evidence.",
   potentialAction: {
     "@type": "SearchAction",
     target: `${siteUrl}/search?q={search_term_string}`,
