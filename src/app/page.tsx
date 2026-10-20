@@ -1,33 +1,10 @@
-import SiteHeader from "@/components/home/site-header";
-import HeroSection from "@/components/home/hero-section";
-import BrandMarquee from "@/components/home/brand-marquee";
-import ControlModelSection from "@/components/home/control-model-section";
-import EndpointIntegrationSection from "@/components/home/endpoint-integration-section";
-import AboutPromoSection from "@/components/home/about-promo-section";
-import ValidationSection from "@/components/home/validation-section";
-import WorkspaceCtaSection from "@/components/home/workspace-cta-section";
-import SiteFooter from "@/components/home/site-footer";
+import { redirect } from "next/navigation";
+import { getCurrentUser } from "@/lib/auth";
 
-export default function HomePage() {
-  return (
-    <main id="main-content" className="min-h-screen overflow-x-hidden bg-[var(--bg)] text-[var(--text)]">
-      <SiteHeader />
+export const dynamic = "force-dynamic";
 
-      <HeroSection />
-
-      <BrandMarquee />
-
-      <ControlModelSection />
-
-      <EndpointIntegrationSection />
-
-      <AboutPromoSection />
-
-      <ValidationSection />
-
-      <WorkspaceCtaSection />
-
-      <SiteFooter />
-    </main>
-  );
+export default async function HomePage() {
+  const user = await getCurrentUser().catch(() => null);
+  if (!user) redirect("/login");
+  redirect("/console");
 }
