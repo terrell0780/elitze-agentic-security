@@ -11,27 +11,27 @@ const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: { default: "Continuous Pentesting, Governed by Evidence", template: "%s | ELITZE Agentic Security" },
-  description: "ELITZE Agentic Security connects release-assurance testing, identity-aware AI agent governance, tenant-aware authorization, and evidence-backed retesting. Live execution claims depend on verified runner results.",
+  title: { default: "ELITZE Agentic Security | See the threat. Control the path. Prove the fix.", template: "%s | ELITZE Agentic Security" },
+  description: "ELITZE Agentic Security protects sensitive execution paths with identity-aware access control, reachability analysis, policy enforcement, runtime observation, and evidence-backed remediation.",
   applicationName: "ELITZE Agentic Security",
   category: "cybersecurity",
-  keywords: ["ELITZE Agentic Security", "continuous pentesting", "release assurance", "AI agent security", "MCP security", "API security", "policy enforcement", "security retesting", "agent runtime security", "security control plane", "security evidence", "continuous security validation", "vulnerability management", "exposure management", "security operations"],
+  keywords: ["ELITZE Agentic Security", "cybersecurity platform", "agentic security", "MCP security", "API security", "runtime threat detection", "identity security", "policy enforcement", "security evidence", "continuous security validation", "vulnerability management", "exposure management", "security operations", "authorized execution"],
   creator: "ELITZE", publisher: "ELITZE", authors: [{ name: "ELITZE" }],
   ...(googleVerification ? { verification: { google: googleVerification } } : {}),
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
-  openGraph: { type: "website", siteName: "ELITZE Agentic Security", title: "Continuous Pentesting, Governed by Evidence", description: "Release-assurance testing, governed AI-agent actions, and evidence-backed security retesting.", locale: "en_CA" },
-  twitter: { card: "summary_large_image", title: "Continuous Pentesting, Governed by Evidence", description: "Release-assurance testing, governed AI-agent actions, and evidence-backed security retesting." },
+  openGraph: { type: "website", siteName: "ELITZE Agentic Security", title: "ELITZE Agentic Security | See the threat. Control the path. Prove the fix.", description: "Identity-aware security controls for agents, MCP servers, APIs, tools, and sensitive execution paths—with evidence you can verify.", locale: "en_CA" },
+  twitter: { card: "summary_large_image", title: "ELITZE Agentic Security | See the threat. Control the path. Prove the fix.", description: "Security decision, policy enforcement, runtime observation, and evidence-backed remediation." },
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#061018" }, { media: "(prefers-color-scheme: light)", color: "#f6fafc" }] };
 
-const organizationSchema = { "@context": "https://schema.org", "@type": "Organization", name: "ELITZE", alternateName: "ELITZE Agentic Security", url: siteUrl, description: "Evidence-governed security testing and identity-aware control for AI agents, APIs, and sensitive execution paths." };
+const organizationSchema = { "@context": "https://schema.org", "@type": "Organization", name: "ELITZE", alternateName: "ELITZE Agentic Security", url: siteUrl, description: "Cybersecurity controls for agent identities, MCP servers, APIs, tools, and sensitive execution paths." };
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "ELITZE Agentic Security",
   url: siteUrl,
-  description: "Continuous Pentesting, Governed by Evidence.",
+  description: "See the threat. Control the path. Prove the fix.",
   potentialAction: {
     "@type": "SearchAction",
     target: `${siteUrl}/search?q={search_term_string}`,
