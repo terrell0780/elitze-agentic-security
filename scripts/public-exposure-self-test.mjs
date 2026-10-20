@@ -108,7 +108,7 @@ const liveBase = process.env.ELITZE_PUBLIC_BASE_URL?.trim();
 const timeoutSignal = () => AbortSignal.timeout(12000);
 const fetchLive = async (route, options = {}) => {
   const url = new URL(route, liveBase);
-  const response = await fetch(url, { redirect: options.redirect ?? "follow", signal: timeoutSignal(), headers: { "user-agent": "ELITZE-public-exposure-check/1.0" } });
+  const response = await fetch(url, { redirect: options.redirect ?? "follow", signal: timeoutSignal(), headers: { "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36" } });
   const body = await response.text();
   return { response, body, url: url.toString() };
 };
@@ -142,7 +142,7 @@ if (liveBase) {
     assert.doesNotMatch(body, /sourceMappingURL\s*=/i, "public JavaScript references a source map: " + new URL(assetUrl).pathname);
     checkNoSecrets(body, "live JavaScript asset " + new URL(assetUrl).pathname);
     const mapUrl = assetUrl + ".map";
-    const mapResponse = await fetch(mapUrl, { redirect: "follow", signal: timeoutSignal(), headers: { "user-agent": "ELITZE-public-exposure-check/1.0" } });
+    const mapResponse = await fetch(mapUrl, { redirect: "follow", signal: timeoutSignal(), headers: { "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36" } });
     if (mapResponse.ok && /(?:json|javascript)/i.test(mapResponse.headers.get("content-type") ?? "")) {
       const mapBody = await mapResponse.text();
       let map = null;
