@@ -46,6 +46,8 @@ assert.match(nextConfig, /Content-Security-Policy/, "security headers must inclu
 assert.match(nextConfig, /Strict-Transport-Security/, "security headers must include HSTS");
 assert.match(nextConfig, /X-Content-Type-Options/, "security headers must include nosniff");
 assert.match(nextConfig, /X-Frame-Options/, "security headers must prevent framing");
+assert.match(nextConfig, /source:\s*"\/api\/:path\*"/, "API routes must have a separate response header rule");
+assert.match(nextConfig, /X-Robots-Tag.*noindex, nofollow, nosnippet/, "API responses must instruct search engines not to index them");
 
 const publicHealth = read("src/app/api/health/route.ts");
 assert.match(publicHealth, /cache-control.*no-store/i, "public health responses must not be cached");
@@ -81,6 +83,36 @@ assert.match(read("src/app/workspace/page.tsx"), /if\s*\(!user\)\s*redirect\(["'
 assert.match(read("src/app/api/elitze/route.ts"), /tenantId:\s*user\.tenantId/, "orchestrator must bind tenant identity to the authenticated session");
 assert.match(read("src/app/api/elitze/route.ts"), /actorId:\s*user\.id/, "orchestrator must bind actor identity to the authenticated session");
 
+
+const rootLayout = read("src/app/layout.tsx");
+assert.match(rootLayout, /title: \{ default: "Enterprise Cybersecurity Built on Evidence"/, "root metadata should lead with cybersecurity");
+assert.match(rootLayout, /applicationCategory: "SecurityApplication"/, "SoftwareApplication structured data must declare its security category");
+assert.match(rootLayout, /JSON.stringify\(softwareApplicationSchema\)/, "SoftwareApplication JSON-LD must be emitted");
+assert.match(rootLayout, /identity-bound access/i, "structured data should describe security functionality");
+assert.doesNotMatch(rootLayout, /AI safety|AI governance|guardrails/i, "general positioning must not lead with AI governance language");
+const home = read("src/app/page.tsx");
+assert.match(home, /alternates: \{ canonical: "\/" \}/, "homepage must have its own canonical");
+assert.match(home, /HeroSection/);
+const hero = read("src/components/home/hero-section.tsx");
+assert.match(hero, /Enterprise[\s\S]{0,120}Cybersecurity/);
+assert.match(hero, /The model is not the security boundary\./);
+const pillars = read("src/components/home/validation-section.tsx");
+for (const item of ["Map every exposed path", "Enforce before execution", "Retest and prove remediation", "Identity-bound access", "Tenant-scoped records", "Evidence with provenance", "Unknown stays unknown"]) {
+  assert.ok(pillars.includes(item), "homepage security/trust section must include " + item);
+}
+assert.match(read("src/app/security/page.tsx"), /sizes="100vw"/, "large security architecture image must declare responsive sizes");
+for (const file of [
+  "src/app/console/layout.tsx",
+  "src/app/workspace/page.tsx",
+  "src/app/login/layout.tsx",
+  "src/app/register/layout.tsx",
+  "src/app/forgot-password/layout.tsx",
+  "src/app/reset-password/layout.tsx",
+  "src/app/auth/verify/layout.tsx",
+  "src/app/chat/layout.tsx",
+]) {
+  assert.match(read(file), /index:\s*false/, file + " must be marked noindex");
+}
 const publicFiles = walk(path.join(root, "public"));
 for (const file of publicFiles) {
   const rel = path.relative(root, file);
@@ -177,6 +209,7 @@ if (liveBase) {
     const { response, body } = await fetchLive(route, { redirect: "manual" });
     assert.equal(response.status, 401, "private API must deny anonymous access: " + route + " (" + response.status + ")");
     assert.match(response.headers.get("cache-control") ?? "", /no-store/i, "private API must prevent caching: " + route);
+    assert.match(response.headers.get("x-robots-tag") ?? "", /noindex/i, "API response must not be indexed: " + route);
     checkNoSecrets(body, "anonymous API response " + route);
     checkNoInternalEvidence(body, "anonymous API response " + route);
   }
