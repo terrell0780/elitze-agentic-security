@@ -113,6 +113,7 @@ for (const route of publicPages) {
     assert.match(body, /<title>Enterprise Cybersecurity Platform<\/title>/i, "homepage title must lead with cybersecurity");
     const canonicalLink = [...body.matchAll(/<link\b[^>]*>/gi)]
       .map((match) => match[0])
+      .find((tag) => tag.includes('rel="canonical"'));
     const canonicalHref = canonicalLink?.split('href="')[1]?.split('"')[0];
     const canonicalUrl = canonicalHref ? new URL(canonicalHref) : null;
     assert.ok(canonicalUrl?.protocol === "https:" && canonicalUrl.hostname === "www.elitze.info" && canonicalUrl.pathname === "/", "homepage canonical must point at https://www.elitze.info/");
