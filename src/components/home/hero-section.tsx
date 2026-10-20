@@ -10,15 +10,15 @@ export default function HeroSection() {
       <div className="relative mx-auto grid max-w-[1400px] gap-12 px-4 py-16 sm:px-7 sm:py-24 lg:grid-cols-[.9fr_1.1fr] lg:items-center lg:py-28">
         <div>
           <div className="inline-flex items-center gap-2 rounded-full border border-[var(--accent-border)] bg-[var(--accent-soft)] px-3 py-1.5 text-[9px] font-bold uppercase tracking-[.2em] text-[var(--accent)]">
-            Independent V2 security control plane
+            Enterprise cybersecurity control plane
           </div>
           <h1 className="display-type mt-7 max-w-4xl text-[2.8rem] leading-[.98] sm:text-6xl lg:text-[5.1rem]">
-            Continuous Pentesting,
+            Enterprise
             <br />
-            <span className="text-[var(--accent)]">Governed by Evidence.</span>
+            <span className="text-[var(--accent)]">Cybersecurity.</span>
           </h1>
           <p className="mt-6 max-w-xl text-base leading-7 text-[var(--muted-strong)]">
-            Bind security tests to releases, verify fixes by retest, and govern AI-agent actions with explicit authorization and evidence—not model output alone.
+            Map exposed execution paths across identities, APIs, tools, and services. Enforce policy before sensitive operations run, then verify remediation with source-attributed evidence. The model is not the security boundary.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/platform" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950 transition hover:brightness-110">
