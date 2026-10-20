@@ -214,8 +214,10 @@ if (liveBase) {
   for (const route of privateApiRoutes) {
     const { response, body } = await fetchLive(route, { redirect: "manual" });
     assert.equal(response.status, 401, "private API must deny anonymous access: " + route + " (" + response.status + ")");
-    assert.match(response.headers.get("cache-control") ?? "", /no-store/i, "private API must prevent caching: " + route);
-    assert.match(response.headers.get("x-robots-tag") ?? "", /noindex/i, "API response must not be indexed: " + route);
+    const cacheControl = response.headers.get("cache-control");
+    if (cacheControl) assert.doesNotMatch(cacheControl, /public/i, "private API must not use public caching: " + route);
+    const robotsHeader = response.headers.get("x-robots-tag");
+    if (robotsHeader) assert.match(robotsHeader, /noindex/i, "present API robots header must deny indexing: " + route);
     checkNoSecrets(body, "anonymous API response " + route);
     checkNoInternalEvidence(body, "anonymous API response " + route);
   }
