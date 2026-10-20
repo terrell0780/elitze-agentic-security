@@ -45,6 +45,9 @@ jobs:
       - name: Production configuration contract
         run: npm run production-config:self-test
 
+      - name: Public exposure regression checks
+        run: npm run security:public-exposure-self-test
+
       - name: Sanitized readiness diagnostics self-test
         run: npm run health-observability:self-test
 
