@@ -12,7 +12,7 @@ const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: { default: "Enterprise Cybersecurity Platform", template: "%s | ELITZE Agentic Security" },
-  description: "Protect enterprise identities, APIs, connected systems, and sensitive execution paths with continuous security testing, threat detection, vulnerability intelligence, and evidence-backed remediation.",
+  description: "Enterprise cybersecurity platform for identities, APIs, connected systems, and sensitive execution paths, with continuous testing, threat detection, vulnerability intelligence, and evidence-backed remediation.",
   applicationName: "ELITZE Agentic Security",
   category: "cybersecurity",
   keywords: [
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "ELITZE Agentic Security",
     title: "Enterprise Cybersecurity Platform",
-    description: "Continuous security testing, threat detection, vulnerability intelligence, and evidence-backed remediation for enterprise systems.",
+    description: "Enterprise cybersecurity with continuous testing, threat detection, vulnerability intelligence, and evidence-backed remediation for enterprise systems."
     locale: "en_CA",
   },
   twitter: {
