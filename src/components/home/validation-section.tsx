@@ -65,6 +65,12 @@ export default function ValidationSection() {
           ))}
         </div>
 
+        <aside aria-labelledby="honesty-heading" className="mt-10 rounded-3xl border border-[var(--accent-border)] bg-[var(--panel)] p-6 sm:p-8">
+          <p className="text-[9px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">Evidence before appearance</p>
+          <h3 id="honesty-heading" className="mt-3 text-2xl font-black tracking-[-.04em] sm:text-3xl">What you see is real. We ship no fake data.</h3>
+          <p className="mt-3 max-w-3xl text-sm leading-7 text-[var(--muted-strong)]">No demo users, fabricated telemetry, or simulated findings presented as live evidence. Missing signals stay explicitly unknown or unmeasurable. Illustrative interface previews are labelled and are not represented as live customer records.</p>
+        </aside>
+
         <p className="mt-6 max-w-4xl text-xs leading-6 text-[var(--muted)]">
           Implementation is not the same as a verified live deployment. Actual pentest execution depends on valid authorization, an available runner, and its returned result. Database-enforced row-level security and end-to-end production isolation remain separate verification items.
         </p>
