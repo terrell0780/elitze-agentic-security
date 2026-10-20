@@ -18,7 +18,7 @@ export default function HeroSection() {
             <span className="text-[var(--accent)]">Governed by Evidence.</span>
           </h1>
           <p className="mt-6 max-w-xl text-base leading-7 text-[var(--muted-strong)]">
-            Bind security tests to releases, verify fixes by retest, and govern AI-agent actions with explicit authorization and evidence—not model output alone.
+            A continuous penetration testing platform for CI/CD: automate security testing every release, verify fixes through evidence-backed retests, and govern sensitive actions through a multi-tenant security control plane.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link href="/platform" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950 transition hover:brightness-110">
