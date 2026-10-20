@@ -104,6 +104,23 @@ for (const route of publicPages) {
   assert.equal(response.status, 200, "public route " + route + " must return HTTP 200");
   const body = await response.text();
   assertCleanPublicBody(body, route);
+  const h1Count = [...body.matchAll(/<h1\\b/gi)].length;
+  assert.equal(h1Count, 1, "public page " + route + " must have exactly one primary heading");
+  for (const imageMatch of body.matchAll(/<img\\b[^>]*>/gi)) {
+    assert.match(imageMatch[0], /\\balt\\s*=/i, "image on " + route + " must define alternative text");
+  }
+  if (route === "/") {
+    assert.match(body, /<title>Enterprise Cybersecurity Platform<\\/title>/i, "homepage title must lead with cybersecurity");
+    assert.match(body, /<link[^>]*rel=["']canonical["'][^>]*href=["']https:\\/\\/www\\.elitze\\.info\\/["']/i, "homepage canonical must point at https://www.elitze.info/");
+    assert.match(body, /name=["']description["'][^>]*content=["'][^"']*cybersecurity/i, "homepage description must lead with cybersecurity");
+    const schemaJson = [...body.matchAll(/<script type=["']application\\/ld\\+json["']>([\\s\\S]*?)<\\/script>/gi)]
+      .map((match) => JSON.parse(match[1]));
+    assert.ok(schemaJson.some((schema) => schema["@type"] === "SoftwareApplication" &&
+      schema.applicationCategory === "SecurityApplication" &&
+      typeof schema.description === "string" &&
+      schema.description.toLowerCase().includes("cybersecurity") &&
+      typeof schema.keywords === "string"), "homepage SoftwareApplication JSON-LD must include category, description, and keywords");
+  }
   for (const header of ["content-security-policy", "x-content-type-options", "x-frame-options", "strict-transport-security"]) {
     assert.ok(response.headers.get(header), "security header " + header + " missing from " + route);
   }
