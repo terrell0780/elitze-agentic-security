@@ -111,7 +111,10 @@ for (const route of publicPages) {
   }
   if (route === "/") {
     assert.match(body, /<title>Enterprise Cybersecurity Platform<\/title>/i, "homepage title must lead with cybersecurity");
-    assert.match(body, /<link[^>]*rel=["']canonical["'][^>]*href=["']https:\/\/www\.elitze\.info\/["']/i, "homepage canonical must point at https://www.elitze.info/");
+    const canonicalLink = [...body.matchAll(/<link\\b[^>]*>/gi)]
+      .map((match) => match[0])
+      .find((tag) => /\\brel=["']canonical["']/i.test(tag));
+    assert.ok(canonicalLink && /\\bhref=["']https:\\/\\/www\\.elitze\\.info\\//i.test(canonicalLink), "homepage canonical must point at https://www.elitze.info/");
     assert.match(body, /name=["']description["'][^>]*content=["'][^"']*cybersecurity/i, "homepage description must lead with cybersecurity");
     const schemaJson = [...body.matchAll(/<script type=["']application\/ld\+json["']>([\s\S]*?)<\/script>/gi)]
       .map((match) => JSON.parse(match[1]));
