@@ -101,12 +101,12 @@ for (const item of ["Map every exposed path", "Enforce before execution", "Retes
   assert.ok(pillars.includes(item), "homepage security/trust section must include " + item);
 }
 const securityPage = read("src/app/security/page.tsx");
-assert.match(securityPage, /<Image[\\s\\S]{0,350}alt="[^"]+"/, "security architecture image must have descriptive alt text");
+assert.match(securityPage, /<Image[\s\S]{0,350}alt="[^"]+"/, "security architecture image must have descriptive alt text");
 assert.match(securityPage, /sizes="100vw"/, "large security architecture image must declare responsive sizes");
 const platformPage = read("src/app/platform/page.tsx");
-assert.match(platformPage, /<Image[\\s\\S]{0,350}alt="[^"]+"/, "platform architecture image must have descriptive alt text");
+assert.match(platformPage, /<Image[\s\S]{0,350}alt="[^"]+"/, "platform architecture image must have descriptive alt text");
 assert.match(platformPage, /sizes="100vw"/, "large platform architecture image must declare responsive sizes");
-assert.match(platformPage, /canonical: "\\/platform"/, "platform page must have a canonical URL");
+assert.match(platformPage, /alternates: \{ canonical: "\/platform" \}/, "platform page must have a canonical URL");
 for (const file of [
   "src/app/console/layout.tsx",
   "src/app/workspace/page.tsx",
