@@ -1,32 +1,32 @@
-import { Activity, CheckCircle2, Fingerprint } from "lucide-react";
+import { Activity, CheckCircle2, CircleHelp, Database, FileCheck2, Fingerprint, LockKeyhole } from "lucide-react";
 
 const pillars = [
   {
     number: "01",
     icon: Activity,
-    title: "Pentest every release",
-    summary: "Make release assurance part of the release path—not a once-a-year PDF.",
+    title: "Map every exposed path",
+    summary: "Identify exposed identities, APIs, tools, and reachable resources.",
     detail:
-      "Define the HTTPS target, bounded scope, test profile, and authorization reference for release-assurance work. A test is reported as executed only when an authorized, configured runner returns its outcome.",
-    proof: "Scoped request · authorization · runner result",
+      "Build an evidence-backed view of reachable assets and execution paths. Missing telemetry and unsupported relationships stay unknown rather than being represented as confirmed exposure.",
+    proof: "Asset inventory · reachability · source evidence",
   },
   {
     number: "02",
     icon: Fingerprint,
-    title: "Govern every agent",
-    summary: "Keep agent actions behind authenticated identity, tenant context, and policy.",
+    title: "Enforce before execution",
+    summary: "Evaluate sensitive operations against identity, tenant, and policy boundaries.",
     detail:
-      "Security requests and decisions derive identity and tenant context on the server. TOTP MFA enrollment and verification have explicit flows; the application does not trust a tenant ID supplied by the browser.",
-    proof: "Authenticated session · tenant-aware authorization · MFA",
+      "Security-sensitive requests must derive their actor and tenant context from an authenticated server-side identity. Client-supplied tenant values are not an authorization source.",
+    proof: "Authenticated identity · tenant boundary · decision",
   },
   {
     number: "03",
     icon: CheckCircle2,
-    title: "Verify every fix",
-    summary: "A finding is not resolved just because someone says it is.",
+    title: "Retest and prove remediation",
+    summary: "Verify a fix from an authorized retest and its observed result.",
     detail:
       "Treat remediation as verified only when an authorized retest supplies an observable outcome and associated evidence. Queued work, missing telemetry, and unverified results stay distinct from a pass.",
-    proof: "Finding · retest · observed evidence",
+    proof: "Finding · retest · source-attributed evidence",
   },
 ] as const;
 
@@ -64,6 +64,37 @@ export default function ValidationSection() {
             </article>
           ))}
         </div>
+
+        <section aria-label="Security trust boundaries" className="mt-8 border-t border-[var(--border)] pt-7">
+          <div className="max-w-3xl">
+            <h3 className="text-lg font-bold tracking-tight">Security boundaries, made explicit.</h3>
+            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
+              Public product information is separated from authenticated workspace data and privileged operations. Actual enforcement is verified through route-level controls and security tests, not through the appearance of the interface.
+            </p>
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <article className="rounded-xl border border-[var(--border)] bg-[var(--panel)] p-4">
+              <Fingerprint className="h-5 w-5 text-[var(--accent)]" />
+              <h4 className="mt-3 text-sm font-semibold">Identity-bound access</h4>
+              <p className="mt-1 text-xs leading-5 text-[var(--muted)]">Sensitive operations resolve identity and authorization on the server.</p>
+            </article>
+            <article className="rounded-xl border border-[var(--border)] bg-[var(--panel)] p-4">
+              <Database className="h-5 w-5 text-[var(--accent)]" />
+              <h4 className="mt-3 text-sm font-semibold">Tenant-scoped records</h4>
+              <p className="mt-1 text-xs leading-5 text-[var(--muted)]">Workspace data access must remain within the authenticated tenant boundary.</p>
+            </article>
+            <article className="rounded-xl border border-[var(--border)] bg-[var(--panel)] p-4">
+              <FileCheck2 className="h-5 w-5 text-[var(--accent)]" />
+              <h4 className="mt-3 text-sm font-semibold">Evidence with provenance</h4>
+              <p className="mt-1 text-xs leading-5 text-[var(--muted)]">Findings distinguish source observations from inference and unverified states.</p>
+            </article>
+            <article className="rounded-xl border border-[var(--border)] bg-[var(--panel)] p-4">
+              <CircleHelp className="h-5 w-5 text-[var(--accent)]" />
+              <h4 className="mt-3 text-sm font-semibold">Unknown stays unknown</h4>
+              <p className="mt-1 text-xs leading-5 text-[var(--muted)]">Missing telemetry is not counted as proof of security or successful execution.</p>
+            </article>
+          </div>
+        </section>
 
         <p className="mt-6 max-w-4xl text-xs leading-6 text-[var(--muted)]">
           Implementation is not the same as a verified live deployment. Actual pentest execution depends on valid authorization, an available runner, and its returned result. Database-enforced row-level security and end-to-end production isolation remain separate verification items.
