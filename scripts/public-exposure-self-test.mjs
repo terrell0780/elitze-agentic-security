@@ -100,7 +100,13 @@ const pillars = read("src/components/home/validation-section.tsx");
 for (const item of ["Map every exposed path", "Enforce before execution", "Retest and prove remediation", "Identity-bound access", "Tenant-scoped records", "Evidence with provenance", "Unknown stays unknown"]) {
   assert.ok(pillars.includes(item), "homepage security/trust section must include " + item);
 }
-assert.match(read("src/app/security/page.tsx"), /sizes="100vw"/, "large security architecture image must declare responsive sizes");
+const securityPage = read("src/app/security/page.tsx");
+assert.match(securityPage, /<Image[\\s\\S]{0,350}alt="[^"]+"/, "security architecture image must have descriptive alt text");
+assert.match(securityPage, /sizes="100vw"/, "large security architecture image must declare responsive sizes");
+const platformPage = read("src/app/platform/page.tsx");
+assert.match(platformPage, /<Image[\\s\\S]{0,350}alt="[^"]+"/, "platform architecture image must have descriptive alt text");
+assert.match(platformPage, /sizes="100vw"/, "large platform architecture image must declare responsive sizes");
+assert.match(platformPage, /canonical: "\\/platform"/, "platform page must have a canonical URL");
 for (const file of [
   "src/app/console/layout.tsx",
   "src/app/workspace/page.tsx",
