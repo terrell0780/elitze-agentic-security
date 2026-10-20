@@ -11,27 +11,27 @@ const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: { default: "ELITZE Agentic Security | AI Security Control Plane", template: "%s | ELITZE Agentic Security" },
-  description: "ELITZE Agentic Security provides an evidence-backed control path for agent identity, MCP servers, tools, reachability, policy enforcement, authorized execution, runtime observation and retesting.",
+  title: { default: "Continuous Pentesting, Governed by Evidence", template: "%s | ELITZE Agentic Security" },
+  description: "ELITZE Agentic Security connects release-assurance testing, identity-aware AI agent governance, tenant-aware authorization, and evidence-backed retesting. Live execution claims depend on verified runner results.",
   applicationName: "ELITZE Agentic Security",
   category: "cybersecurity",
-  keywords: ["ELITZE Agentic Security", "agentic security", "AI agent security", "AI security", "MCP security", "LLM security", "API security", "AI governance", "agent runtime security", "security control plane", "security decision plane", "security evidence", "continuous security validation", "vulnerability management", "exposure management", "security operations", "SOC automation"],
+  keywords: ["ELITZE Agentic Security", "continuous pentesting", "release assurance", "AI agent security", "MCP security", "API security", "policy enforcement", "security retesting", "agent runtime security", "security control plane", "security evidence", "continuous security validation", "vulnerability management", "exposure management", "security operations"],
   creator: "ELITZE", publisher: "ELITZE", authors: [{ name: "ELITZE" }],
   ...(googleVerification ? { verification: { google: googleVerification } } : {}),
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
-  openGraph: { type: "website", siteName: "ELITZE Agentic Security", title: "ELITZE Agentic Security | See the threat. Control the path. Prove the fix.", description: "A security decision and evidence plane for AI agents, software, cloud, identity, APIs and runtime behavior.", locale: "en_CA" },
-  twitter: { card: "summary_large_image", title: "ELITZE Agentic Security | See the threat. Control the path. Prove the fix.", description: "Security decision, policy enforcement and verification for the agentic enterprise." },
+  openGraph: { type: "website", siteName: "ELITZE Agentic Security", title: "Continuous Pentesting, Governed by Evidence", description: "Release-assurance testing, governed AI-agent actions, and evidence-backed security retesting.", locale: "en_CA" },
+  twitter: { card: "summary_large_image", title: "Continuous Pentesting, Governed by Evidence", description: "Release-assurance testing, governed AI-agent actions, and evidence-backed security retesting." },
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, themeColor: [{ media: "(prefers-color-scheme: dark)", color: "#061018" }, { media: "(prefers-color-scheme: light)", color: "#f6fafc" }] };
 
-const organizationSchema = { "@context": "https://schema.org", "@type": "Organization", name: "ELITZE", alternateName: "ELITZE Agentic Security", url: siteUrl, description: "Security decision and evidence plane for AI agents, software, cloud, identity, APIs and runtime behavior." };
+const organizationSchema = { "@context": "https://schema.org", "@type": "Organization", name: "ELITZE", alternateName: "ELITZE Agentic Security", url: siteUrl, description: "Evidence-governed security testing and identity-aware control for AI agents, APIs, and sensitive execution paths." };
 const websiteSchema = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "ELITZE Agentic Security",
   url: siteUrl,
-  description: "See the threat. Control the path. Prove the fix.",
+  description: "Continuous Pentesting, Governed by Evidence.",
   potentialAction: {
     "@type": "SearchAction",
     target: `${siteUrl}/search?q={search_term_string}`,
