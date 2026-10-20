@@ -46,6 +46,8 @@ jobs:
         run: npm run production-config:self-test
 
       - name: Public exposure regression checks
+        env:
+          ELITZE_PUBLIC_BASE_URL: https://www.elitze.info
         run: npm run security:public-exposure-self-test
 
       - name: Sanitized readiness diagnostics self-test
