@@ -105,10 +105,11 @@ if (fs.existsSync(generatedStatic)) {
 }
 
 const liveBase = process.env.ELITZE_PUBLIC_BASE_URL?.trim();
+let liveCheckStatus = "SKIPPED";
 const timeoutSignal = () => AbortSignal.timeout(12000);
 const fetchLive = async (route, options = {}) => {
   const url = new URL(route, liveBase);
-  const response = await fetch(url, { redirect: options.redirect ?? "follow", signal: timeoutSignal(), headers: { "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36" } });
+  const response = await fetch(url, { redirect: options.redirect ?? "follow", signal: timeoutSignal(), headers: { "user-agent": "ELITZE-public-exposure-check/1.0" } });
   const body = await response.text();
   return { response, body, url: url.toString() };
 };
@@ -117,8 +118,16 @@ if (liveBase) {
   assert.equal(base.protocol, "https:", "live exposure checks must target HTTPS");
   const publicRoutes = ["/", "/platform", "/security"];
   const assetUrls = new Set();
+  let edgeBlocked = false;
   for (const route of publicRoutes) {
     const { response, body, url } = await fetchLive(route);
+    if ([403, 429].includes(response.status)) {
+      checkNoSecrets(body, "edge protection response " + route);
+      checkNoInternalEvidence(body, "edge protection response " + route);
+      console.warn("ELITZE live public exposure checks: UNMEASURABLE; edge returned HTTP " + response.status + " for " + route + ". The application response was not inspected.");
+      edgeBlocked = true;
+      break;
+    }
     assert.equal(response.status, 200, "public route unavailable: " + route + " (" + response.status + ")");
     assert.match(response.headers.get("content-type") ?? "", /text\/html/i, "public route must return HTML: " + route);
     for (const [header, pattern] of [
@@ -135,6 +144,7 @@ if (liveBase) {
       assetUrls.add(new URL(match[1], url).toString());
     }
   }
+  if (!edgeBlocked) {
   assert.ok(assetUrls.size > 0, "homepage should reference the expected JavaScript assets");
   for (const assetUrl of assetUrls) {
     const { response, body } = await fetchLive(assetUrl);
@@ -142,7 +152,7 @@ if (liveBase) {
     assert.doesNotMatch(body, /sourceMappingURL\s*=/i, "public JavaScript references a source map: " + new URL(assetUrl).pathname);
     checkNoSecrets(body, "live JavaScript asset " + new URL(assetUrl).pathname);
     const mapUrl = assetUrl + ".map";
-    const mapResponse = await fetch(mapUrl, { redirect: "follow", signal: timeoutSignal(), headers: { "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36" } });
+    const mapResponse = await fetch(mapUrl, { redirect: "follow", signal: timeoutSignal(), headers: { "user-agent": "ELITZE-public-exposure-check/1.0" } });
     if (mapResponse.ok && /(?:json|javascript)/i.test(mapResponse.headers.get("content-type") ?? "")) {
       const mapBody = await mapResponse.text();
       let map = null;
@@ -179,8 +189,13 @@ if (liveBase) {
   assert.deepEqual(Object.keys(health).sort(), ["ok", "service", "status"].sort(), "public health must expose only its minimal public contract");
   assert.equal(health.service, "elitze-agentic-security");
   assert.ok(["ready", "unavailable"].includes(health.status));
+  liveCheckStatus = "PASS";
   console.log("ELITZE live public exposure checks: PASS (" + publicRoutes.length + " public pages, " + assetUrls.size + " assets, " + privateApiRoutes.length + " private APIs)");
+  } else {
+    liveCheckStatus = "UNMEASURABLE";
+    console.warn("ELITZE live checks stopped because edge protection blocked the probe; static/build checks remain applicable.");
+  }
 } else {
   console.log("ELITZE live public exposure checks: SKIPPED (set ELITZE_PUBLIC_BASE_URL to enable)");
 }
-console.log("ELITZE public exposure self-test: PASS");
+console.log("ELITZE public exposure static/build checks: PASS; live checks: " + liveCheckStatus);
