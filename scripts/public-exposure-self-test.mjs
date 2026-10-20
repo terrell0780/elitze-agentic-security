@@ -49,6 +49,32 @@ if (baseUrl) {
   assert.equal(home.response.status, 200, "public homepage should return HTTP 200");
   assert.doesNotMatch(home.body, /sourceMappingURL=|BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY|(?:api[_-]?key|secret|password)\s*[:=]\s*["'][^"']{12,}/i, "homepage must not expose source-map references or obvious credential material");
 
+  const sensitivePayload = /BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY|gh[pousr]_[A-Za-z0-9]{30,}|AKIA[0-9A-Z]{16}|xox[baprs]-[A-Za-z0-9-]{20,}|ELITZE_(?:RUNNER|SECURITY_RUNNER)_HMAC_SECRET\\s*[:=]|(?:DATABASE_URL|SUPABASE_SERVICE_ROLE_KEY|RESEND_API_KEY)\\s*[:=]|["'](?:tenantId|tenant_id|missingMigrations|configurationSource|connectionString)["']\\s*:/i;
+  assert.doesNotMatch(home.body, sensitivePayload, "homepage HTML must not contain credential patterns or serialized private diagnostic fields");
+
+  const sitemapResult = await fetchRoute("/sitemap.xml");
+  assert.equal(sitemapResult.response.status, 200, "public sitemap should return HTTP 200");
+  const publicPaths = [...sitemapResult.body.matchAll(/<loc>https?:\\/\\/[^/]+([^<]*)<\\/loc>/g)].map((match) => match[1] || "/");
+  assert.ok(publicPaths.length > 0, "public sitemap should list public routes");
+  assert.ok(publicPaths.every((path) => !/^\\/(?:api|console|workspace|login|register|forgot-password|reset-password)(?:\\/|$)/.test(path)), "sitemap must not advertise private routes");
+
+  const scriptUrls = [...home.body.matchAll(/<script[^>]+src=["']([^"']+\\.js(?:\\?[^"']*)?)["']/g)].map((match) => match[1]);
+  const uniqueScripts = [...new Set(scriptUrls)].filter((path) => path.startsWith("/") || new URL(path).origin === base.origin);
+  for (const scriptPath of uniqueScripts) {
+    const script = await fetchRoute(scriptPath);
+    assert.equal(script.response.status, 200, `public script should load: ${scriptPath}`);
+    assert.doesNotMatch(script.body, /sourceMappingURL=|BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY|gh[pousr]_[A-Za-z0-9]{30,}|AKIA[0-9A-Z]{16}|xox[baprs]-[A-Za-z0-9-]{20,}/i, `public script must not expose source maps or obvious credentials: ${scriptPath}`);
+    const mapPath = scriptPath.replace(/\\.js(?:\\?.*)?$/, ".js.map");
+    const sourceMap = await fetchRoute(mapPath);
+    assert.notEqual(sourceMap.response.status, 200, `source map must not be publicly retrievable: ${mapPath}`);
+  }
+
+  for (const path of publicPaths) {
+    const page = await fetchRoute(path);
+    assert.ok(page.response.status >= 200 && page.response.status < 400, `sitemap route must not return a server error: ${path} returned ${page.response.status}`);
+    assert.doesNotMatch(page.body, sensitivePayload, `public page must not expose credentials or serialized private diagnostic fields: ${path}`);
+  }
+
   const health = await fetchRoute("/api/health");
   assert.ok([200, 503].includes(health.response.status), "public health endpoint should return only readiness status");
   const healthJson = JSON.parse(health.body);
