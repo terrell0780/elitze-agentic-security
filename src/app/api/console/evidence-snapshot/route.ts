@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 
 export async function GET() {
   const user = await getCurrentUser().catch(() => null);
-  if (!user) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  if (!user) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401, headers: { "cache-control": "private, no-store" } });
 
   try {
     const db = getPgPool();
