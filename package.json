@@ -11,6 +11,7 @@
     "typecheck": "tsc --noEmit",
     "test": "node scripts/security-self-test.mjs",
     "security:self-test": "node scripts/security-self-test.mjs",
+    "security:public-exposure-self-test": "node scripts/public-exposure-self-test.mjs",
     "threat-detection:self-test": "node --experimental-strip-types scripts/threat-detection-self-test.mjs",
     "data-bridge:self-test": "node scripts/data-bridge-self-test.mjs",
     "mcp-workload-identity:self-test": "node scripts/mcp-workload-identity-self-test.mjs",
