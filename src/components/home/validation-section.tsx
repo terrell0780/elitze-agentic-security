@@ -4,29 +4,29 @@ const pillars = [
   {
     number: "01",
     icon: Activity,
-    title: "Pentest every release",
-    summary: "Make release assurance part of the release path—not a once-a-year PDF.",
+    title: "Map exposure and reach",
+    summary: "Understand which identities, services, APIs, and tools can reach sensitive resources.",
     detail:
-      "Define the HTTPS target, bounded scope, test profile, and authorization reference for release-assurance work. A test is reported as executed only when an authorized, configured runner returns its outcome.",
-    proof: "Scoped request · authorization · runner result",
+      "Connect approved sources, map reachable execution paths, and keep missing telemetry distinct from confirmed exposure. Unknown reach is not reported as safe.",
+    proof: "Source-linked inventory · reachability · evidence status",
   },
   {
     number: "02",
     icon: Fingerprint,
-    title: "Govern every agent",
-    summary: "Keep agent actions behind authenticated identity, tenant context, and policy.",
+    title: "Enforce identity and policy",
+    summary: "Make authorization—not model output—the boundary for sensitive actions.",
     detail:
-      "Security requests and decisions derive identity and tenant context on the server. TOTP MFA enrollment and verification have explicit flows; the application does not trust a tenant ID supplied by the browser.",
-    proof: "Authenticated session · tenant-aware authorization · MFA",
+      "Evaluate identity, tenant context, scope, and policy before authorized execution. Reject out-of-scope requests and preserve decision records for review.",
+    proof: "Authenticated identity · tenant-aware policy · decision record",
   },
   {
     number: "03",
     icon: CheckCircle2,
-    title: "Verify every fix",
-    summary: "A finding is not resolved just because someone says it is.",
+    title: "Verify remediation",
+    summary: "Track fixes through observation, retesting, and evidence.",
     detail:
-      "Treat remediation as verified only when an authorized retest supplies an observable outcome and associated evidence. Queued work, missing telemetry, and unverified results stay distinct from a pass.",
-    proof: "Finding · retest · observed evidence",
+      "Treat remediation as verified only when an observable retest supports the result. Queued work, missing telemetry, and unverified outcomes remain distinct from a pass.",
+    proof: "Finding · remediation · retest · observed evidence",
   },
 ] as const;
 
@@ -39,10 +39,10 @@ export default function ValidationSection() {
             The ELITZE operating model
           </div>
           <h2 className="mt-3 text-3xl font-black tracking-[-.045em] sm:text-4xl">
-            Three pillars. One evidence-governed loop.
+            Discover. Control. Observe. Prove.
           </h2>
           <p className="mt-4 text-sm leading-7 text-[var(--muted-strong)]">
-            Continuous testing matters only when the scope is authorized, the agent boundary is governed, and the result can be verified.
+            Security decisions must follow verified identity, authorized scope, observable behavior, and evidence—not assumptions.
           </p>
         </div>
 
@@ -64,10 +64,6 @@ export default function ValidationSection() {
             </article>
           ))}
         </div>
-
-        <p className="mt-6 max-w-4xl text-xs leading-6 text-[var(--muted)]">
-          Implementation is not the same as a verified live deployment. Actual pentest execution depends on valid authorization, an available runner, and its returned result. Database-enforced row-level security and end-to-end production isolation remain separate verification items.
-        </p>
       </div>
     </section>
   );
