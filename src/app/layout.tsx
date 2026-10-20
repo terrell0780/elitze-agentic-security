@@ -41,13 +41,13 @@ export const metadata: Metadata = {
     type: "website",
     siteName: "ELITZE Agentic Security",
     title: "Enterprise Cybersecurity Platform",
-    description: "Enterprise cybersecurity with continuous testing, threat detection, vulnerability intelligence, and evidence-backed remediation for enterprise systems."
+    description: "Enterprise cybersecurity with continuous testing, threat detection, vulnerability intelligence, and evidence-backed remediation for enterprise systems.",
     locale: "en_CA",
   },
   twitter: {
     card: "summary_large_image",
     title: "Enterprise Cybersecurity Platform",
-    description: "Continuous security testing, threat detection, vulnerability intelligence, and evidence-backed remediation for enterprise systems.",
+    description: "Enterprise cybersecurity with continuous testing, threat detection, vulnerability intelligence, and evidence-backed remediation for enterprise systems.",
   },
 };
 
