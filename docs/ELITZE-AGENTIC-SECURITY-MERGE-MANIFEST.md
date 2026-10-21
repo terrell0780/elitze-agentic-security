@@ -1,18 +1,18 @@
 # ELITZE Agentic Security — Architecture and Deployment Manifest
 
-**Canonical repository:** [`terrell0780/elitze-agentic-security`](https://github.com/terrell0780/elitze-agentic-security)
+**Repository:** [`terrell0780/elitze-agentic-security`](https://github.com/terrell0780/elitze-agentic-security)
 
-**Product:** ELITZE Agentic Security
-**Production web domain:** [`https://www.elitze.info`](https://www.elitze.info) (the apex domain `https://elitze.info` redirects to www)
+**Product:** ELITZE Agentic Security  
+**Production web domain:** [`https://www.elitze.info`](https://www.elitze.info) (the apex domain [`https://elitze.info`](https://elitze.info) redirects to www)
 
-This document defines the intended architecture and deployment boundaries. It is not, by itself, proof that a production integration is connected or a service is healthy. Use runtime checks and source-attributed evidence for operational claims.
+This document defines intended architecture and deployment boundaries. It is not proof that a production integration is connected or a service is healthy. Use runtime checks and source-attributed evidence for operational claims.
 
 ## System boundaries
 
-- **ELITZE runtime orchestrator:** The core orchestration and policy boundary. The runtime orchestrator is `src/lib/elitze-secure/elitze-agent.ts`; `POST /api/elitze` is the governed planning/API entry point.
-- **SARA supervisory layer:** Provides operator-facing assistance and supervisory assurance within ELITZE's authenticated identity, tenant, policy, approval, and evidence controls. SARA does not create independent execution authority.
-- **Sentinel security layer:** The integrated security-protection layer within ELITZE Agentic Security, not a separate product or separate control plane. Its code mapping is the gateway, deterministic policy engine, enforcement point, defense fabric, audit ledger, configured adapters, and controlled security runner. This label does not establish that external providers or the runner are live.
-- **Persistent workflows:** `src/lib/elitze-secure/agent-workflow.ts` and the related database migrations persist tenant-scoped workflow state, identity checks, approval gates, delegation limits, provenance, and evidence/retest state. A stored schedule is not proof that a production scheduler is running.
+- **ELITZE runtime orchestrator:** Core orchestration and policy boundary at `src/lib/elitze-secure/elitze-agent.ts`; `POST /api/elitze` is the governed planning/API entry point.
+- **SARA supervisory layer:** Provides supervisory assurance within ELITZE's authenticated identity, tenant, policy, approval, and evidence controls. SARA does not create independent execution authority.
+- **Sentinel security layer:** Integrated security protection within ELITZE Agentic Security, not a separate product or control plane. Its code mapping includes the gateway, deterministic policy engine, enforcement point, defense fabric, audit ledger, configured adapters, and controlled security runner. This label does not establish that external providers or the runner are live.
+- **Persistent workflows:** `src/lib/elitze-secure/agent-workflow.ts` and database migrations persist tenant-scoped workflow state, identity checks, approval gates, delegation limits, provenance, and evidence/retest state. A stored schedule is not proof that a production scheduler is running.
 - **Agentic SOC analysis:** The tenant-authenticated LangGraph path analyzes eligible tenant-scoped observed events. Model review must not invent findings or silently change source severity.
 - **Security runner:** The `runner/` directory contains the separately deployed execution tier. It must validate signed requests, explicit authorization and scope, target allowlists, safety limits, timeouts, and signed callbacks. It is subordinate to the ELITZE control plane.
 - **Frontend and data plane:** The Next.js App Router application and tenant-scoped database provide the shared workspace, API routes, identity and policy state, Data Bridge, adapters, workflows, and evidence.
@@ -23,7 +23,7 @@ This document defines the intended architecture and deployment boundaries. It is
 - `generated/elitze_orchestrator.py` is a bounded CI self-test/evidence wrapper for the allowlisted runner handshake. It is not the product runtime orchestrator.
 - `src/app/api/elitze/route.ts` plans and records governed work. A returned plan is not proof that an external action executed.
 - `ElitzeActionExecutor` is an execution interface. External execution requires a real authorized executor or adapter and applicable policy approval.
-- A production runner must use the canonical repository and `runner/Dockerfile`, share the approved HMAC secret through secret managers, and pass its health and signed-handshake checks. A runner sourced from another repository is not the canonical runner.
+- A production runner must use this repository and `runner/Dockerfile`, share the approved HMAC secret through secret managers, and pass health and signed-handshake checks. A runner sourced elsewhere is not the implementation described here.
 
 ## Security workflow
 
@@ -51,8 +51,8 @@ The repository includes implementation foundations for typed security decisions,
 4. Verify signup/login, verification and recovery flows, session revocation, tenant isolation, authorization boundaries, and migration state.
 5. Verify runner health and signed challenge-response with production configuration.
 6. Verify external providers with authorized credentials and source-attributed records.
-7. Promote only the commit that passed required release gates; record the commit SHA and observed verification results.
+7. Promote only a commit that passed required release gates; record the commit SHA and observed verification results.
 
-## Canonical build rule
+## Repository integrity
 
-`terrell0780/elitze-agentic-security` is the canonical ELITZE Agentic Security repository. Keep one authoritative product build and do not create competing product repositories or claim deployment success without direct evidence.
+Keep this repository as the single implementation reference for ELITZE Agentic Security. Do not create competing product repositories or claim deployment success without direct evidence.
