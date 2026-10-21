@@ -12,7 +12,8 @@ RUN set -eux; \
     echo "Nuclei build failed after three attempts" >&2; \
     exit 1
 
-FROM node:22-alpine
+# Match the repository's declared Node.js >=24 runtime and CI toolchain.
+FROM node:24-alpine
 RUN apk add --no-cache ca-certificates
 COPY --from=nuclei-build /go/bin/nuclei /usr/local/bin/nuclei
 WORKDIR /app
