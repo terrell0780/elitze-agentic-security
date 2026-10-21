@@ -77,6 +77,7 @@ for (const [file, marker] of [
 ]) {
   assert.match(read(file), marker, file + " must scope data queries by tenant");
 }
+assert.doesNotMatch(read("src/app/api/console/security-graph/route.ts"), /tenantId:\s*user\.tenantId/, "security graph must not echo the tenant identifier in its response");
 assert.match(read("src/app/console/layout.tsx"), /getCurrentUser\(\)/, "console server layout must authenticate before rendering");
 assert.match(read("src/app/console/layout.tsx"), /if\s*\(!user\)\s*redirect\(["']\/login/, "anonymous console navigation must redirect to login");
 assert.match(read("src/app/workspace/page.tsx"), /getCurrentUser\(\)/, "workspace entry must authenticate on the server");
