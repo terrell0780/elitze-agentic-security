@@ -154,7 +154,7 @@ const fetchLive = async (route, options = {}) => {
 };
 if (liveBase) {
   const base = new URL(liveBase);
-  assert.equal(base.protocol, "https:", "live exposure checks must target HTTPS");
+  const isLoopbackHttp = base.protocol === "http:" && ["127.0.0.1", "localhost"].includes(base.hostname);\n  assert.ok(base.protocol === "https:" || isLoopbackHttp, "live exposure checks must target HTTPS except for a loopback HTTP test server");
   const publicRoutes = ["/", "/platform", "/security"];
   const assetUrls = new Set();
   let edgeBlocked = false;
