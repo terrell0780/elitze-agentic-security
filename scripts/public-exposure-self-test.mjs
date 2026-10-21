@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
+import { execFileSync } from "node:child_process";
 
 const root = process.cwd();
 const read = (file) => fs.readFileSync(path.join(root, file), "utf8");
@@ -11,11 +12,25 @@ const walk = (directory) => {
     return entry.isDirectory() ? walk(full) : [full];
   });
 };
+const tracked = execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8" }).split(/\r?\n/).filter(Boolean);
+const sensitiveTracked = tracked.filter((file) =>
+  ((/(^|\/)\.env(?:\..*)?$/.test(file) && !/\.example$/.test(file)) ||
+   /\.(?:pem|p12|pfx|key)$/i.test(file) ||
+   /(^|\/)(?:id_rsa|id_ed25519)$/i.test(file))
+);
+assert.deepEqual(sensitiveTracked, [], "credential/private-key files must never be tracked");
+
+const isBrowserSource = (file) =>
+  /^(?:src\/app|src\/components|public)\//.test(file) &&
+  /\.(?:tsx?|jsx?|mjs|cjs|css|html|svg|json)$/i.test(file);
+
 const secretPatterns = [
   ["private key", /-----BEGIN (?:[A-Z0-9 ]+ )?PRIVATE KEY-----/],
   ["database connection string", /postgres(?:ql)?:\/\/[^\s"'<>]+:[^\s"'<>]+@/i],
-  ["GitHub access token", /\bgh[pousr]_[A-Za-z0-9]{20,}\b/],
-  ["AWS access key identifier", /\bAKIA[0-9A-Z]{16}\b/],
+  ["GitHub access token", /\b(?:gh[pousr]_[A-Za-z0-9]{20,}|github_pat_[A-Za-z0-9_]{30,})\b/],
+  ["AWS access key identifier", /\b(?:AKIA|ASIA)[0-9A-Z]{16}\b/],
+  ["Stripe live secret", /\b(?:sk|rk)_live_[A-Za-z0-9]{16,}\b/],
+  ["Supabase service secret", /\bsb_secret_[A-Za-z0-9_-]{20,}\b/],
   ["Resend API token", /\bre_[A-Za-z0-9_-]{20,}\b/],
   ["Vercel token", /\bvercel_[A-Za-z0-9]{20,}\b/i],
   ["OpenAI-style secret token", /\bsk-[A-Za-z0-9]{32,}\b/],
@@ -27,6 +42,16 @@ const checkNoSecrets = (text, label) => {
     assert.equal(pattern.test(text), false, label + ": possible " + name + " exposure");
   }
 };
+for (const file of tracked.filter(isBrowserSource)) {
+  const content = read(file);
+  checkNoSecrets(content, file + " browser-facing source");
+  if (/^\s*["']use client["'];?/m.test(content)) {
+    for (const match of content.matchAll(/process\.env\.([A-Z0-9_]+)/g)) {
+      assert.ok(match[1].startsWith("NEXT_PUBLIC_"), "server-only environment variable " + match[1] + " referenced in client component " + file);
+    }
+  }
+}
+
 const checkNoInternalEvidence = (text, label) => {
   const patterns = [
     ["serialized tenant UUID", /["'](?:tenantId|tenant_id|organizationId|organization_id)["']\s*:\s*["'][0-9a-f]{8}-[0-9a-f-]{27,}["']/i],
