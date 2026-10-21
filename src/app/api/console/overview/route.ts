@@ -5,11 +5,13 @@ import { getPgPool, isDatabaseConfigured } from "@/db";
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
+const privateHeaders = { "cache-control": "private, no-store" };
+
 export async function GET() {
   const user = await getCurrentUser();
-  if (!user) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  if (!user) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401, headers: privateHeaders });
   if (!isDatabaseConfigured()) {
-    return NextResponse.json({ ok: false, error: "database_unconfigured", evidenceState: "UNMEASURABLE" }, { status: 503, headers: { "cache-control": "no-store" } });
+    return NextResponse.json({ ok: false, error: "database_unconfigured", evidenceState: "UNMEASURABLE" }, { status: 503, headers: privateHeaders });
   }
 
   try {
@@ -78,9 +80,9 @@ export async function GET() {
         latestTestAt: t.latest_at ?? null,
       },
       measurementPolicy: "All values come from the authenticated tenant PostgreSQL boundary. Empty counts are real zero-record states; unavailable measurements are not substituted with synthetic values.",
-    }, { headers: { "cache-control": "no-store" } });
+    }, { headers: privateHeaders });
   } catch (error) {
     console.error("ELITZE tenant overview load failed", error);
-    return NextResponse.json({ ok: false, error: "tenant_overview_unavailable", evidenceState: "UNMEASURABLE" }, { status: 503, headers: { "cache-control": "no-store" } });
+    return NextResponse.json({ ok: false, error: "tenant_overview_unavailable", evidenceState: "UNMEASURABLE" }, { status: 503, headers: privateHeaders });
   }
 }

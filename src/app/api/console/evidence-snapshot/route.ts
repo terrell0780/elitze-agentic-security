@@ -8,7 +8,7 @@ export const runtime = "nodejs";
 
 export async function GET() {
   const user = await getCurrentUser().catch(() => null);
-  if (!user) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401 });
+  if (!user) return NextResponse.json({ ok: false, error: "unauthorized" }, { status: 401, headers: { "cache-control": "private, no-store" } });
 
   try {
     const db = getPgPool();
@@ -57,7 +57,6 @@ export async function GET() {
         { control: "external_integrations_end_to_end", state: "NOT_RUNTIME_VERIFIED" },
         { control: "agent_and_mcp_runtime_enforcement", state: "NOT_RUNTIME_VERIFIED" },
         { control: "independent_security_assessment", state: "NOT_PROVIDED" },
-        { control: "customer_revenue_and_buyer_interest", state: "OUT_OF_BAND_EVIDENCE_REQUIRED" },
         { control: "intellectual_property_assignment_and_provenance", state: "OUT_OF_BAND_EVIDENCE_REQUIRED" },
       ],
       integrityNotes: [

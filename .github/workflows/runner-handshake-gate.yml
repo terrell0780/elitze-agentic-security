@@ -4,10 +4,10 @@ on:
   push:
     branches:
       - main
-      - verify/runner-handshake-20261008
   pull_request:
     branches:
       - main
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -23,34 +23,22 @@ jobs:
     timeout-minutes: 20
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: 24
-          cache: npm
+          package-manager-cache: false
 
       - name: Install locked dependencies
         run: npm ci
-
-      - name: Type-check
-        run: npm run typecheck
-
-      - name: Lint
-        run: npm run lint
 
       - name: Verify runner-side challenge-response
         run: npm run runner:handshake-self-test
 
       - name: Verify control-plane challenge-response
         run: npm run runner:control-plane-handshake-self-test
-
-      - name: Verify enterprise platform readiness
-        run: npm run platform:readiness
-
-      - name: Build production application
-        run: npm run build
 
       - name: Build and smoke-test runner container
         run: |
@@ -113,5 +101,3 @@ jobs:
           docker logs "$container"
           exit 1
 
-      - name: Audit production dependencies
-        run: npm audit --omit=dev

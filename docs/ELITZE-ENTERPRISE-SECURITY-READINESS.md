@@ -159,7 +159,7 @@ A residual-risk acceptance does **not** transform the underlying control into `V
 
 ## Claim firewall
 
-Public site copy, sales material, console status, acquisition materials, security questionnaires, and API responses must derive assurance language from the claim state and evidence record. The system must not manufacture positive claims from documentation existence.
+Product copy, console status, security questionnaires, and API responses must derive assurance language from the claim state and evidence record. The system must not manufacture positive claims from documentation existence.
 
 Examples:
 

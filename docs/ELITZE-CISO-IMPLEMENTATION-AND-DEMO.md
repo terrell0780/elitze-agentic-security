@@ -101,26 +101,27 @@ The MCP upstream address regression command is `npm run mcp-upstream-address:sel
 
 README-listed API surfaces include `GET /api/health`, `GET /api/security/skills`, `POST /api/security/decision`, `POST /api/data-bridge/ingest`, `GET /api/data-bridge/observe`, `GET /api/data-bridge/health`, and `GET /api/data-bridge/adapters`. Test protected routes only with an authorized tenant context.
 
-## Buyer handoff package
+## Release evidence package
 
-Deliver a buyer-verifiable source and evidence package, not passwords or live secrets:
+Preserve an auditable release record that includes:
 
-- Repository URL, exact release commit SHA, PR history, architecture, build/test instructions, migrations and deployment/recovery runbooks.
-- `package.json`, `package-lock.json`, CycloneDX SBOM, license inventory and any required open-source notices.
-- Contributor/inventor record, signed IP assignment or transfer documents where applicable, third-party rights/limitations, and separate proof for trademarks/domains. Source possession alone does not prove full IP title.
-- Sanitized `.env.example`, infrastructure map, database restore steps, IONOS/Vercel/Resend ownership transfer plan, provider integration matrix and a list of secrets to rotate.
-- Exact CI run links, test/audit output, evidence integrity results, live connector test records and known prerequisites.
-- Transfer to buyer-controlled accounts, rotate all shared credentials, validate DNS/email/database/runner/connectors, remove seller access after written acceptance, and record post-transfer health evidence.
+- Repository URL, reviewed commit SHA, PR history, architecture, database migrations, and recovery runbooks.
+- `package.json`, lockfile, CycloneDX SBOM, license inventory, and applicable open-source notices.
+- Sanitized `.env.example`, infrastructure map, backup/restore steps, provider integration matrix, and documented secret-rotation procedure.
+- Exact CI run links, test and dependency-audit outputs, evidence-integrity results, live connector records, and known prerequisites.
+- Evidence that the deployed revision matches the reviewed commit, plus post-deployment health and rollback results.
 
-## Acquisition proposition
+Do not commit or transmit production secret values through source control. Repository content does not, by itself, establish legal ownership, external integration status, or production security effectiveness.
 
-**Problem:** agent and MCP tool access can create poorly understood paths to sensitive data or high-impact operations. ELITZE is built to connect an agent identity and its reachable capabilities to policy, separately authorized execution, observed outcomes, retesting, and evidence.
+## Security outcomes and limitations
 
-**Asset proposition:** a source-code and intellectual-property transfer of the ELITZE Agentic Security control plane and its documented agent-identity/MCP runtime-security implementation, together with the specific code, tests, schemas, adapters, deployment methods and documentation included in the signed agreement.
+ELITZE connects workload identity and observed reachability to policy decisions, separately authorized execution, runtime outcomes, remediation, retesting, and evidence.
 
-**Supporting evidence:** repository history; architecture and integration docs; tests and exact CI artifacts; SBOM and reviewed license inventory; authenticated provider test results; and a staging walkthrough that follows a request from identity through evidence.
-
-**Must be separately verified before closing:** transferability and ownership of all included IP; third-party license compliance; operational status of each integration; security test results; uptime/performance claims; and financial ROI assumptions. Do not invent customers, efficacy rates, savings, revenue or valuation.
+- Report only outcomes supported by the exact source revision and executed verification.
+- Do not invent identities, telemetry, vulnerabilities, incidents, integration status, customer records, metrics, certifications, or performance results.
+- Preserve unknown or unmeasurable states when a source, permission, runtime, or evidence reference is unavailable.
+- Treat code presence and stored configuration as prerequisites, not proof of live protection.
+- Promote a release only after mandatory CI checks, the authorized runner handshake, integration evidence, and recovery plan are verified for that exact commit.
 
 ## References
 

@@ -53,7 +53,14 @@ export async function POST(request: NextRequest) {
       results.evidence.push(await recordGraphEvidence(item as never));
     }
   } catch (error) {
-    return NextResponse.json({ ok:false,error:error instanceof Error ? error.message : "graph_write_failed" },{status:400});
+    const message = error instanceof Error ? error.message : "";
+    const clientErrors = new Set(["invalid_graph_node", "invalid_graph_edge", "invalid_graph_evidence"]);
+    const isClientError = clientErrors.has(message);
+    if (!isClientError) console.error("ELITZE security graph write failed", error);
+    return NextResponse.json(
+      { ok: false, error: isClientError ? message : "graph_write_failed" },
+      { status: isClientError ? 400 : 503 },
+    );
   }
   return NextResponse.json({ ok:true, results });
 }

@@ -26,6 +26,13 @@ const tests = [
   ["legal:control-self-test", "Legal control pack"],
   ["brand:self-test", "ELITZE public brand"],
   ["production-config:self-test", "Production identity/config"],
+  ["public-exposure:self-test", "Public exposure audit"],
+  ["workspace-platform:self-test", "Workspace and authorization boundaries"],
+  ["runner:self-test", "Runner scope and safety"],
+  ["runner:handshake-self-test", "Signed runner handshake"],
+  ["runner:control-plane-handshake-self-test", "Control-plane runner handshake"],
+  ["google-ads-governance:self-test", "Google Ads policy governance"],
+  ["db:config-self-test", "Database configuration"],
   ["tenant-overview:self-test", "Tenant isolation"],
   ["auth:security-self-test", "Authentication security"],
   ["progressive-proofing:self-test", "Progressive proofing"],
@@ -33,15 +40,12 @@ const tests = [
   ["pentest-request:self-test", "Pentest request controls"],
   ["security-fabric:self-test", "Security source fabric"],
   ["security-graph:self-test", "Security graph"],
-  ["google-ads-governance:self-test", "Advertising governance"],
-  ["contact-acquisition:self-test", "Contact/acquisition routing"],
-  ["rag:self-test", "RAG/vector controls"],
+    ["rag:self-test", "RAG/vector controls"],
   ["braces:self-test", "Dependency security patch"],
   ["agent-workflow:self-test", "Agent workflows"],
   ["trust-ownership:self-test", "Trust/ownership controls"],
   ["reo-market-intelligence:self-test", "REO market intelligence"],
-  ["business-process:self-test", "Business process controls"],
-];
+ ];
 
 const shuffled = [...tests];
 for (let i = shuffled.length - 1; i > 0; i -= 1) {

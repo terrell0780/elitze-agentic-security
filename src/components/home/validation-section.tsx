@@ -1,4 +1,4 @@
-import { Activity, CheckCircle2, Fingerprint } from "lucide-react";
+import { Activity, CheckCircle2, CircleHelp, Database, FileCheck2, Fingerprint } from "lucide-react";
 
 const pillars = [
   {
@@ -64,6 +64,41 @@ export default function ValidationSection() {
             </article>
           ))}
         </div>
+
+        <section aria-label="Security trust boundaries" className="mt-8 border-t border-[var(--border)] pt-7">
+          <div className="max-w-3xl">
+            <h3 className="text-lg font-bold tracking-tight">Security boundaries, made explicit.</h3>
+            <p className="mt-2 text-sm leading-6 text-[var(--muted)]">
+              Public product information is separated from authenticated workspace data and privileged operations. Actual enforcement is verified through route-level controls and security tests, not through the appearance of the interface.
+            </p>
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+            <article className="rounded-xl border border-[var(--border)] bg-[var(--panel)] p-4">
+              <Fingerprint className="h-5 w-5 text-[var(--accent)]" />
+              <h4 className="mt-3 text-sm font-semibold">Identity-bound access</h4>
+              <p className="mt-1 text-xs leading-5 text-[var(--muted)]">Sensitive operations resolve identity and authorization on the server.</p>
+            </article>
+            <article className="rounded-xl border border-[var(--border)] bg-[var(--panel)] p-4">
+              <Database className="h-5 w-5 text-[var(--accent)]" />
+              <h4 className="mt-3 text-sm font-semibold">Tenant-scoped records</h4>
+              <p className="mt-1 text-xs leading-5 text-[var(--muted)]">Workspace data access must remain within the authenticated tenant boundary.</p>
+            </article>
+            <article className="rounded-xl border border-[var(--border)] bg-[var(--panel)] p-4">
+              <FileCheck2 className="h-5 w-5 text-[var(--accent)]" />
+              <h4 className="mt-3 text-sm font-semibold">Evidence with provenance</h4>
+              <p className="mt-1 text-xs leading-5 text-[var(--muted)]">Findings distinguish source observations from inference and unverified states.</p>
+            </article>
+            <article className="rounded-xl border border-[var(--border)] bg-[var(--panel)] p-4">
+              <CircleHelp className="h-5 w-5 text-[var(--accent)]" />
+              <h4 className="mt-3 text-sm font-semibold">Unknown stays unknown</h4>
+              <p className="mt-1 text-xs leading-5 text-[var(--muted)]">Missing telemetry is not counted as proof of security or successful execution.</p>
+            </article>
+          </div>
+        </section>
+
+        <p className="mt-6 max-w-4xl text-xs leading-6 text-[var(--muted)]">
+          Implementation is not the same as a verified live deployment. Actual pentest execution depends on valid authorization, an available runner, and its returned result. Database-enforced row-level security and end-to-end production isolation remain separate verification items.
+        </p>
       </div>
     </section>
   );

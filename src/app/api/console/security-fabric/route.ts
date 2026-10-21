@@ -175,7 +175,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true, result });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "connector_probe_failed";
+    const errorCode = "connector_probe_failed";
     console.error("ELITZE connector probe failed", {
       connectorId: body.connectorId,
       tenantId: user.tenantId,
@@ -188,7 +188,7 @@ export async function POST(request: NextRequest) {
         "VALUES ($1,$2,'IMPLEMENTED','ERROR',now(),$3) " +
         "ON CONFLICT (tenant_id,connector_id) DO UPDATE SET " +
         "health_state='ERROR',last_error_at=now(),last_error=$3,updated_at=now()",
-      [user.tenantId, body.connectorId, message],
+      [user.tenantId, body.connectorId, errorCode],
     );
 
     return NextResponse.json(

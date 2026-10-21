@@ -13,7 +13,6 @@ import {
 } from "drizzle-orm/pg-core";
 
 export { useCases, agentIntegrations, godsEyeFindings } from "./use-cases-schema";
-export { crmContacts, crmActions } from "./crm-schema";
 export { dataSources, insights } from "./data-hub-schema";
 export { dataBridgeSources, dataBridgeEvents } from "./data-bridge-schema";
 export { securityApprovals, securityIntegrationEvents } from "./enterprise-workflow-schema";
@@ -79,16 +78,6 @@ export const enforcementEvents = pgTable("enforcement_events", {
   intentMismatch: boolean("intent_mismatch").notNull().default(false),
   latencyMs: real("latency_ms").notNull().default(0),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
-});
-
-export const marketGaps = pgTable("market_gaps", {
-  id: serial("id").primaryKey(),
-  title: varchar("title", { length: 200 }).notNull(),
-  demand: varchar("demand", { length: 20 }).notNull(),
-  buyer: varchar("buyer", { length: 120 }).notNull(),
-  why: text("why").notNull(),
-  elitzeStatus: varchar("elitze_status", { length: 40 }).notNull(),
-  differentiator: boolean("differentiator").notNull().default(false),
 });
 
 export const securityIdentities = pgTable("security_identities", {

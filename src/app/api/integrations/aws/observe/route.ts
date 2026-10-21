@@ -56,6 +56,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true, source: "aws", observedAt, region: observed.region, callerAccount: callerAccount ?? "UNKNOWN", roleCount: roleArns.length, policyCount: policyArns.length, cloudTrailEvents: events.length, evidenceState: callerAccount ? "OBSERVED" : "UNKNOWN" });
   } catch (error) {
     console.error("ELITZE AWS observation failed", error);
-    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "aws_observation_failed", evidenceState: "UNAVAILABLE" }, { status: 503 });
+    return NextResponse.json({ ok: false, error: "aws_observation_failed", evidenceState: "UNAVAILABLE" }, { status: 503 });
   }
 }

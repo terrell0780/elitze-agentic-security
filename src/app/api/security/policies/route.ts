@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
   if (!body?.tenantId || !body?.createdBy || !body.policy) return json({ ok: false, error: "tenantId_createdBy_policy_required" }, 400);
   let parsed;
   try { parsed = parsePolicyDocument(typeof body.policy === "string" ? body.policy : JSON.stringify(body.policy)); }
-  catch (error) { return json({ ok: false, error: error instanceof Error ? error.message : "invalid_policy" }, 400); }
+  catch { return json({ ok: false, error: "invalid_policy" }, 400); }
 
   const client = await pool.connect();
   try {

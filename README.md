@@ -104,6 +104,7 @@ npm run test
 npm run workspace-platform:self-test
 npm run platform:readiness
 npm run production-config:self-test
+npm run public-exposure:self-test
 npm run runner:self-test
 npm run runner:handshake-self-test
 npm run runner:control-plane-handshake-self-test
@@ -128,6 +129,8 @@ ELITZE is organized around identity, tenant isolation, explicit policy, scoped e
 - [Architecture and deployment manifest](docs/ELITZE-AGENTIC-SECURITY-MERGE-MANIFEST.md)
 - [Production integrations](docs/ELITZE-PRODUCTION-INTEGRATIONS.md)
 - [Enterprise security controls](docs/ENTERPRISE-SECURITY-CONTROL-STATUS.md)
+- [Security validation program](docs/ELITZE-SECURITY-VALIDATION-PROGRAM.md)
+- [Production operations readiness](docs/PRODUCTION-OPERATIONS-READINESS.md)
 - [Third-party license inventory](docs/security/THIRD-PARTY-LICENSE-INVENTORY-2026-10-11.md)
 
 ## Contributing

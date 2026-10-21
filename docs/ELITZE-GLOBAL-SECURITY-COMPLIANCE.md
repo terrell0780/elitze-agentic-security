@@ -194,7 +194,7 @@ An integration pack is **not** proof that a production connector is live. Implem
 
 ## Legal protection boundary
 
-ELITZE's application and acquisition/legal package should maintain, at minimum:
+ELITZE's application and security/compliance documentation should maintain, at minimum:
 
 1. Terms of Service
 2. Privacy Policy

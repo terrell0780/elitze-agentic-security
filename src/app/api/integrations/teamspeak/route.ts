@@ -48,8 +48,8 @@ export async function POST(request: NextRequest) {
   let url: URL;
   try {
     url = validateExternalHttpsUrl(parsed.data.webqueryUrl);
-  } catch (error) {
-    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "invalid_external_url" }, { status: 400 });
+  } catch {
+    return NextResponse.json({ ok: false, error: "Invalid or disallowed HTTPS endpoint." }, { status: 400 });
   }
 
   try {
@@ -85,6 +85,7 @@ export async function POST(request: NextRequest) {
       note: "The API key is encrypted at rest and is never returned. Connection verification requires an authorized TeamSpeak Web Query endpoint and is not represented as connected until tested.",
     }, { status: 201 });
   } catch (error) {
-    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "Unable to configure TeamSpeak." }, { status: 503 });
+    console.error("ELITZE TeamSpeak integration setup failed", error);
+    return NextResponse.json({ ok: false, error: "TeamSpeak integration could not be configured." }, { status: 503 });
   }
 }

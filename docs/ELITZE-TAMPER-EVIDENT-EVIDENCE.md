@@ -149,7 +149,7 @@ elitzectl evidence verify ./bundle --json
 elitzectl evidence inspect ./bundle --event <event-id>
 ```
 
-The CLI must be deterministic and suitable for use by auditors, incident responders, acquisition diligence teams, or an independent third party.
+The CLI must be deterministic and suitable for use by auditors, incident responders, or an authorized independent security reviewer.
 
 ## Security boundary
 

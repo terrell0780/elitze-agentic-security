@@ -12,7 +12,7 @@ const states = [
   ["Domain control", "EVIDENCE_REQUIRED", "Registrar and DNS records are the authoritative evidence for control of the production domains."],
   ["Copyright chain", "DOCUMENT_REQUIRED", "Authorship, employment, contractor and assignment records must support any ownership assertion."],
   ["Third-party rights", "REVIEW_REQUIRED", "Dependencies, APIs, datasets, models, images, fonts, trademarks and other external material keep their own license/rights boundary."],
-  ["Buyer transfer", "EXECUTION_REQUIRED", "A transaction is complete only after definitive transfer documents and agreed accounts/assets are transferred."],
+  ["Privileged change control", "APPROVAL_REQUIRED", "Changes to domains, deployments, integrations, or privileged access require an approved change record and post-change verification."],
 ];
 
 export default function OwnershipPage() {
@@ -34,7 +34,7 @@ export default function OwnershipPage() {
         <div className="text-[10px] font-bold uppercase tracking-[.24em] text-[var(--accent)]">ELITZE legal control</div>
         <h1 className="mt-4 text-4xl font-black tracking-[-.055em] sm:text-6xl">Ownership is a chain of evidence.</h1>
         <p className="mt-6 max-w-3xl text-lg leading-8 text-[var(--muted-strong)]">
-          ELITZE does not convert repository access, a brand name, AI-assisted development, or a domain name into an unsupported legal-ownership claim. Rights are recorded by source, provenance, license or assignment evidence, and transfer status.
+          ELITZE does not convert repository access, a brand name, AI-assisted development, or a domain name into an unsupported legal-ownership claim. Rights are recorded by source, provenance, license or assignment evidence, and authorization status.
         </p>
 
         <div className="mt-10 space-y-3">
@@ -55,7 +55,7 @@ export default function OwnershipPage() {
         <div className="mt-8 rounded-[24px] border border-[var(--accent-border)] bg-[var(--accent-soft)] p-6">
           <div className="text-[9px] font-bold uppercase tracking-[.2em] text-[var(--accent)]">Canonical ELITZE identity</div>
           <div className="mt-3 text-sm font-semibold">ELITZE Agentic Security · https://elitze.info · https://www.elitze.info</div>
-          <div className="mt-2 text-xs leading-5 text-[var(--muted-strong)]">The detailed diligence register is maintained in the controlled legal documentation. It is not itself a transfer instrument or legal opinion.</div>
+          <div className="mt-2 text-xs leading-5 text-[var(--muted-strong)]">The detailed diligence register is maintained in the controlled legal documentation. It is not itself a legal instrument or ownership opinion.</div>
         </div>
 
         <Link href="/legal" className="mt-8 inline-flex items-center gap-2 rounded-xl border border-[var(--border)] px-4 py-2.5 text-sm font-semibold">

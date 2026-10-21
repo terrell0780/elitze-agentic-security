@@ -11,4 +11,4 @@ The authenticated `GET /api/console/evidence-snapshot` endpoint downloads a tena
 
 The endpoint requires an authenticated session and scopes all queries to the current tenant. The export contains aggregate counts and timestamps only; it excludes targets, credentials, detailed findings, raw event payloads, and secret values. It uses `Cache-Control: no-store, private` and a downloadable JSON content disposition.
 
-This snapshot is a convenience for technical diligence, not a certification, penetration-test report, IP ownership opinion, customer/revenue proof, or independent audit. Buyer-facing claims must be supported by the underlying evidence and the remaining gaps must be disclosed.
+This snapshot is an operational evidence index, not a certification, penetration-test report, legal ownership opinion, or independent audit. Product and security claims must be supported by underlying evidence; unknowns and remaining gaps must be disclosed.

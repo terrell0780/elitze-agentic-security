@@ -4,7 +4,6 @@ on:
   pull_request:
     branches:
       - main
-      - rehaul/2026-security-control-surface
 
 permissions:
   contents: read
@@ -25,11 +24,11 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v7
         with:
-          node-version: 22
+          node-version: 24
           package-manager-cache: false
 
       - name: Install dependencies
-        run: npm install --no-audit --no-fund
+        run: npm ci
 
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high

@@ -46,7 +46,7 @@ The repository includes implementation foundations for typed security decisions,
 ## Release checklist
 
 1. Install dependencies reproducibly with `npm ci`.
-2. Run typecheck, lint, self-tests, production configuration checks, runner handshake checks, and the production build.
+2. Run typecheck, lint, self-tests, production configuration checks, the public exposure audit, runner handshake checks, dependency audit, and the production build. For live checks, distinguish `PASS`, `UNMEASURABLE`, and `SKIPPED`; do not interpret an edge-blocked probe as proof that the application was inspected.
 3. Apply database migrations only to the explicitly approved target database; preserve existing data and review destructive changes before execution.
 4. Verify signup/login, verification and recovery flows, session revocation, tenant isolation, authorization boundaries, and migration state.
 5. Verify runner health and signed challenge-response with production configuration.

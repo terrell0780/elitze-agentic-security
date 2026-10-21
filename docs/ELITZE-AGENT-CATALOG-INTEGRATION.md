@@ -35,6 +35,6 @@ A runtime is operationally verified only when the implementation is connected to
 
 Repository builds and self-tests validate code contracts; they do not alone prove production integrations or live runtime operation.
 
-## Ownership and transfer
+## Provenance and licensing
 
-The product UI and supported runtime roster use ELITZE and Sara branding. Any historical research material or external source artifact must receive separate provenance and license review before redistribution or inclusion in an acquisition transfer. This document does not make a blanket claim about third-party ownership.
+The product UI and supported runtime roster use ELITZE and Sara branding. Historical research material and external source artifacts require separate provenance and license review before redistribution or inclusion. This document does not make a blanket claim about third-party ownership.

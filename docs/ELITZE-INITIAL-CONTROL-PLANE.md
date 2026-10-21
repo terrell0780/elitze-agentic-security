@@ -48,9 +48,9 @@ The authenticated API provides snapshot, identity registration, reachability obs
 
 The product must not convert `UNKNOWN` or `UNMEASURABLE` into a positive security claim.
 
-## Sale/readiness implication
+## Security verification path
 
-The initial buyer demonstration should focus on one real path:
+Validation should focus on one real path:
 
 **agent identity → MCP/tool reachability → policy decision → evidence → authorized execution → result → retest**
 

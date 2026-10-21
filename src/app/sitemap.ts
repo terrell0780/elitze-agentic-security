@@ -2,7 +2,6 @@ import type { MetadataRoute } from "next";
 import { productionConfig } from "@/config/production";
 
 const routes = [
-  "/",
   "/platform",
   "/security",
   "/compliance",
@@ -33,7 +32,7 @@ const routes = [
 export default function sitemap(): MetadataRoute.Sitemap {
   return routes.map((path) => ({
     url: `${productionConfig.canonicalOrigin}${path}`,
-    changeFrequency: path === "/" ? "weekly" : "monthly",
-    priority: path === "/" ? 1 : path === "/security" || path === "/compliance" || path === "/platform" ? 0.9 : 0.7,
+    changeFrequency: "monthly",
+    priority: path === "/security" || path === "/compliance" || path === "/platform" ? 0.9 : 0.7,
   }));
 }

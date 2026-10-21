@@ -59,6 +59,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: true, source: "github-api", observedAt, repository: observation.repository, installations: observation.installations ?? "UNAVAILABLE", workflows: observation.workflows?.length ?? 0, protectedBranches: observation.branchProtections?.length ?? 0, secretMetadata: observation.secretMetadata?.length ?? 0, auditEvents: Array.isArray(observation.auditEvents) ? observation.auditEvents.length : "UNAVAILABLE" });
   } catch (error) {
     console.error("ELITZE GitHub observation failed", error);
-    return NextResponse.json({ ok: false, error: error instanceof Error ? error.message : "github_observation_failed", evidenceState: "UNAVAILABLE" }, { status: 503 });
+    return NextResponse.json({ ok: false, error: "github_observation_failed", evidenceState: "UNAVAILABLE" }, { status: 503 });
   }
 }

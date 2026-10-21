@@ -4,8 +4,9 @@ Canonical site: https://www.elitze.info
 
 ## Current crawl configuration
 
-- `https://www.elitze.info/robots.txt` allows public documentation and product pages and disallows private workspace/auth/API paths.
+- `https://www.elitze.info/robots.txt` is the minimal three-line crawl policy; it does not serve as an access-control boundary. The public sitemap contains only public product/documentation routes. Sensitive workspace pages use `noindex` metadata and server-side authentication; API responses carry `X-Robots-Tag: noindex, nofollow, nosnippet`.
 - `https://www.elitze.info/sitemap.xml` is the sitemap to submit to Google Search Console.
+- The root route redirects anonymous visitors to `/login` and is therefore excluded from the sitemap. Crawler rules are not access controls; authentication and authorization must remain enforced server-side.
 - Public page metadata should remain `index, follow`; do not add `noindex` to public pages.
 - Canonical URLs must use `https://www.elitze.info` consistently. Keep `elitze.info` as the redirecting alternate if that is how the production domain is configured.
 - `src/app/layout.tsx` already maps `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` to Next.js Google verification metadata. The value is evaluated at build/deploy time and is not fetched from Google automatically.

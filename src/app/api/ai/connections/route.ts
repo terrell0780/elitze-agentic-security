@@ -60,9 +60,9 @@ export async function POST(request: NextRequest) {
   let url: URL;
   try {
     url = validateExternalHttpsUrl(parsed.data.baseUrl);
-  } catch (error) {
+  } catch {
     return NextResponse.json(
-      { ok: false, error: error instanceof Error ? error.message : "invalid_external_url" },
+      { ok: false, error: "Invalid or disallowed HTTPS connection URL." },
       { status: 400 },
     );
   }
@@ -116,8 +116,9 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ ok: true, connection }, { status: 201 });
   } catch (error) {
+    console.error("ELITZE AI connection storage failed", error);
     return NextResponse.json(
-      { ok: false, error: error instanceof Error ? error.message : "Unable to store AI connection." },
+      { ok: false, error: "AI connection data plane unavailable." },
       { status: 503 },
     );
   }

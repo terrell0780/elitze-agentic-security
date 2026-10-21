@@ -75,7 +75,7 @@ export async function POST(request: Request) {
         return NextResponse.json({ error: "unsupported_operation" }, { status: 400 });
     }
   } catch (error) {
-    const message = error instanceof Error ? error.message : "control_plane_error";
-    return NextResponse.json({ error: message }, { status: 400 });
+    console.error("ELITZE control-plane operation failed", error);
+    return NextResponse.json({ error: "control_plane_operation_failed" }, { status: 503 });
   }
 }

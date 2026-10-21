@@ -44,7 +44,7 @@ This is a generic integration primitive, not a claim of compatibility with any n
 
 ## Vendor-specific integrations
 
-A future named integration is not considered implemented merely because a vendor's API is known publicly or because the vendor appears in research, sales material, or documentation.
+A future named integration is not considered implemented merely because a vendor's API is known publicly or because the vendor appears in research or documentation.
 
 A named integration becomes an ELITZE implemented integration only after:
 
@@ -64,6 +64,6 @@ Until then, the source is represented only as a potential integration target.
 
 External sources do not receive direct access to the ELITZE Security Graph, Policy Engine, database, or infrastructure execution layer. The Data Bridge is an ingress and normalization boundary. Any consequential action remains behind ELITZE identity, policy, authorization, approval, execution, and verification controls.
 
-## Product and acquisition policy
+## Product integrity and integration policy
 
-ELITZE must not imply partnership, endorsement, certification, customer status, or technical compatibility that has not been verified. The connector framework exists so ELITZE can integrate rapidly when a prospective partner or buyer provides an authorized technical environment.
+ELITZE must not imply partnership, endorsement, certification, customer status, or technical compatibility that has not been verified. The connector framework may be enabled only when an authorized operator provides a verified technical environment.

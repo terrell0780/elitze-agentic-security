@@ -36,12 +36,21 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ ok: true, status: "VERIFICATION_REQUIRED", userId: user.id }, { status: 201 });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Signup failed.";
+    const message = error instanceof Error ? error.message : "";
     const duplicate = /duplicate|unique/i.test(message);
     const emailConfig = /email_delivery_not_configured|email_delivery_failed|unsupported_email_provider/i.test(message);
-    return NextResponse.json(
-      { ok: false, error: duplicate ? "Account or organization already exists." : emailConfig ? "Transactional email is not configured." : message },
-      { status: emailConfig ? 503 : duplicate ? 409 : 400 },
-    );
+    const invalidInput = error instanceof z.ZodError;
+    const publicError = duplicate
+      ? "Account or organization already exists."
+      : emailConfig
+        ? "Transactional email is not configured."
+        : invalidInput
+          ? "Invalid signup request."
+          : "Signup failed.";
+    const status = emailConfig ? 503 : duplicate ? 409 : invalidInput ? 400 : 500;
+    if (!duplicate && !emailConfig && !invalidInput) {
+      console.error("ELITZE signup failed", error);
+    }
+    return NextResponse.json({ ok: false, error: publicError }, { status });
   }
 }

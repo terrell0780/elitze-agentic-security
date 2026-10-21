@@ -1,6 +1,6 @@
 ---
 name: elitze-release-evidence
-description: Verify ELITZE release gates, migrations, authentication E2E, SBOM and licenses, runner handshake, rollback, and buyer handoff evidence.
+description: Verify ELITZE release gates, migrations, authentication E2E, SBOM and licenses, runner handshake, rollback, and operational evidence.
 ---
 
 # ELITZE Release Evidence
@@ -39,5 +39,5 @@ Do not run migrations, destructive actions, or live-provider tests against produ
 - Rollback, restore, and post-deploy health steps exist.
 - Each live provider has separately verified integration evidence and a truthful status.
 
-## Handoff
-Deliver a source/commit manifest, lockfile, SBOM, license inventory, architecture and deployment docs, migration/restore runbook, sanitized integration matrix, CI/test links, verified ownership documents, and buyer-controlled credential rotation procedure. Never transfer secrets through source control or assert IP title without supporting documentation.
+## Release evidence package
+Deliver a source/commit manifest, lockfile, SBOM, license inventory, architecture and deployment docs, migration/restore runbook, sanitized integration matrix, CI/test links, ownership/provenance records where applicable, and a credential-rotation procedure. Never commit secrets to source control or assert legal ownership without supporting documentation.

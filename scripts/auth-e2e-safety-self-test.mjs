@@ -25,7 +25,7 @@ assert.equal(isReservedNonDeliverableEmail("e2e-auth-example@example.invalid", h
   "hosted authentication must reject seeded reserved .invalid accounts");
 assert.equal(isReservedNonDeliverableEmail("e2e-auth-example@example.invalid", disposableCiEnvironment), false,
   "the isolated disposable CI E2E must permit its synthetic .invalid addresses");
-assert.equal(isReservedNonDeliverableEmail("buyer@example.com", hostedEnvironment), false);
+assert.equal(isReservedNonDeliverableEmail("valid-user@example.com", hostedEnvironment), false);
 assert.equal(isReservedNonDeliverableEmail("e2e-auth-example@example.invalid", {
   ...disposableCiEnvironment, PGHOST: "db.example.net",
 }), true, "a remote DB must not unlock reserved test identities");

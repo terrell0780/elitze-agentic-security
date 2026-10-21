@@ -83,7 +83,7 @@ try {
   }
 
   const requiredTables = [
-    "agents", "discoveries", "hitl_approvals", "asi_controls", "enforcement_events", "market_gaps",
+    "agents", "discoveries", "hitl_approvals", "asi_controls", "enforcement_events",
     "security_identities", "security_policies", "security_decisions", "attack_paths", "red_team_runs",
     "evidence_records", "security_approvals", "security_integration_events", "audit_ledger_events",
     "containment_actions", "decision_evidence", "analyst_feedback", "team_channels", "team_messages",

@@ -5,7 +5,7 @@
 1. Use the repository's supported Node.js version and install the lockfile-pinned dependencies with npm ci.
 2. Configure local environment variables for local services only. Do not copy production secrets into development.
 3. Use a disposable local PostgreSQL database for authentication and end-to-end tests. The auth E2E test deliberately refuses non-loopback databases and requires ELITZE_AUTH_E2E_DISPOSABLE_DB=true plus a database name explicitly marked ci, test, or e2e.
-4. Run the focused self-test, npm run lint, npm run typecheck, npm audit --audit-level=high, npm run sale:readiness, and npm run build.
+4. Run the focused self-test, npm run lint, npm run typecheck, npm audit --audit-level=high, npm run public-exposure:self-test, and npm run build.
 
 ## Security and evidence requirements
 

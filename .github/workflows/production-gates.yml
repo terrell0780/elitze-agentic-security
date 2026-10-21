@@ -106,8 +106,38 @@ jobs:
       - name: Production build
         run: npm run build
 
-      - name: Code review green light
-        run: echo "GREEN LIGHT — review integrity, workspace readiness, security fabric, live validation, typecheck, lint, and production build passed."
+      - name: Start built application for HTTP exposure verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          (npm run start -- --hostname 127.0.0.1 > /tmp/elitze-exposure-audit.log 2>&1 & echo $! > /tmp/elitze-exposure-audit.pid)
+          for attempt in $(seq 1 45); do
+            status="$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3000/login || true)"
+            if [ "$status" = "200" ]; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/elitze-exposure-audit.log
+          echo "::error::Built app failed to start for public exposure verification."
+          exit 1
+
+      - name: Public exposure guard against built application
+        env:
+          ELITZE_PUBLIC_BASE_URL: http://127.0.0.1:3000
+        run: npm run public-exposure:self-test
+
+      - name: Stop built application after exposure verification
+        if: always()
+        shell: bash
+        run: if [ -f /tmp/elitze-exposure-audit.pid ]; then kill "$(cat /tmp/elitze-exposure-audit.pid)" || true; fi
+
+      - name: Verify production public exposure
+        if: github.event_name != 'pull_request'
+        env:
+          ELITZE_PUBLIC_BASE_URL: https://www.elitze.info
+        run: npm run public-exposure:self-test
+
+      - name: Code review stages passed
+        run: echo "PASS — review integrity, workspace readiness, security fabric, live validation, typecheck, lint, production build, and exposure checks completed."
 
   verify:
     needs: code-review
@@ -217,6 +247,30 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: Start built application for HTTP exposure verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          (npm run start -- --hostname 127.0.0.1 > /tmp/elitze-exposure-verify.log 2>&1 & echo $! > /tmp/elitze-exposure-verify.pid)
+          for attempt in $(seq 1 45); do
+            status="$(curl --silent --output /dev/null --write-out '%{http_code}' http://127.0.0.1:3000/login || true)"
+            if [ "$status" = "200" ]; then exit 0; fi
+            sleep 2
+          done
+          cat /tmp/elitze-exposure-verify.log
+          echo "::error::Built app failed to start for public exposure verification."
+          exit 1
+
+      - name: Public exposure guard against built application
+        env:
+          ELITZE_PUBLIC_BASE_URL: http://127.0.0.1:3000
+        run: npm run public-exposure:self-test
+
+      - name: Stop built application after exposure verification
+        if: always()
+        shell: bash
+        run: if [ -f /tmp/elitze-exposure-verify.pid ]; then kill "$(cat /tmp/elitze-exposure-verify.pid)" || true; fi
 
       - name: Authentication E2E database-safety contract
         run: npm run auth:e2e-safety-self-test

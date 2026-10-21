@@ -143,9 +143,8 @@ export async function POST(request: Request) {
     try {
       const result = evaluateEvidenceExpression(expression, record);
       return NextResponse.json({ ok: true, result, record, expression }, { headers: { "cache-control": "no-store" } });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "invalid_expression";
-      return NextResponse.json({ ok: false, error: message, expression }, { status: 400 });
+    } catch {
+      return NextResponse.json({ ok: false, error: "invalid_expression", expression }, { status: 400 });
     }
   } catch (error) {
     console.error("ELITZE evidence debugger evaluation failed", error);
