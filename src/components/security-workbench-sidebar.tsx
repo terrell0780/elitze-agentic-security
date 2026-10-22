@@ -21,7 +21,6 @@ const groups = [
     items: [
       { href: "/console/skills", label: "Security Skills & Policies", icon: ShieldCheck, description: "Governed security capabilities" },
       { href: "/orchestration", label: "Orchestration", icon: Workflow, description: "Agent and workflow coordination" },
-      { href: "/console/google-ads", label: "Google Ads Governance", icon: ShieldCheck, description: "Policy-gated advertising controls" },
     ],
   },
   {

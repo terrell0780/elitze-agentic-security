@@ -10,13 +10,16 @@
   - It must not represent illustrative UI as live tenant telemetry.
 - [x] Confirm public navigation exposes the landing-page sections and points to public product pages without exposing authenticated tenant state.
 - [x] Confirm landing page is responsive at desktop and mobile widths through responsive layout classes and mobile navigation.
+- [x] Replace the plain sign-in form with a branded cybersecurity workspace handoff.
 
 ## Authenticated dashboard
 
 - [x] `/workspace` remains the guarded entry point and sends unauthenticated visitors to `/login`.
 - [x] `/console` is the authenticated command center.
+- [x] Keep the command center focused: summary metrics and dedicated links replace the overloaded all-capabilities atlas.
 - [x] Existing specialist routes remain available as separate dashboard pages: analyst, threat detection, adversary emulation, vulnerabilities, readiness, skills, integrations, ROI, and governance.
 - [x] Improve the shared dashboard navigation labels and active-state clarity where needed after visual review.
+- [x] Remove unrelated advertising governance from the visible cybersecurity navigation.
 - [ ] Keep live status claims tied to API evidence and preserve explicit unverified/empty states.
 
 ## Runtime and delivery
