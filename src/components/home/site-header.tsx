@@ -6,12 +6,11 @@ import { Menu, ShieldCheck, X } from "lucide-react";
 import GlobalThemeToggle from "@/components/global-theme-toggle";
 
 const primaryLinks = [
-  ["Workspace", "/workspace"],
   ["Platform", "/platform"],
+  ["How it works", "/#how-it-works"],
   ["Security", "/security"],
-  ["Threat Detection", "/console/threat-detection"],
   ["Integrations", "/integrations"],
-  ["Documentation", "/docs"],
+  ["Resources", "/docs"],
 ] as const;
 
 export default function SiteHeader() {
@@ -38,9 +37,11 @@ export default function SiteHeader() {
     </nav>
 
     <div className="flex shrink-0 items-center gap-2">
-    <Link href="/workspace" className="hidden rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-slate-950 transition hover:brightness-110 sm:inline-flex"
-    >
-    Open workspace
+    <Link href="/login" className="hidden px-3 py-2.5 text-xs font-semibold text-[var(--muted)] transition hover:text-[var(--text)] sm:inline-flex">
+    Sign in
+    </Link>
+    <Link href="/register" className="hidden rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-slate-950 transition hover:brightness-110 sm:inline-flex">
+    Start free
     </Link>
     <button
     type="button"
@@ -69,8 +70,11 @@ export default function SiteHeader() {
     {label}
     </Link>
     ))}
-    <Link href="/workspace" onClick={() => setMobileOpen(false)} className="rounded-xl bg-[var(--accent-soft)] px-3 py-3 text-sm font-semibold text-[var(--accent)]">
-    Open workspace
+    <Link href="/login" onClick={() => setMobileOpen(false)} className="rounded-xl px-3 py-3 text-sm text-[var(--muted)] transition hover:bg-[var(--panel)] hover:text-[var(--text)]">
+    Sign in
+    </Link>
+    <Link href="/register" onClick={() => setMobileOpen(false)} className="rounded-xl bg-[var(--accent-soft)] px-3 py-3 text-sm font-semibold text-[var(--accent)]">
+    Start free
     </Link>
     </div>
     </nav>
