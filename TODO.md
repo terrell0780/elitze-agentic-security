@@ -24,4 +24,4 @@
 - [x] Add and verify `public/manus-routes.json` for all source page routes.
 - [x] Run TypeScript diagnostics.
 - [x] Run the production build.
-- [ ] Commit and push the completed implementation to the canonical `main` branch.
+- [x] Commit and push the completed implementation to the canonical `main` branch.
