@@ -20,6 +20,7 @@ const groups = [
     label: "GOVERN",
     items: [
       { href: "/console/skills", label: "Security Skills & Policies", icon: ShieldCheck, description: "Governed security capabilities" },
+      { href: "/console/google-ads", label: "Google Ads Governance", icon: ShieldCheck, description: "Policy-gated advertising controls" },
       { href: "/orchestration", label: "Orchestration", icon: Workflow, description: "Agent and workflow coordination" },
     ],
   },
@@ -60,9 +61,9 @@ export default function SecurityWorkbenchSidebar() {
                   {group.items.map(({ href, label, icon: Icon, description }) => {
                     const active = href === "/console" ? pathname === "/console" : pathname === href || pathname.startsWith(`${href}/`);
                     return (
-                    <Link key={href} href={href} aria-current={active ? "page" : undefined} className={`group flex items-center gap-3 rounded-xl border px-3 py-3 transition ${active ? "border-cyan-300/20 bg-cyan-300/[.09]" : "border-transparent hover:border-cyan-300/10 hover:bg-cyan-300/[.035]"}`}>
+                    <Link key={href} href={href} aria-current={active ? "page" : undefined} className={`group flex items-center gap-3 rounded-xl border px-3 py-3 transition ${active ? "border-cyan-300/30 bg-cyan-300/[.06]" : "border-white/5 bg-white/[.015] hover:border-white/10 hover:bg-white/[.03]"}`}>
                       <Icon className={`h-4 w-4 shrink-0 ${active ? "text-cyan-200" : "text-cyan-300/80"}`} />
-                      <span className="min-w-0"><span className={`block text-sm font-semibold ${active ? "text-cyan-50" : "text-slate-200"}`}>{label}</span><span className="block truncate text-[10px] text-slate-600">{description}</span></span>
+                      <span className="min-w-0"><span className={`block text-sm font-semibold ${active ? "text-cyan-50" : "text-slate-200"}`}>{label}</span><span className="block truncate text-[10px] text-slate-500">{description}</span></span>
                       {active && <span className="ml-auto size-1.5 rounded-full bg-cyan-200 shadow-[0_0_10px_rgba(103,232,249,.9)]" />}
                     </Link>
                     );
@@ -79,7 +80,9 @@ export default function SecurityWorkbenchSidebar() {
       </aside>
       <nav aria-label="Security workbench mobile navigation" className="sticky top-0 z-40 flex gap-2 overflow-x-auto border-b border-white/10 bg-[#070a0f] px-3 py-2 lg:hidden">
         {groups.flatMap((group) => group.items).map(({ href, label }) => (
-          <Link key={href} href={href} aria-current={pathname === href ? "page" : undefined} className={`shrink-0 rounded-lg border px-3 py-2 text-xs font-semibold ${pathname === href ? "border-cyan-300/30 bg-cyan-300/[.08] text-cyan-100" : "border-white/10 text-slate-200"}`}>{label}</Link>
+          <Link key={href} href={href} aria-current={pathname === href ? "page" : undefined} className={`shrink-0 rounded-lg border px-3 py-2 text-xs font-semibold ${pathname === href ? "border-cyan-300/30 bg-cyan-300/[.08] text-cyan-100" : "border-white/10 bg-white/[.02] text-slate-300"}`}>
+            {label}
+          </Link>
         ))}
       </nav>
     </>
