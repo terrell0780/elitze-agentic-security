@@ -93,7 +93,7 @@ export default function AdversaryEmulationConsole() {
   const currentRun=result?.runId? runs.find((run)=>String(run.id)===String(result.runId)):undefined;
 
   return(
-    <main className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--header)]/90 backdrop-blur-xl">
         <div className="mx-auto flex min-h-[72px] max-w-[1550px] flex-wrap items-center justify-between gap-3 px-4 sm:px-7">
           <Link href="/console" className="flex items-center gap-3"><span className="grid h-9 w-9 place-items-center rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent)]"><ShieldCheck className="h-5 w-5"/></span><span><b className="block text-sm tracking-[.12em]">ELITZE</b><span className="block text-[8px] uppercase tracking-[.22em] text-[var(--muted)]">Adversary emulation</span></span></Link>
