@@ -1,10 +1,10 @@
-# ELITZE Post-Transfer Customer Validation Program
+# ELITZE Customer Validation Program
 
-> Buyer-run operational playbook. This document is not evidence that the seller currently has customers, revenue, design partners or completed pilots.
+> Operational playbook. This document is not evidence that customers, revenue, design partners, or completed pilots exist.
 
 ## Purpose
 
-After transfer, a buyer may use this program to establish customer evidence. ELITZE must never make customer, outcome, scale, ranking, or market-leadership claims merely because this process exists. Evidence must exist before making any such claim. Documentation, a prototype, or a design-partner conversation is not customer proof.
+An authorized ELITZE operator may use this program to establish customer evidence. ELITZE must never make customer, outcome, scale, ranking, or market-leadership claims merely because this process exists. Evidence must exist before making any such claim. Documentation, a prototype, or a design-partner conversation is not customer proof.
 
 ## Initial wedge
 
