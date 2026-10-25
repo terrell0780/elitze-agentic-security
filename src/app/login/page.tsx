@@ -160,7 +160,7 @@ function LoginContent() {
   }
 
   return (
-    <main className="min-h-screen overflow-hidden bg-[#071018] text-white">
+    <main id="main-content" tabIndex={-1} className="min-h-screen overflow-hidden bg-[#071018] text-white">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(103,232,249,.14),transparent_30%),radial-gradient(circle_at_85%_70%,rgba(167,139,250,.12),transparent_34%)]" />
       <div className="relative mx-auto grid min-h-screen max-w-[1440px] lg:grid-cols-[1.08fr_.92fr]">
         <section className="flex flex-col justify-between px-6 py-7 sm:px-10 sm:py-10 lg:px-16 lg:py-12">
@@ -211,7 +211,7 @@ export default function LoginPage() {
   return (
     <Suspense
       fallback={
-        <main className="flex min-h-screen items-center justify-center bg-[#071018] px-6 text-white">
+        <main id="main-content" tabIndex={-1} className="flex min-h-screen items-center justify-center bg-[#071018] px-6 text-white">
           <div className="rounded-[26px] border border-white/[.12] bg-[#0c151e] p-8 text-center shadow-[0_30px_90px_rgba(0,0,0,.3)]">
             <div className="mx-auto size-10 animate-spin rounded-full border-2 border-cyan-200 border-r-transparent" />
             <p className="mt-4 text-sm text-slate-400">Preparing secure workspace access…</p>
