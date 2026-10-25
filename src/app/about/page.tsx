@@ -43,8 +43,9 @@ const capabilityGroups = [
 
 export default function Page() {
   return (
-    <>
+    <main id="main-content" tabIndex={-1}>
       <SeoFeaturePage
+        asMain={false}
         eyebrow="About ELITZE"
         title="One platform. Clear control over AI agents."
         description="ELITZE Agentic Security helps teams identify agents and MCP servers, understand what they can reach, enforce policy before sensitive actions, validate security within authorized scope, and preserve evidence for review."
@@ -107,6 +108,6 @@ export default function Page() {
         </div>
       </section>
       <SecurityCapabilityAtlas />
-    </>
+    </main>
   );
 }
