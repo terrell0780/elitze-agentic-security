@@ -4,7 +4,7 @@ Thank you for helping improve ELITZE Agentic Security.
 
 ## Before changing code
 
-- Work from the canonical repository: `terrell0780/elitze-agentic-security`.
+- Work from the project repository: `terrell0780/elitze-agentic-security`.
 - Open or update a focused pull request rather than making unrelated changes together.
 - Read [SECURITY.md](SECURITY.md) and the [architecture and deployment manifest](docs/ELITZE-AGENTIC-SECURITY-MERGE-MANIFEST.md).
 - Do not commit credentials, private keys, production database URLs, customer data, generated build caches, or deployment tokens.

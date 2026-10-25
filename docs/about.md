@@ -17,10 +17,10 @@ The product's operating loop is:
 
 ## Technology direction
 
-The platform uses a Next.js application and PostgreSQL-backed evidence; a LangGraph StateGraph coordinates the bounded security analyst; NVIDIA NIM can optionally provide a compatible model endpoint; MITRE ATT&CK Enterprise data provides current technique context; Obsidian-compatible Markdown exports preserve portable evidence notes.
+The application uses Next.js and PostgreSQL-backed evidence with a bounded security-analysis workflow. External source connections are limited to explicitly authorized integrations, including approved feeds and scanners. Framework references and exported evidence notes support analysis but do not establish live provider connectivity.
 
 ## What the product does not claim
 
 Source adapters, an available model or an installed scanner do not alone prove a live integration. An ATT&CK reference is not proof a technique was emulated. A scanner job that never reached an execution runner is not a scan result. ELITZE preserves those distinctions.
 
-Canonical site: https://www.elitze.info
+Website: https://www.elitze.info

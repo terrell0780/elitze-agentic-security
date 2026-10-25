@@ -101,26 +101,18 @@ The MCP upstream address regression command is `npm run mcp-upstream-address:sel
 
 README-listed API surfaces include `GET /api/health`, `GET /api/security/skills`, `POST /api/security/decision`, `POST /api/data-bridge/ingest`, `GET /api/data-bridge/observe`, `GET /api/data-bridge/health`, and `GET /api/data-bridge/adapters`. Test protected routes only with an authorized tenant context.
 
-## Buyer handoff package
+## Internal rollout and demonstration readiness
 
-Deliver a buyer-verifiable source and evidence package, not passwords or live secrets:
+Before an authorized staging or production rollout, record:
 
-- Repository URL, exact release commit SHA, PR history, architecture, build/test instructions, migrations and deployment/recovery runbooks.
-- `package.json`, `package-lock.json`, CycloneDX SBOM, license inventory and any required open-source notices.
-- Contributor/inventor record, signed IP assignment or transfer documents where applicable, third-party rights/limitations, and separate proof for trademarks/domains. Source possession alone does not prove full IP title.
-- Sanitized `.env.example`, infrastructure map, database restore steps, IONOS/Vercel/Resend ownership transfer plan, provider integration matrix and a list of secrets to rotate.
-- Exact CI run links, test/audit output, evidence integrity results, live connector test records and known prerequisites.
-- Transfer to buyer-controlled accounts, rotate all shared credentials, validate DNS/email/database/runner/connectors, remove seller access after written acceptance, and record post-transfer health evidence.
+- Repository commit SHA, review history, architecture, build/test results, migrations, and recovery runbooks.
+- Dependency lockfile, software bill of materials, license inventory, and required open-source notices.
+- Source provenance, contributor records, third-party rights, and separate evidence for domain and trademark control.
+- Sanitized environment examples, infrastructure inventory, database restore steps, authorized provider connections, and credential-rotation requirements.
+- Exact CI/test artifacts, evidence-integrity results, connector test records, and unresolved prerequisites.
+- Environment owner approval, approved deployment target, scope of change, rollback plan, and post-change health evidence.
 
-## Acquisition proposition
-
-**Problem:** agent and MCP tool access can create poorly understood paths to sensitive data or high-impact operations. ELITZE is built to connect an agent identity and its reachable capabilities to policy, separately authorized execution, observed outcomes, retesting, and evidence.
-
-**Asset proposition:** a source-code and intellectual-property transfer of the ELITZE Agentic Security control plane and its documented agent-identity/MCP runtime-security implementation, together with the specific code, tests, schemas, adapters, deployment methods and documentation included in the signed agreement.
-
-**Supporting evidence:** repository history; architecture and integration docs; tests and exact CI artifacts; SBOM and reviewed license inventory; authenticated provider test results; and a staging walkthrough that follows a request from identity through evidence.
-
-**Must be separately verified before closing:** transferability and ownership of all included IP; third-party license compliance; operational status of each integration; security test results; uptime/performance claims; and financial ROI assumptions. Do not invent customers, efficacy rates, savings, revenue or valuation.
+Never include credentials or live secrets in a handoff. Do not deploy without explicit deployment authorization. A demonstration must use real authorized evidence or clearly labeled synthetic examples; it must not present illustrative data as live telemetry.
 
 ## References
 

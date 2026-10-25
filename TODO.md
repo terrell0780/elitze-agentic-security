@@ -24,7 +24,7 @@
 
 ## Runtime and delivery
 
-- [x] Add and verify `public/manus-routes.json` for all source page routes.
+- [x] Maintain and verify `public/elitze-routes.json` for all source page routes.
 - [x] Run TypeScript diagnostics.
 - [x] Run the production build.
 - [x] Commit reviewed changes to the `main` branch after required checks pass.
