@@ -34,7 +34,7 @@ export default function RoiPage() {
   const set = (key: keyof RoiInputs, value: string) => setInputs((current) => ({ ...current, [key]: Number(value) || 0 }));
 
   return (
-    <main className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <header className="border-b border-[var(--border)] bg-[var(--header)]">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
           <div><div className="text-sm font-semibold tracking-wide text-[var(--text)]">ELITZE</div><div className="text-[10px] uppercase tracking-[0.22em] text-slate-500">Agentic Security · RIO / ROI</div></div>

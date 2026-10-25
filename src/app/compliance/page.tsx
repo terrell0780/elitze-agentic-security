@@ -15,7 +15,7 @@ const groups = [
 
 export default function CompliancePage() {
   return (
-    <main className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <header className="border-b border-[var(--border)] bg-[var(--header)]/95 backdrop-blur-xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
           <Link href="/" className="text-sm font-bold tracking-wide">ELITZE</Link>

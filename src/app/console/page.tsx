@@ -113,12 +113,12 @@ export default function ConsolePage() {
     finally { setBusy(false); }
   }
 
-  if (authorized === null) return <main className="flex min-h-screen items-center justify-center bg-[var(--bg)] px-6 text-[var(--text)]"><div className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-8 text-center"><div className="text-xs font-bold tracking-[.28em] text-[var(--accent)]">ELITZE</div><div className="mt-3 text-sm font-semibold">Verifying secure session</div></div></main>;
+  if (authorized === null) return <main id="main-content" tabIndex={-1} className="flex min-h-screen items-center justify-center bg-[var(--bg)] px-6 text-[var(--text)]"><div className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-8 text-center"><div className="text-xs font-bold tracking-[.28em] text-[var(--accent)]">ELITZE</div><div className="mt-3 text-sm font-semibold">Verifying secure session</div></div></main>;
 
   const current = navigation.find((item) => item.id === view) ?? navigation[0];
 
   return (
-    <main className="min-h-screen bg-[#070b10] text-slate-100">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#070b10] text-slate-100">
       <header className="sticky top-0 z-40 border-b border-white/[.08] bg-[#070b10]/90 backdrop-blur-2xl">
         <div className="mx-auto flex h-[68px] max-w-[1680px] items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex shrink-0 items-center gap-3" aria-label="ELITZE home"><span className="grid h-9 w-9 place-items-center rounded-xl border border-cyan-300/25 bg-cyan-300/[.08] text-cyan-200"><ShieldCheck className="h-5 w-5" /></span><span><b className="block text-sm tracking-[.14em]">ELITZE</b><span className="block text-[9px] uppercase tracking-[.22em] text-slate-500">Agentic security</span></span></Link>

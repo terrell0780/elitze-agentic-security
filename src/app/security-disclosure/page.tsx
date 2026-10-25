@@ -12,7 +12,7 @@ const contactEmail = "tsh_cook@hotmail.com";
 
 export default function SecurityDisclosurePage() {
   return (
-    <main id="main-content" className="min-h-screen bg-[var(--bg)] px-4 py-14 text-[var(--text)] sm:px-6 sm:py-20">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[var(--bg)] px-4 py-14 text-[var(--text)] sm:px-6 sm:py-20">
       <article className="mx-auto max-w-4xl space-y-8">
         <header className="rounded-[28px] border border-[var(--border)] bg-[var(--panel)] p-7 sm:p-9">
           <Link href="/" className="text-xs font-bold uppercase tracking-[.22em] text-[var(--accent)]">ELITZE Agentic Security</Link>

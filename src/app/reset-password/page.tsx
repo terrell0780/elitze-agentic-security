@@ -47,7 +47,7 @@ function ResetPasswordContent() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[var(--bg)] px-6 text-[var(--text)]">
+    <main id="main-content" tabIndex={-1} className="flex min-h-screen items-center justify-center bg-[var(--bg)] px-6 text-[var(--text)]">
       <div className="w-full max-w-md">
         <div className="mb-8">
           <Link href="/" className="text-xs font-semibold tracking-[0.3em] text-[var(--accent)]">ELITZE</Link>
@@ -76,5 +76,5 @@ function ResetPasswordContent() {
 }
 
 export default function ResetPasswordPage() {
-  return <Suspense fallback={<main className="flex min-h-screen items-center justify-center bg-[var(--bg)] px-6 text-[var(--text)]"><div className="text-sm text-[var(--muted)]">Preparing secure password reset…</div></main>}><ResetPasswordContent /></Suspense>;
+  return <Suspense fallback={<main id="main-content" tabIndex={-1} className="flex min-h-screen items-center justify-center bg-[var(--bg)] px-6 text-[var(--text)]"><div className="text-sm text-[var(--muted)]">Preparing secure password reset…</div></main>}><ResetPasswordContent /></Suspense>;
 }
