@@ -48,9 +48,9 @@ The authenticated API provides snapshot, identity registration, reachability obs
 
 The product must not convert `UNKNOWN` or `UNMEASURABLE` into a positive security claim.
 
-## Sale/readiness implication
+## Demonstration and rollout readiness
 
-The initial buyer demonstration should focus on one real path:
+An authorized demonstration should focus on one evidence-backed path:
 
 **agent identity → MCP/tool reachability → policy decision → evidence → authorized execution → result → retest**
 
