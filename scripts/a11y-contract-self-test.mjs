@@ -35,7 +35,7 @@ for (const absolute of pageFiles) {
   }
 
   if (/\bredirect\s*\(/.test(source)) continue;
-  if (/\\bSeoFeaturePage\\b/.test(source)) continue;
+  if (/\bSeoFeaturePage\b/.test(source)) continue;
   failures.push(relative + ": no main landmark, redirect, or shared SEO feature-page template detected");
 }
 
