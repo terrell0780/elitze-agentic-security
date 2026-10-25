@@ -32,7 +32,7 @@ const connectors = [
 
 export default function ReoPage() {
   return (
-    <main className="min-h-screen bg-[#07070a] px-4 py-10 text-zinc-100 sm:px-6 sm:py-14">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#07070a] px-4 py-10 text-zinc-100 sm:px-6 sm:py-14">
       <section className="mx-auto max-w-6xl space-y-10">
         <header className="max-w-4xl space-y-4">
           <p className="text-sm uppercase tracking-[0.24em] text-zinc-500">ELITZE REO</p>
