@@ -1,6 +1,6 @@
 # ELITZE Agent Identity and Sara Assistant
 
-## Canonical identity
+## ELITZE product identity
 
 ELITZE Agentic Security is the single product and platform identity. Sara is the ELITZE security assistant.
 
@@ -35,6 +35,6 @@ A runtime is operationally verified only when the implementation is connected to
 
 Repository builds and self-tests validate code contracts; they do not alone prove production integrations or live runtime operation.
 
-## Ownership and transfer
+## Branding and source provenance
 
-The product UI and supported runtime roster use ELITZE and Sara branding. Any historical research material or external source artifact must receive separate provenance and license review before redistribution or inclusion in an acquisition transfer. This document does not make a blanket claim about third-party ownership.
+The product UI and supported runtime roster use ELITZE Agentic Security and Sara branding. Remove obsolete third-party product names from active UI and current product documentation. Preserve historical migration records where needed for database integrity; do not present those records as current product branding. External source artifacts require provenance and license review before inclusion.
