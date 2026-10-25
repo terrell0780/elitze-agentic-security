@@ -26,7 +26,7 @@ Turn the current redirect-only home route into a professional public landing pag
 - Authenticated `/workspace` remains the guarded entry point and redirects signed-in users to `/console`.
 - Existing `/console` and nested console pages remain the dashboard information architecture. The shared `SecurityWorkbenchSidebar` provides persistent navigation across command center, analyst, threat detection, adversary emulation, vulnerability intelligence, readiness, governance, value, and security model pages.
 - Keep the dashboard data-driven and honest: live APIs determine status; empty or missing data remains explicitly unverified.
-- Add `public/manus-routes.json` with the complete route manifest and keep `robots.ts` disallow rules for authenticated and API paths.
+- Maintain `public/elitze-routes.json` with the complete route manifest and keep `robots.ts` disallow rules for authenticated and API paths.
 
 ## Project structure
 
@@ -37,4 +37,4 @@ Turn the current redirect-only home route into a professional public landing pag
 - `src/app/console/*/page.tsx`: authenticated specialist dashboard pages.
 - `src/components/security-workbench-sidebar.tsx`: shared authenticated multi-page navigation.
 - `src/app/globals.css`: shared theme, accessibility focus, and reduced-motion rules.
-- `public/manus-routes.json`: route declarations for Preview tooling.
+- `public/elitze-routes.json`: ELITZE route declarations for preview tooling.
