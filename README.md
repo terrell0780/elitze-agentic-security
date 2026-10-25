@@ -4,9 +4,9 @@
 
 > The model is not the security boundary.
 
-ELITZE Agentic Security is a security control plane designed to connect agent identity, tenant boundaries, policy decisions, controlled execution, runtime observation, and auditable evidence. It is built around a simple principle: every consequential action should have a clear identity, an explicit authorization path, and a traceable decision.
+ELITZE Agentic Security is the product identity across the application, documentation, and supported security workflows. Its design connects agent identity, tenant boundaries, policy decisions, controlled execution, runtime observation, and auditable evidence. A documented capability is not proof of a live integration or verified production outcome.
 
-**Product:** [elitze.info](https://www.elitze.info) · **Repository:** [Source code](https://github.com/terrell0780/elitze-agentic-security)
+**ELITZE website:** [elitze.info](https://www.elitze.info) · **Source repository:** [elitze-agentic-security](https://github.com/terrell0780/elitze-agentic-security)
 
 ## What ELITZE is built to do
 
@@ -16,7 +16,7 @@ ELITZE Agentic Security is a security control plane designed to connect agent id
 - **Coordinate controlled execution** through scoped runner and integration patterns.
 - **Observe and retest** security-relevant behavior as part of a repeatable control loop.
 - **Preserve decision evidence** for review, investigation, and operational accountability.
-- **Support enterprise security workflows** through authenticated workspaces, a security console, data-bridge adapters, and integration health endpoints.
+- **Support security workflows** through authenticated workspaces, a security console, data-bridge adapters, and integration health endpoints. Live connectivity and operational status must be verified separately.
 
 ## The ELITZE control loop
 
