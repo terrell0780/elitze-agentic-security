@@ -11,6 +11,7 @@ export default function SeoFeaturePage({
   panels,
   links,
   sectionTitle = "Built for evidence-first security operations",
+  asMain = true,
 }: {
   eyebrow: string;
   title: string;
@@ -18,9 +19,15 @@ export default function SeoFeaturePage({
   panels: FeaturePanel[];
   links: FeatureLink[];
   sectionTitle?: string;
+  asMain?: boolean;
 }) {
+  const Root = asMain ? "main" : "div";
   return (
-    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+    <Root
+      id={asMain ? "main-content" : undefined}
+      tabIndex={asMain ? -1 : undefined}
+      className="min-h-screen bg-[var(--bg)] text-[var(--text)]"
+    >
       <header className="border-b border-[var(--border)] bg-[var(--header)]/90 backdrop-blur-xl">
         <div className="mx-auto flex min-h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-7">
           <Link href="/" className="flex items-center gap-3" aria-label="ELITZE Agentic Security home">
@@ -77,6 +84,6 @@ export default function SeoFeaturePage({
           <div className="mt-9 border-t border-[var(--border)] pt-5 text-[10px] leading-5 text-[var(--muted)]">ELITZE does not claim a clean posture when telemetry is absent. Live source records, authorization scope, execution state, and verification evidence remain separately visible.</div>
         </div>
       </section>
-    </main>
+    </Root>
   );
 }
