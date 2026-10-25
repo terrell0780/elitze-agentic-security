@@ -149,9 +149,9 @@ function ProductPreview() {
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen overflow-hidden bg-[#071018] text-white">
+    <div className="min-h-screen overflow-hidden bg-[#071018] text-white">
       <SiteHeader />
-
+      <main id="main-content" tabIndex={-1}>
       <section className="relative border-b border-white/[.08]">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_76%_12%,rgba(103,232,249,.13),transparent_32%),radial-gradient(circle_at_15%_35%,rgba(167,139,250,.10),transparent_30%)]" />
         <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-cyan-200/60 to-transparent" />
@@ -205,7 +205,8 @@ export default function HomePage() {
 
       <section className="mx-auto max-w-[1440px] px-5 py-20 text-center sm:px-8 sm:py-28 lg:px-12"><div className="mx-auto max-w-3xl"><div className="mx-auto grid size-12 place-items-center rounded-2xl border border-cyan-200/25 bg-cyan-200/[.08] text-cyan-200"><ShieldCheck className="size-6" /></div><h2 className="mt-7 text-4xl font-semibold tracking-[-.06em] sm:text-6xl">Make the safe path the easy path.</h2><p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-400">Start with a clear security control plane for the agents and tools already changing how your organization works.</p><div className="mt-8 flex flex-wrap justify-center gap-3"><Link href="/register" className="inline-flex items-center gap-2 rounded-xl bg-cyan-200 px-5 py-3.5 text-sm font-bold text-[#061018] transition hover:bg-cyan-100">Create your workspace <ArrowRight className="size-4" /></Link><Link href="/contact" className="inline-flex items-center gap-2 rounded-xl border border-white/[.15] px-5 py-3.5 text-sm font-semibold text-white transition hover:border-cyan-200/40">Talk to ELITZE <ArrowRight className="size-4" /></Link></div></div></section>
 
+      </main>
       <SiteFooter />
-    </main>
+    </div>
   );
 }
