@@ -20,7 +20,7 @@ const industries = ["Financial services", "Healthcare", "Government", "Enterpris
 
 export default function UseCasesPage() {
   return (
-    <main className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <header className="border-b border-[var(--border)] bg-[var(--header)]/95"><div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6"><Link href="/" className="text-sm font-semibold tracking-wide text-[var(--text)]">ELITZE <span className="text-[var(--accent)]">· Agentic Security</span></Link><Link href="/console" className="inline-flex items-center gap-2 rounded-lg border border-[var(--accent-border)] bg-[var(--accent-soft)] px-4 py-2 text-sm text-[var(--accent)]">Open Console <ArrowRight className="h-4 w-4" /></Link></div></header>
       <div className="mx-auto max-w-7xl px-6 py-20">
         <div className="max-w-4xl"><p className="text-xs font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">Use cases</p><h1 className="mt-4 text-4xl font-semibold tracking-tight text-[var(--text)] sm:text-6xl">Security controls for systems that can act.</h1><p className="mt-6 text-lg leading-8 text-[var(--muted-strong)]">ELITZE applies an explicit security model to the identities, tools, data and infrastructure an agent can reach.</p></div>
