@@ -20,9 +20,9 @@ jobs:
   audit:
     name: Axe WCAG and Lighthouse
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     env:
-      # Set repository variable A11Y_AUDIT_URL to override the canonical production origin.
+      # Set repository variable A11Y_AUDIT_URL to override the audited production origin.
       AUDIT_BASE_URL: ${{ vars.A11Y_AUDIT_URL || 'https://www.elitze.info' }}
     steps:
       - name: Checkout
@@ -31,55 +31,108 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 24
+      - name: Verify source accessibility contracts
+        run: node scripts/a11y-contract-self-test.mjs
       - name: Set up Chrome
         id: chrome
         uses: browser-actions/setup-chrome@v1
-      - name: Install audit tools
-        run: npm install --global @axe-core/cli lighthouse browser-driver-manager
-      - name: Install Chrome WebDriver
-        run: browser-driver-manager install chrome
-      - name: Run Axe accessibility audit
+      - name: Install Axe, Lighthouse, and Chrome WebDriver
+        run: |
+          npm install --global @axe-core/cli lighthouse browser-driver-manager
+          browser-driver-manager install chrome
+      - name: Run WCAG 2.0, 2.1, and 2.2 A/AA scans on public and auth routes
         shell: bash
         run: |
-          set -euo pipefail
+          set -uo pipefail
+          mkdir -p artifacts/axe
           BASE_URL="${AUDIT_BASE_URL%/}"
-          axe \
-            "$BASE_URL/" \
-            "$BASE_URL/platform" \
-            "$BASE_URL/security" \
-            "$BASE_URL/accessibility" \
-            --tags wcag2a,wcag2aa,wcag21a,wcag21aa,wcag22aa \
-            --exit --load-delay=1500 --timeout=120
-      - name: Run Lighthouse accessibility and best-practices audit
+          status=0
+          while IFS= read -r route; do
+            [[ -z "$route" ]] && continue
+            slug="$(printf '%s' "$route" | sed 's#^/$#home#; s#^/##; s#[^A-Za-z0-9._-]#-#g')"
+            echo "::group::Axe WCAG audit: $route"
+            if axe "$BASE_URL$route" \
+              --tags wcag2a,wcag2aa,wcag21a,wcag21aa,wcag22a,wcag22aa \
+              --exit --load-delay=1500 --timeout=120 \
+              --chrome-options="no-sandbox,disable-setuid-sandbox,disable-dev-shm-usage" \
+              --save "$slug.json" --dir artifacts/axe; then
+              echo "Axe passed: $route"
+            else
+              echo "::error::Axe found violations or failed to scan $route"
+              status=1
+            fi
+            echo "::endgroup::"
+          done <<'ROUTES'
+          /
+          /platform
+          /security
+          /integrations
+          /about
+          /accessibility
+          /security-disclosure
+          /contact
+          /faq
+          /compare
+          /compliance
+          /orchestration
+          /adversary-emulation
+          /agentic-soc
+          /recursive-agents
+          /threat-detection
+          /contributing
+          /docs
+          /privacy
+          /terms
+          /legal
+          /use-cases
+          /reo
+          /login
+          /register
+          /forgot-password
+          /reset-password
+          ROUTES
+          exit "$status"
+      - name: Run Lighthouse accessibility and best-practices audits
+        if: always() && steps.chrome.outcome == 'success'
         shell: bash
         env:
           CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
         run: |
           set -euo pipefail
-          mkdir -p artifacts
+          mkdir -p artifacts/lighthouse
           BASE_URL="${AUDIT_BASE_URL%/}"
-          lighthouse "$BASE_URL/" \
-            --only-categories=accessibility,best-practices,seo \
-            --output=json --output-path=artifacts/lighthouse-home.json \
-            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" --quiet
+          for route in / /platform /security /about /login; do
+            slug="$(printf '%s' "$route" | sed 's#^/$#home#; s#^/##; s#[^A-Za-z0-9._-]#-#g')"
+            lighthouse "$BASE_URL$route" \
+              --only-categories=accessibility,best-practices \
+              --output=json --output-path="artifacts/lighthouse/$slug.json" \
+              --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" --quiet
+          done
           node --input-type=module -e '
             import fs from "node:fs";
-            const report = JSON.parse(fs.readFileSync("artifacts/lighthouse-home.json", "utf8"));
-            for (const category of ["accessibility", "best-practices"]) {
-              const score = report.categories?.[category]?.score;
-              if (typeof score !== "number" || score < 0.90) {
-                console.error("Lighthouse " + category + " score below 0.90 or unavailable:", score);
-                process.exitCode = 1;
-              } else {
-                console.log("Lighthouse " + category + ": " + Math.round(score * 100) + "/100");
+            const dir = "artifacts/lighthouse";
+            const files = fs.readdirSync(dir).filter((name) => name.endsWith(".json"));
+            if (files.length === 0) {
+              console.error("No Lighthouse reports were generated.");
+              process.exit(1);
+            }
+            let failed = false;
+            for (const file of files) {
+              const report = JSON.parse(fs.readFileSync(dir + "/" + file, "utf8"));
+              for (const category of ["accessibility", "best-practices"]) {
+                const score = report.categories?.[category]?.score;
+                const ok = typeof score === "number" && score >= 0.90;
+                console.log(file + " " + category + ": " + (typeof score === "number" ? Math.round(score * 100) : "unavailable") + "/100");
+                if (!ok) failed = true;
               }
             }
+            if (failed) process.exitCode = 1;
           '
-      - name: Upload Lighthouse report
+      - name: Upload WCAG and Lighthouse reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: lighthouse-accessibility-report
+          name: elitze-accessibility-audit
           path: artifacts/
           if-no-files-found: ignore
-          retention-days: 14
+          retention-days: 30
