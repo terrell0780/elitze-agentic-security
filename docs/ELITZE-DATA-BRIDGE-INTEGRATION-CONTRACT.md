@@ -64,6 +64,6 @@ Until then, the source is represented only as a potential integration target.
 
 External sources do not receive direct access to the ELITZE Security Graph, Policy Engine, database, or infrastructure execution layer. The Data Bridge is an ingress and normalization boundary. Any consequential action remains behind ELITZE identity, policy, authorization, approval, execution, and verification controls.
 
-## Product and acquisition policy
+## Product claims and integration authorization
 
-ELITZE must not imply partnership, endorsement, certification, customer status, or technical compatibility that has not been verified. The connector framework exists so ELITZE can integrate rapidly when a prospective partner or buyer provides an authorized technical environment.
+ELITZE must not imply partnership, endorsement, certification, customer status, or technical compatibility that has not been verified. Integrations are limited to explicitly authorized feed and scanner connections. Each connection requires a defined owner, approved scope, authentication, tenant binding, validation, and evidence. No connector receives implicit execution authority.
