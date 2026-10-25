@@ -20,21 +20,21 @@ walk(appRoot);
 for (const absolute of pageFiles) {
   const relative = path.relative(root, absolute).split(path.sep).join("/");
   const source = fs.readFileSync(absolute, "utf8");
-  const mainTags = [...source.matchAll(/<main\\b[^>]*>/g)].map((match) => match[0]);
+  const mainTags = [...source.matchAll(/<main\b[^>]*>/g)].map((match) => match[0]);
 
   if (mainTags.length > 0) {
     for (const tag of mainTags) {
       if (!/id=["']main-content["']/.test(tag)) {
         failures.push(relative + ": main landmark must target id=\"main-content\"; found " + tag);
       }
-      if (!/tabIndex=\\{-1\\}/.test(tag) && !/tabindex=["']-1["']/.test(tag)) {
+      if (!/tabIndex=\{-1\}/.test(tag) && !/tabindex=["']-1["']/.test(tag)) {
         failures.push(relative + ": main landmark must be programmatically focusable; found " + tag);
       }
     }
     continue;
   }
 
-  if (/\\bredirect\\s*\\(/.test(source)) continue;
+  if (/\bredirect\s*\(/.test(source)) continue;
   if (/\\bSeoFeaturePage\\b/.test(source)) continue;
   failures.push(relative + ": no main landmark, redirect, or shared SEO feature-page template detected");
 }
