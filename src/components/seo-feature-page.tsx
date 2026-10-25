@@ -20,7 +20,7 @@ export default function SeoFeaturePage({
   sectionTitle?: string;
 }) {
   return (
-    <main id="main-content" className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <header className="border-b border-[var(--border)] bg-[var(--header)]/90 backdrop-blur-xl">
         <div className="mx-auto flex min-h-[72px] max-w-7xl items-center justify-between gap-4 px-4 sm:px-7">
           <Link href="/" className="flex items-center gap-3" aria-label="ELITZE Agentic Security home">
