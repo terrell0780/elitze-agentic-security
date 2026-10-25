@@ -5,7 +5,7 @@ const EMAIL = "tsh_cook@hotmail.com";
 
 export default function ContactPage() {
   return (
-    <main className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <header className="border-b border-[var(--border)] bg-[var(--header)]/90">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
           <Link href="/" className="text-sm font-black tracking-[.16em]">ELITZE</Link>
