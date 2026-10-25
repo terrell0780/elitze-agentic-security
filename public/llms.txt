@@ -1,17 +1,19 @@
 # ELITZE Agentic Security
 
-ELITZE is a security control plane for software, cloud, identities, AI agents and runtime behavior.
+ELITZE Agentic Security provides identity-aware security workflows for AI agents, MCP servers, tools, and sensitive execution paths. Only explicitly authorized integrations may connect; capability descriptions do not establish live connectivity.
 
-## Canonical sources
-- https://elitze.info/
-- https://elitze.info/platform
-- https://elitze.info/security
-- https://elitze.info/use-cases
-- https://elitze.info/compare
-- https://elitze.info/about
-- https://elitze.info/faq
+## ELITZE website pages
+- https://www.elitze.info/
+- https://www.elitze.info/platform
+- https://www.elitze.info/security
+- https://www.elitze.info/use-cases
+- https://www.elitze.info/compare
+- https://www.elitze.info/about
+- https://www.elitze.info/faq
 
-## Product scope
+## Product capabilities
+
+These are product capability areas, not a claim that every control is deployed, connected, or verified in production.
 - Security Graph
 - Security Intelligence
 - Policy Engine
