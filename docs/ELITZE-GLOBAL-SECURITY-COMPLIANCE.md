@@ -125,72 +125,21 @@ For AI systems and agents:
 - security validation
 - incident/post-market records where applicable
 
-## SAP security and compliance pack
+## Business-platform security evidence
 
-ELITZE should treat SAP as a business-critical security plane.
+ELITZE may normalize security evidence from business platforms when an explicitly authorized feed or scanner connection has been reviewed and tested. Evidence can cover configuration, identity and authorization, privileged access, authentication events, audit logs, certificates, administrative changes, test scope, observed impact, remediation, and retest results.
 
-The SAP pack is designed for evidence around:
+Every observation must capture source, timestamp, tenant/system, actor, object, authorization context, and evidence freshness where available. Collecting an observation does not establish that a platform is secure or compliant.
 
-- SAP S/4HANA and related security configuration
-- SAP BTP
-- SAP Cloud Identity Services
-- roles and authorizations
-- privileged access
-- authentication and identity events
-- audit/security logs
-- trust and certificate configuration
-- administrative changes
-- tenant/system scope
+## Adversarial validation evidence
 
-Every SAP observation should capture source, timestamp, tenant/system, actor, object, event, authorization context and evidence freshness.
+Adversarial testing evidence may be ingested only from explicitly authorized sources and within the approved scope. The evidence contract should capture authorization, target scope, test identifier, execution time, observed attack path, validated exploitability, affected asset/identity, impact evidence, remediation reference, retest result, safety controls, emergency-stop state, and operator/approval context.
 
-An observation does **not** become "SAP compliant" merely because ELITZE collected it.
+Active testing must remain behind explicit authorization, scope controls, impact limits, and audit logging.
 
-## Pentera / adversarial exposure-validation pack
+## Controlled integration boundary
 
-ELITZE should support exposure-validation evidence from adversarial testing platforms such as Pentera.
-
-The evidence contract should capture:
-
-- authorization and target scope
-- test identifier
-- execution time
-- attack path
-- validated exploitability
-- affected asset/identity
-- impact evidence
-- remediation reference
-- re-test result
-- safety controls
-- emergency-stop state
-- operator/approval context
-
-Active attack execution must always remain behind ELITZE authorization, scope controls, impact limits and audit logging.
-
-The desired lifecycle is:
-
-`discover -> validate -> prove -> prioritize -> remediate -> revalidate -> preserve evidence`
-
-This complements ELITZE's existing principle:
-
-**Pentest every release. Govern every agent. Verify every fix.**
-
-## Major security ecosystem packs
-
-The control plane is structured to accommodate real evidence from:
-
-- Splunk
-- CrowdStrike
-- Palo Alto Networks
-- enterprise identity providers such as Entra ID and Okta
-- AWS, Microsoft Azure and Google Cloud
-- GitHub
-- ServiceNow and Jira
-- Kubernetes
-- SAP
-- adversarial exposure-validation platforms such as Pentera
-
-An integration pack is **not** proof that a production connector is live. Implementation state must separately identify `PLANNED`, `IMPLEMENTED`, `CONFIGURED`, `OPERATIONAL`, `UNAVAILABLE` or `BLOCKED`.
+ELITZE supports only explicitly authorized feed and scanner connections. Vendor names in external research do not imply a supported connector, partnership, endorsement, or live connectivity. Each connection must be separately declared, configured, tested, and evidence-verified.
 
 ## Legal protection boundary
 
