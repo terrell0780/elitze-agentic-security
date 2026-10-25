@@ -1,0 +1,85 @@
+name: A11y & Security Audit
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+  schedule:
+    - cron: "23 8 * * 1"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: a11y-security-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  audit:
+    name: Axe WCAG and Lighthouse
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      # Set repository variable A11Y_AUDIT_URL to override the canonical production origin.
+      AUDIT_BASE_URL: ${{ vars.A11Y_AUDIT_URL || 'https://www.elitze.info' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Set up Chrome
+        id: chrome
+        uses: browser-actions/setup-chrome@v1
+      - name: Install audit tools
+        run: npm install --global @axe-core/cli lighthouse browser-driver-manager
+      - name: Install Chrome WebDriver
+        run: browser-driver-manager install chrome
+      - name: Run Axe accessibility audit
+        shell: bash
+        run: |
+          set -euo pipefail
+          BASE_URL="${AUDIT_BASE_URL%/}"
+          axe \
+            "$BASE_URL/" \
+            "$BASE_URL/platform" \
+            "$BASE_URL/security" \
+            "$BASE_URL/accessibility" \
+            --tags wcag2a,wcag2aa,wcag21a,wcag21aa,wcag22aa \
+            --exit --load-delay=1500 --timeout=120
+      - name: Run Lighthouse accessibility and best-practices audit
+        shell: bash
+        env:
+          CHROME_PATH: ${{ steps.chrome.outputs.chrome-path }}
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts
+          BASE_URL="${AUDIT_BASE_URL%/}"
+          lighthouse "$BASE_URL/" \
+            --only-categories=accessibility,best-practices,seo \
+            --output=json --output-path=artifacts/lighthouse-home.json \
+            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" --quiet
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const report = JSON.parse(fs.readFileSync("artifacts/lighthouse-home.json", "utf8"));
+            for (const category of ["accessibility", "best-practices"]) {
+              const score = report.categories?.[category]?.score;
+              if (typeof score !== "number" || score < 0.90) {
+                console.error("Lighthouse " + category + " score below 0.90 or unavailable:", score);
+                process.exitCode = 1;
+              } else {
+                console.log("Lighthouse " + category + ": " + Math.round(score * 100) + "/100");
+              }
+            }
+          '
+      - name: Upload Lighthouse report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-accessibility-report
+          path: artifacts/
+          if-no-files-found: ignore
+          retention-days: 14

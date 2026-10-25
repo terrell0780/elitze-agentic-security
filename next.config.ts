@@ -20,7 +20,7 @@ const securityHeaders = [
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob: https:",
       "font-src 'self' data:",
-      "connect-src 'self' https://www.google-analytics.com https://www.googletagmanager.com",
+      "connect-src 'self' https://api.elitze.info https://www.google-analytics.com https://www.googletagmanager.com",
       "manifest-src 'self'",
       "worker-src 'self' blob:",
       "media-src 'self' blob:",
