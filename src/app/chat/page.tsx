@@ -17,15 +17,15 @@ export default function ChatPage() {
   }, []);
 
   if (authorized === null) {
-    return <main className="flex min-h-screen items-center justify-center bg-[var(--bg)] text-[var(--text)]"><div className="text-sm text-[var(--muted)]">Checking secure session…</div></main>;
+    return <main id="main-content" tabIndex={-1} className="flex min-h-screen items-center justify-center bg-[var(--bg)] text-[var(--text)]"><div className="text-sm text-[var(--muted)]">Checking secure session…</div></main>;
   }
 
   if (!authorized) {
-    return <main className="min-h-screen bg-[var(--bg)] px-4 py-16 text-[var(--text)]"><div className="mx-auto max-w-2xl rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-8 text-center"><ShieldCheck className="mx-auto h-7 w-7 text-[var(--accent)]" /><h1 className="mt-4 text-3xl font-black tracking-tight">ELITZE Chat requires a secure session.</h1><p className="mt-3 text-sm leading-6 text-[var(--muted-strong)]">Sign in before using governed AI, tenant collaboration, uploads, or voice.</p><Link href="/login?next=%2Fchat" className="mt-6 inline-flex rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950">Sign in</Link></div></main>;
+    return <main id="main-content" tabIndex={-1} className="min-h-screen bg-[var(--bg)] px-4 py-16 text-[var(--text)]"><div className="mx-auto max-w-2xl rounded-3xl border border-[var(--border)] bg-[var(--panel)] p-8 text-center"><ShieldCheck className="mx-auto h-7 w-7 text-[var(--accent)]" /><h1 className="mt-4 text-3xl font-black tracking-tight">ELITZE Chat requires a secure session.</h1><p className="mt-3 text-sm leading-6 text-[var(--muted-strong)]">Sign in before using governed AI, tenant collaboration, uploads, or voice.</p><Link href="/login?next=%2Fchat" className="mt-6 inline-flex rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-bold text-slate-950">Sign in</Link></div></main>;
   }
 
   return (
-    <main className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--header)]/90 backdrop-blur-2xl">
         <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
           <Link href="/console" aria-label="Back to console" className="rounded-lg border border-[var(--border)] p-2"><ArrowLeft className="h-4 w-4" /></Link>
