@@ -139,7 +139,7 @@ export default function AutonomousAnalystPage() {
   }
 
   return (
-    <main className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
       <header className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--header)]/88 backdrop-blur-2xl">
         <div className="mx-auto flex min-h-[72px] max-w-[1600px] items-center justify-between gap-4 px-4 sm:px-7">
           <Link href="/console" className="flex items-center gap-3">
