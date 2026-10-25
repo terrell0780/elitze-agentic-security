@@ -26,7 +26,7 @@ function VerifyContent() {
   }, [params, router]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[var(--bg)] px-6 text-[var(--text)]">
+    <main id="main-content" tabIndex={-1} className="flex min-h-screen items-center justify-center bg-[var(--bg)] px-6 text-[var(--text)]">
       <div className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-8 text-center">
         <div className="text-xs font-semibold tracking-[0.3em] text-[var(--accent)]">ELITZE</div>
         <h1 className="mt-4 text-xl font-semibold">Email verification</h1>
@@ -38,7 +38,7 @@ function VerifyContent() {
 
 export default function VerifyPage() {
   return (
-    <Suspense fallback={<main className="flex min-h-screen items-center justify-center bg-[var(--bg)] px-6 text-[var(--text)]"><div className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-8 text-center"><div className="text-xs font-semibold tracking-[0.3em] text-[var(--accent)]">ELITZE</div><h1 className="mt-4 text-xl font-semibold">Email verification</h1><p className="mt-3 text-sm text-slate-500">Preparing verification…</p></div></main>}>
+    <Suspense fallback={<main id="main-content" tabIndex={-1} className="flex min-h-screen items-center justify-center bg-[var(--bg)] px-6 text-[var(--text)]"><div className="rounded-2xl border border-[var(--border)] bg-[var(--panel)] p-8 text-center"><div className="text-xs font-semibold tracking-[0.3em] text-[var(--accent)]">ELITZE</div><h1 className="mt-4 text-xl font-semibold">Email verification</h1><p className="mt-3 text-sm text-slate-500">Preparing verification…</p></div></main>}>
       <VerifyContent />
     </Suspense>
   );
