@@ -1,6 +1,6 @@
-# ELITZE Post-Transfer Customer Readiness
+# ELITZE Production and Customer Readiness
 
-> Buyer-run operational checklist. This document does not establish that the seller currently operates a customer-facing SaaS business or has active customer evidence.
+> Operational readiness checklist. This document does not establish that production dependencies are connected or that customer evidence exists.
 
 Production state is evidence-gated. The application does not seed customer records, create synthetic telemetry, or turn a missing dependency into a success state.
 
@@ -8,8 +8,8 @@ Required operating dependencies:
 - Managed PostgreSQL: reachable, migrated and schema-verified.
 - Authentication: production database plus auth encryption/session/origin configuration.
 - CRM: tenant-scoped storage.
-- Email provider: Postmark credentials and a verifiable delivery path; the sender/domain must be verified with Postmark.
-- Authorized lead sources: real tenant-bound source with accepted ingestion evidence.
+- Email provider: configured credentials and a verifiable delivery path; the sender/domain must be verified with the selected provider.
+- Authorized integrations: explicitly approved, tenant-bound feed or scanner with accepted ingestion evidence.
 - Analytics: consent-gated measurement configuration.
 - Monitoring: production runtime monitoring.
 - Backups: a verified backup/restore test recorded in the ELITZE database.
