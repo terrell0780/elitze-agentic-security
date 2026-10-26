@@ -1,6 +1,7 @@
 import { createHash } from "node:crypto";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+import type { PoolClient } from "pg";
 import { getPgPool } from "@/db";
 import { assertSameOrigin, consumeRateLimit, createSession, getRateLimitKey, hashPassword, normalizeEmail } from "@/lib/auth";
 import { normalizeTenantRole } from "@/lib/elitze-secure/tenant-security";
@@ -60,7 +61,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: "password_policy" }, { status: 400, headers: privateHeaders });
   }
 
-  let client;
+  let client: PoolClient;
   try { client = await db.connect(); } catch (error) { console.error("ELITZE invitation transaction unavailable", error); return NextResponse.json({ ok: false, error: "invitation_service_unavailable" }, { status: 503, headers: privateHeaders }); }
   let user: { id: string; tenantId: string; email: string; displayName: string | null; role: string; status: string } | null = null;
   try {
