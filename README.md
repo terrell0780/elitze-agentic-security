@@ -178,6 +178,122 @@ npm run runner:control-plane-handshake-self-test
 npm run build
 ```
 
+## Complete ELITZE product and feature inventory
+
+This section consolidates the product capabilities that must remain visible across the documentation. It describes repository-backed modules and documented integration paths; it does not imply every external provider is configured or live.
+
+### A. AI agent security, identity, and runtime
+- AI agent and workload identity; identity relationships to human owners and tenants.
+- MCP client, server, and tool discovery and identity; workload-token verification and session binding.
+- Agent passports and agent-risk context where supported by the relevant code path.
+- Resource reachability mapping, least-privilege boundaries, and sensitive data/credential access controls.
+- MCP gateway request evaluation, tool/server identity, capability checks, request validation, replay/nonce protection, rate limiting, safe upstream destination validation, bounded responses, and timeouts.
+- Deterministic pre-execution policy outcomes: allow, deny, require approval, or allow with constraints.
+- Runtime enforcement and outcome observation; model output cannot grant its own execution permissions.
+- Purpose-bound and tenant-scoped access; fail-closed handling of critical authorization failures.
+
+### B. Policy, approval, workflow, and orchestration
+- Deterministic policy evaluation and policy versioning; constrained JSON/YAML policy definitions where supported.
+- Conditions for agent, owner, tool, action, resource, environment, data classification, purpose, impact, time window, and approver role.
+- Restrictive conflict resolution; approval expiration and governed high-impact actions.
+- Persistent agent workflow definitions and runs; manual, scheduled, and event-based trigger definitions.
+- Allowed skills/channels, autonomy modes, bounded delegation, and tenant/agent validation.
+- Security-task orchestration for threat hunting, vulnerability analysis, incident response, investigation, OSINT/research, fraud analysis, and report review where the relevant route/skill exists.
+- Defense Fabric adapter contracts separating planning, authorization, execution, and returned evidence.
+- Kill-switch request handling and explicit blocked, pending, approval-required, unavailable, failed, and completed states where implemented.
+- Plans, approvals, queued jobs, and actual execution results remain distinct.
+
+### C. Threat detection, threat intelligence, and SOC
+- Source-backed threat detection and high/critical source-alert surfacing.
+- Authentication-failure clustering across a 30-minute window.
+- Explicit credential-exposure and data-exfiltration indicators.
+- Sensitive MCP/tool/policy/authorization/execution-boundary denial signals.
+- Event IDs, source references, timestamps, severity, and ATT&CK technique context.
+- Agentic SOC graph/workflow, autonomous analyst, supported event correlation, investigation timelines, findings, analyst review, and evidence gaps.
+- Threat-intelligence and case-management source paths for OpenCTI, MISP, and TheHive.
+- Endpoint and network telemetry source paths for Wazuh, Velociraptor, Suricata, Zeek, OSQuery, and FleetDM.
+- Detection and knowledge sources including MITRE ATT&CK, Sigma, and YARA.
+- Threat consoles, analyst consoles, SOC feedback/metrics paths, and connector health surfaces where implemented.
+- Source-authored alert, correlated observation, analyst inference, proposed response, and verified outcome remain distinct.
+
+### D. Vulnerability, exposure, assets, and authorized testing
+- CVE/vulnerability triage and vulnerability-console surfaces.
+- CVSS, EPSS, CISA KEV, NVD, and GitHub Advisory enrichment paths.
+- Asset criticality, internet exposure, known exploitation, and exploit-verification evidence where available.
+- Exposure prioritization, reachability context, attack-path relationships, and evidence-qualified risk.
+- Nuclei and OpenVAS/Greenbone source/connector paths; bounded Nuclei runner execution.
+- Signed scan jobs and callbacks, HMAC challenge/response, nonce/replay protection, target allowlists, scope checks, target-safety restrictions, and timeouts.
+- Authorized scan-result ingestion, vulnerability remediation tracking, and retesting.
+- AST-diff analysis paths where present.
+- Red-team/adversary-emulation and pentesting-related console/workflow surfaces where present.
+- A scanner install, scheduled scan, imported finding, or risk score alone is not proof of a successful scan, exploitability, or remediation.
+
+### E. Four security-tool integrations
+- **Nmap:** bounded XML import; live-host/open-port observations; DTD/entity rejection; no raw XML/NSE output retention; import does not run arbitrary Nmap commands.
+- **John the Ripper:** authorized audit-summary import; counts and hashed account references; no plaintext passwords or raw-output retention.
+- **Aircrack-ng:** wireless access-point survey CSV; BSSID/SSID/channel and advertised security/signal metadata; station/client records and recovered keys excluded; survey connector, not attack launcher.
+- **Metasploit Framework:** separately managed authenticated HTTPS bridge; health/version and session metadata only; no web-exposed exploit-module, payload, or command execution.
+
+### F. Security graph, Data Bridge, and evidence
+- Security graph entities and relationships across people, agents, service accounts, models, MCP servers, tools, credentials, cloud roles, data stores, assets, vulnerabilities, policies, incidents, actions, and evidence.
+- Authorization, delegation, invocation, reachability, reads/writes, execution, governance, decision, result, support, and verification relationships.
+- Tenant-scoped graph queries, blast-radius/reachability context, and observed-versus-inferred relationships.
+- Authenticated data-source registration, source-token hashing/revocation, tenant binding, schema validation, normalization, duplicate/replay handling, bounded ingestion, persistence, source-health, and observed-signal APIs.
+- Per-tenant sequence numbers and SHA-256 hash-linked audit records; decision/MCP evidence, signed receipts where configured, and evidence export.
+- Offline verification and evidence snapshot/inspection tooling where implemented.
+- Progressive proof stages: OBSERVED, INTEGRITY_VERIFIED, RETESTED, and PROVEN, with UNKNOWN/UNMEASURABLE states retained when evidence is absent.
+- Hash chaining is tamper evidence, not a claim of independent WORM immutability.
+
+### G. Identity, cloud, and application integrations
+- **MCP:** discovery, tool inventory, governed requests, policy and runtime observations.
+- **GitHub/GitHub Actions:** repository/workflow metadata, authorized installation context, protected-branch/workflow observations, secret metadata without secret values, and organization audit events when permitted.
+- **AWS IAM/CloudTrail:** caller identity, role and managed-policy metadata, and CloudTrail observations.
+- **Microsoft Entra ID/Azure and Kubernetes:** documented integration contracts for directory/service-principal/sign-in context, workload/service-account identity, RBAC, and authorized cluster observations; treat as configurable paths until verified.
+- Provider/collector source paths for vulnerability and endpoint/network tools described above.
+- Connection management, capability manifests, integration health, and credential revocation paths where present.
+- Provider names in a catalog or adapter do not establish that an authenticated live connection exists.
+
+### H. AI assistant, skills, RAG, and model governance
+- Sara/ELITZE security-assistant workflows for investigation, summarization, and evidence organization within policy boundaries.
+- Security skill registry, skill prerequisites, authorization levels, and evidence/verification requirements where implemented.
+- AI-provider connection management and NVIDIA NIM connection/review paths where present.
+- Tenant-scoped document ingestion, retrieval-augmented generation (RAG), and PostgreSQL/pgvector-backed vector search.
+- Model-assisted analysis and retrieved content remain subordinate to source evidence, deterministic policy, and required human approval.
+
+### I. Authentication, organizations, and collaboration
+- Registration, login, email verification, password reset/recovery, sessions, logout, MFA, passkeys/WebAuthn, and OIDC/SAML paths.
+- API-key issuance and revocation where implemented.
+- Organization/tenant creation and administration; owner, admin, analyst/member, approver, and viewer roles.
+- Owner-managed business profile, member review, invitations, role selection, pending-invitation revocation, token hashing, single-use invitations, rate limits, and expiry as documented.
+- Tenant-scoped security records and server-side role enforcement; client-provided tenant IDs do not confer authority.
+- Team messaging, voice, and session-related API surfaces where present.
+- Invitation email delivery and multi-organization membership depend on configuration and documented support boundaries.
+
+### J. Consoles, dashboards, reporting, and diagnostics
+- Security workspace, executive overview, asset inventory, agent views, active threats, critical assets, CVEs/vulnerabilities, threat intelligence, attack graph, campaigns, investigation timeline, and analyst findings.
+- Agentic SOC, autonomous analyst, vulnerability, integration, organization, security skills, adversary-emulation/pentesting, readiness/diagnostics, ROI, evidence-debugging/snapshot, and progressive-proofing surfaces where present.
+- KEV/EPSS/VPR and risk context only when supported by source data; geospatial views only with actual coordinates.
+- JSON/PDF evidence export on applicable routes, audit records, security reports, and source-linked findings.
+- Missing telemetry, provider outages, unavailable adapters, and evidence gaps must remain visible rather than being replaced by fabricated data.
+
+### K. Wider ELITZE business and governance modules
+- **REO/content governance:** trust/ownership decisions, content-integrity review, and supporting intelligence paths.
+- **Google Ads governance:** pre-publication allow/review/block decisions and policy evidence.
+- **Market intelligence:** Semrush and Similarweb connection paths.
+- **CRM:** customer/business relationship API surfaces.
+- **Compliance:** framework/control catalogs and mapping workflows.
+- **RIO/ROI:** results, impact, outcome, and financial-assumption calculations; claims require real source data and disclosed assumptions.
+- **Collaboration:** team messaging and related session surfaces.
+- **Accessibility:** accessibility contract tests and Axe/WCAG/Lighthouse audit paths.
+- **Release and supply-chain quality:** dependency/security checks, configuration and production self-tests, build gates, migration checks, and SBOM workflow components where present.
+
+### L. Security, privacy, and operational boundaries
+- Tenant isolation and server-side authorization; secrets held in deployment secret storage rather than source control/browser code.
+- Signed runner/control-plane communication, bounded authorized execution, explicit target scope, and auditable outcomes.
+- Security tests for authentication, role access, integration parsers, runner handshakes, configuration, accessibility, and production builds where configured.
+- Explicit distinction between IMPLEMENTED, CONFIGURED, CONNECTED, OBSERVED, INFERRED, UNKNOWN, UNMEASURABLE, and VERIFIED/PROVEN.
+- No invented telemetry, fake assets, fabricated findings, guessed risk scores, or unsupported claims of certification, compliance, remediation, or customer outcomes.
+
 ## Documentation
 
 - [Architecture and deployment manifest](docs/ELITZE-AGENTIC-SECURITY-MERGE-MANIFEST.md)
