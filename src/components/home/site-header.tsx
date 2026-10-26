@@ -14,6 +14,8 @@ const primaryLinks = [
   ["How-to", "/how-to"],
   ["FAQ", "/faq"],
   ["Docs", "/docs"],
+  ["Chat", "/chat"],
+  ["Console", "/console"],
 ] as const;
 
 export default function SiteHeader() {
@@ -44,7 +46,7 @@ export default function SiteHeader() {
     Sign in
     </Link>
     <Link href="/register" className="hidden rounded-xl bg-[var(--accent)] px-4 py-2.5 text-xs font-bold text-slate-950 transition hover:brightness-110 sm:inline-flex">
-    Start free
+    Create account
     </Link>
     <button
     type="button"
