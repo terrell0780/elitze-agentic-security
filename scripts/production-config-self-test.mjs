@@ -53,7 +53,7 @@ assert.doesNotMatch(orchestrationRoute, /tenantId:\s*z\.string|actorId:\s*z\.str
 const mergeManifest = read("docs/ELITZE-AGENTIC-SECURITY-MERGE-MANIFEST.md");
 const orchestrationManifest = read("docs/ELITZE-ORCHESTRATION-DEFENSE.md");
 assert.match(mergeManifest, /ELITZE runtime orchestrator/);
-assert.match(mergeManifest, /Sentinel security layer[^\n]*not a separate product or separate control plane/);
+assert.match(mergeManifest, /Sentinel security layer:[^\n]*not a separate product or control plane/);
 assert.match(mergeManifest, /generated\/elitze_orchestrator\.py` is a bounded CI self-test\/evidence wrapper/);
 assert.match(orchestrationManifest, /Sentinel is the integrated security-protection layer within this platform, not a separate product or control plane/);
 assert.match(orchestrationManifest, /src\/lib\/elitze-secure\/elitze-agent\.ts` — ELITZE runtime planning\/orchestration/);
