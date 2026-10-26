@@ -253,7 +253,70 @@ The repository's consolidated CI workflow is `.github/workflows/production-gates
 - Review destructive database migrations and production data changes before execution.
 - Do not claim independent penetration testing, SOC 2/ISO certification, compliance, customer outcomes, performance, or production-scale reliability without the applicable evidence.
 
-## 16. Documentation map
+## 16. Additional product modules and integration boundaries
+
+This section records capabilities that sit alongside the core agent/MCP path and must remain visible in the product inventory.
+
+### 16.1 Production identity and cloud integrations
+
+The documented initial integration scope includes:
+
+- **MCP:** server discovery, tool inventory, controlled gateway requests, deterministic policy, request/response metadata, and tool-description change observations.
+- **GitHub/GitHub Actions:** repository and workflow metadata, authorized installation context, protected-branch state, Actions secret metadata (never secret values), and organization audit events when the token has permission.
+- **AWS IAM/CloudTrail:** signed API requests, STS caller identity, IAM role and managed-policy metadata, and CloudTrail events.
+
+Additional contracts cover:
+
+- **Microsoft Entra ID/Azure:** user/application/service-principal context and audit/sign-in activity.
+- **Kubernetes:** API discovery, service-account and workload identity, RBAC relationship mapping, and authorized observations.
+
+The phase-6 integration notes explicitly keep Entra and Kubernetes outside the initial end-to-end implementation boundary until the initial MCP/GitHub/AWS paths have been verified. They must therefore be described as integration contracts or configurable paths unless a real environment proves otherwise.
+
+All integration adapters require tenant authorization, least-privilege provider permissions, authenticated discovery, persisted source evidence, an observable result, and a retest where the control path is being evaluated. No code module by itself proves a provider is live.
+
+### 16.2 SOC analyst dashboard and security posture views
+
+The analyst console includes product surfaces for executive overview, threat intelligence, assets, CVEs, agents, active threats, critical assets, KEV/EPSS/VPR and evidence-qualified risk states, attack graph context, active campaigns, investigation timeline, autonomous analyst findings, source-fed threat detection, and connector probes. A world map is meaningful only where the source provides real coordinates.
+
+The dashboard and analyst should preserve the difference between a source alert, a correlated observation, an analyst inference, a proposed response, and an independently verified outcome. An unconfigured source must not produce fake counts or imply active monitoring.
+
+### 16.3 Knowledge retrieval and AI provider paths
+
+The wider repository contains AI provider-connection management, tenant-scoped document ingestion, retrieval-augmented generation, and vector search backed by PostgreSQL/pgvector. Retrieved text and model-generated summaries can support research, investigation, and evidence organization; they do not replace source evidence, deterministic authorization, or human approval where required.
+
+### 16.4 Wider business and governance modules
+
+The repo also contains application paths and documentation for:
+
+- REO/content trust, ownership and integrity governance;
+- Google Ads pre-publication allow/review/block decisions and policy evidence;
+- Semrush and Similarweb market-intelligence paths;
+- CRM/business relationship API surfaces;
+- compliance catalogs and framework/control mapping;
+- RIO/ROI results, impact, outcome, and financial-assumption calculations;
+- team messaging and related collaboration endpoints;
+- accessibility contracts and Axe/WCAG/Lighthouse checks;
+- dependency, security, configuration, build, and software-supply-chain validation.
+
+These modules are part of the broader product repository, but should be described as connected or operational only when the relevant account, credentials, service, and observed result are verified.
+
+### 16.5 Authentication and team-access surface
+
+The application includes registration and login, verification/recovery, sessions, MFA, passkeys/WebAuthn, OIDC/SAML integration paths, API-key issuance/revocation, organization/tenant administration, invitations, and role-separated owner/admin/analyst/approver/viewer access. Every privileged route must enforce server-side identity and authorization; tenant IDs supplied by callers are not authority by themselves.
+
+### 16.6 Runner and security-tool scope
+
+The separate authorized runner and the four security-tool paths are distinct:
+
+- Nmap imports bounded XML scan evidence; it does not execute arbitrary Nmap commands from the web application.
+- John the Ripper imports bounded password-audit summary data and does not retain plaintext passwords or raw output.
+- Aircrack-ng imports Wi-Fi access-point survey records; it is not a wireless attack launcher.
+- Metasploit uses a read-only HTTPS bridge for health and session metadata; the connector does not launch exploit modules or payloads.
+- Nuclei runs through the bounded scanner runner with signed jobs, authorized target scope, timeouts, and signed observations.
+
+Execution capability must remain confined to the authorized runner or a separately authorized adapter. An import endpoint is not an execution endpoint; scanner installation is not a completed scan; a finding is not proof of exploitability.
+
+## 17. Documentation map
 
 - [README / product overview](../README.md)
 - [Agent identity and MCP runtime contract](ELITZE-AGENT-IDENTITY-MCP-RUNTIME-CONTRACT.md)
