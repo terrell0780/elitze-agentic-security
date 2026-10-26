@@ -42,6 +42,8 @@ jobs:
         run: npm run data-bridge:self-test
       - name: Security-tool integration self-test
         run: npm run security-tool-integrations:self-test
+      - name: Tenant role and owner onboarding self-test
+        run: npm run tenant-security:self-test
       - name: MCP workload identity self-test
         run: npm run mcp-workload-identity:self-test
       - name: Authentication E2E safety self-test
