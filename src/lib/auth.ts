@@ -387,33 +387,47 @@ export async function registerUser(
   const tenantName = organizationName?.trim() || `${normalized.split("@")[0]}'s organization`;
   const tenantSlug = organizationSlug?.trim().toLowerCase() || `tenant-${randomBytes(8).toString("hex")}`;
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(tenantSlug)) throw new Error("organization_slug_policy");
-  const result = await getPgPool().query(
-    `WITH new_tenant AS (
-       INSERT INTO auth_tenants (name,slug)
-       VALUES ($1,$2)
-       RETURNING id
-     )
-     INSERT INTO auth_users
-       (tenant_id,email,email_normalized,password_hash,display_name,role)
-     SELECT id,$3,$3,$4,$5,'owner'
-     FROM new_tenant
-     RETURNING
-       id,
-       tenant_id AS "tenantId",
-       email,
-       display_name AS "displayName",
-       role,
-       status`,
-    [
-      tenantName,
-      tenantSlug,
-      normalized,
-      passwordHash,
-      displayName?.trim() || null,
-    ],
-  );
+  const client = await getPgPool().connect();
+  try {
+    await client.query("BEGIN");
+    // Serialize same-email registrations and invitation acceptance across tenant creation paths.
+    await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", [normalized]);
+    const existing = await client.query("SELECT id FROM auth_users WHERE email_normalized=$1 LIMIT 1", [normalized]);
+    if (existing.rows[0]) throw new Error("email_already_registered");
 
-  return result.rows[0] as AuthUser;
+    const result = await client.query(
+      `WITH new_tenant AS (
+         INSERT INTO auth_tenants (name,slug)
+         VALUES ($1,$2)
+         RETURNING id
+       )
+       INSERT INTO auth_users
+         (tenant_id,email,email_normalized,password_hash,display_name,role)
+       SELECT id,$3,$3,$4,$5,'owner'
+       FROM new_tenant
+       RETURNING
+         id,
+         tenant_id AS "tenantId",
+         email,
+         display_name AS "displayName",
+         role,
+         status`,
+      [
+        tenantName,
+        tenantSlug,
+        normalized,
+        passwordHash,
+        displayName?.trim() || null,
+      ],
+    );
+    await client.query("COMMIT");
+    return result.rows[0] as AuthUser;
+  } catch (error) {
+    await client.query("ROLLBACK").catch(() => undefined);
+    throw error;
+  } finally {
+    client.release();
+  }
 }
 
 export async function authenticate(email: string, password: string) {
