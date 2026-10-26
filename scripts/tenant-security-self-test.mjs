@@ -66,7 +66,7 @@ assert.match(invitationMigration, /CHECK \(role IN \('admin', 'member', 'approve
 assert.match(organizationPage, /normalizeTenantRole/);
 assert.match(invitationPage, /AcceptInvitationForm/);
 assert.match(invitationPage, /<main id="main-content" tabIndex=\{-1\}/);
-assert.doesNotMatch(invitationForm, /<main\\b/, "invitation form must not render a nested main landmark");
+assert.doesNotMatch(invitationForm, /<main\b/, "invitation form must not render a nested main landmark");
 assert.match(organizationUi, /Send invitation/);
 assert.match(organizationUi, /Business profile/);
 assert.ok(routeManifest.routes.some((route) => route.path === "/console/organization"));
