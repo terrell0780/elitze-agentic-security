@@ -82,6 +82,20 @@ export function databaseConfigurationSource(): DatabaseSource {
   return "NONE";
 }
 
+function configureRuntimeRole(targetPool: Pool): void {
+  const role = process.env.ELITZE_DB_RUNTIME_ROLE?.trim();
+  if (!role) return;
+  if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(role)) {
+    throw new Error("ELITZE_DB_RUNTIME_ROLE must be a valid PostgreSQL role identifier.");
+  }
+  // Queue role initialization before the pool hands a new client to a caller.
+  targetPool.on("connect", (client) => {
+    client.query(`SET ROLE "${role}"`, (error) => {
+      if (error) client.release(error);
+    });
+  });
+}
+
 function getPool(): Pool {
   if (databasePool) return databasePool;
 
@@ -94,6 +108,8 @@ function getPool(): Pool {
       connectionTimeoutMillis: Number(process.env.DATABASE_CONNECTION_TIMEOUT_MS ?? 10_000),
       maxUses: Number(process.env.DATABASE_MAX_USES ?? 0) || undefined,
     });
+
+  configureRuntimeRole(databasePool);
 
   if (process.env.NODE_ENV !== "production") {
     globalForDb.__elitzePostgresqlPool = databasePool;
