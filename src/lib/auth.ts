@@ -394,8 +394,8 @@ export async function registerUser(
        RETURNING id
      )
      INSERT INTO auth_users
-       (tenant_id,email,email_normalized,password_hash,display_name)
-     SELECT id,$3,$3,$4,$5
+       (tenant_id,email,email_normalized,password_hash,display_name,role)
+     SELECT id,$3,$3,$4,$5,'owner'
      FROM new_tenant
      RETURNING
        id,
