@@ -1,0 +1,18 @@
+name: Ubuntu slim hosted runner allocation probe
+
+on:
+  push:
+    branches: [fix/actions-runner-pool-ubuntu-22]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  slim:
+    name: Ubuntu slim hosted runner allocation probe
+    runs-on: ubuntu-slim
+    timeout-minutes: 5
+    steps:
+      - name: Confirm the runner can execute
+        run: echo "Ubuntu slim hosted runner allocation succeeded."
