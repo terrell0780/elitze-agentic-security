@@ -42,7 +42,6 @@ const quickLinks = [
   { href: "/console/threat-detection", label: "Runtime threat detection", description: "Review observed signals and response evidence.", icon: Activity },
   { href: "/console/vulnerabilities", label: "Vulnerability intelligence", description: "Prioritize CVE, KEV and exposure findings.", icon: ShieldX },
   { href: "/console/adversary-emulation", label: "Adversary emulation", description: "Run authorized validation with scope controls.", icon: Workflow },
-  { href: "/console/readiness", label: "Production readiness", description: "Check dependencies and proof gates.", icon: CheckCircle2 },
   { href: "/console/integrations", label: "Connected integrations", description: "Configure and verify security data sources.", icon: Database },
 ];
 
