@@ -14,5 +14,9 @@ export default async function AcceptInvitationPage({
 }) {
   const params = await searchParams;
   const token = typeof params.token === "string" ? params.token : "";
-  return <AcceptInvitationForm token={token} />;
+  return (
+    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+      <AcceptInvitationForm token={token} />
+    </main>
+  );
 }
