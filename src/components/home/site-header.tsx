@@ -8,9 +8,12 @@ import GlobalThemeToggle from "@/components/global-theme-toggle";
 const primaryLinks = [
   ["Platform", "/platform"],
   ["How it works", "/#how-it-works"],
+  ["About", "/about"],
   ["Security", "/security"],
   ["Integrations", "/integrations"],
-  ["Resources", "/docs"],
+  ["How-to", "/how-to"],
+  ["FAQ", "/faq"],
+  ["Docs", "/docs"],
 ] as const;
 
 export default function SiteHeader() {
