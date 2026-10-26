@@ -74,7 +74,14 @@ export async function POST(request: NextRequest) {
   const role = normalizeTenantRole(user.role);
   if (role !== "OWNER" && parsed.data.role === "admin") return forbidden();
 
-  if (!(await consumeRateLimit(await getRateLimitKey("tenant-invite", email), 10, 60 * 60))) {
+  let rateAllowed: boolean;
+  try {
+    rateAllowed = await consumeRateLimit(await getRateLimitKey("tenant-invite", email), 10, 60 * 60);
+  } catch (error) {
+    console.error("ELITZE invitation rate-limit check failed", error);
+    return NextResponse.json({ ok: false, error: "invitation_service_unavailable" }, { status: 503, headers: privateHeaders });
+  }
+  if (!rateAllowed) {
     return NextResponse.json({ ok: false, error: "too_many_invitation_attempts" }, { status: 429, headers: { ...privateHeaders, "Retry-After": "3600" } });
   }
 
