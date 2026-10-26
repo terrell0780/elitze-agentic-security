@@ -27,14 +27,14 @@ export async function GET() {
     ok,
     service: "elitze-agentic-security",
     brand: "ELITZE",
-    checks: {
-      database: database.success ? "ok" : databaseConfigured ? "unhealthy" : "unconfigured",
-      schema,
-      productionConfiguration: configurationReady ? "ok" : "blocked",
-    },
   };
 
   if (isPlatformOwner(user)) {
+    response.checks = {
+      database: database.success ? "ok" : databaseConfigured ? "unhealthy" : "unconfigured",
+      schema,
+      productionConfiguration: configurationReady ? "ok" : "blocked",
+    };
     response.database = {
       configurationSource: database.configurationSource,
       version: database.version,
