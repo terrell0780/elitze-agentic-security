@@ -24,6 +24,21 @@ function connectionString() {
   return value;
 }
 
+function configureRuntimeRole(targetPool: Pool): void {
+  const role = process.env.ELITZE_DB_RUNTIME_ROLE?.trim();
+  if (!role) return;
+  if (!/^[A-Za-z_][A-Za-z0-9_]*$/.test(role)) {
+    throw new Error("ELITZE_DB_RUNTIME_ROLE must be a valid PostgreSQL role identifier.");
+  }
+  // pg-pool emits "connect" before handing a new client to its waiter. Queue
+  // SET ROLE first so application queries cannot run before least privilege is active.
+  targetPool.on("connect", (client) => {
+    client.query(`SET ROLE "${role}"`, (error) => {
+      if (error) client.release(error);
+    });
+  });
+}
+
 function getPool() {
   if (pool) return pool;
   const url = connectionString();
@@ -39,6 +54,7 @@ function getPool() {
         ? { rejectUnauthorized: true }
         : undefined,
   });
+  configureRuntimeRole(pool);
   return pool;
 }
 
