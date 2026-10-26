@@ -44,6 +44,8 @@ jobs:
         run: npm run security-tool-integrations:self-test
       - name: Tenant role and owner onboarding self-test
         run: npm run tenant-security:self-test
+      - name: Platform-owner boundary self-test
+        run: npm run platform-owner:self-test
       - name: MCP workload identity self-test
         run: npm run mcp-workload-identity:self-test
       - name: Authentication E2E safety self-test
