@@ -30,7 +30,8 @@ function parseRecords(input: string): string[][] {
       } else {
         field += char;
       }
-    } else if (char === '"' && field.length === 0) {
+    } else if (char === '"' && field.trim().length === 0) {
+      field = "";
       quoted = true;
     } else if (char === ",") {
       row.push(field.trim());
