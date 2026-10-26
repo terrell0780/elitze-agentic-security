@@ -1,6 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { getPgPool, isDatabaseConfigured, databaseConfigurationSource } from "@/db";
+import { assessTenantDatabaseIsolation } from "@/lib/database-isolation-readiness";
 
 export type ReadinessState = "READY" | "CONFIGURED" | "BLOCKED" | "UNMEASURABLE";
 export type ReadinessCheck = { state: ReadinessState; detail: string; source?: string; evidence?: string };
@@ -31,9 +32,58 @@ async function checkDatabase():Promise<ReadinessCheck>{
  }catch(error){return {state:"BLOCKED",detail:error instanceof Error?"PostgreSQL health check failed: "+error.message:"PostgreSQL health check failed.",source:"runtime database health check"}}
 }
 
+async function checkTenantDatabaseIsolation(): Promise<ReadinessCheck> {
+ if (!isDatabaseConfigured()) {
+  return {state:"BLOCKED",detail:"Tenant database isolation cannot be verified until PostgreSQL is configured.",source:"runtime configuration"};
+ }
+ try {
+  const db=getPgPool();
+  const roleResult=await db.query(
+   "SELECT current_user AS active_role, r.rolsuper AS is_superuser, r.rolbypassrls AS bypass_rls FROM pg_roles r WHERE r.rolname=current_user"
+  );
+  const role=roleResult.rows[0] as {active_role?:string;is_superuser?:boolean;bypass_rls?:boolean}|undefined;
+  const tableResult=await db.query(
+   `SELECT n.nspname AS schema_name, c.relname AS table_name,
+           c.relrowsecurity AS rls_enabled,
+           c.relforcerowsecurity AS force_rls,
+           COUNT(DISTINCT p.polname)::int AS policy_count
+      FROM pg_class c
+      JOIN pg_namespace n ON n.oid=c.relnamespace
+      LEFT JOIN pg_policy p ON p.polrelid=c.oid
+     WHERE c.relkind IN ('r','p')
+       AND n.nspname NOT IN ('pg_catalog','information_schema')
+       AND n.nspname NOT LIKE 'pg_toast%'
+       AND EXISTS (
+         SELECT 1 FROM pg_attribute a
+          WHERE a.attrelid=c.oid AND a.attnum>0 AND NOT a.attisdropped
+            AND a.attname IN ('tenant_id','organization_id')
+       )
+     GROUP BY n.nspname,c.relname,c.relrowsecurity,c.relforcerowsecurity
+     ORDER BY n.nspname,c.relname`
+  );
+  const assessment=assessTenantDatabaseIsolation({
+   expectedRuntimeRole:env("ELITZE_DB_RUNTIME_ROLE"),
+   activeRole:role?.active_role,
+   isSuperuser:role?.is_superuser,
+   bypassRls:role?.bypass_rls,
+   tenantTables:tableResult.rows.map((row)=>({
+    schemaName:String(row.schema_name),
+    tableName:String(row.table_name),
+    rlsEnabled:row.rls_enabled===true||row.rls_enabled==="t",
+    forceRls:row.force_rls===true||row.force_rls==="t",
+    policyCount:Number(row.policy_count??0),
+   })),
+  });
+  return {...assessment,evidence:"Catalog check at "+new Date().toISOString()};
+ } catch {
+  return {state:"BLOCKED",detail:"Tenant database isolation could not be verified from PostgreSQL catalog evidence.",source:"PostgreSQL role and RLS catalog verification"};
+ }
+}
+
 export async function getProductionReadiness():Promise<ProductionReadiness>{
  const managedDatabase=await checkDatabase();
  const databaseReady=managedDatabase.state==="READY";
+ const tenantDatabaseIsolation=databaseReady?await checkTenantDatabaseIsolation():{state:"BLOCKED" as const,detail:"Tenant database isolation cannot be verified until the database and migration checks pass.",source:"database dependency"};
  let crm:ReadinessCheck, authorizedLeadSources:ReadinessCheck, backups:ReadinessCheck, realCustomerPilotData:ReadinessCheck;
  if(!databaseReady){
   crm={state:"BLOCKED",detail:"CRM cannot be verified until the managed database is healthy.",source:"database dependency"};
@@ -65,6 +115,6 @@ export async function getProductionReadiness():Promise<ProductionReadiness>{
  const monitoring=process.env.VERCEL==="1"
   ?{state:"CONFIGURED" as const,detail:"Production is running on Vercel and runtime logs are available.",source:"Vercel runtime"}
   :{state:"BLOCKED" as const,detail:"Production monitoring is not detectable from the runtime.",source:"runtime environment"};
- const checks={managedDatabase,authentication,crm,emailProvider,authorizedLeadSources,analytics,monitoring,backups,realCustomerPilotData};
+ const checks={managedDatabase,tenantDatabaseIsolation,authentication,crm,emailProvider,authorizedLeadSources,analytics,monitoring,backups,realCustomerPilotData};
  return {generatedAt:new Date().toISOString(),checks,releaseBlocked:Object.values(checks).some((check)=>check.state==="BLOCKED")};
 }
