@@ -31,6 +31,15 @@ const auth = fs.readFileSync("src/lib/auth.ts", "utf8");
 const signup = fs.readFileSync("src/app/api/auth/signup/route.ts", "utf8");
 const v1Signup = fs.readFileSync("src/app/api/v1/auth/signup/route.ts", "utf8");
 const controlPlane = fs.readFileSync("src/app/api/control-plane/route.ts", "utf8");
+const membersRoute = fs.readFileSync("src/app/api/console/members/route.ts", "utf8");
+const organizationRoute = fs.readFileSync("src/app/api/console/organization/route.ts", "utf8");
+const acceptRoute = fs.readFileSync("src/app/api/auth/invitations/accept/route.ts", "utf8");
+const invitationMigration = fs.readFileSync("drizzle/0999_auth_tenant_invitations.sql", "utf8");
+const organizationPage = fs.readFileSync("src/app/console/organization/page.tsx", "utf8");
+const invitationPage = fs.readFileSync("src/app/accept-invitation/page.tsx", "utf8");
+const organizationUi = fs.readFileSync("src/components/organization-members-console.tsx", "utf8");
+const routeManifest = JSON.parse(fs.readFileSync("public/elitze-routes.json", "utf8"));
+
 assert.match(auth, /display_name,role\)\s*SELECT id,\$3,\$3,\$4,\$5,'owner'/);
 for (const [name, route] of [["signup", signup], ["v1 signup", v1Signup]]) {
   assert.match(route, /consumeRateLimit/);
@@ -38,5 +47,26 @@ for (const [name, route] of [["signup", signup], ["v1 signup", v1Signup]]) {
   assert.match(route, /Retry-After/);
 }
 assert.match(controlPlane, /buildPrincipal\(\{ tenantId: user\.tenantId, subjectId: user\.id, roles: \[user\.role\] \}\)/);
+assert.match(auth, /pg_advisory_xact_lock\(hashtext\(\$1\)\)/);
+assert.match(auth, /email_already_registered/);
+assert.match(membersRoute, /getCurrentUser/);
+assert.match(membersRoute, /normalizeTenantRole/);
+assert.match(membersRoute, /parsed\.data\.role === "admin"/);
+assert.match(membersRoute, /auth_tenant_invitations/);
+assert.match(membersRoute, /assertSameOrigin/);
+assert.match(organizationRoute, /isOwner\(user\.role\)/);
+assert.match(organizationRoute, /organization_slug_already_in_use/);
+assert.match(acceptRoute, /pg_advisory_xact_lock/);
+assert.match(acceptRoute, /FOR UPDATE/);
+assert.match(acceptRoute, /accepted_at=now\(\)/);
+assert.match(acceptRoute, /expires_at>now\(\)/);
+assert.match(invitationMigration, /CREATE TABLE IF NOT EXISTS auth_tenant_invitations/);
+assert.match(invitationMigration, /CHECK \(role IN \('admin', 'member', 'approver', 'viewer'\)\)/);
+assert.match(organizationPage, /normalizeTenantRole/);
+assert.match(invitationPage, /AcceptInvitationForm/);
+assert.match(organizationUi, /Send invitation/);
+assert.match(organizationUi, /Business profile/);
+assert.ok(routeManifest.routes.some((route) => route.path === "/console/organization"));
+assert.ok(routeManifest.routes.some((route) => route.path === "/accept-invitation"));
 
-console.log("ELITZE tenant roles, owner onboarding, and signup rate-limit self-test: PASS");
+console.log("ELITZE tenant roles, owner/business onboarding, invitation, and signup rate-limit self-test: PASS");
