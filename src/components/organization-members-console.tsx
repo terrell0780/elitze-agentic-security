@@ -22,6 +22,8 @@ type Invitation = {
   invitedBy: string;
 };
 type Payload = { ok: boolean; error?: string; members?: Member[]; invitations?: Invitation[] };
+type Organization = { id: string; name: string; slug: string; createdAt: string };
+type OrganizationPayload = { ok: boolean; error?: string; organization?: Organization; canEdit?: boolean };
 
 const roleLabel = (role: string) => ({
   owner: "Owner",
@@ -38,6 +40,9 @@ const dateLabel = (value: string | null | undefined) => {
 };
 
 export default function OrganizationMembersConsole({ actorRole }: { actorRole: "OWNER" | "SECURITY_ADMIN" }) {
+  const [organization, setOrganization] = useState<Organization | null>(null);
+  const [organizationName, setOrganizationName] = useState("");
+  const [organizationSlug, setOrganizationSlug] = useState("");
   const [members, setMembers] = useState<Member[]>([]);
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [email, setEmail] = useState("");
@@ -51,9 +56,21 @@ export default function OrganizationMembersConsole({ actorRole }: { actorRole: "
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch("/api/console/members", { cache: "no-store" });
-      const payload = await response.json() as Payload;
+      const [response, organizationResponse] = await Promise.all([
+        fetch("/api/console/members", { cache: "no-store" }),
+        fetch("/api/console/organization", { cache: "no-store" }),
+      ]);
+      const [payload, organizationPayload] = await Promise.all([
+        response.json() as Promise<Payload>,
+        organizationResponse.json() as Promise<OrganizationPayload>,
+      ]);
       if (!response.ok || !payload.ok) throw new Error(payload.error ?? "organization_members_unavailable");
+      if (!organizationResponse.ok || !organizationPayload.ok || !organizationPayload.organization) {
+        throw new Error(organizationPayload.error ?? "organization_profile_unavailable");
+      }
+      setOrganization(organizationPayload.organization);
+      setOrganizationName(organizationPayload.organization.name);
+      setOrganizationSlug(organizationPayload.organization.slug);
       setMembers(payload.members ?? []);
       setInvitations(payload.invitations ?? []);
     } catch (cause) {
@@ -64,6 +81,30 @@ export default function OrganizationMembersConsole({ actorRole }: { actorRole: "
   }, []);
 
   useEffect(() => { void load(); }, [load]);
+
+  async function saveOrganization(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setBusy(true);
+    setError(null);
+    setNotice(null);
+    try {
+      const response = await fetch("/api/console/organization", {
+        method: "PATCH",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ name: organizationName.trim(), slug: organizationSlug.trim().toLowerCase() }),
+      });
+      const payload = await response.json() as OrganizationPayload;
+      if (!response.ok || !payload.ok || !payload.organization) throw new Error(payload.error ?? "organization_profile_update_failed");
+      setOrganization(payload.organization);
+      setOrganizationName(payload.organization.name);
+      setOrganizationSlug(payload.organization.slug);
+      setNotice("Organization profile saved.");
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : "organization_profile_update_failed");
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function invite(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -126,6 +167,23 @@ export default function OrganizationMembersConsole({ actorRole }: { actorRole: "
 
         {error && <div role="alert" className="mt-6 rounded-xl border border-rose-300/25 bg-rose-300/[.06] p-4 text-sm text-rose-100">Request failed: {error}</div>}
         {notice && <div role="status" className="mt-6 rounded-xl border border-cyan-300/20 bg-cyan-300/[.05] p-4 text-sm text-cyan-100">{notice}</div>}
+
+        <section className="mt-8 rounded-2xl border border-white/10 bg-white/[.025] p-5 sm:p-6">
+          <div className="flex items-center gap-2"><ShieldCheck className="h-5 w-5 text-cyan-200" /><h2 className="text-lg font-semibold">Business profile</h2></div>
+          {organization && <p className="mt-2 text-xs text-slate-500">Tenant ID: <span className="font-mono">{organization.id}</span> · Created {dateLabel(organization.createdAt)}</p>}
+          <form onSubmit={saveOrganization} className="mt-5 grid gap-4 md:grid-cols-[1fr_1fr_auto] md:items-end">
+            <div>
+              <label htmlFor="organization-name" className="mb-2 block text-sm font-medium text-slate-300">Organization name</label>
+              <input id="organization-name" name="organizationName" required minLength={2} maxLength={200} value={organizationName} onChange={(event) => setOrganizationName(event.target.value)} disabled={actorRole !== "OWNER" || busy} className="w-full rounded-xl border border-white/10 bg-black/20 px-3 py-3 text-sm outline-none focus:border-cyan-300/50 disabled:opacity-60" />
+            </div>
+            <div>
+              <label htmlFor="organization-slug" className="mb-2 block text-sm font-medium text-slate-300">Organization URL slug</label>
+              <input id="organization-slug" name="organizationSlug" required minLength={2} maxLength={120} pattern="[a-z0-9]+(-[a-z0-9]+)*" value={organizationSlug} onChange={(event) => setOrganizationSlug(event.target.value.toLowerCase())} disabled={actorRole !== "OWNER" || busy} className="w-full rounded-xl border border-white/10 bg-black/20 px-3 py-3 text-sm outline-none focus:border-cyan-300/50 disabled:opacity-60" />
+            </div>
+            {actorRole === "OWNER" && <button type="submit" disabled={busy || !organizationName.trim() || !organizationSlug.trim()} className="rounded-xl bg-cyan-300 px-4 py-3 text-sm font-bold text-slate-950 hover:bg-cyan-200 disabled:opacity-50">Save profile</button>}
+          </form>
+          {actorRole !== "OWNER" && <p className="mt-3 text-xs text-slate-500">Only the organization owner can change its name or slug.</p>}
+        </section>
 
         <section className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]">
           <div className="rounded-2xl border border-white/10 bg-white/[.025] p-5 sm:p-6">
