@@ -55,7 +55,7 @@ export default function AcceptInvitationForm({ token }: { token: string }) {
   }
 
   return (
-    <main id="main-content" tabIndex={-1} className="flex min-h-screen items-center justify-center bg-[#070b10] px-4 py-10 text-slate-100">
+    <div className="flex min-h-screen items-center justify-center bg-[#070b10] px-4 py-10 text-slate-100">
       <section className="w-full max-w-lg rounded-3xl border border-white/10 bg-white/[.025] p-6 shadow-2xl sm:p-8">
         <Link href="/" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[.2em] text-cyan-200"><ShieldCheck className="h-5 w-5" /> ELITZE</Link>
         <p className="mt-8 text-[10px] font-bold uppercase tracking-[.22em] text-cyan-300">Organization invitation</p>
@@ -85,6 +85,6 @@ export default function AcceptInvitationForm({ token }: { token: string }) {
         {needsSignIn && <p className="mt-5 text-center text-sm"><Link className="font-semibold text-cyan-200 underline underline-offset-4" href="/login">Continue to sign in</Link></p>}
         <p className="mt-6 text-center text-xs text-slate-500">Did not request access? You can safely ignore this email.</p>
       </section>
-    </main>
+    </div>
   );
 }
