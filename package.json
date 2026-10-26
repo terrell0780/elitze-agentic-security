@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "npm run mcp-upstream-address:self-test && npm run accessibility:contract-self-test",
+    "prebuild": "npm run mcp-upstream-address:self-test && npm run accessibility:contract-self-test && npm run security-tool-integrations:self-test",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
