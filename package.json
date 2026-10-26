@@ -61,19 +61,19 @@
   "dependencies": {
     "@langchain/core": "^1.2.17",
     "@langchain/langgraph": "^1.4.21",
-    "@modelcontextprotocol/server": "2.0.0",
+    "@modelcontextprotocol/server": "2.4.0",
     "@node-saml/node-saml": "5.1.0",
     "@simplewebauthn/browser": "14.0.0",
     "@simplewebauthn/server": "14.0.2",
     "drizzle-orm": "0.45.2",
     "duck-duck-scrape": "^2.2.7",
     "lucide-react": "^1.37.0",
-    "next": "16.3.8",
+    "next": "16.4.3",
     "openid-client": "6.8.8",
     "pg": "8.20.0",
     "react": "19.2.6",
     "react-dom": "19.2.6",
-    "zod": "4.5.4"
+    "zod": "4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "4.1.17",
@@ -82,8 +82,8 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "drizzle-kit": "0.31.10",
-    "eslint": "9.39.4",
-    "eslint-config-next": "16.3.8",
+    "eslint": "10.13.0",
+    "eslint-config-next": "16.4.3",
     "fill-range": "7.1.1",
     "postcss": "8.5.29",
     "tailwindcss": "4.1.17",

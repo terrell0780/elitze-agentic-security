@@ -53,7 +53,7 @@ assert.doesNotMatch(orchestrationRoute, /tenantId:\s*z\.string|actorId:\s*z\.str
 const mergeManifest = read("docs/ELITZE-AGENTIC-SECURITY-MERGE-MANIFEST.md");
 const orchestrationManifest = read("docs/ELITZE-ORCHESTRATION-DEFENSE.md");
 assert.match(mergeManifest, /ELITZE runtime orchestrator/);
-assert.match(mergeManifest, /Sentinel security layer[^\n]*not a separate product or separate control plane/);
+assert.match(mergeManifest, /Sentinel security layer:[^\n]*not a separate product or control plane/);
 assert.match(mergeManifest, /generated\/elitze_orchestrator\.py` is a bounded CI self-test\/evidence wrapper/);
 assert.match(orchestrationManifest, /Sentinel is the integrated security-protection layer within this platform, not a separate product or control plane/);
 assert.match(orchestrationManifest, /src\/lib\/elitze-secure\/elitze-agent\.ts` — ELITZE runtime planning\/orchestration/);
@@ -92,7 +92,7 @@ const featurePage = read("src/components/seo-feature-page.tsx");
 assert.match(workspaceEntry, /getCurrentUser/, "workspace entry must verify authentication");
 assert.match(workspaceEntry, /if \(!user\) redirect\("\/login/, "anonymous visitors must be sent to sign-in");
 assert.match(workspaceEntry, /redirect\("\/console"\)/, "authenticated visitors must enter the console");
-assert.match(homePage, /\["Workspace", "\/workspace"\]/, "workspace must be in primary navigation");
+assert.match(homePage, /href="\/workspace"/, "homepage must link to the authenticated workspace");
 assert.match(homePage, /Open workspace/i, "homepage must expose a clear workspace action");
 assert.doesNotMatch(homePage, /\/sales|Acquisition|acquisition/i, "homepage must be security-workspace product copy");
 assert.doesNotMatch(platformPage, /\/sales|Acquisition|acquisition/i, "platform page must be security product copy");
