@@ -37,18 +37,28 @@ try {
   await client.query("SELECT pg_advisory_lock(hashtext($1))", [migrationLock]);
   lockAcquired = true;
 
-  const sql = await fs.readFile(
-    path.join(process.cwd(), "drizzle", migrationFile),
-    "utf8",
+  // Least-privilege runtime identities cannot CREATE in public. Production
+  // schema migrations are applied by the database owner; builds verify an
+  // already-provisioned table and only attempt DDL when it is genuinely absent.
+  const existingTable = await client.query(
+    "SELECT to_regclass('public.auth_tenant_invitations') IS NOT NULL AS present",
   );
+  if (!existingTable.rows[0]?.present) {
+    const sql = await fs.readFile(
+      path.join(process.cwd(), "drizzle", migrationFile),
+      "utf8",
+    );
 
-  await client.query("BEGIN");
-  try {
-    await client.query(sql);
-    await client.query("COMMIT");
-  } catch (error) {
-    await client.query("ROLLBACK");
-    throw error;
+    await client.query("BEGIN");
+    try {
+      await client.query(sql);
+      await client.query("COMMIT");
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    }
+  } else {
+    console.log("ELITZE tenant invitation table already provisioned; verifying with the configured database identity.");
   }
 
   const expectedColumns = [
@@ -68,7 +78,7 @@ try {
   const columnsResult = await client.query(
     `SELECT column_name, udt_name
      FROM information_schema.columns
-     WHERE table_schema = current_schema()
+     WHERE table_schema = 'public'
        AND table_name = 'auth_tenant_invitations'`,
   );
   const actualColumns = new Map(
@@ -94,7 +104,7 @@ try {
   const indexesResult = await client.query(
     `SELECT indexname
      FROM pg_indexes
-     WHERE schemaname = current_schema()
+     WHERE schemaname = 'public'
        AND tablename = 'auth_tenant_invitations'
        AND indexname = ANY($1::text[])`,
     [requiredIndexes],
@@ -110,7 +120,7 @@ try {
   const foreignKeys = await client.query(
     `SELECT COUNT(*)::int AS count
      FROM pg_constraint
-     WHERE conrelid = to_regclass(current_schema() || '.auth_tenant_invitations')
+     WHERE conrelid = to_regclass('public.auth_tenant_invitations')
        AND contype = 'f'`,
   );
   if (foreignKeys.rows[0]?.count !== 2) {
