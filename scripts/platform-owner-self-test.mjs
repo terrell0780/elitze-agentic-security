@@ -46,12 +46,12 @@ try {
   assert.match(consolePage, /\{platformOwner === true && <Link href="\/console\/readiness"/, "direct global readiness link must only appear for platform owners");
   assert.match(consolePage, /label:"Tenant data"/, "ordinary tenant owners should see tenant data status, not global schema status");
   assert.match(organizationPage, /role !== "OWNER" && role !== "SECURITY_ADMIN"/, "organization page must restrict access to tenant administrators");
-  assert.match(organizationApi, /WHERE id=\\$1 LIMIT 1[\\s\\S]*?\\[user\\.tenantId\\]/, "organization reads must use the authenticated tenant id");
-  assert.match(organizationApi, /WHERE id=\\$3[\\s\\S]*?user\\.tenantId/, "organization writes must use the authenticated tenant id");
+  assert.match(organizationApi, /WHERE id=\$1 LIMIT 1[\s\S]*?\[user\.tenantId\]/, "organization reads must use the authenticated tenant id");
+  assert.match(organizationApi, /WHERE id=\$3[\s\S]*?user\.tenantId/, "organization writes must use the authenticated tenant id");
   assert.match(membersApi, /FROM auth_users WHERE tenant_id=\\$1 ORDER BY created_at ASC LIMIT 500/, "member listing must be tenant-scoped");
   assert.match(membersApi, /WHERE tenant_id=\\$1 AND accepted_at IS NULL/, "invitations must be tenant-scoped");
-  assert.match(tenantOverview, /const tenantId = user\\.tenantId/, "console overview must derive tenant scope from the signed-in user");
-  assert.match(tenantOverview, /WHERE tenant_id=\\$1/, "console overview queries must apply tenant scope");
+  assert.match(tenantOverview, /const tenantId = user\.tenantId/, "console overview must derive tenant scope from the signed-in user");
+  assert.match(tenantOverview, /WHERE tenant_id=\$1/, "console overview queries must apply tenant scope");
   assert.match(envExample, /^ELITZE_PLATFORM_OWNER_EMAILS=$/m);
   assert.match(docs, /platform owner/i);
   console.log("ELITZE platform-owner boundary self-test: PASS");
