@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "npm run mcp-upstream-address:self-test && npm run accessibility:contract-self-test",
+    "prebuild": "npm run mcp-upstream-address:self-test && npm run accessibility:contract-self-test && npm run security-tool-integrations:self-test && npm run tenant-security:self-test && npm run platform-owner:self-test",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -35,6 +35,8 @@
     "evidence-expression:self-test": "node --experimental-strip-types scripts/evidence-expression-self-test.mjs",
     "pentest-request:self-test": "node scripts/pentest-request-self-test.mjs",
     "live-validation:self-test": "node scripts/live-validation-self-test.mjs",
+    "security-tool-integrations:self-test": "node --experimental-strip-types scripts/security-tool-integrations-self-test.mjs",
+    "tenant-security:self-test": "node --experimental-strip-types scripts/tenant-security-self-test.mjs",
     "runner:self-test": "node runner/self-test.mjs",
     "runner:handshake-self-test": "node runner/handshake-integration-self-test.mjs",
     "runner:control-plane-handshake-self-test": "node --experimental-strip-types scripts/runner-control-plane-handshake-self-test.mjs",
@@ -56,7 +58,8 @@
     "evidence-snapshot:self-test": "node scripts/evidence-snapshot-self-test.mjs",
     "platform:readiness": "node scripts/security-self-test.mjs && node scripts/production-config-self-test.mjs && node scripts/brand-self-test.mjs",
     "workspace-platform:self-test": "node scripts/workspace-platform-self-test.mjs",
-    "accessibility:contract-self-test": "node scripts/a11y-contract-self-test.mjs"
+    "accessibility:contract-self-test": "node scripts/a11y-contract-self-test.mjs",
+    "platform-owner:self-test": "node --experimental-strip-types scripts/platform-owner-self-test.mjs"
   },
   "dependencies": {
     "@langchain/core": "^1.2.17",

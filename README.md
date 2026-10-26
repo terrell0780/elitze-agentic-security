@@ -18,6 +18,18 @@ ELITZE Agentic Security is the product identity across the application, document
 - **Preserve decision evidence** for review, investigation, and operational accountability.
 - **Support security workflows** through authenticated workspaces, a security console, data-bridge adapters, and integration health endpoints. Live connectivity and operational status must be verified separately.
 
+## User, business, and owner workflows
+
+- **Personal/initial sign-up:** creates a new tenant and assigns the creator the tenant-owner role; role selection is not accepted from client input.
+- **Business owner:** can edit the tenant's business name and slug, see tenant members, invite teammates, choose least-privilege roles, and revoke pending invitations.
+- **Security admin:** can manage security and integrations and invite non-admin members; only the owner can grant admin access or change the business profile.
+- **Analyst/member:** can work with security data under the tenant permission model.
+- **Approver:** can review governed actions; **viewer:** is read-only.
+- **Invitations:** are sent by configured transactional email, stored as token hashes, single-use, tenant-scoped, rate-limited, and expire after seven days. An email already linked to an account cannot yet join a second tenant; multi-organization membership is a documented limitation.
+- **Security-tool evidence:** Nmap XML, John the Ripper summary results, and Aircrack-ng Wi-Fi survey CSV are imported through authenticated, bounded endpoints. Metasploit integration is read-only through an operator-managed HTTPS bridge; the web application does not directly execute exploit modules or wireless attacks.
+
+Role/access checks and integration parser tests run as part of the production build gates. A successful build validates the code path; live email, database migrations, and tool bridges must still be configured to use the corresponding features.
+
 ## The ELITZE control loop
 
 ```text

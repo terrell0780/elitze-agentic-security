@@ -11,6 +11,12 @@ const gates = [
   ["Data Bridge self-test", ["run", "data-bridge:self-test"]],
   ["MCP workload identity self-test", ["run", "mcp-workload-identity:self-test"]],
   ["authentication E2E safety self-test", ["run", "auth:e2e-safety-self-test"]],
+  ["security-tool integration self-test", ["run", "security-tool-integrations:self-test"]],
+  ["tenant/business owner self-test", ["run", "tenant-security:self-test"]],
+  ["platform-owner boundary self-test", ["run", "platform-owner:self-test"]],
+  ["security-tool integration self-test", ["run", "security-tool-integrations:self-test"]],
+  ["tenant/business owner self-test", ["run", "tenant-security:self-test"]],
+  ["platform-owner boundary self-test", ["run", "platform-owner:self-test"]],
   ["production build", ["run", "build"]],
 ];
 

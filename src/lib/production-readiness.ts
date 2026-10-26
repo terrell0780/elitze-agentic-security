@@ -7,7 +7,7 @@ export type ReadinessCheck = { state: ReadinessState; detail: string; source?: s
 export type ProductionReadiness = { generatedAt: string; checks: Record<string, ReadinessCheck>; releaseBlocked: boolean };
 
 const REQUIRED_TABLES=[
-"auth_tenants","auth_users","auth_sessions","auth_tokens","auth_rate_limits","auth_mfa_factors","auth_recovery_codes",
+"auth_tenants","auth_users","auth_sessions","auth_tokens","auth_rate_limits","auth_tenant_invitations","auth_mfa_factors","auth_recovery_codes",
 "auth_webauthn_credentials","auth_challenges","auth_refresh_tokens","auth_api_keys","auth_privileged_reauth",
 "crm_contacts","crm_actions","data_bridge_sources","data_bridge_events","security_graph_nodes","security_graph_edges",
 "security_graph_evidence","security_test_requests","production_readiness_evidence","_elitze_migrations",

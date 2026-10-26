@@ -2,9 +2,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Activity, Bug, FileSearch, Globe2, LayoutDashboard, Radar, ShieldCheck, Siren, Workflow, ClipboardCheck, Bot } from "lucide-react";
+import { Activity, Bug, FileSearch, Globe2, LayoutDashboard, Radar, ShieldCheck, Siren, Workflow, ClipboardCheck, Bot, Users, Building2 } from "lucide-react";
 
-const groups = [
+type WorkbenchItem = {
+  href: string;
+  label: string;
+  icon: typeof Activity;
+  description: string;
+  adminOnly?: boolean;
+  platformOwnerOnly?: boolean;
+};
+type WorkbenchGroup = { label: string; items: WorkbenchItem[] };
+
+const groups: WorkbenchGroup[] = [
   {
     label: "OPERATE",
     items: [
@@ -13,7 +23,6 @@ const groups = [
       { href: "/console/adversary-emulation", label: "Adversary Emulation", icon: Siren, description: "Authorized red-team exercises and evidence" },
       { href: "/console/threat-detection", label: "Runtime Threat Detection", icon: Siren, description: "Observed runtime signals and response evidence" },
       { href: "/console/vulnerabilities", label: "Vulnerability Intelligence", icon: Bug, description: "CVE, KEV and threat findings" },
-      { href: "/console/readiness", label: "Release Readiness", icon: ClipboardCheck, description: "Production and security proof gates" },
     ],
   },
   {
@@ -31,10 +40,31 @@ const groups = [
       { href: "/security", label: "Security Model", icon: FileSearch, description: "Controls and trust boundaries" },
     ],
   },
+  {
+    label: "PLATFORM",
+    items: [
+      { href: "/console/readiness", label: "Platform Readiness", icon: ClipboardCheck, description: "Global runtime and release proof gates", platformOwnerOnly: true },
+    ],
+  },
+  {
+    label: "MANAGE",
+    items: [
+      { href: "/console/organization", label: "Organization & Members", icon: Building2, description: "Business profile and team access", adminOnly: true },
+    ],
+  },
 ];
 
-export default function SecurityWorkbenchSidebar() {
+function canManageOrganization(role: string) {
+  return ["OWNER", "TENANT_OWNER", "ADMIN", "SECURITY_ADMIN", "TENANT_ADMIN"].includes(role.trim().toUpperCase().replace(/[ -]+/g, "_"));
+}
+
+export default function SecurityWorkbenchSidebar({ role, platformOwner = false }: { role: string; platformOwner?: boolean }) {
   const pathname = usePathname();
+  const manageable = canManageOrganization(role);
+  const visibleGroups = groups
+    .map((group) => ({ ...group, items: group.items.filter((item) => (!item.adminOnly || manageable) && (!item.platformOwnerOnly || platformOwner)) }))
+    .filter((group) => group.items.length > 0);
+
   return (
     <>
       <aside className="fixed inset-y-0 left-0 z-40 hidden w-72 border-r border-white/8 bg-[#070a0f] lg:block">
@@ -53,18 +83,18 @@ export default function SecurityWorkbenchSidebar() {
               <div className="text-[9px] font-bold uppercase tracking-[.2em] text-cyan-200/80">CONTROL PATH</div>
               <div className="mt-2 text-xs font-semibold leading-5 text-slate-200">Discover → Identify → Map Reach → Decide → Execute → Observe → Prove → Retest</div>
             </div>
-            {groups.map((group) => (
+            {visibleGroups.map((group) => (
               <section key={group.label} className="mb-5">
                 <div className="px-3 pb-2 text-[9px] font-bold uppercase tracking-[.2em] text-slate-600">{group.label}</div>
                 <nav className="space-y-1" aria-label={group.label}>
                   {group.items.map(({ href, label, icon: Icon, description }) => {
                     const active = href === "/console" ? pathname === "/console" : pathname === href || pathname.startsWith(`${href}/`);
                     return (
-                    <Link key={href} href={href} aria-current={active ? "page" : undefined} className={`group flex items-center gap-3 rounded-xl border px-3 py-3 transition ${active ? "border-cyan-300/20 bg-cyan-300/[.09]" : "border-transparent hover:border-cyan-300/10 hover:bg-cyan-300/[.035]"}`}>
-                      <Icon className={`h-4 w-4 shrink-0 ${active ? "text-cyan-200" : "text-cyan-300/80"}`} />
-                      <span className="min-w-0"><span className={`block text-sm font-semibold ${active ? "text-cyan-50" : "text-slate-200"}`}>{label}</span><span className="block truncate text-[10px] text-slate-600">{description}</span></span>
-                      {active && <span className="ml-auto size-1.5 rounded-full bg-cyan-200 shadow-[0_0_10px_rgba(103,232,249,.9)]" />}
-                    </Link>
+                      <Link key={href} href={href} aria-current={active ? "page" : undefined} className={`group flex items-center gap-3 rounded-xl border px-3 py-3 transition ${active ? "border-cyan-300/20 bg-cyan-300/[.09]" : "border-transparent hover:border-cyan-300/10 hover:bg-cyan-300/[.035]"}`}>
+                        <Icon className={`h-4 w-4 shrink-0 ${active ? "text-cyan-200" : "text-cyan-300/80"}`} />
+                        <span className="min-w-0"><span className={`block text-sm font-semibold ${active ? "text-cyan-50" : "text-slate-200"}`}>{label}</span><span className="block truncate text-[10px] text-slate-600">{description}</span></span>
+                        {active && <span className="ml-auto size-1.5 rounded-full bg-cyan-200 shadow-[0_0_10px_rgba(103,232,249,.9)]" />}
+                      </Link>
                     );
                   })}
                 </nav>
@@ -78,7 +108,7 @@ export default function SecurityWorkbenchSidebar() {
         </div>
       </aside>
       <nav aria-label="Security workbench mobile navigation" className="sticky top-0 z-40 flex gap-2 overflow-x-auto border-b border-white/10 bg-[#070a0f] px-3 py-2 lg:hidden">
-        {groups.flatMap((group) => group.items).map(({ href, label }) => (
+        {visibleGroups.flatMap((group) => group.items).map(({ href, label }) => (
           <Link key={href} href={href} aria-current={pathname === href ? "page" : undefined} className={`shrink-0 rounded-lg border px-3 py-2 text-xs font-semibold ${pathname === href ? "border-cyan-300/30 bg-cyan-300/[.08] text-cyan-100" : "border-white/10 text-slate-200"}`}>{label}</Link>
         ))}
       </nav>

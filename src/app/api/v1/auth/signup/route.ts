@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
-import { assertSameOrigin, issueEmailToken, registerUser } from "@/lib/auth";
+import { assertSameOrigin, consumeRateLimit, getRateLimitKey, issueEmailToken, normalizeEmail, registerUser } from "@/lib/auth";
 import { sendAuthEmail } from "@/lib/auth-email";
 
 const schema = z.object({
@@ -19,6 +19,10 @@ export async function POST(request: Request) {
     }
 
     const input = schema.parse(await request.json());
+    const normalizedEmail = normalizeEmail(input.email);
+    if (!(await consumeRateLimit(await getRateLimitKey("register", normalizedEmail), 5, 60 * 60))) {
+      return NextResponse.json({ ok: false, error: "too_many_attempts" }, { status: 429, headers: { "Retry-After": "3600" } });
+    }
     const user = await registerUser(
       input.email,
       input.password,
@@ -37,7 +41,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, status: "VERIFICATION_REQUIRED", userId: user.id }, { status: 201 });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Signup failed.";
-    const duplicate = /duplicate|unique/i.test(message);
+    const duplicate = /duplicate|unique|email_already_registered/i.test(message);
     const emailConfig = /email_delivery_not_configured|email_delivery_failed|unsupported_email_provider/i.test(message);
     return NextResponse.json(
       { ok: false, error: duplicate ? "Account or organization already exists." : emailConfig ? "Transactional email is not configured." : "Signup failed." },

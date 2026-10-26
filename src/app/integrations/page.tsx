@@ -4,10 +4,10 @@ import { productionConfig } from "@/config/production";
 
 const url = productionConfig.canonicalOrigin + "/integrations";
 export const metadata: Metadata = {
-  title: "Security Integrations: NVIDIA NIM, MCP, SIEM and Threat Feeds",
-  description: "Understand ELITZE's tenant-scoped integration layer, encrypted model credentials, public vulnerability intelligence, and source-specific connection verification.",
+  title: "Security Integrations: Nmap, Metasploit, John the Ripper, Aircrack-ng, MCP and SIEM",
+  description: "ELITZE security integrations for Nmap XML evidence, guarded Metasploit RPC observation, privacy-preserving John the Ripper results, Wi-Fi survey evidence, SIEM, and threat intelligence.",
   alternates: { canonical: url },
-  openGraph: { type: "website", url, title: "ELITZE Security Integrations", description: "Connect authorized sources and prove each integration with a real probe." },
+  openGraph: { type: "website", url, title: "ELITZE Security Integrations", description: "Connect authorized sources and preserve source-specific, tenant-scoped evidence." },
 };
 
 export default function Page() {
@@ -16,6 +16,10 @@ export default function Page() {
     title="Connect the real source. Verify the connection. Keep the evidence."
     description="ELITZE separates connector code, credentials, configured state, successful probes, and observed records. A provider name or secret variable is not proof of an operational integration. Each tenant connector must pass its provider-specific authentication and runtime check."
     panels={[
+      { title: "Aircrack-ng / Wi-Fi survey", body: "Import airodump-ng CSV survey output through an authenticated API. ELITZE records access-point identifiers, SSID, channel, encryption type, and survey signal metadata. It ignores client/station records and never stores raw CSV or recovered keys. Use only for authorized wireless assessments; packet injection and password cracking are not exposed through the web app.", state: "Wi-Fi evidence import implemented" },
+      { title: "Nmap", body: "Import Nmap XML scan results through an authenticated API. ELITZE records live-host and confirmed open-port/service observations in the tenant security graph; it rejects DTD/entity declarations and does not persist raw XML or NSE script output. Scan execution belongs on an authorized runner, not a public web server.", state: "XML evidence import implemented" },
+      { title: "Metasploit Framework", body: "A separately deployed HTTPS bridge adapts the local Metasploit MessagePack RPC interface. ELITZE can verify bridge health and observe session metadata. The bridge URL and token are server-side secrets; this web endpoint does not expose arbitrary module/exploit execution.", state: "Read-only bridge; operator managed" },
+      { title: "John the Ripper", body: "Import John --show audit output as summary evidence. ELITZE records cracked/remaining counts and audit metadata only. Plaintext passwords and account labels are never persisted by the importer; run password audits on a controlled, authorized worker.", state: "Privacy-preserving result import implemented" },
       { title: "NVIDIA NIM", body: "Tenant model connections use the standard NVIDIA NIM /v1 endpoint. Keys are encrypted at rest; GET /v1/models validates endpoint reachability and selected model availability. Inference success is tracked separately.", state: "Optional / probe required" },
       { title: "MCP and agent identity", body: "The security control path maps an authenticated agent/workload identity to MCP servers, tools, policy decisions, and auditable evidence. Unobserved relationships stay unknown.", state: "Tenant scoped" },
       { title: "Vulnerability intelligence", body: "NVD, CISA KEV, and FIRST EPSS provide external reference records. They do not establish that a CVE is present or reachable on a customer's asset.", state: "Reference evidence" },
