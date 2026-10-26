@@ -48,10 +48,6 @@ function findTagAttributes(source: string, tag: string): Record<string, string> 
   return match ? attributes(match[1]) : null;
 }
 
-function decodeXmlText(value: string): string {
-  return decodeXmlAttribute(value.replace(/<[^>]*>/g, "")).trim();
-}
-
 /**
  * Parse the safe, machine-readable subset of Nmap XML used for asset evidence.
  * The importer rejects DTD/entity declarations and never stores raw scan XML or
