@@ -1,0 +1,27 @@
+name: Hosted runner pool probe
+
+on:
+  push:
+    branches: [fix/actions-runner-pool-ubuntu-22]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ubuntu:
+    name: Ubuntu hosted runner allocation probe
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Confirm the runner can execute
+        run: echo "Ubuntu hosted runner allocation succeeded."
+
+  windows:
+    name: Windows hosted runner allocation probe
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - name: Confirm the runner can execute
+        shell: pwsh
+        run: Write-Output "Windows hosted runner allocation succeeded."
