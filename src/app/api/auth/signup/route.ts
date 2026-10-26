@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true, status: "VERIFICATION_REQUIRED", userId: user.id }, { status: 201 });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Signup failed.";
-    const duplicate = /duplicate|unique/i.test(message);
+    const duplicate = /duplicate|unique|email_already_registered/i.test(message);
     const emailConfig = /email_delivery_not_configured|email_delivery_failed|unsupported_email_provider/i.test(message);
     return NextResponse.json(
       { ok: false, error: duplicate ? "Account or organization already exists." : emailConfig ? "Transactional email is not configured." : message },
