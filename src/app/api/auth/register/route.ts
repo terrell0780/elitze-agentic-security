@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
     return Response.json({ ok: true, verificationRequired: true });
   } catch (error) {
     const message = error instanceof Error ? error.message : "registration_failed";
+    if (message === "email_already_registered") return Response.json({ error: "email_already_registered" }, { status: 409 });
     if (message === "email_delivery_not_configured") return Response.json({ error: "email_delivery_not_configured" }, { status: 503 });
     if (message === "invalid_email" || message === "password_policy") return Response.json({ error: message }, { status: 400 });
     if (message.includes("duplicate") || message.includes("unique")) {
