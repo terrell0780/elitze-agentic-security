@@ -37,3 +37,11 @@ The current permission model is:
 - Apply the SQL migrations before using this feature.
 - Keep request-body logging disabled for credentials and invitation tokens.
 - Admin endpoints derive tenant identity from the authenticated session, never from a caller-supplied tenant ID.
+
+## Platform owner boundary
+
+The organization `OWNER` role is a customer/business-tenant role. It does not grant access to other tenants or platform-wide database diagnostics. Platform ownership is provisioned separately with the server-side `ELITZE_PLATFORM_OWNER_EMAILS` environment variable, containing a comma-separated allowlist of exact email addresses. Public registration and organization invitations cannot assign platform ownership.
+
+The global `/console/readiness` page and `GET /api/ops/readiness` are restricted to allowlisted platform owners because the underlying checks contain platform-wide database, migration, backup, lead-source, and deployment evidence. Detailed fields on `GET /api/console/health` use the same boundary. Ordinary users and business owners retain tenant-scoped dashboard, organization, and member-management features.
+
+Configure the allowlist only in the deployment secret/configuration manager. Do not derive platform ownership from the tenant role, the public contact email, or a user-editable organization field. With an empty or unmatched allowlist, platform-owner authorization fails closed. After configuration, verify the approved account can view platform readiness and a normal tenant owner receives `403 platform_owner_required` from the global readiness API.
