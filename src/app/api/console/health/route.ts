@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { validateProductionSecrets } from "@/config/secrets-assert";
 import { verifyProductionDatabase } from "@/lib/database-verify";
+import { isPlatformOwner } from "@/lib/platform-owner";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -33,7 +34,7 @@ export async function GET() {
     },
   };
 
-  if (user.role === "owner" || user.role === "admin") {
+  if (isPlatformOwner(user)) {
     response.database = {
       configurationSource: database.configurationSource,
       version: database.version,
