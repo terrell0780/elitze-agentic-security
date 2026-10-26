@@ -17,7 +17,7 @@ concurrency:
 jobs:
   static-and-security:
     name: Static checks and security self-tests
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -47,7 +47,7 @@ jobs:
 
   dependency-audit:
     name: Production dependency audit
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -61,9 +61,62 @@ jobs:
       - name: Audit production dependencies
         run: npm audit --omit=dev --audit-level=high
 
+  authentication-e2e:
+    name: Real authentication DB E2E
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: pgvector/pgvector:pg16
+        env:
+          POSTGRES_USER: elitze_ci
+          POSTGRES_PASSWORD: elitze_ci_password
+          POSTGRES_DB: elitze_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U elitze_ci -d elitze_ci"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - name: Install locked dependencies
+        run: npm ci
+      - name: Apply migrations to disposable CI database
+        run: npm run db:migrate
+        env:
+          PGHOST: 127.0.0.1
+          PGPORT: "5432"
+          PGUSER: elitze_ci
+          PGPASSWORD: elitze_ci_password
+          PGDATABASE: elitze_ci
+          DATABASE_SSL: "disable"
+          ELITZE_AUTH_E2E_DISPOSABLE_DB: "true"
+      - name: Production build for authentication E2E
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SITE_URL: http://127.0.0.1:3010
+      - name: Real authentication DB E2E
+        run: npm run auth:e2e-self-test
+        env:
+          PGHOST: 127.0.0.1
+          PGPORT: "5432"
+          PGUSER: elitze_ci
+          PGPASSWORD: elitze_ci_password
+          PGDATABASE: elitze_ci
+          DATABASE_SSL: "disable"
+          ELITZE_AUTH_E2E_DISPOSABLE_DB: "true"
+
   build:
     name: Next.js production build
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: static-and-security
     steps:
       - name: Checkout
