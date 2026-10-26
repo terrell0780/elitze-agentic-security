@@ -66,6 +66,56 @@ The application includes an authenticated workspace and security console, tenant
 
 Sara is ELITZE's security assistant. It supports investigation, summarization, evidence organization, and security workflows within the platform's identity, policy, approval, and execution boundaries. Model-generated analysis does not override deterministic authorization.
 
+## Additional platform modules
+
+### 9. Production identity and cloud integration paths
+
+Beyond the MCP control plane, ELITZE defines provider paths for:
+
+- **GitHub and GitHub Actions:** repository and workflow metadata, authorized GitHub App installation context, protected-branch and workflow observations, secret metadata without reading secret values, and organization audit events when granted.
+- **AWS IAM and CloudTrail:** caller identity, IAM role and customer-managed policy metadata, and signed CloudTrail observations.
+- **Microsoft Entra ID and Azure:** directory users, applications, service principals, sign-in/audit activity, and identity context for access review.
+- **Kubernetes:** API discovery, workload and service-account identity, RBAC relationships, and authorized cluster observations.
+
+The first implemented integration phase is centered on MCP, GitHub, and AWS. Entra/Azure and Kubernetes are defined integration paths, not a statement that every tenant already has a working production connection. Each requires customer-side credentials, least-privilege review, successful discovery, and captured evidence before it can be called integrated.
+
+### 10. Executive security dashboard and exposure views
+
+The analyst and security operations surfaces bring together the signals available to a tenant, including:
+
+- executive overview and asset inventory;
+- threat-intelligence context;
+- CVEs and vulnerability findings;
+- agents and their observed relationships;
+- active threats and high-criticality assets;
+- KEV, EPSS, VPR, and evidence-qualified risk context;
+- attack-graph context;
+- campaigns and investigation timelines;
+- analyst findings and source-fed detection fabric;
+- geospatial views only when actual coordinates are present;
+- connector status and missing-data indicators.
+
+Counts and risk views must be sourced from tenant records and real observations. The UI does not invent assets, locations, vulnerability findings, threat feeds, or risk scores to fill an empty dashboard.
+
+### 11. Retrieval, knowledge, and model-provider governance
+
+ELITZE also contains paths for tenant-scoped document ingestion, retrieval-augmented generation (RAG), vector search backed by PostgreSQL/pgvector, AI provider connection management, and governed use of model-generated analysis. Retrieved material and generated summaries support investigation and workflow context; they do not override policy, establish facts without sources, or grant authorization.
+
+### 12. Additional governance and business modules
+
+The wider application also includes modules beyond the core security control plane:
+
+- **REO/content governance:** trust and ownership decisions, content-integrity review, and supporting intelligence workflows.
+- **Google Ads governance:** pre-publication policy decisions to allow, block, or require review, with supporting evidence and checks against misleading claims.
+- **Market intelligence:** Semrush and Similarweb connection paths.
+- **CRM:** customer and business relationship API surfaces.
+- **Compliance mapping:** control/framework catalogs and mapping workflows.
+- **RIO/ROI:** result, impact, and outcome measurement based on observed security signals and customer-approved financial assumptions.
+- **Team collaboration:** messaging and related team/session API surfaces.
+- **Accessibility and release quality:** accessibility contract tests, Axe/WCAG and Lighthouse audit, dependency/security checks, configuration self-tests, and build gates.
+
+These modules belong to the wider ELITZE product and repository. Their presence does not mean a third-party account is connected or a business outcome has been achieved; those require their own operational evidence.
+
 ## The ELITZE control loop
 
 `Discover → Identify → Map Reach → Evaluate Policy → Decide → Authorize → Execute → Observe → Retest → Prove`
