@@ -204,7 +204,7 @@ export default function OrganizationMembersConsole({ actorRole }: { actorRole: "
               </div>
               <div className="rounded-xl border border-white/8 bg-black/15 p-3 text-xs leading-5 text-slate-400">
                 <ShieldCheck className="mr-1 inline h-4 w-4 text-cyan-300" />
-                Invitations are tenant-scoped. An email already linked to another ELITZE account must use that account's existing organization until multi-organization membership is supported.
+                Invitations are tenant-scoped. An email already linked to another ELITZE account must use that account&apos;s existing organization until multi-organization membership is supported.
               </div>
               <button type="submit" disabled={busy || !email.trim()} className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-cyan-300 px-4 py-3 text-sm font-bold text-slate-950 hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-50">
                 <Send className="h-4 w-4" /> {busy ? "Working…" : "Send invitation"}
