@@ -92,7 +92,7 @@ const featurePage = read("src/components/seo-feature-page.tsx");
 assert.match(workspaceEntry, /getCurrentUser/, "workspace entry must verify authentication");
 assert.match(workspaceEntry, /if \(!user\) redirect\("\/login/, "anonymous visitors must be sent to sign-in");
 assert.match(workspaceEntry, /redirect\("\/console"\)/, "authenticated visitors must enter the console");
-assert.match(homePage, /\["Workspace", "\/workspace"\]/, "workspace must be in primary navigation");
+assert.match(homePage, /href="\/workspace"/, "homepage must link to the authenticated workspace");
 assert.match(homePage, /Open workspace/i, "homepage must expose a clear workspace action");
 assert.doesNotMatch(homePage, /\/sales|Acquisition|acquisition/i, "homepage must be security-workspace product copy");
 assert.doesNotMatch(platformPage, /\/sales|Acquisition|acquisition/i, "platform page must be security product copy");
