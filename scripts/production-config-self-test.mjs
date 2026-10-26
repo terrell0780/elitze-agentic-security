@@ -107,3 +107,10 @@ const legacyIdentityFiles = tracked.filter((file) => !file.startsWith("drizzle/"
 assert.equal(legacyIdentityFiles.length, 0, "legacy orchestration file names remain");
 const legacyIdentityContent = textFiles.filter((file) => !file.startsWith("drizzle/") && new RegExp(legacyIdentity, "i").test(read(file)));
 assert.equal(legacyIdentityContent.length, 0, "legacy orchestration branding remains");
+
+assert.match(env, /^ELITZE_DB_RUNTIME_ROLE=$/m, "the application runtime role must be documented as a distinct deployment setting");
+assert.match(read("src/db/index.ts"), /configureRuntimeRole\(databasePool, process\.env\.ELITZE_DB_RUNTIME_ROLE\)/);
+assert.match(read("src/lib/database.ts"), /configureRuntimeRole\(pool, process\.env\.ELITZE_DB_RUNTIME_ROLE\)/);
+assert.match(read("src/lib/production-readiness.ts"), /tenantDatabaseIsolation/, "tenant database isolation must be included in release readiness");
+assert.match(read("src/lib/database-isolation-readiness.ts"), /BYPASSRLS/, "runtime roles that bypass RLS must block readiness");
+
