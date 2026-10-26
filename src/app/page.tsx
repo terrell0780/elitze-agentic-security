@@ -23,6 +23,7 @@ import {
   Zap,
 } from "lucide-react";
 import SiteFooter from "@/components/home/site-footer";
+import InteractiveProductHub from "@/components/home/interactive-product-hub";
 import SiteHeader from "@/components/home/site-header";
 
 export const metadata = {
@@ -175,6 +176,8 @@ export default function HomePage() {
           {[["01", "See the real attack path", "Identity, agent, MCP, API, data, and runtime context in one view."], ["02", "Make the right decision", "Policy and approvals sit before sensitive execution, not after the incident."], ["03", "Leave a defensible record", "Every action can carry provenance, outcome, remediation, and retest evidence."]].map(([number, title, description]) => <div key={number} className="flex gap-4"><span className="font-mono text-xs text-cyan-200/80">{number}</span><div><div className="text-sm font-semibold text-white">{title}</div><p className="mt-1 text-xs leading-5 text-slate-500">{description}</p></div></div>)}
         </div>
       </section>
+
+      <InteractiveProductHub />
 
       <section id="how-it-works" className="mx-auto max-w-[1440px] px-5 py-20 sm:px-8 sm:py-28 lg:px-12">
         <div className="max-w-2xl"><div className="text-[10px] font-bold uppercase tracking-[.22em] text-cyan-200">The control loop</div><h2 className="mt-3 text-3xl font-semibold tracking-[-.05em] sm:text-5xl">From discovery to proof, without the blind spots.</h2><p className="mt-5 text-base leading-7 text-slate-400">ELITZE gives security teams a single operating path for the actions that matter most in an AI-native environment.</p></div>
