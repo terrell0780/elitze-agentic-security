@@ -26,17 +26,30 @@ export async function POST(request: NextRequest) {
 
   const tokenHash = createHash("sha256").update(parsed.data.token).digest("hex");
   const db = getPgPool();
-  const preview = await db.query(
-    `SELECT email_normalized FROM auth_tenant_invitations
-     WHERE token_hash=$1 AND accepted_at IS NULL AND revoked_at IS NULL AND expires_at>now()
-     LIMIT 1`,
-    [tokenHash],
-  );
+  let preview;
+  try {
+    preview = await db.query(
+      `SELECT email_normalized FROM auth_tenant_invitations
+       WHERE token_hash=$1 AND accepted_at IS NULL AND revoked_at IS NULL AND expires_at>now()
+       LIMIT 1`,
+      [tokenHash],
+    );
+  } catch (error) {
+    console.error("ELITZE invitation lookup failed", error);
+    return NextResponse.json({ ok: false, error: "invitation_service_unavailable" }, { status: 503, headers: privateHeaders });
+  }
   if (!preview.rows[0]) {
     return NextResponse.json({ ok: false, error: "invitation_invalid_or_expired" }, { status: 400, headers: privateHeaders });
   }
   const email = normalizeEmail(String(preview.rows[0].email_normalized));
-  if (!(await consumeRateLimit(await getRateLimitKey("invitation-accept", email), 5, 60 * 60))) {
+  let rateAllowed: boolean;
+  try {
+    rateAllowed = await consumeRateLimit(await getRateLimitKey("invitation-accept", email), 5, 60 * 60);
+  } catch (error) {
+    console.error("ELITZE invitation rate-limit check failed", error);
+    return NextResponse.json({ ok: false, error: "invitation_service_unavailable" }, { status: 503, headers: privateHeaders });
+  }
+  if (!rateAllowed) {
     return NextResponse.json({ ok: false, error: "too_many_invitation_attempts" }, { status: 429, headers: { ...privateHeaders, "Retry-After": "3600" } });
   }
 
@@ -47,7 +60,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ ok: false, error: "password_policy" }, { status: 400, headers: privateHeaders });
   }
 
-  const client = await db.connect();
+  let client;
+  try { client = await db.connect(); } catch (error) { console.error("ELITZE invitation transaction unavailable", error); return NextResponse.json({ ok: false, error: "invitation_service_unavailable" }, { status: 503, headers: privateHeaders }); }
   let user: { id: string; tenantId: string; email: string; displayName: string | null; role: string; status: string } | null = null;
   try {
     await client.query("BEGIN");
