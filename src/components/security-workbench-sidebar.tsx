@@ -10,6 +10,7 @@ type WorkbenchItem = {
   icon: typeof Activity;
   description: string;
   adminOnly?: boolean;
+  platformOwnerOnly?: boolean;
 };
 type WorkbenchGroup = { label: string; items: WorkbenchItem[] };
 
@@ -22,7 +23,6 @@ const groups: WorkbenchGroup[] = [
       { href: "/console/adversary-emulation", label: "Adversary Emulation", icon: Siren, description: "Authorized red-team exercises and evidence" },
       { href: "/console/threat-detection", label: "Runtime Threat Detection", icon: Siren, description: "Observed runtime signals and response evidence" },
       { href: "/console/vulnerabilities", label: "Vulnerability Intelligence", icon: Bug, description: "CVE, KEV and threat findings" },
-      { href: "/console/readiness", label: "Release Readiness", icon: ClipboardCheck, description: "Production and security proof gates" },
     ],
   },
   {
@@ -41,6 +41,12 @@ const groups: WorkbenchGroup[] = [
     ],
   },
   {
+    label: "PLATFORM",
+    items: [
+      { href: "/console/readiness", label: "Platform Readiness", icon: ClipboardCheck, description: "Global runtime and release proof gates", platformOwnerOnly: true },
+    ],
+  },
+  {
     label: "MANAGE",
     items: [
       { href: "/console/organization", label: "Organization & Members", icon: Building2, description: "Business profile and team access", adminOnly: true },
@@ -52,11 +58,11 @@ function canManageOrganization(role: string) {
   return ["OWNER", "TENANT_OWNER", "ADMIN", "SECURITY_ADMIN", "TENANT_ADMIN"].includes(role.trim().toUpperCase().replace(/[ -]+/g, "_"));
 }
 
-export default function SecurityWorkbenchSidebar({ role }: { role: string }) {
+export default function SecurityWorkbenchSidebar({ role, platformOwner = false }: { role: string; platformOwner?: boolean }) {
   const pathname = usePathname();
   const manageable = canManageOrganization(role);
   const visibleGroups = groups
-    .map((group) => ({ ...group, items: group.items.filter((item) => !item.adminOnly || manageable) }))
+    .map((group) => ({ ...group, items: group.items.filter((item) => (!item.adminOnly || manageable) && (!item.platformOwnerOnly || platformOwner)) }))
     .filter((group) => group.items.length > 0);
 
   return (
