@@ -1,5 +1,3 @@
-import { normalizeEmail } from "@/lib/auth";
-
 type PlatformOwnerIdentity = { email?: string | null } | null | undefined;
 
 /**
@@ -8,11 +6,11 @@ type PlatformOwnerIdentity = { email?: string | null } | null | undefined;
  * grants access to platform-wide operations or other tenants.
  */
 export function isPlatformOwner(user: PlatformOwnerIdentity): boolean {
-  const email = typeof user?.email === "string" ? normalizeEmail(user.email) : "";
+  const email = typeof user?.email === "string" ? user.email.trim().toLowerCase() : "";
   if (!email) return false;
   const configured = (process.env.ELITZE_PLATFORM_OWNER_EMAILS ?? "")
     .split(",")
-    .map(normalizeEmail)
+    .map((value) => value.trim().toLowerCase())
     .filter(Boolean);
   return configured.includes(email);
 }
