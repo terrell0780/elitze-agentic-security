@@ -37,6 +37,7 @@ const acceptRoute = fs.readFileSync("src/app/api/auth/invitations/accept/route.t
 const invitationMigration = fs.readFileSync("drizzle/0032_auth_tenant_invitations.sql", "utf8");
 const organizationPage = fs.readFileSync("src/app/console/organization/page.tsx", "utf8");
 const invitationPage = fs.readFileSync("src/app/accept-invitation/page.tsx", "utf8");
+const invitationForm = fs.readFileSync("src/components/accept-invitation-form.tsx", "utf8");
 const organizationUi = fs.readFileSync("src/components/organization-members-console.tsx", "utf8");
 const routeManifest = JSON.parse(fs.readFileSync("public/elitze-routes.json", "utf8"));
 
@@ -64,6 +65,8 @@ assert.match(invitationMigration, /CREATE TABLE IF NOT EXISTS auth_tenant_invita
 assert.match(invitationMigration, /CHECK \(role IN \('admin', 'member', 'approver', 'viewer'\)\)/);
 assert.match(organizationPage, /normalizeTenantRole/);
 assert.match(invitationPage, /AcceptInvitationForm/);
+assert.match(invitationPage, /<main id="main-content" tabIndex=\{-1\}/);
+assert.doesNotMatch(invitationForm, /<main\\b/, "invitation form must not render a nested main landmark");
 assert.match(organizationUi, /Send invitation/);
 assert.match(organizationUi, /Business profile/);
 assert.ok(routeManifest.routes.some((route) => route.path === "/console/organization"));
