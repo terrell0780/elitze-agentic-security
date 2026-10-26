@@ -22,6 +22,18 @@ Example JSON body:
 
 The importer accepts XML up to 2 MiB, rejects DTD/entity declarations, caps results at 500 hosts, and records live hosts plus ports reported as `open`. It does not run Nmap, store the raw XML, or persist NSE script output. A scan's findings are observations, not proof of exploitability.
 
+## Aircrack-ng: import Wi-Fi survey evidence
+
+For an authorized wireless assessment, export an access-point survey as airodump-ng CSV and submit it to:
+
+`POST /api/integrations/security-tools/aircrack-ng/import`
+
+Required header: `x-elitze-api-key: <ELITZE_INTERNAL_API_KEY>`
+
+JSON body fields: `tenantId`, `surveyId` (optional), and `csv` (survey CSV). The route is capped at 1 MiB and 500 access points. It records BSSID, SSID, channel, advertised privacy/cipher/authentication, and limited signal/beacon metadata. It ignores the station/client section and does not store raw CSV, recovered keys, or client station records.
+
+This is a survey-evidence connector, not a wireless attack launcher. ELITZE does not provide packet injection, deauthentication, handshake cracking, or arbitrary command execution from this endpoint. Conduct wireless assessments only on networks where you have explicit authorization.
+
 ## John the Ripper: import audit summaries
 
 Run password audits only against password hashes you are explicitly authorized to test, using a controlled worker with access restricted to the audit team. The importer accepts the output of `john --show` through:
