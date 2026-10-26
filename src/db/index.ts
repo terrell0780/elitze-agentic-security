@@ -1,5 +1,6 @@
 import { drizzle } from "drizzle-orm/node-postgres";
 import { Pool, type PoolConfig } from "pg";
+import { configureRuntimeRole } from "@/lib/database-runtime-role";
 
 const globalForDb = globalThis as typeof globalThis & {
   __elitzePostgresqlPool?: Pool;
@@ -94,6 +95,8 @@ function getPool(): Pool {
       connectionTimeoutMillis: Number(process.env.DATABASE_CONNECTION_TIMEOUT_MS ?? 10_000),
       maxUses: Number(process.env.DATABASE_MAX_USES ?? 0) || undefined,
     });
+
+  configureRuntimeRole(databasePool, process.env.ELITZE_DB_RUNTIME_ROLE);
 
   if (process.env.NODE_ENV !== "production") {
     globalForDb.__elitzePostgresqlPool = databasePool;

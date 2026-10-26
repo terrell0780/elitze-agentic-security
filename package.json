@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "npm run mcp-upstream-address:self-test && npm run accessibility:contract-self-test && npm run security-tool-integrations:self-test && npm run tenant-security:self-test && npm run platform-owner:self-test",
+    "prebuild": "npm run db:runtime-role:self-test && npm run mcp-upstream-address:self-test && npm run accessibility:contract-self-test && npm run security-tool-integrations:self-test && npm run tenant-security:self-test && npm run platform-owner:self-test",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -59,7 +59,8 @@
     "platform:readiness": "node scripts/security-self-test.mjs && node scripts/production-config-self-test.mjs && node scripts/brand-self-test.mjs",
     "workspace-platform:self-test": "node scripts/workspace-platform-self-test.mjs",
     "accessibility:contract-self-test": "node scripts/a11y-contract-self-test.mjs",
-    "platform-owner:self-test": "node --experimental-strip-types scripts/platform-owner-self-test.mjs"
+    "platform-owner:self-test": "node --experimental-strip-types scripts/platform-owner-self-test.mjs",
+    "db:runtime-role:self-test": "node --experimental-strip-types scripts/db-runtime-role-self-test.mjs"
   },
   "dependencies": {
     "@langchain/core": "^1.2.17",

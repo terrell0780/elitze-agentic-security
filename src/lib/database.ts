@@ -2,6 +2,7 @@ import { Pool } from "pg";
 import { drizzle } from "drizzle-orm/node-postgres";
 import type { NodePgDatabase } from "drizzle-orm/node-postgres";
 import * as schema from "@/db/production-schema";
+import { configureRuntimeRole } from "@/lib/database-runtime-role";
 
 let pool: Pool | undefined;
 let productionDb: NodePgDatabase<typeof schema> | undefined;
@@ -39,6 +40,7 @@ function getPool() {
         ? { rejectUnauthorized: true }
         : undefined,
   });
+  configureRuntimeRole(pool, process.env.ELITZE_DB_RUNTIME_ROLE);
   return pool;
 }
 
