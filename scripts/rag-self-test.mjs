@@ -3,7 +3,7 @@ const files=["drizzle/0026_rag_vector_search.sql","drizzle/0027_rag_tenant_rls.s
 for(const f of files)if(!fs.existsSync(f))throw new Error("missing_rag_file:"+f);
 const m=fs.readFileSync(files[0],"utf8");
 for(const x of ["CREATE EXTENSION IF NOT EXISTS vector","rag_documents","rag_chunks","vector(1536)","vector_cosine_ops"])if(!m.includes(x))throw new Error("missing_rag_migration_marker:"+x);
-const r=fs.readFileSync(files[1],"utf8");
+const r=fs.readFileSync(files[2],"utf8");
 for(const x of ["ELITZE_EMBEDDING_URL","ELITZE_AI_GATEWAY_URL","tenantId","vector","searchRag","indexDocument","isRagConfigured"])if(!r.includes(x))throw new Error("missing_rag_implementation_marker:"+x);
 if(!fs.readFileSync("src/db/schema.ts","utf8").includes('vector("embedding", { dimensions: 1536 })'))throw new Error("missing_drizzle_vector_schema");
 const rls=fs.readFileSync("drizzle/0027_rag_tenant_rls.sql","utf8");
