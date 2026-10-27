@@ -8,5 +8,9 @@ export const metadata: Metadata = {
 };
 
 export default function HomePage() {
-  return <ProductWorkspaceHome />;
+  return (
+    <main id="main-content" tabIndex={-1}>
+      <ProductWorkspaceHome />
+    </main>
+  );
 }
