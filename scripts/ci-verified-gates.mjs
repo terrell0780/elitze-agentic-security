@@ -14,9 +14,6 @@ const gates = [
   ["security-tool integration self-test", ["run", "security-tool-integrations:self-test"]],
   ["tenant/business owner self-test", ["run", "tenant-security:self-test"]],
   ["platform-owner boundary self-test", ["run", "platform-owner:self-test"]],
-  ["security-tool integration self-test", ["run", "security-tool-integrations:self-test"]],
-  ["tenant/business owner self-test", ["run", "tenant-security:self-test"]],
-  ["platform-owner boundary self-test", ["run", "platform-owner:self-test"]],
   ["production build", ["run", "build"]],
 ];
 
