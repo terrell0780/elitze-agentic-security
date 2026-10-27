@@ -3,7 +3,7 @@
 **Manifest generated:** 2026-10-27  
 **Repository:** https://github.com/terrell0780/elitze-agentic-security  
 **Production:** https://www.elitze.info  
-**Current main commit:** `4ff816343cdb68e367d066c9847abb52d4e7ba16`  
+**Latest application/security implementation commit documented here:** `4ff816343cdb68e367d066c9847abb52d4e7ba16` (the documentation export commits follow this application commit).  
 **Latest verified deployment:** Vercel deployment `dpl_Hr1a1gfVFqpve9K2dguDbZKcAVY7`, state `READY`; aliases include `www.elitze.info` and `elitze.info`.
 
 > This is a source manifest and observed release snapshot, not a claim that every advertised integration is live or that overall tenant isolation is verified.
