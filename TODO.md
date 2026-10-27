@@ -1,30 +1,29 @@
-# ELITZE public experience and dashboard TODO
+# ELITZE workspace and product readiness
 
-## Public landing page
+## Workspace entry and navigation
+- [x] Replace the promotional homepage with a functional security workspace entry.
+- [x] Load authenticated tenant overview metrics from the workspace API; show unavailable states instead of fabricated data.
+- [x] Provide searchable, filterable links to all specialist dashboards, investigations, scanners, integrations, evidence, chat and agent workflows.
+- [x] Expose About, interactive How-to, searchable FAQ, Help and Documentation routes.
+- [x] Register the How-to route in the route manifest and sitemap.
+- [x] Keep all tenant metrics behind the existing authenticated APIs.
 
-- [x] The `/` route is a professional public landing page rather than an automatic redirect to login.
-  - It must explain ELITZE as an agentic security control plane.
-  - It must include a clear primary CTA to create a workspace and a secondary CTA to explore the platform.
-  - It must show the control path from discovery through evidence-backed retesting.
-  - It must include capability, security-principle, and role-specific sections.
-  - It must not represent illustrative UI as live tenant telemetry.
-- [x] Confirm public navigation exposes the landing-page sections and points to public product pages without exposing authenticated tenant state.
-- [x] Confirm landing page is responsive at desktop and mobile widths through responsive layout classes and mobile navigation.
-- [x] Replace the plain sign-in form with a branded cybersecurity workspace handoff.
+## Interactive product surfaces
+- [x] Governed Chat, team collaboration and file/voice affordances remain on their dedicated authenticated route.
+- [x] Search and category filter the workspace launcher without inventing data.
+- [x] How-to guides support search, category filtering, interactive guide selection and local completion marks.
+- [x] FAQ supports search, category filtering, collapsible answers and direct links into the relevant product route.
+- [x] Specialist pages remain separate routes for Agentic SOC, analyst, threat detection, CVE/KEV/EPSS, adversary emulation, pentesting, readiness, integrations, organization, skills and ROI.
 
-## Authenticated dashboard
+## Security and release gates
+- [x] Add a tenant database isolation readiness assessment based on runtime role and PostgreSQL RLS catalog evidence.
+- [x] Reject missing/mismatched runtime roles and superuser/BYPASSRLS roles in the readiness assessment.
+- [x] Add regression tests to CI and production prebuild.
+- [ ] Provision and verify policy semantics for every tenant-keyed table.
+- [ ] Add passing cross-tenant negative tests using real separate tenant identities.
+- [ ] Verify authentication/session flows and live authorized security-runner handshake.
+- [ ] Verify connected email and other provider workflows with authorized credentials.
+- [ ] Confirm backup/restore and real customer-pilot evidence where required.
+- [ ] Merge and promote only after mandatory build, integration and tenant-isolation gates pass.
 
-- [x] `/workspace` remains the guarded entry point and sends unauthenticated visitors to `/login`.
-- [x] `/console` is the authenticated command center.
-- [x] Keep the command center focused: summary metrics and dedicated links replace the overloaded all-capabilities atlas.
-- [x] Existing specialist routes remain available as separate dashboard pages: analyst, threat detection, adversary emulation, vulnerabilities, readiness, skills, integrations, ROI, and governance.
-- [x] Improve the shared dashboard navigation labels and active-state clarity where needed after visual review.
-- [x] Remove unrelated advertising governance from the visible cybersecurity navigation.
-- [ ] Keep live status claims tied to API evidence and preserve explicit unverified/empty states.
-
-## Runtime and delivery
-
-- [x] Maintain and verify `public/elitze-routes.json` for all source page routes.
-- [x] Run TypeScript diagnostics.
-- [x] Run the production build.
-- [x] Commit reviewed changes to the `main` branch after required checks pass.
+A passing build verifies compilation and wired self-tests; it does not by itself prove production readiness or tenant isolation.

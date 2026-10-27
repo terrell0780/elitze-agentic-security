@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "prebuild": "npm run db:runtime-role:self-test && npm run mcp-upstream-address:self-test && npm run accessibility:contract-self-test && npm run security-tool-integrations:self-test && npm run tenant-security:self-test && npm run platform-owner:self-test",
+    "prebuild": "npm run db:runtime-role:self-test && npm run mcp-upstream-address:self-test && npm run accessibility:contract-self-test && npm run security-tool-integrations:self-test && npm run tenant-security:self-test && npm run platform-owner:self-test && npm run database-isolation-readiness:self-test",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -25,6 +25,7 @@
     "db:migrate": "node scripts/migrate.mjs",
     "db:config-self-test": "node scripts/db-config-self-test.mjs",
     "production-config:self-test": "node scripts/production-config-self-test.mjs",
+    "database-isolation-readiness:self-test": "node --experimental-strip-types scripts/database-isolation-readiness-self-test.mjs",
     "health-observability:self-test": "node --experimental-strip-types scripts/health-observability-self-test.mjs",
     "tenant-overview:self-test": "node scripts/tenant-overview-self-test.mjs",
     "mcp:github": "node src/lib/elitze-secure/github-control-mcp.mjs",

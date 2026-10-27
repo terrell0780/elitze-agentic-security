@@ -1,22 +1,26 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+import { ArrowLeft, CircleHelp, MessageCircle, ShieldCheck } from "lucide-react";
+import FaqBrowser from "@/components/faq-browser";
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "FAQ | ELITZE Agentic Security",
-  description: "Answers about ELITZE Agentic Security identity, MCP runtime controls, evidence, authorization and production boundaries.",
+  description: "Search answers about ELITZE dashboards, chat, scanners, integrations, evidence, authorization and release readiness.",
   alternates: { canonical: "/faq" },
 };
-import { ArrowRight, ChevronDown, ShieldCheck } from "lucide-react";
 
-const faq = [
-
-  ["Is ELITZE replacing our existing security tools?", "No. ELITZE is designed as a control and verification layer across connected code, cloud, identity, agent, data, runtime and security systems."],
-  ["Does ELITZE invent live security data?", "No. Connected, verified records drive posture. Empty or unavailable integrations remain explicit instead of being filled with synthetic assets, alerts or telemetry."],
-  ["What is ELITZE Global Security View?", "It is the visual command surface for traversing connected security domains, security-graph relationships, exposure paths and authorized visual intelligence. Production posture still comes from verified data sources."],
-  ["What makes continuous offensive validation different?", "The goal is to make authorized offensive validation part of the release loop: validate the relevant condition, remediate it, then retest the original condition and preserve the evidence."],
-  ["What is the evidence intelligence layer?", "It preserves the relationship between signal, context, decision, action and verification so operators do not reconstruct the story from disconnected tickets."],
-  ["Can autonomous actions be destructive?", "Actions are intended to remain inside explicit policy, identity and capability boundaries. Where required authorization or infrastructure is unavailable, the safe behavior is to fail closed rather than pretend an action occurred."],
-  ["How does ELITZE handle AI risk?", "Models are decision inputs, not the security boundary. Authorization, policy enforcement, evidence and containment are deterministic control points."],
-  ["Where is the technical detail?", "The primary experience stays visual. Detailed standards, implementation states, architecture and benchmark notes belong in the About, Security and repository documentation."],
-];
-
-export default function FaqPage(){return <main id="main-content" tabIndex={-1} className="min-h-screen bg-[var(--bg)] text-[var(--text)]"><header className="border-b border-[var(--border)] bg-[var(--header)] backdrop-blur-xl"><div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 sm:px-6"><Link href="/" className="flex items-center gap-3"><div className="grid h-9 w-9 place-items-center rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent)]"><ShieldCheck className="h-5 w-5"/></div><span className="text-sm font-bold">ELITZE</span></Link><Link href="/workspace" className="rounded-xl bg-[var(--accent)] px-4 py-2.5 text-sm font-semibold text-white">Open workspace</Link></div></header><section className="mx-auto max-w-4xl px-4 py-16 sm:px-6 sm:py-24"><div className="text-center"><p className="text-xs font-bold uppercase tracking-[.22em] text-[var(--accent)]">FAQ</p><h1 className="mt-4 text-4xl font-bold tracking-[-.04em] sm:text-6xl">The answers, without the wall of text.</h1><p className="mx-auto mt-5 max-w-2xl text-sm leading-6 text-[var(--muted-strong)]">The main product stays focused. Detailed questions live here.</p></div><div className="mt-10 space-y-3">{faq.map(([question,answer])=><details key={question} className="group rounded-2xl border border-[var(--border)] bg-[var(--panel)] open:border-[var(--accent-border)]"><summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-sm font-semibold"><span>{question}</span><ChevronDown className="h-4 w-4 shrink-0 text-[var(--muted)] transition group-open:rotate-180"/></summary><div className="px-5 pb-5 text-sm leading-6 text-[var(--muted)]">{answer}</div></details>)}</div><div className="mt-10 text-center"><Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--accent)]">Back to ELITZE <ArrowRight className="h-4 w-4"/></Link></div></section></main>}
+export default function FaqPage() {
+  return <main id="main-content" tabIndex={-1} className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
+    <header className="sticky top-0 z-40 border-b border-[var(--border)] bg-[var(--header)]/90 backdrop-blur-xl">
+      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-4 sm:px-6">
+        <Link href="/" className="flex items-center gap-3"><span className="grid size-9 place-items-center rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent)]"><ShieldCheck className="size-4" /></span><span className="text-sm font-black tracking-[.12em]">ELITZE</span></Link>
+        <nav className="flex items-center gap-3 text-xs"><Link href="/how-to" className="text-[var(--muted)] hover:text-[var(--text)]">How-to</Link><Link href="/help" className="text-[var(--muted)] hover:text-[var(--text)]">Help</Link><Link href="/console" className="rounded-xl bg-[var(--accent)] px-3.5 py-2.5 font-bold text-slate-950">Open console</Link></nav>
+      </div>
+    </header>
+    <section className="mx-auto max-w-5xl px-4 py-10 sm:px-6 sm:py-14">
+      <div className="mb-8 flex items-start gap-4"><span className="grid size-11 shrink-0 place-items-center rounded-2xl border border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent)]"><CircleHelp className="size-5" /></span><div><div className="text-[9px] font-bold uppercase tracking-[.22em] text-[var(--accent)]">Product support</div><h1 className="mt-2 text-3xl font-black tracking-[-.05em] sm:text-5xl">Frequently asked questions</h1><p className="mt-3 max-w-2xl text-sm leading-6 text-[var(--muted-strong)]">Search and filter answers about workspaces, security tools, integrations, governed chat and evidence.</p></div></div>
+      <FaqBrowser />
+      <div className="mt-8 flex flex-wrap gap-3"><Link href="/how-to" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-4 py-3 text-sm font-semibold"><ArrowLeft className="size-4" /> Step-by-step guides</Link><Link href="/contact" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-4 py-3 text-sm font-semibold"><MessageCircle className="size-4" /> Contact support</Link></div>
+    </section>
+  </main>;
+}
