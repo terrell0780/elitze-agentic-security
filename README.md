@@ -138,6 +138,8 @@ ELITZE is organized around identity, tenant isolation, explicit policy, scoped e
 - [Security reporting](SECURITY.md)
 - [Contribution guide](CONTRIBUTING.md)
 - [Architecture and deployment manifest](docs/ELITZE-AGENTIC-SECURITY-MERGE-MANIFEST.md)
+- [Full project manifest (routes, scripts, dependencies, deployment and readiness)](docs/ELITZE-AGENTIC-SECURITY-FULL-MANIFEST.md)
+- [ELITZE chat and context export (available excerpts and project context)](docs/ELITZE-AGENTIC-SECURITY-CHAT-AND-CONTEXT-EXPORT.md)
 - [Production integrations](docs/ELITZE-PRODUCTION-INTEGRATIONS.md)
 - [Enterprise security controls](docs/ENTERPRISE-SECURITY-CONTROL-STATUS.md)
 - [Third-party license inventory](docs/security/THIRD-PARTY-LICENSE-INVENTORY-2026-10-11.md)
