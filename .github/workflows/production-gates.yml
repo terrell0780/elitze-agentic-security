@@ -37,6 +37,8 @@ jobs:
         run: npm run lint
       - name: Production configuration self-test
         run: npm run production-config:self-test
+      - name: Tenant database isolation readiness self-test
+        run: npm run database-isolation-readiness:self-test
       - name: Security self-test
         run: npm run test
       - name: Authentication security self-test

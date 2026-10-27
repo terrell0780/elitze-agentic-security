@@ -297,6 +297,8 @@ This section consolidates the product capabilities that must remain visible acro
 ## Documentation
 
 - [Architecture and deployment manifest](docs/ELITZE-AGENTIC-SECURITY-MERGE-MANIFEST.md)
+- [Full project manifest (routes, scripts, dependencies, deployment and readiness)](docs/ELITZE-AGENTIC-SECURITY-FULL-MANIFEST.md)
+- [ELITZE chat and context export (available excerpts and project context)](docs/ELITZE-AGENTIC-SECURITY-CHAT-AND-CONTEXT-EXPORT.md)
 - [Production integrations](docs/ELITZE-PRODUCTION-INTEGRATIONS.md)
 - [Security-tool integrations](docs/SECURITY-TOOL-INTEGRATIONS.md)
 - [Agent identity and MCP runtime contract](docs/ELITZE-AGENT-IDENTITY-MCP-RUNTIME-CONTRACT.md)

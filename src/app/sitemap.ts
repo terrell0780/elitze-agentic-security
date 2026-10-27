@@ -9,6 +9,7 @@ const routes = [
   "/use-cases",
   "/compare",
   "/about",
+  "/how-to",
   "/faq",
   "/orchestration",
   "/reo",
