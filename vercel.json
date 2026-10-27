@@ -6,5 +6,5 @@
       "schedule": "0 0 * * *"
     }
   ],
-  "buildCommand": "node scripts/ci-verified-gates.mjs && node scripts/apply-tenant-invitations-migration.mjs"
+  "buildCommand": "node scripts/ci-verified-gates.mjs"
 }
