@@ -1,10 +1,48 @@
 import { createHash } from "node:crypto";
 import { getPgPool } from "@/db";
+import type { PoolClient } from "pg";
 
 const EMBEDDING_DIMENSIONS = 1536;
 const MAX_DOCUMENT_CHARS = 1_000_000;
 const CHUNK_SIZE = 1_200;
 const CHUNK_OVERLAP = 200;
+
+const TENANT_UUID_PATTERN = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
+
+function normalizeTenantId(value: string): string {
+  const tenantId = value.trim();
+  if (!TENANT_UUID_PATTERN.test(tenantId)) {
+    throw new Error("invalid_tenant_id");
+  }
+  return tenantId.toLowerCase();
+}
+
+/**
+ * Every RAG database operation runs on one pinned connection and transaction.
+ * PostgreSQL RLS policies fail closed unless this transaction-local tenant
+ * context is present. SET LOCAL semantics prevent tenant context leaking
+ * between pooled requests.
+ */
+async function withTenantTransaction<T>(
+  tenantId: string,
+  action: (client: PoolClient, normalizedTenantId: string) => Promise<T>,
+): Promise<T> {
+  const normalizedTenantId = normalizeTenantId(tenantId);
+  const client = await getPgPool().connect();
+
+  try {
+    await client.query("BEGIN");
+    await client.query("SELECT set_config('app.tenant_id', $1, true)", [normalizedTenantId]);
+    const result = await action(client, normalizedTenantId);
+    await client.query("COMMIT");
+    return result;
+  } catch (error) {
+    await client.query("ROLLBACK").catch(() => undefined);
+    throw error;
+  } finally {
+    client.release();
+  }
+}
 
 export type RagSource = {
   id: string;
@@ -124,7 +162,7 @@ export function publicRagError(error: unknown): {
 } {
   const message = error instanceof Error ? error.message : "";
 
-  if (message === "invalid_document_size" || message === "invalid_query") {
+  if (message === "invalid_document_size" || message === "invalid_query" || message === "invalid_tenant_id") {
     return { code: message, status: 400 };
   }
 
@@ -149,14 +187,12 @@ export async function indexDocument(input: {
 }) {
   const chunks = chunkText(input.content);
   const embeddings = await embed(chunks);
-  const db = getPgPool();
+
   const contentHash = createHash("sha256").update(input.content).digest("hex");
   const metadata = JSON.stringify(input.metadata ?? {});
 
-  await db.query("BEGIN");
-
-  try {
-    const document = await db.query(
+  return withTenantTransaction(input.tenantId, async (client, tenantId) => {
+    const document = await client.query(
       `INSERT INTO rag_documents
         (tenant_id,content_id,title,source_type,source_uri,content_hash,metadata,updated_at)
        VALUES ($1,$2,$3,$4,$5,$6,$7::jsonb,now())
@@ -169,7 +205,7 @@ export async function indexDocument(input: {
          updated_at=now()
        RETURNING id`,
       [
-        input.tenantId,
+        tenantId,
         input.contentId,
         input.title.trim(),
         input.sourceType.trim(),
@@ -182,16 +218,19 @@ export async function indexDocument(input: {
     const documentId = String(document.rows[0]?.id ?? "");
     if (!documentId) throw new Error("document_persistence_failed");
 
-    await db.query("DELETE FROM rag_chunks WHERE document_id=$1", [documentId]);
+    await client.query(
+      "DELETE FROM rag_chunks WHERE document_id=$1 AND tenant_id=$2",
+      [documentId, tenantId],
+    );
 
     for (let index = 0; index < chunks.length; index += 1) {
-      await db.query(
+      await client.query(
         `INSERT INTO rag_chunks
           (document_id,tenant_id,chunk_index,content,content_hash,embedding,metadata)
          VALUES ($1,$2,$3,$4,$5,$6::vector,$7::jsonb)`,
         [
           documentId,
-          input.tenantId,
+          tenantId,
           index,
           chunks[index],
           createHash("sha256").update(chunks[index]).digest("hex"),
@@ -201,17 +240,13 @@ export async function indexDocument(input: {
       );
     }
 
-    await db.query("COMMIT");
     return {
       documentId,
       contentId: input.contentId,
       chunksIndexed: chunks.length,
       contentHash,
     };
-  } catch (error) {
-    await db.query("ROLLBACK").catch(() => undefined);
-    throw error;
-  }
+  });
 }
 
 export function isRagConfigured() {
@@ -237,25 +272,28 @@ export async function searchRag(
   const [embedding] = await embed([clean]);
   const safeLimit = Math.min(Math.max(Math.trunc(limit), 1), 20);
 
-  const result = await getPgPool().query(
-    `SELECT
-       c.id,
-       c.document_id AS "documentId",
-       d.title,
-       c.content,
-       d.source_type AS "sourceType",
-       d.source_uri AS "sourceUri",
-       1-(c.embedding <=> $1::vector) AS similarity,
-       c.metadata
-     FROM rag_chunks c
-     JOIN rag_documents d ON d.id=c.document_id
-     WHERE c.tenant_id=$2 AND d.tenant_id=$2
-     ORDER BY c.embedding <=> $1::vector ASC
-     LIMIT $3`,
-    [vectorLiteral(embedding), tenantId, safeLimit],
-  );
 
-  return result.rows as RagSource[];
+  return withTenantTransaction(tenantId, async (client, normalizedTenantId) => {
+    const result = await client.query(
+      `SELECT
+         c.id,
+         c.document_id AS "documentId",
+         d.title,
+         c.content,
+         d.source_type AS "sourceType",
+         d.source_uri AS "sourceUri",
+         1-(c.embedding <=> $1::vector) AS similarity,
+         c.metadata
+       FROM rag_chunks c
+       JOIN rag_documents d ON d.id=c.document_id
+       WHERE c.tenant_id=$2 AND d.tenant_id=$2
+       ORDER BY c.embedding <=> $1::vector ASC
+       LIMIT $3`,
+      [vectorLiteral(embedding), normalizedTenantId, safeLimit],
+    );
+
+    return result.rows as RagSource[];
+  });
 }
 
 export function formatRetrievedContext(sources: RagSource[]) {
