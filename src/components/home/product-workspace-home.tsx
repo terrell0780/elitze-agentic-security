@@ -127,7 +127,7 @@ export default function ProductWorkspaceHome() {
   const statusGood = signedIn && overview?.ok === true;
 
   return (
-    <main id="main-content" tabIndex={-1} className="min-h-screen bg-[#070b10] text-slate-100">
+    <div className="min-h-screen bg-[#070b10] text-slate-100">
       <header className="sticky top-0 z-40 border-b border-white/[.08] bg-[#070b10]/95 backdrop-blur-xl">
         <div className="mx-auto flex min-h-[68px] max-w-[1600px] flex-wrap items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
           <Link href="/" className="flex items-center gap-3" aria-label="ELITZE workspace home">
@@ -212,6 +212,6 @@ export default function ProductWorkspaceHome() {
 
         <footer className="mt-10 flex flex-wrap items-center justify-between gap-3 border-t border-white/[.08] pt-5 text-[10px] text-slate-600"><span>Product status is evidence-gated. Illustrative content is not tenant telemetry.</span><div className="flex flex-wrap gap-4"><Link href="/about" className="hover:text-slate-300">About</Link><Link href="/how-to" className="hover:text-slate-300">How-to</Link><Link href="/faq" className="hover:text-slate-300">FAQ</Link><Link href="/docs" className="hover:text-slate-300">Docs</Link><Link href="/contact" className="hover:text-slate-300">Support</Link></div></footer>
       </div>
-    </main>
+    </div>
   );
 }
