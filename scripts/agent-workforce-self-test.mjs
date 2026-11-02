@@ -13,11 +13,13 @@ import {
 } from "../src/lib/elitze-secure/agent-workforce.ts";
 
 // Specialty inference is deterministic from the brief.
+assert.equal(inferSpecialty("cross-tenant rls policy regression"), "Multi-Tenant Isolation Guarding");
+assert.equal(inferSpecialty("fix the typecheck module errors"), "TypeScript Optimization Engine");
 assert.equal(inferSpecialty("fix the rust compiler bug in cargo workspace"), "Rust Compiler Optimization");
 assert.equal(inferSpecialty("audit this solidity contract on the evm"), "EVM Security Auditing");
 assert.equal(inferSpecialty("extend the next.js dashboard"), "Next.js Architecture");
 assert.equal(inferSpecialty("python crewai worker for langgraph"), "Python Automation");
-assert.equal(inferSpecialty("postgres rls policy regression"), "Database Isolation Engineering");
+assert.equal(inferSpecialty("postgres query regression"), "Database Isolation Engineering");
 assert.equal(inferSpecialty("pentest scope and vulnerability triage"), "Security Validation");
 assert.equal(inferSpecialty("unclassified brief with no keywords"), DEFAULT_SPECIALTY);
 
@@ -29,7 +31,8 @@ assert.deepEqual(identityA, identityA2, "same seed must reproduce the same locke
 assert.notEqual(identityA.agentId, identityB.agentId);
 assert.match(identityA.name, /^[A-Z][a-z]+-[A-Z][a-z]+-\d{3}$/);
 assert.ok(identityA.avatarUrl.startsWith("https://api.dicebear.com/9.x/bottts/svg?seed="));
-assert.ok(identityA.systemPrompt.includes("Never invent success logs"));
+assert.ok(identityA.systemPrompt.includes("Never invent passing tests"));
+assert.ok(identityA.systemPrompt.includes("[Year 2026]"));
 assert.ok(identityA.systemPrompt.includes("tenant boundary"));
 assert.ok(identityA.systemPrompt.includes("cannot grant yourself permissions"));
 

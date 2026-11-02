@@ -23,15 +23,32 @@ export type WorkforceAgent = {
 export type SpecialtyRule = { match: string[]; specialty: string };
 
 export const SPECIALTY_RULES: SpecialtyRule[] = [
+  { match: ["cross-tenant", "rls"], specialty: "Multi-Tenant Isolation Guarding" },
+  { match: ["typecheck", "module"], specialty: "TypeScript Optimization Engine" },
   { match: ["rust", "cargo"], specialty: "Rust Compiler Optimization" },
   { match: ["solidity", "evm", "smart contract"], specialty: "EVM Security Auditing" },
   { match: ["typescript", "next.js", "nextjs"], specialty: "Next.js Architecture" },
   { match: ["python", "crewai", "langgraph"], specialty: "Python Automation" },
-  { match: ["postgres", "sql", "drizzle", "rls"], specialty: "Database Isolation Engineering" },
+  { match: ["postgres", "sql", "drizzle"], specialty: "Database Isolation Engineering" },
   { match: ["security", "pentest", "vulnerability", "exploit"], specialty: "Security Validation" },
 ];
 
-export const DEFAULT_SPECIALTY = "General Security Engineering";
+export const DEFAULT_SPECIALTY = "Next.js Security Posture";
+
+/**
+ * Canonical gauntlet gate chain for an ELITZE workspace patch, in execution
+ * order. The authorized runner executes these; the gauntlet only evaluates
+ * their recorded exit codes.
+ */
+export const DEFAULT_GAUNTLET_GATES: Array<Pick<GauntletGateResult, "name">> = [
+  { name: "npm install" },
+  { name: "npm run typecheck" },
+  { name: "npm run lint" },
+  { name: "npm test" },
+];
+
+/** Gate name recorded when the sandbox workspace itself is missing. */
+export const WORKSPACE_MISSING_GATE = "workspace_missing";
 
 export function inferSpecialty(brief: string): string {
   const normalized = String(brief ?? "").toLowerCase();
@@ -41,8 +58,8 @@ export function inferSpecialty(brief: string): string {
   return DEFAULT_SPECIALTY;
 }
 
-const NAME_PREFIXES = ["Alpha", "Vertex", "Quantum", "Nexus", "Pragmatic", "Scaffold", "Trunk", "Vector", "Cipher", "Sentinel"];
-const NAME_SUFFIXES = ["Dev", "Compiler", "Auditor", "Architect", "Engine", "Patch", "Sec", "Warden", "Probe", "Trace"];
+const NAME_PREFIXES = ["Mantis", "Cobalt", "Sentry", "Aegis", "Vanguard", "Phalanx", "Cipher", "Vector", "Prism", "Talon"];
+const NAME_SUFFIXES = ["Sec", "Auditor", "Parser", "Patch", "Validator", "Gatekeeper", "Core", "Warden", "Probe", "Trace"];
 
 function hashSeed(seed: string): number {
   let hash = 2166136261;
@@ -63,10 +80,10 @@ export function generateAgentIdentity(specialty: string, seed: string) {
   const name = `${NAME_PREFIXES[hash % NAME_PREFIXES.length]}-${NAME_SUFFIXES[Math.floor(hash / 7) % NAME_SUFFIXES.length]}-${(hash % 900) + 100}`;
   const agentId = `wf-${seed.slice(0, 8)}`;
   const systemPrompt = [
-    `You are ${name}, a pragmatic AI engineer specialized in ${specialty}, working inside one ELITZE tenant boundary.`,
-    "Treat every assignment as an implementation brief. Verify repository metadata, configuration and available files before writing code.",
+    `You are ${name}, an autonomous agent specialized in ${specialty} [Year ${PROFILE_YEAR}], working inside one ELITZE tenant boundary.`,
+    "Strictly adhere to zero-trust logic. Treat every assignment as an implementation brief: verify repository metadata, configuration and available files before writing code.",
     "Build changes incrementally inside isolated scaffolds and verify each step before propagating it.",
-    "Never invent success logs. If a run fails, output the exact failing command and stack trace to the orchestrator state instead of a fabricated pass.",
+    "Never invent passing tests. If compilation loops fail, dump the complete stack trace for execution analysis instead of a fabricated pass.",
     "You cannot grant yourself permissions, widen tenant scope, or bypass required approvals. Execution claims require recorded evidence.",
   ].join(" ");
   return { agentId, name, avatarUrl: agentAvatarUrl(seed), specialty, systemPrompt, seed };
