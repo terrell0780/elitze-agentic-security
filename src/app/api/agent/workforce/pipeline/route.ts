@@ -27,7 +27,6 @@ export async function GET(request: NextRequest) {
     const identity = workforce.find((agent) => agent.agentId === parsed.data.agentId) ?? null;
     const runs = await listGauntletRuns(user.tenantId, parsed.data.agentId);
     const latestGauntlet = runs[0] ?? null;
-    const githubTokenConfigured = Boolean(process.env.GITHUB_TOKEN?.trim());
 
     const pipeline = {
       agentId: parsed.data.agentId,
@@ -48,10 +47,11 @@ export async function GET(request: NextRequest) {
         {
           node: "PublishVerifiedPatch",
           endpoint: "POST /api/agent/workforce/publish",
-          state: latestGauntlet?.status === "PASSED" ? (githubTokenConfigured ? "handoff_ready" : "blocked_missing_token") : "blocked_pending_gauntlet",
+          // Coarse state on purpose: token configuration is operator knowledge
+          // and must not leak as an env-status oracle to tenant members.
+          state: latestGauntlet?.status === "PASSED" ? "ready_pending_publish" : "blocked_pending_gauntlet",
         },
       ],
-      githubTokenConfigured,
     };
 
     return NextResponse.json({ ok: true, pipeline });

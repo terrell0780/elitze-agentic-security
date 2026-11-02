@@ -87,7 +87,10 @@ assert.ok(passedRecord.includes("All recorded gates exited 0."));
 // Fail-closed persistence and tenant scoping exist in the DB layer and migration.
 const root = process.cwd();
 const dbLayer = readFileSync(path.join(root, "src/lib/elitze-secure/agent-workforce-db.ts"), "utf8");
+assert.ok(!dbLayer.includes("getDb("), "workforce queries must never bypass the tenant client");
 assert.ok(dbLayer.includes("set_config('app.tenant_id'"), "tenant context must be set transaction-locally");
+assert.ok((dbLayer.match(/withTenantClient\(/g) ?? []).length >= 4, "every operation must run inside the tenant client");
+assert.ok(dbLayer.includes("pg_advisory_xact_lock"), "concurrent hiring must be serialized");
 assert.ok(dbLayer.includes("ROLLBACK"), "fail-closed rollback required");
 assert.ok(dbLayer.includes("throw error"), "errors must propagate, never be swallowed");
 
@@ -111,6 +114,7 @@ const gauntletRoute = readFileSync(path.join(root, "src/app/api/agent/workforce/
 assert.ok(gauntletRoute.includes("getCurrentUser"));
 assert.ok(gauntletRoute.includes("assertSameOrigin"));
 assert.ok(gauntletRoute.includes("verificationBasis"));
+assert.ok(gauntletRoute.includes("max(4000)"), "gate log excerpts must be capped at the evaluation limit");
 const listRoute = readFileSync(path.join(root, "src/app/api/agent/workforce/route.ts"), "utf8");
 assert.ok(listRoute.includes("user.tenantId") || listRoute.includes("getCurrentUser"));
 assert.ok(listRoute.includes("obsidian-dashboard"));
@@ -130,7 +134,8 @@ assert.ok(pipelineRoute.includes("EvaluateInfrastructure"));
 assert.ok(pipelineRoute.includes("RunGauntletSandbox"));
 assert.ok(pipelineRoute.includes("PublishVerifiedPatch"));
 assert.ok(pipelineRoute.includes("blocked_pending_gauntlet"));
-assert.ok(pipelineRoute.includes("blocked_missing_token"));
+assert.ok(!pipelineRoute.includes("githubTokenConfigured"), "pipeline must not leak env-status to tenant members");
+assert.ok(!pipelineRoute.includes("blocked_missing_token"));
 
 console.log("ELITZE agent workforce self-test: PASS (identity, gauntlet fail-closed, tenant scoping, frontmatter year)");
 

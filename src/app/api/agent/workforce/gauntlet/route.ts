@@ -10,7 +10,7 @@ const gateSchema = z.object({
   name: z.string().trim().min(1).max(120),
   exitCode: z.number().int().finite(),
   durationMs: z.number().int().finite().min(0).max(86_400_000).default(0),
-  logExcerpt: z.string().max(20_000).default(""),
+  logExcerpt: z.string().max(4000).default(""),
 });
 
 const recordSchema = z.object({
