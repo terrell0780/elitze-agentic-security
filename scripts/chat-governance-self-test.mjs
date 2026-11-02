@@ -4,7 +4,8 @@ import crypto from "node:crypto";
 import pg from "pg";
 
 const root = process.cwd();
-process.loadEnvFile?.(path.resolve(root, ".env.local"));
+const envLocalPath = path.resolve(root, ".env.local");
+if (fs.existsSync(envLocalPath)) process.loadEnvFile?.(envLocalPath);
 
 let databaseUrl = process.env.DATABASE_URL || "";
 if (!databaseUrl && process.env.NEON_PROJECT_ID) {

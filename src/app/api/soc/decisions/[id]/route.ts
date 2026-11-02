@@ -18,7 +18,7 @@ export async function GET(_request: NextRequest, context: { params: Promise<{ id
     const db = getDb();
     const membership = await db.select({ id: teamChannelMembers.id }).from(teamChannelMembers)
       .innerJoin(teamChannels, eq(teamChannels.id, teamChannelMembers.channelId))
-      .where(and(eq(teamChannelMembers.actorId, session.actorId), isNull(teamChannelMembers.leftAt), eq(teamChannels.channelType, "team")))
+      .where(and(eq(teamChannelMembers.actorId, session.actorId), isNull(teamChannelMembers.leftAt), eq(teamChannels.channelType, "team"), eq(teamChannels.tenantId, session.tenantId)))
       .limit(1);
     if (!membership.length) return NextResponse.json({ ok: false, error: "Team membership required." }, { status: 403 });
 
@@ -32,7 +32,7 @@ export async function GET(_request: NextRequest, context: { params: Promise<{ id
       reasons: securityDecisions.reasons,
       policyVersion: securityDecisions.policyVersion,
       createdAt: securityDecisions.createdAt,
-    }).from(securityDecisions).where(eq(securityDecisions.id, decisionId)).limit(1);
+    }).from(securityDecisions).where(and(eq(securityDecisions.id, decisionId), eq(securityDecisions.tenantId, session.tenantId))).limit(1);
 
     if (!decision) return NextResponse.json({ ok: false, error: "Decision not found." }, { status: 404 });
 
