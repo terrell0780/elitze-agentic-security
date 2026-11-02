@@ -51,4 +51,21 @@ After a PASSED gauntlet, `POST /api/agent/workforce/publish` produces a runner h
 - **PR payload:** a **draft** pull request payload targeting the configured repository, with the verification basis stated in the body.
 - **No fabricated outcomes:** the handoff is a plan, not an outcome. The response carries `publicationEvidence: runner_reportback_required` — a pull request only becomes a recorded fact when the runner reports back what actually happened.
 
+## Dataview dashboard and pipeline train
+
+`GET /api/agent/workforce?format=obsidian-dashboard` returns a paste-ready dashboard note with three Dataview panels querying the `Agents/` vault folder under the `year: 2026` profile contract:
+
+- **Panel A — Active Agent Matrix:** avatar, identifier, specialty and operational status per agent.
+- **Panel B — Core Competency Workforce Breakdown:** headcount grouped by specialty.
+- **Panel C — Gauntlet Run History:** latest runs with result and failing gate.
+
+The zero-trust evaluation train maps to the API surface as a linear gate:
+
+```
+EvaluateInfrastructure ──> RunGauntletSandbox ──> PublishVerifiedPatch ──> END
+  POST .../hire             POST .../gauntlet      POST .../publish (handoff)
+```
+
+`GET /api/agent/workforce/pipeline?agentId=wf-…` renders an agent's current position in that train from recorded rows only: `hired`, the latest gauntlet `PASSED`/`FAILED`/`UNKNOWN`, and the publisher state (`handoff_ready`, `blocked_pending_gauntlet`, or `blocked_missing_token`).
+
 Self-test: `npm run agent-workforce:self-test`.

@@ -50,6 +50,53 @@ export const DEFAULT_GAUNTLET_GATES: Array<Pick<GauntletGateResult, "name">> = [
 /** Gate name recorded when the sandbox workspace itself is missing. */
 export const WORKSPACE_MISSING_GATE = "workspace_missing";
 
+/**
+ * Obsidian Dataview dashboard note: paste-ready panels querying the Agents/
+ * vault folder. Panel A is the active agent matrix, Panel B the competency
+ * breakdown, Panel C the gauntlet run history.
+ */
+export function toObsidianDashboard(): string {
+  return [
+    "# ELITZE Agent Dashboard",
+    "",
+    "## Panel A: Active Agent Matrix",
+    "",
+    "```dataview",
+    "TABLE WITHOUT ID",
+    '  ("![|40](" + avatar_url + ")") AS Avatar,',
+    '  file.link AS "Agent Identifier",',
+    '  specialty AS "Specialized Skillset",',
+    '  status AS "Operational Status"',
+    'FROM "Agents"',
+    'WHERE type = "agent-profile" AND year = 2026',
+    "SORT file.name ASC",
+    "```",
+    "",
+    "## Panel B: Core Competency Workforce Breakdown",
+    "",
+    "```dataview",
+    'TABLE count(file.name) AS "Total Deployed Staff"',
+    'FROM "Agents"',
+    'WHERE type = "agent-profile" AND year = 2026',
+    "GROUP BY specialty",
+    "```",
+    "",
+    "## Panel C: Gauntlet Run History",
+    "",
+    "```dataview",
+    "TABLE WITHOUT ID",
+    '  file.link AS "Gauntlet Run",',
+    '  agent_id AS "Agent",',
+    '  status AS "Result",',
+    '  failing_gate AS "Failing Gate"',
+    'FROM "Agents"',
+    'WHERE type = "agent-gauntlet-run" AND year = 2026',
+    "SORT file.name DESC",
+    "```",
+    "",
+  ].join("\n");
+}
+
 export function inferSpecialty(brief: string): string {
   const normalized = String(brief ?? "").toLowerCase();
   for (const rule of SPECIALTY_RULES) {

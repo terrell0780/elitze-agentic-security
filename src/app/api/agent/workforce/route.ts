@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getCurrentUser } from "@/lib/auth";
 import { listWorkforce } from "@/lib/elitze-secure/agent-workforce-db";
-import { toObsidianProfile } from "@/lib/elitze-secure/agent-workforce";
+import { toObsidianDashboard, toObsidianProfile } from "@/lib/elitze-secure/agent-workforce";
 
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
@@ -15,6 +15,12 @@ export async function GET(request: NextRequest) {
     if (request.nextUrl.searchParams.get("format") === "obsidian") {
       const markdown = workforce.map((agent) => toObsidianProfile(agent)).join("\n---\n\n");
       return new NextResponse(markdown, {
+        status: 200,
+        headers: { "content-type": "text/markdown; charset=utf-8", "cache-control": "no-store" },
+      });
+    }
+    if (request.nextUrl.searchParams.get("format") === "obsidian-dashboard") {
+      return new NextResponse(toObsidianDashboard(), {
         status: 200,
         headers: { "content-type": "text/markdown; charset=utf-8", "cache-control": "no-store" },
       });

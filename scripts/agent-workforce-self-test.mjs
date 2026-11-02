@@ -7,6 +7,7 @@ import {
   evaluateGauntlet,
   generateAgentIdentity,
   inferSpecialty,
+  toObsidianDashboard,
   toObsidianGauntletRecord,
   toObsidianProfile,
   truncateLogExcerpt,
@@ -112,6 +113,24 @@ assert.ok(gauntletRoute.includes("assertSameOrigin"));
 assert.ok(gauntletRoute.includes("verificationBasis"));
 const listRoute = readFileSync(path.join(root, "src/app/api/agent/workforce/route.ts"), "utf8");
 assert.ok(listRoute.includes("user.tenantId") || listRoute.includes("getCurrentUser"));
+assert.ok(listRoute.includes("obsidian-dashboard"));
+
+// Dataview dashboard panels query the vault with the 2026 profile contract.
+const dashboard = toObsidianDashboard();
+assert.ok(dashboard.includes('FROM "Agents"'));
+assert.ok(dashboard.includes('year = 2026'));
+assert.ok(dashboard.includes('WHERE type = "agent-profile" AND year = 2026'));
+assert.ok(dashboard.includes("GROUP BY specialty"));
+assert.ok(dashboard.includes('WHERE type = "agent-gauntlet-run" AND year = 2026'));
+
+// Pipeline route renders the zero-trust evaluation train.
+const pipelineRoute = readFileSync(path.join(root, "src/app/api/agent/workforce/pipeline/route.ts"), "utf8");
+assert.ok(pipelineRoute.includes("getCurrentUser"));
+assert.ok(pipelineRoute.includes("EvaluateInfrastructure"));
+assert.ok(pipelineRoute.includes("RunGauntletSandbox"));
+assert.ok(pipelineRoute.includes("PublishVerifiedPatch"));
+assert.ok(pipelineRoute.includes("blocked_pending_gauntlet"));
+assert.ok(pipelineRoute.includes("blocked_missing_token"));
 
 console.log("ELITZE agent workforce self-test: PASS (identity, gauntlet fail-closed, tenant scoping, frontmatter year)");
 
