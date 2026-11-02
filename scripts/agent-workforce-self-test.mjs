@@ -114,3 +114,23 @@ const listRoute = readFileSync(path.join(root, "src/app/api/agent/workforce/rout
 assert.ok(listRoute.includes("user.tenantId") || listRoute.includes("getCurrentUser"));
 
 console.log("ELITZE agent workforce self-test: PASS (identity, gauntlet fail-closed, tenant scoping, frontmatter year)");
+
+// Publisher handoff is fail-closed on gauntlet status, token presence and inputs.
+const publisher = await import("../src/lib/elitze-secure/agent-publisher.ts");
+const base = { gauntletStatus: "PASSED", githubTokenConfigured: true, bountyId: "ALG-42", workspaceRef: "patch-001", seed: "12ab34cd56ef" };
+const ready = publisher.evaluatePublisherGuard(base);
+assert.ok(ready.ready, "passed gauntlet + token must produce a handoff");
+assert.match(ready.branchName, /^bounty-fix\/alg-42-[0-9a-f]{4}$/);
+assert.deepEqual(ready.gitSteps.map((step) => step.step), ["branch_provisioning", "stage_changes", "commit", "push"]);
+assert.deepEqual(ready.gitSteps[0].command, ["git", "checkout", "-b", ready.branchName]);
+assert.equal(ready.prPayload.draft, true);
+assert.equal(ready.autoSubmitted, false);
+assert.equal(ready.executionTier, "authorized_runner");
+assert.ok(ready.runnerChecks.some((check) => check.includes("GITHUB_TOKEN")));
+assert.ok(publisher.evaluatePublisherGuard({ ...base, gauntletStatus: "FAILED" }).ready === false);
+assert.equal(publisher.evaluatePublisherGuard({ ...base, gauntletStatus: "FAILED" }).reason, "publisher_bypassed_failed_sandbox_gates");
+assert.equal(publisher.evaluatePublisherGuard({ ...base, githubTokenConfigured: false }).reason, "missing_github_authentication_token");
+assert.equal(publisher.evaluatePublisherGuard({ ...base, bountyId: "  " }).reason, "missing_bounty_id");
+assert.equal(publisher.evaluatePublisherGuard({ ...base, workspaceRef: "" }).reason, "workspace_missing");
+assert.equal(publisher.publisherBranchName("bounty with spaces/SLASH", "zzzz1111"), "bounty-fix/bounty-with-spaces-slash-1111");
+console.log("ELITZE agent publisher self-test: PASS (fail-closed guard, runner handoff, no auto-submission)");

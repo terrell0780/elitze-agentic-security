@@ -42,4 +42,13 @@ Every persistence operation runs inside a transaction whose `app.tenant_id` is s
 - `POST /api/agent/workforce/gauntlet` — body `{ agentId, patchRef, gates: [{ name, exitCode, durationMs, logExcerpt }] }`; records and evaluates the run; response states `verificationBasis: recorded_gate_exit_codes`.
 - `GET /api/agent/workforce/gauntlet?agentId=` — lists recorded gauntlet runs.
 
+## Publisher handoff (GitHub PR boundary)
+
+After a PASSED gauntlet, `POST /api/agent/workforce/publish` produces a runner handoff for the verified patch:
+
+- **Fail-closed guard:** no handoff unless the gauntlet record for the agent is PASSED; missing GitHub token presence, missing bounty id or missing workspace reference abort with an explicit reason.
+- **Execution plan:** branch provisioning (`bounty-fix/<safe-id>-<4-hex>`), staging, commit with an explicit message, and push — expressed as exact command steps for the **authorized runner tier**, never executed by the web application.
+- **PR payload:** a **draft** pull request payload targeting the configured repository, with the verification basis stated in the body.
+- **No fabricated outcomes:** the handoff is a plan, not an outcome. The response carries `publicationEvidence: runner_reportback_required` — a pull request only becomes a recorded fact when the runner reports back what actually happened.
+
 Self-test: `npm run agent-workforce:self-test`.
