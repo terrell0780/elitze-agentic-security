@@ -1,6 +1,6 @@
 import { NextRequest } from "next/server";
 import { assertSameOrigin, consumeRateLimit, getRateLimitKey, issueEmailToken, registerUser } from "@/lib/auth";
-import { sendAuthEmail } from "@/lib/auth-email";
+import { sendAuthEmail, emailDeliveryConfigured } from "@/lib/auth-email";
 import { productionConfig } from "@/config/production";
 
 export const dynamic = "force-dynamic";
@@ -11,6 +11,12 @@ export async function POST(request: NextRequest) {
     const body = await request.json() as { email?: unknown; password?: unknown; displayName?: unknown };
     if (typeof body.email !== "string" || typeof body.password !== "string") {
       return Response.json({ error: "email_and_password_required" }, { status: 400 });
+    }
+
+    // Pre-flight: fail honestly before creating any user row, so a deployment
+    // without email delivery cannot strand a pending account.
+    if (!emailDeliveryConfigured()) {
+      return Response.json({ error: "email_delivery_not_configured" }, { status: 503 });
     }
 
     const email = body.email.trim().toLowerCase();
@@ -26,6 +32,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     const message = error instanceof Error ? error.message : "registration_failed";
     if (message === "email_already_registered") return Response.json({ error: "email_already_registered" }, { status: 409 });
+    if (message === "email_already_active") return Response.json({ error: "email_already_active" }, { status: 409 });
     if (message === "email_delivery_not_configured") return Response.json({ error: "email_delivery_not_configured" }, { status: 503 });
     if (message === "invalid_email" || message === "password_policy") return Response.json({ error: message }, { status: 400 });
     if (message.includes("duplicate") || message.includes("unique")) {

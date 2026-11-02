@@ -392,8 +392,20 @@ export async function registerUser(
     await client.query("BEGIN");
     // Serialize same-email registrations and invitation acceptance across tenant creation paths.
     await client.query("SELECT pg_advisory_xact_lock(hashtext($1))", [normalized]);
-    const existing = await client.query("SELECT id FROM auth_users WHERE email_normalized=$1 LIMIT 1", [normalized]);
-    if (existing.rows[0]) throw new Error("email_already_registered");
+    const existing = await client.query(
+      `SELECT id, tenant_id AS "tenantId", email, display_name AS "displayName", role, status
+       FROM auth_users WHERE email_normalized=$1 LIMIT 1`,
+      [normalized],
+    );
+    const existingUser = existing.rows[0] as AuthUser | undefined;
+    if (existingUser) {
+      // Active accounts must not re-enter the registration path. Pending
+      // accounts are returned so the caller can re-issue the verification
+      // email instead of stranding the user on a 409 they can never resolve.
+      if (existingUser.status === "active") throw new Error("email_already_active");
+      await client.query("COMMIT");
+      return existingUser;
+    }
 
     const result = await client.query(
       `WITH new_tenant AS (

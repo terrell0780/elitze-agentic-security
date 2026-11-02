@@ -49,7 +49,7 @@ for (const [name, route] of [["signup", signup], ["v1 signup", v1Signup]]) {
 }
 assert.match(controlPlane, /buildPrincipal\(\{ tenantId: user\.tenantId, subjectId: user\.id, roles: \[user\.role\] \}\)/);
 assert.match(auth, /pg_advisory_xact_lock\(hashtext\(\$1\)\)/);
-assert.match(auth, /email_already_registered/);
+assert.match(auth, /email_already_active/); // active accounts refused; pending accounts returned for verification re-issue
 assert.match(membersRoute, /getCurrentUser/);
 assert.match(membersRoute, /normalizeTenantRole/);
 assert.match(membersRoute, /parsed\.data\.role === "admin"/);

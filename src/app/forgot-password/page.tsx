@@ -18,9 +18,14 @@ export default function ForgotPasswordPage() {
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ email: email.trim() }),
       });
-      setState(response.ok
-        ? "If an active account matches that address, a reset link has been sent."
-        : "Password reset is temporarily unavailable.");
+      if (response.ok) {
+        setState("If an active account matches that address, a reset link has been sent.");
+      } else {
+        const payload = await response.json().catch(() => ({ error: "" })) as { error?: string };
+        setState(payload.error === "email_delivery_not_configured"
+          ? "Email delivery is not configured on this deployment yet, so a reset link cannot be sent. Ask the operator to configure it, then try again."
+          : "Password reset is temporarily unavailable.");
+      }
     } catch {
       setState("Password reset is temporarily unavailable.");
     } finally {

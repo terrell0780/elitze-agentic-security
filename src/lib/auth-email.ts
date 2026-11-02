@@ -66,3 +66,16 @@ export async function sendEmail({ to, subject, text, replyTo }: EmailMessage) {
 export async function sendAuthEmail(to: string, subject: string, text: string) {
   return sendEmail({ to, subject, text, replyTo: env("ELITZE_CONTACT_EMAIL") || DEFAULT_REPLY_TO });
 }
+
+/**
+ * True when the configured provider has everything it needs to deliver mail.
+ * Used as a pre-flight check so registration and password reset fail with an
+ * honest 503 before any user state is created or any account lookup happens.
+ */
+export function emailDeliveryConfigured(): boolean {
+  const provider = env("ELITZE_EMAIL_PROVIDER").toLowerCase() || "resend";
+  if (!env("ELITZE_EMAIL_FROM")) return false;
+  if (provider === "resend") return Boolean(env("RESEND_API_KEY"));
+  if (provider === "test") return Boolean(env("ELITZE_EMAIL_TEST_ENDPOINT"));
+  return false;
+}

@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 
 function messageFor(error: string) {
   if (error === "password_policy") return "Use a password between 12 and 256 characters.";
+  if (error === "email_already_active") return "This email already has an active account. Sign in instead.";
   if (error === "email_delivery_not_configured") return "Account creation is temporarily unavailable because verification email delivery is not configured.";
   if (error === "csrf_rejected") return "This deployment rejected the sign-up request origin. Reload the current ELITZE deployment and try again.";
   if (error === "registration_unavailable") return "Account creation is temporarily unavailable because the account service could not reach its database.";

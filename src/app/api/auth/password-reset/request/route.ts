@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { assertSameOrigin, consumeRateLimit, getRateLimitKey, issueEmailToken, normalizeEmail } from "@/lib/auth";
 import { getPgPool } from "@/db";
-import { sendAuthEmail } from "@/lib/auth-email";
+import { sendAuthEmail, emailDeliveryConfigured } from "@/lib/auth-email";
 import { productionConfig } from "@/config/production";
 
 export const dynamic = "force-dynamic";
@@ -10,6 +10,12 @@ export async function POST(request: NextRequest) {
   const generic = { ok: true };
   try {
     if (!(await assertSameOrigin(request))) return Response.json({ error: "csrf_rejected" }, { status: 403 });
+    // Pre-flight: if mail delivery is not configured, say so at the service
+    // level for every input instead of leaking account existence through a
+    // conditional send failure.
+    if (!emailDeliveryConfigured()) {
+      return Response.json({ error: "email_delivery_not_configured" }, { status: 503 });
+    }
     const body = await request.json() as { email?: unknown };
     if (typeof body.email !== "string") return Response.json(generic);
     const email = normalizeEmail(body.email);
