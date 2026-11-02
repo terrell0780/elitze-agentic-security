@@ -7,6 +7,10 @@ ELITZE helps security teams understand what can access their environment, evalua
 **Website:** https://www.elitze.info  
 **Repository:** https://github.com/terrell0780/elitze-agentic-security
 
+## Verified status (2026-10-30)
+
+An independent full verification run at commit `9279873` (clean tree, Node 24, npm 11) observed: install, typecheck, lint, security self-test, the full production build including all eight prebuild gates, and `npm audit` (zero vulnerabilities) all passing; 11 of 12 targeted self-tests passing, with `chat:governance-self-test` failing closed when no `DATABASE_URL` is configured. All probed public routes on https://www.elitze.info serve HTTP 200 with the configured security headers, and authenticated surfaces correctly gate anonymous visitors. The production readiness contract (`/api/public/health`) currently reports 503 "unavailable" because a required production secret, database, or migration-ledger item is not satisfied in the deployed environment; the exact item is in the server logs under `[ELITZE_READINESS]`. Full details and the outstanding-work list: [docs/ELITZE-AGENTIC-SECURITY-FULL-MANIFEST.md](docs/ELITZE-AGENTIC-SECURITY-FULL-MANIFEST.md).
+
 ## What the platform covers
 
 ### 1. AI agent identity and MCP runtime security
@@ -177,6 +181,8 @@ npm run runner:handshake-self-test
 npm run runner:control-plane-handshake-self-test
 npm run build
 ```
+
+All commands above were last verified together on 2026-10-30 (see "Verified status" above). A passing build verifies compilation and wired self-tests; it does not by itself prove production readiness or tenant isolation.
 
 ## Complete ELITZE product and feature inventory
 
