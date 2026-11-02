@@ -192,6 +192,7 @@ This section consolidates the product capabilities that must remain visible acro
 - AI agent and workload identity; identity relationships to human owners and tenants.
 - MCP client, server, and tool discovery and identity; workload-token verification and session binding.
 - Agent passports and agent-risk context where supported by the relevant code path.
+- Lead-orchestrator agent workforce: dynamic hiring of tenant-scoped specialized agents with locked identities and a fail-closed patch gauntlet; runtime execution remains evidence-gated.
 - Resource reachability mapping, least-privilege boundaries, and sensitive data/credential access controls.
 - MCP gateway request evaluation, tool/server identity, capability checks, request validation, replay/nonce protection, rate limiting, safe upstream destination validation, bounded responses, and timeouts.
 - Deterministic pre-execution policy outcomes: allow, deny, require approval, or allow with constraints.

@@ -1,4 +1,5 @@
 import {
+  bigserial,
   boolean,
   integer,
   jsonb,
@@ -183,5 +184,30 @@ export const ragChunks = pgTable("rag_chunks", {
   contentHash: varchar("content_hash", { length: 64 }).notNull(),
   embedding: vector("embedding", { dimensions: 1536 }).notNull(),
   metadata: jsonb("metadata").$type<Record<string, unknown>>().notNull().default({}),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const agentWorkforce = pgTable("agent_workforce", {
+  id: bigserial("id", { mode: "number" }).primaryKey(),
+  tenantId: uuid("tenant_id").notNull(),
+  agentId: varchar("agent_id", { length: 64 }).notNull().unique(),
+  name: varchar("name", { length: 80 }).notNull(),
+  avatarUrl: varchar("avatar_url", { length: 400 }).notNull(),
+  specialty: varchar("specialty", { length: 120 }).notNull(),
+  systemPrompt: text("system_prompt").notNull(),
+  status: varchar("status", { length: 20 }).notNull().default("active"),
+  hiredReason: text("hired_reason"),
+  createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const agentPatchGauntlets = pgTable("agent_patch_gauntlets", {
+  id: bigserial("id", { mode: "number" }).primaryKey(),
+  tenantId: uuid("tenant_id").notNull(),
+  agentId: varchar("agent_id", { length: 64 }).notNull(),
+  patchRef: varchar("patch_ref", { length: 300 }).notNull(),
+  gates: jsonb("gates").$type<Array<{ name: string; exitCode: number; durationMs: number; logExcerpt: string }>>().notNull(),
+  status: varchar("status", { length: 20 }).notNull(),
+  failingGate: varchar("failing_gate", { length: 120 }),
+  logExcerpt: text("log_excerpt"),
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
 });

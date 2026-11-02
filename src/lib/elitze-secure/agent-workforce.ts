@@ -1,0 +1,190 @@
+/**
+ * Agent workforce: pure identity, specialty-inference, gauntlet evaluation and
+ * Obsidian formatting logic. No database or filesystem access lives here; the
+ * tenant-scoped persistence layer is agent-workforce-db.ts.
+ *
+ * Truth-state rules: a hired identity is a DECLARED catalog entry. Runtime
+ * execution state is UNKNOWN. A gauntlet result is PASSED only when every
+ * recorded gate exit code is 0; claims without recorded exit codes are never
+ * treated as verified.
+ */
+
+export type WorkforceAgent = {
+  agentId: string;
+  name: string;
+  avatarUrl: string;
+  specialty: string;
+  systemPrompt: string;
+  status: string;
+  hiredReason: string | null;
+  createdAt: string;
+};
+
+export type SpecialtyRule = { match: string[]; specialty: string };
+
+export const SPECIALTY_RULES: SpecialtyRule[] = [
+  { match: ["rust", "cargo"], specialty: "Rust Compiler Optimization" },
+  { match: ["solidity", "evm", "smart contract"], specialty: "EVM Security Auditing" },
+  { match: ["typescript", "next.js", "nextjs"], specialty: "Next.js Architecture" },
+  { match: ["python", "crewai", "langgraph"], specialty: "Python Automation" },
+  { match: ["postgres", "sql", "drizzle", "rls"], specialty: "Database Isolation Engineering" },
+  { match: ["security", "pentest", "vulnerability", "exploit"], specialty: "Security Validation" },
+];
+
+export const DEFAULT_SPECIALTY = "General Security Engineering";
+
+export function inferSpecialty(brief: string): string {
+  const normalized = String(brief ?? "").toLowerCase();
+  for (const rule of SPECIALTY_RULES) {
+    if (rule.match.some((keyword) => normalized.includes(keyword))) return rule.specialty;
+  }
+  return DEFAULT_SPECIALTY;
+}
+
+const NAME_PREFIXES = ["Alpha", "Vertex", "Quantum", "Nexus", "Pragmatic", "Scaffold", "Trunk", "Vector", "Cipher", "Sentinel"];
+const NAME_SUFFIXES = ["Dev", "Compiler", "Auditor", "Architect", "Engine", "Patch", "Sec", "Warden", "Probe", "Trace"];
+
+function hashSeed(seed: string): number {
+  let hash = 2166136261;
+  for (let index = 0; index < seed.length; index += 1) {
+    hash ^= seed.charCodeAt(index);
+    hash = Math.imul(hash, 16777619);
+  }
+  return Math.abs(hash);
+}
+
+export function agentAvatarUrl(seed: string): string {
+  return `https://api.dicebear.com/9.x/bottts/svg?seed=${encodeURIComponent(seed)}&backgroundColor=b6e3f4`;
+}
+
+/** Deterministic identity: the same seed always produces the same locked profile. */
+export function generateAgentIdentity(specialty: string, seed: string) {
+  const hash = hashSeed(seed);
+  const name = `${NAME_PREFIXES[hash % NAME_PREFIXES.length]}-${NAME_SUFFIXES[Math.floor(hash / 7) % NAME_SUFFIXES.length]}-${(hash % 900) + 100}`;
+  const agentId = `wf-${seed.slice(0, 8)}`;
+  const systemPrompt = [
+    `You are ${name}, a pragmatic AI engineer specialized in ${specialty}, working inside one ELITZE tenant boundary.`,
+    "Treat every assignment as an implementation brief. Verify repository metadata, configuration and available files before writing code.",
+    "Build changes incrementally inside isolated scaffolds and verify each step before propagating it.",
+    "Never invent success logs. If a run fails, output the exact failing command and stack trace to the orchestrator state instead of a fabricated pass.",
+    "You cannot grant yourself permissions, widen tenant scope, or bypass required approvals. Execution claims require recorded evidence.",
+  ].join(" ");
+  return { agentId, name, avatarUrl: agentAvatarUrl(seed), specialty, systemPrompt, seed };
+}
+
+export type GauntletGateResult = {
+  name: string;
+  exitCode: number;
+  durationMs: number;
+  logExcerpt: string;
+};
+
+export type GauntletEvaluation = {
+  status: "PASSED" | "FAILED";
+  failingGate: string | null;
+  logExcerpt: string | null;
+};
+
+const LOG_EXCERPT_MAX = 4000;
+
+/** Standard frontmatter year for cross-referencing secure builds. */
+export const PROFILE_YEAR = 2026;
+
+export function truncateLogExcerpt(log: string): string {
+  const normalized = String(log ?? "");
+  return normalized.length > LOG_EXCERPT_MAX ? normalized.slice(0, LOG_EXCERPT_MAX) : normalized;
+}
+
+export function evaluateGauntlet(gates: GauntletGateResult[]): GauntletEvaluation {
+  if (!Array.isArray(gates) || gates.length === 0) {
+    return { status: "FAILED", failingGate: "no_gates_recorded", logExcerpt: null };
+  }
+  for (const gate of gates) {
+    if (!gate || typeof gate.name !== "string" || !gate.name.trim()) {
+      return { status: "FAILED", failingGate: "invalid_gate_record", logExcerpt: null };
+    }
+    if (typeof gate.exitCode !== "number" || !Number.isFinite(gate.exitCode)) {
+      return { status: "FAILED", failingGate: gate.name, logExcerpt: "gate recorded without a numeric exit code" };
+    }
+    if (gate.exitCode !== 0) {
+      return { status: "FAILED", failingGate: gate.name, logExcerpt: truncateLogExcerpt(gate.logExcerpt ?? "") };
+    }
+  }
+  return { status: "PASSED", failingGate: null, logExcerpt: null };
+}
+
+function sanitizeFileName(name: string): string {
+  return String(name ?? "Unknown-Agent").replace(/[\\/*?:"<>|]/g, "").replace(/\s+/g, "_");
+}
+
+/** Obsidian profile in the frontmatter layout used by the console export path. */
+export function toObsidianProfile(agent: Pick<WorkforceAgent, "name" | "avatarUrl" | "specialty" | "systemPrompt" | "status">): string {
+  return [
+    "---",
+    `year: ${PROFILE_YEAR}`,
+    "type: agent-profile",
+    `agent_name: ${agent.name}`,
+    `avatar_url: '${agent.avatarUrl}'`,
+    `specialty: ${agent.specialty}`,
+    `status: ${agent.status}`,
+    "catalog_truth_state: DECLARED",
+    "runtime_truth_state: UNKNOWN",
+    "---",
+    "",
+    `# ${agent.name}`,
+    "",
+    `![Agent Avatar](${agent.avatarUrl})`,
+    "",
+    "## Technical Focus & Capabilities",
+    "",
+    `This agent is specialized in **${agent.specialty}**.`,
+    "",
+    "## System Prompts & Guardrails",
+    "",
+    "```text",
+    agent.systemPrompt,
+    "```",
+    "",
+    "## Task Execution History",
+    "- [x] Registered to the tenant workforce via the lead orchestrator.",
+    "- [ ] Runtime execution evidence: not verified.",
+    "",
+  ].join("\n");
+}
+
+/** Obsidian record for a gauntlet run; failures carry the exact log excerpt. */
+export function toObsidianGauntletRecord(record: {
+  agentId: string;
+  patchRef: string;
+  status: string;
+  failingGate: string | null;
+  logExcerpt: string | null;
+  createdAt: string;
+}): string {
+  const lines = [
+    "---",
+    `year: ${PROFILE_YEAR}`,
+    "type: agent-gauntlet-run",
+    `agent_id: ${record.agentId}`,
+    `patch_ref: ${record.patchRef}`,
+    `status: ${record.status}`,
+    `failing_gate: ${record.failingGate ?? "none"}`,
+    "---",
+    "",
+    "## Gate Outcome",
+    "",
+  ];
+  if (record.status === "PASSED") {
+    lines.push("All recorded gates exited 0.", "");
+  } else {
+    lines.push(
+      `Failing gate: **${record.failingGate ?? "unknown"}**.`,
+      "",
+      "```text",
+      record.logExcerpt ?? "(no log excerpt recorded)",
+      "```",
+      "",
+    );
+  }
+  return lines.join("\n");
+}

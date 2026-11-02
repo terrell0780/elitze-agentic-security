@@ -51,6 +51,7 @@ ELITZE is a multi-tenant, evidence-gated security operations platform (Next.js 1
 - **MCP gateway:** signed workload tokens, deny-by-default upstream hostname allowlist, tool/server identity, tenant and session binding, replay protection, policy decisions, evidence recording. Execution defaults to off.
 - **Security runner:** `runner/`; separate execution tier; must validate signed requests, explicit authorization/scope, target allowlists, safety limits, timeouts, and signed callbacks.
 - **Agent workflows:** `src/lib/elitze-secure/agent-workflow.ts`; persisted state is not proof a live scheduler is running.
+- **Agent workforce and patch gauntlet:** dynamic tenant-scoped agent hiring with locked deterministic identities, Obsidian-format profile export (`year: 2026` frontmatter), and fail-closed gauntlet records; migration `0034_agent_workforce.sql` with forced RLS.
 - **Data Bridge:** authenticated ingestion, observed signals, adapter capabilities, and integration health.
 - **Security workspace:** Next.js App Router routes for authenticated operations, console views, specialist tools, FAQ, and how-to guidance. 46 public routes registered in `public/elitze-routes.json`.
 - **Persistence:** PostgreSQL-backed state; 36 SQL migrations under `drizzle/`.
