@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FAQ · ELITZE Agentic Security</title>
+<meta name="description" content="Elitze Agentic Security — agent and MCP control plane: inventory, reachability, pre-execution policy, real scans with patch plans, and evidence that says UNKNOWN when it is unknown.">
+<meta property="og:title" content="FAQ · ELITZE Agentic Security">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#040f18">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-nav="open">
+<a class="sr-only" href="#main">Skip to content</a>
+
+<aside class="sidebar" aria-label="Site navigation">
+  <div class="brandrow">
+    <span class="brandmark" aria-hidden="true">E</span>
+    <span class="brandtext"><b>ELITZE</b><span>Agentic Security</span></span>
+    <button class="sidebar-toggle" type="button" id="nav-toggle" aria-label="Collapse navigation">‹</button>
+  </div>
+  <div class="navgroup"><span>Overview</span><a class="navlink" href="index.html"><span class="ico" aria-hidden="true">◈</span><span class="lbl">Hub</span></a></div><div class="navgroup"><span>Control</span><a class="navlink" href="graph.html"><span class="ico" aria-hidden="true">◎</span><span class="lbl">God&#x27;s-eye graph</span></a><a class="navlink" href="guardrails.html"><span class="ico" aria-hidden="true">⛨</span><span class="lbl">Guardrails</span></a><a class="navlink" href="scans.html"><span class="ico" aria-hidden="true">⧗</span><span class="lbl">Scans &amp; patches</span></a><a class="navlink" href="email.html"><span class="ico" aria-hidden="true">✉</span><span class="lbl">Email posture</span></a></div><div class="navgroup"><span>Agent</span><a class="navlink" href="sara.html"><span class="ico" aria-hidden="true">◐</span><span class="lbl">Sara</span></a></div><div class="navgroup"><span>Assurance</span><a class="navlink" href="integrations.html"><span class="ico" aria-hidden="true">⇄</span><span class="lbl">Integrations</span></a><a class="navlink" href="compare.html"><span class="ico" aria-hidden="true">⚖</span><span class="lbl">Compare</span></a><a class="navlink" href="plans.html"><span class="ico" aria-hidden="true">$</span><span class="lbl">Plans</span></a><a class="navlink" href="faq.html" aria-current="page"><span class="ico" aria-hidden="true">?</span><span class="lbl">FAQ</span></a><a class="navlink" href="contact.html"><span class="ico" aria-hidden="true">✎</span><span class="lbl">Contact</span></a><a class="navlink" href="trust.html"><span class="ico" aria-hidden="true">✓</span><span class="lbl">Trust</span></a></div>
+  <div class="sidefoot">
+    <b>Measured build</b><br>
+    health 503 · unavailable<br>
+    2026-11-04T16:18:44Z
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <button class="hamburger" type="button" id="nav-burger" aria-label="Open navigation">☰</button>
+    <div class="crumbs"><a href="index.html">Hub</a><span>/</span><b>FAQ</b></div>
+    <div class="spacer"></div>
+    <button class="searchbtn" type="button" id="open-search" aria-keyshortcuts="Control+K">
+      <span class="lbl">Search</span> <kbd>⌘K</kbd>
+    </button>
+    <a class="btn primary" href="mailto:terrell0780@gmail.com?subject=Elitze%20access%20request">Request access</a>
+  </div>
+
+  <main class="content" id="main">
+<div class="reveal"><span class="tagline">FAQ</span>
+  <h2>Questions that matter before a pilot</h2>
+  <p class="lede">Short answers, no hedging.</p></div>
+<div class="mt12"><details><summary>Is anything on this site simulated?</summary><p>No. Health is a live read of /api/v1/health, the KEV count comes from the CISA feed, the findings come from an actual engine run against a real dependency tree, and SPF/DMARC were resolved over DNS. Where a value could not be read it says UNMEASURABLE.</p></details><details><summary>Why is platform health 503?</summary><p>Because the deployed app cannot reach its database. The honest state is &quot;unavailable&quot; with productionDatabase NOT_VERIFIED; when the connection is verified the tile changes and so does this answer.</p></details><details><summary>Does the scanner touch my production systems?</summary><p>No. It reads manifests and lockfiles in a directory you name, then queries public advisory feeds. Reaching into running systems requires authorized validation, separately scoped and written.</p></details><details><summary>Do you auto-apply patches?</summary><p>No. The engine produces a plan — target version, command, verification, rollback, blast radius. Execution stays with a human or an approved CI job.</p></details><details><summary>Why does one finding have no fix?</summary><p>Because every advisory fix for that package is older than the installed version. Recommending it would be a downgrade, so the plan is withheld and the finding says why.</p></details><details><summary>Is Sara the same as Lindy?</summary><p>No. Sara is Elitze&#x27;s security assistant. The agent surface borrows the shape people expect from workflow agents — triggers, email triage, scheduling, approvals — but it operates inside tenant authorization and cannot self-grant.</p></details><details><summary>Do you hold SOC 2 or ISO 27001?</summary><p>No. None held, stated plainly on the trust page.</p></details><details><summary>How do I pay?</summary><p>Interac e-Transfer or KOHO deposit. Google Pay needs a merchant processor with identity verification and is being enabled.</p></details></div>
+    <footer class="site">
+      <nav aria-label="Footer">
+        <a href="graph.html">Graph</a><a href="scans.html">Scans</a><a href="email.html">Email</a>
+        <a href="sara.html">Sara</a><a href="compare.html">Compare</a><a href="trust.html">Trust</a>
+        <a href="security.txt">security.txt</a>
+      </nav>
+      <div>© 2026 TrueElitze Digital · Terrell Hall · Victoria, BC, Canada<br>
+      Built 2026-11-04T16:18:46Z. Every figure is traced to a source and a timestamp; a failed
+      measurement reads UNMEASURABLE, never zero.</div>
+    </footer>
+  </main>
+</div>
+
+<div class="scrim" id="scrim" data-open="false"></div>
+<div class="palette" id="palette" data-open="false" role="dialog" aria-modal="true" aria-label="Search">
+  <label class="sr-only" for="q">Search Elitze</label>
+  <input id="q" type="text" placeholder="Search pages, findings, integrations…" autocomplete="off">
+  <div class="results" id="results"></div>
+</div>
+
+<script src="assets/data.js"></script>
+<script src="assets/site.js" defer></script>
+</body>
+</html>

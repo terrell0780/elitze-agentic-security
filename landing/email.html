@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Email posture · ELITZE Agentic Security</title>
+<meta name="description" content="Elitze Agentic Security — agent and MCP control plane: inventory, reachability, pre-execution policy, real scans with patch plans, and evidence that says UNKNOWN when it is unknown.">
+<meta property="og:title" content="Email posture · ELITZE Agentic Security">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#040f18">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-nav="open">
+<a class="sr-only" href="#main">Skip to content</a>
+
+<aside class="sidebar" aria-label="Site navigation">
+  <div class="brandrow">
+    <span class="brandmark" aria-hidden="true">E</span>
+    <span class="brandtext"><b>ELITZE</b><span>Agentic Security</span></span>
+    <button class="sidebar-toggle" type="button" id="nav-toggle" aria-label="Collapse navigation">‹</button>
+  </div>
+  <div class="navgroup"><span>Overview</span><a class="navlink" href="index.html"><span class="ico" aria-hidden="true">◈</span><span class="lbl">Hub</span></a></div><div class="navgroup"><span>Control</span><a class="navlink" href="graph.html"><span class="ico" aria-hidden="true">◎</span><span class="lbl">God&#x27;s-eye graph</span></a><a class="navlink" href="guardrails.html"><span class="ico" aria-hidden="true">⛨</span><span class="lbl">Guardrails</span></a><a class="navlink" href="scans.html"><span class="ico" aria-hidden="true">⧗</span><span class="lbl">Scans &amp; patches</span></a><a class="navlink" href="email.html" aria-current="page"><span class="ico" aria-hidden="true">✉</span><span class="lbl">Email posture</span></a></div><div class="navgroup"><span>Agent</span><a class="navlink" href="sara.html"><span class="ico" aria-hidden="true">◐</span><span class="lbl">Sara</span></a></div><div class="navgroup"><span>Assurance</span><a class="navlink" href="integrations.html"><span class="ico" aria-hidden="true">⇄</span><span class="lbl">Integrations</span></a><a class="navlink" href="compare.html"><span class="ico" aria-hidden="true">⚖</span><span class="lbl">Compare</span></a><a class="navlink" href="plans.html"><span class="ico" aria-hidden="true">$</span><span class="lbl">Plans</span></a><a class="navlink" href="faq.html"><span class="ico" aria-hidden="true">?</span><span class="lbl">FAQ</span></a><a class="navlink" href="contact.html"><span class="ico" aria-hidden="true">✎</span><span class="lbl">Contact</span></a><a class="navlink" href="trust.html"><span class="ico" aria-hidden="true">✓</span><span class="lbl">Trust</span></a></div>
+  <div class="sidefoot">
+    <b>Measured build</b><br>
+    health 503 · unavailable<br>
+    2026-11-04T16:18:44Z
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <button class="hamburger" type="button" id="nav-burger" aria-label="Open navigation">☰</button>
+    <div class="crumbs"><a href="index.html">Hub</a><span>/</span><b>Email posture</b></div>
+    <div class="spacer"></div>
+    <button class="searchbtn" type="button" id="open-search" aria-keyshortcuts="Control+K">
+      <span class="lbl">Search</span> <kbd>⌘K</kbd>
+    </button>
+    <a class="btn primary" href="mailto:terrell0780@gmail.com?subject=Elitze%20access%20request">Request access</a>
+  </div>
+
+  <main class="content" id="main">
+<div class="reveal">
+  <span class="tagline">Email · measured posture</span>
+  <h2>Your own domain, audited</h2>
+  <p class="lede">Mail is where agents leak. These records were read over DNS at build time —
+  including the parts that fail.</p>
+</div>
+<div class="grid mt12">
+  <div class="int"><b>SPF</b><span><code>v=spf1 include:_spf-us.ionos.com ~all</code></span><span class="badge" data-s="OBSERVED">softfail</span></div>
+  <div class="int"><b>DMARC</b><span><code>v=DMARC1; p=none;</code></span><span class="badge" data-s="OBSERVED">not enforcing · no rua</span></div>
+  <div class="int"><b>MX</b><span>mx00.ionos.com, mx01.ionos.com</span><span class="badge" data-s="VERIFIED">resolved</span></div>
+  <div class="int"><b>DKIM</b><span>selector not discoverable from DNS alone</span><span class="badge" data-s="UNMEASURABLE">not measured</span></div>
+</div>
+
+<div class="two mt18">
+  <div class="card">
+    <h3>Header inspector</h3>
+    <p class="muted" style="font-size:12.5px">Paste the top of a message. Parses
+    Authentication-Results, Received hops and From/Return-Path alignment locally — nothing leaves the page.</p>
+    <label class="field" for="hdr">Raw headers</label>
+    <textarea id="hdr" spellcheck="false">Authentication-Results: mx.example.net; spf=softfail smtp.mailfrom=bounce@example.net; dkim=none; dmarc=fail header.from=elitze.info
+Received: from unknown (HELO mail.example.net) (203.0.113.9) by mx01.example.net
+From: "Elitze Billing" &lt;billing@elitze.info&gt;
+Return-Path: &lt;bounce@example.net&gt;</textarea>
+    <div class="row mt8">
+      <button class="btn ghost tiny" type="button" id="hdr-run">Analyse</button>
+      <button class="btn ghost tiny" type="button" id="hdr-clear">Clear</button>
+    </div>
+  </div>
+  <div class="card soft">
+    <h3>Verdict</h3>
+    <div class="verdict" id="mail-verdict" data-v="DENY">—</div>
+    <p class="muted" style="font-size:12.5px" id="mail-why">Run the analyser.</p>
+    <ul class="trace" id="mail-trace"></ul>
+    <div class="note mt12"><b>Fix path:</b> publish DKIM, add
+    <code>rua=mailto:security@elitze.info</code>, then move from <code>p=none</code> to
+    <code>p=quarantine</code>. Until DMARC enforces, the domain your invoices come from can be spoofed.</div>
+  </div>
+</div>
+
+<h2 class="mt26">What Sara does with mail</h2>
+<div class="grid">
+  <div class="int"><b>Inbound triage</b><span>classify, extract the ask, link the thread to a finding</span><span class="badge" data-s="DECLARED">documented</span></div>
+  <div class="int"><b>Draft with approval</b><span>composes a reply; a named operator must send</span><span class="badge" data-s="DECLARED">gate on send</span></div>
+  <div class="int"><b>Disclosure routing</b><span>security@ with 48h acknowledgement target</span><span class="badge" data-s="OBSERVED">policy published</span></div>
+  <div class="int"><b>Phishing verdict</b><span>SPF/DKIM/DMARC + alignment, shown above</span><span class="badge" data-s="OBSERVED">working here</span></div>
+</div>
+    <footer class="site">
+      <nav aria-label="Footer">
+        <a href="graph.html">Graph</a><a href="scans.html">Scans</a><a href="email.html">Email</a>
+        <a href="sara.html">Sara</a><a href="compare.html">Compare</a><a href="trust.html">Trust</a>
+        <a href="security.txt">security.txt</a>
+      </nav>
+      <div>© 2026 TrueElitze Digital · Terrell Hall · Victoria, BC, Canada<br>
+      Built 2026-11-04T16:18:46Z. Every figure is traced to a source and a timestamp; a failed
+      measurement reads UNMEASURABLE, never zero.</div>
+    </footer>
+  </main>
+</div>
+
+<div class="scrim" id="scrim" data-open="false"></div>
+<div class="palette" id="palette" data-open="false" role="dialog" aria-modal="true" aria-label="Search">
+  <label class="sr-only" for="q">Search Elitze</label>
+  <input id="q" type="text" placeholder="Search pages, findings, integrations…" autocomplete="off">
+  <div class="results" id="results"></div>
+</div>
+
+<script src="assets/data.js"></script>
+<script src="assets/site.js" defer></script>
+</body>
+</html>

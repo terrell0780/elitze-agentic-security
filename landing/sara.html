@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sara · ELITZE Agentic Security</title>
+<meta name="description" content="Elitze Agentic Security — agent and MCP control plane: inventory, reachability, pre-execution policy, real scans with patch plans, and evidence that says UNKNOWN when it is unknown.">
+<meta property="og:title" content="Sara · ELITZE Agentic Security">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#040f18">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-nav="open">
+<a class="sr-only" href="#main">Skip to content</a>
+
+<aside class="sidebar" aria-label="Site navigation">
+  <div class="brandrow">
+    <span class="brandmark" aria-hidden="true">E</span>
+    <span class="brandtext"><b>ELITZE</b><span>Agentic Security</span></span>
+    <button class="sidebar-toggle" type="button" id="nav-toggle" aria-label="Collapse navigation">‹</button>
+  </div>
+  <div class="navgroup"><span>Overview</span><a class="navlink" href="index.html"><span class="ico" aria-hidden="true">◈</span><span class="lbl">Hub</span></a></div><div class="navgroup"><span>Control</span><a class="navlink" href="graph.html"><span class="ico" aria-hidden="true">◎</span><span class="lbl">God&#x27;s-eye graph</span></a><a class="navlink" href="guardrails.html"><span class="ico" aria-hidden="true">⛨</span><span class="lbl">Guardrails</span></a><a class="navlink" href="scans.html"><span class="ico" aria-hidden="true">⧗</span><span class="lbl">Scans &amp; patches</span></a><a class="navlink" href="email.html"><span class="ico" aria-hidden="true">✉</span><span class="lbl">Email posture</span></a></div><div class="navgroup"><span>Agent</span><a class="navlink" href="sara.html" aria-current="page"><span class="ico" aria-hidden="true">◐</span><span class="lbl">Sara</span></a></div><div class="navgroup"><span>Assurance</span><a class="navlink" href="integrations.html"><span class="ico" aria-hidden="true">⇄</span><span class="lbl">Integrations</span></a><a class="navlink" href="compare.html"><span class="ico" aria-hidden="true">⚖</span><span class="lbl">Compare</span></a><a class="navlink" href="plans.html"><span class="ico" aria-hidden="true">$</span><span class="lbl">Plans</span></a><a class="navlink" href="faq.html"><span class="ico" aria-hidden="true">?</span><span class="lbl">FAQ</span></a><a class="navlink" href="contact.html"><span class="ico" aria-hidden="true">✎</span><span class="lbl">Contact</span></a><a class="navlink" href="trust.html"><span class="ico" aria-hidden="true">✓</span><span class="lbl">Trust</span></a></div>
+  <div class="sidefoot">
+    <b>Measured build</b><br>
+    health 503 · unavailable<br>
+    2026-11-04T16:18:44Z
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <button class="hamburger" type="button" id="nav-burger" aria-label="Open navigation">☰</button>
+    <div class="crumbs"><a href="index.html">Hub</a><span>/</span><b>Sara</b></div>
+    <div class="spacer"></div>
+    <button class="searchbtn" type="button" id="open-search" aria-keyshortcuts="Control+K">
+      <span class="lbl">Search</span> <kbd>⌘K</kbd>
+    </button>
+    <a class="btn primary" href="mailto:terrell0780@gmail.com?subject=Elitze%20access%20request">Request access</a>
+  </div>
+
+  <main class="content" id="main">
+<div class="reveal">
+  <span class="tagline">Sara · the ELITZE assistant</span>
+  <h2>An operator's agent, with the handbrake on</h2>
+  <p class="lede">Sara investigates, drafts and prepares — inside the same authorization boundary as
+  everything else. Every action that changes state stops at a named approver.</p>
+</div>
+<div class="two mt12">
+  <div class="card">
+    <h3>Goal → plan preview</h3>
+    <p class="muted" style="font-size:12.5px">Type what you want done. The planner composes steps and
+    marks where a human must approve. No model call happens here.</p>
+    <label class="field" for="goal">Goal</label>
+    <input type="text" id="goal" value="Triage the billing thread and prepare a patch for the undici findings">
+    <div class="row mt8"><button class="btn ghost tiny" type="button" id="goal-run">Compose plan</button></div>
+    <ol id="plan" style="margin:12px 0 0 18px;padding:0;font-size:13.2px;color:#a9c7d6"></ol>
+  </div>
+  <div class="card soft">
+    <h3>Agent surface</h3>
+    <div class="grid mt8">
+      <div class="int"><b>Triggers</b><span>schedule · new email · chat · webhook · calendar</span><span class="badge" data-s="DECLARED">documented</span></div>
+      <div class="int"><b>Email triage</b><span>classify, extract tasks, draft reply</span><span class="badge" data-s="DECLARED">approval to send</span></div>
+      <div class="int"><b>Scheduling</b><span>propose slots, hold, confirm</span><span class="badge" data-s="DECLARED">documented</span></div>
+      <div class="int"><b>Evidence work</b><span>collect, cite, export, retest</span><span class="badge" data-s="OBSERVED">in product</span></div>
+      <div class="int"><b>Plain-English builder</b><span>describe a workflow, get steps</span><span class="badge" data-s="UNKNOWN">not built</span></div>
+      <div class="int"><b>CRM / task sync</b><span>Jira, Linear, ServiceNow, HubSpot</span><span class="badge" data-s="UNKNOWN">not built</span></div>
+    </div>
+    <div class="note mt12"><b>Boundary:</b> Sara cannot grant its own permissions, bypass approvals or
+    widen scope. Outbound email always requires a named approver — a product rule, not a setting.</div>
+  </div>
+</div>
+<h2 class="mt26">Why the gates exist</h2>
+<div class="grid">
+  <div class="int"><b>Prompt injection</b><span>a hostile tool result cannot expand Sara's grants</span><span class="badge" data-s="DECLARED">design rule</span></div>
+  <div class="int"><b>Confused deputy</b><span>every call carries its own identity, not the caller's session</span><span class="badge" data-s="DECLARED">design rule</span></div>
+  <div class="int"><b>Irreversible writes</b><span>send, delete, attach-policy and export all require approval</span><span class="badge" data-s="DECLARED">policy</span></div>
+</div>
+    <footer class="site">
+      <nav aria-label="Footer">
+        <a href="graph.html">Graph</a><a href="scans.html">Scans</a><a href="email.html">Email</a>
+        <a href="sara.html">Sara</a><a href="compare.html">Compare</a><a href="trust.html">Trust</a>
+        <a href="security.txt">security.txt</a>
+      </nav>
+      <div>© 2026 TrueElitze Digital · Terrell Hall · Victoria, BC, Canada<br>
+      Built 2026-11-04T16:18:46Z. Every figure is traced to a source and a timestamp; a failed
+      measurement reads UNMEASURABLE, never zero.</div>
+    </footer>
+  </main>
+</div>
+
+<div class="scrim" id="scrim" data-open="false"></div>
+<div class="palette" id="palette" data-open="false" role="dialog" aria-modal="true" aria-label="Search">
+  <label class="sr-only" for="q">Search Elitze</label>
+  <input id="q" type="text" placeholder="Search pages, findings, integrations…" autocomplete="off">
+  <div class="results" id="results"></div>
+</div>
+
+<script src="assets/data.js"></script>
+<script src="assets/site.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "elitze-scan"
+version = "1.4.0"
+description = "Authorized dependency, secret and hygiene scanning with live OSV / CISA KEV / FIRST EPSS enrichment and per-finding patch plans."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Proprietary — © 2026 TrueElitze Digital" }
+authors = [{ name = "Terrell Hall", email = "terrell0780@gmail.com" }]
+keywords = ["security", "vulnerability", "osv", "cisa-kev", "epss", "sbom", "agentic-security"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: System Administrators",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Security",
+  "Typing :: Typed",
+]
+
+# The CLI needs only an HTTP client. The API and test extras are opt-in so a
+# scanner box does not have to carry a web framework.
+dependencies = ["httpx>=0.28"]
+
+[project.optional-dependencies]
+api = ["fastapi>=0.115", "uvicorn>=0.30", "python-multipart>=0.0.9"]
+dev = [
+  "pytest>=8",
+  "fastapi>=0.115",
+  "uvicorn>=0.30",
+  "python-multipart>=0.0.9",
+]
+
+[project.scripts]
+elitze-scan = "elitze_scan.cli:main"
+
+[project.urls]
+Homepage = "https://www.elitze.info"
+Source = "https://github.com/terrell0780/Elitze-Secure"
+Security = "https://www.elitze.info/security.txt"
+
+[tool.hatch.build.targets.wheel]
+packages = ["elitze_scan"]
+
+[tool.hatch.build.targets.sdist]
+include = ["elitze_scan", "tests", "README.md", "pyproject.toml"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]
+ignore = ["E501"]

@@ -150,7 +150,11 @@ function LoginContent() {
         return;
       }
 
-      router.replace("/console");
+      // Honour ?next= from a console redirect, but only for same-origin paths.
+      const nextParam = params.get("next") ?? "";
+      const destination =
+        nextParam.startsWith("/") && !nextParam.startsWith("//") ? nextParam : "/console";
+      router.replace(destination);
       router.refresh();
     } catch {
       setError("Authentication is temporarily unavailable.");

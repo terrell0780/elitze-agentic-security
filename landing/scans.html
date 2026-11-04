@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scans &amp; patches · ELITZE Agentic Security</title>
+<meta name="description" content="Elitze Agentic Security — agent and MCP control plane: inventory, reachability, pre-execution policy, real scans with patch plans, and evidence that says UNKNOWN when it is unknown.">
+<meta property="og:title" content="Scans &amp; patches · ELITZE Agentic Security">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#040f18">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-nav="open">
+<a class="sr-only" href="#main">Skip to content</a>
+
+<aside class="sidebar" aria-label="Site navigation">
+  <div class="brandrow">
+    <span class="brandmark" aria-hidden="true">E</span>
+    <span class="brandtext"><b>ELITZE</b><span>Agentic Security</span></span>
+    <button class="sidebar-toggle" type="button" id="nav-toggle" aria-label="Collapse navigation">‹</button>
+  </div>
+  <div class="navgroup"><span>Overview</span><a class="navlink" href="index.html"><span class="ico" aria-hidden="true">◈</span><span class="lbl">Hub</span></a></div><div class="navgroup"><span>Control</span><a class="navlink" href="graph.html"><span class="ico" aria-hidden="true">◎</span><span class="lbl">God&#x27;s-eye graph</span></a><a class="navlink" href="guardrails.html"><span class="ico" aria-hidden="true">⛨</span><span class="lbl">Guardrails</span></a><a class="navlink" href="scans.html" aria-current="page"><span class="ico" aria-hidden="true">⧗</span><span class="lbl">Scans &amp; patches</span></a><a class="navlink" href="email.html"><span class="ico" aria-hidden="true">✉</span><span class="lbl">Email posture</span></a></div><div class="navgroup"><span>Agent</span><a class="navlink" href="sara.html"><span class="ico" aria-hidden="true">◐</span><span class="lbl">Sara</span></a></div><div class="navgroup"><span>Assurance</span><a class="navlink" href="integrations.html"><span class="ico" aria-hidden="true">⇄</span><span class="lbl">Integrations</span></a><a class="navlink" href="compare.html"><span class="ico" aria-hidden="true">⚖</span><span class="lbl">Compare</span></a><a class="navlink" href="plans.html"><span class="ico" aria-hidden="true">$</span><span class="lbl">Plans</span></a><a class="navlink" href="faq.html"><span class="ico" aria-hidden="true">?</span><span class="lbl">FAQ</span></a><a class="navlink" href="contact.html"><span class="ico" aria-hidden="true">✎</span><span class="lbl">Contact</span></a><a class="navlink" href="trust.html"><span class="ico" aria-hidden="true">✓</span><span class="lbl">Trust</span></a></div>
+  <div class="sidefoot">
+    <b>Measured build</b><br>
+    health 503 · unavailable<br>
+    2026-11-04T16:18:44Z
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <button class="hamburger" type="button" id="nav-burger" aria-label="Open navigation">☰</button>
+    <div class="crumbs"><a href="index.html">Hub</a><span>/</span><b>Scans &amp; patches</b></div>
+    <div class="spacer"></div>
+    <button class="searchbtn" type="button" id="open-search" aria-keyshortcuts="Control+K">
+      <span class="lbl">Search</span> <kbd>⌘K</kbd>
+    </button>
+    <a class="btn primary" href="mailto:terrell0780@gmail.com?subject=Elitze%20access%20request">Request access</a>
+  </div>
+
+  <main class="content" id="main">
+<div class="reveal spread">
+  <div>
+    <span class="tagline">Real scan · automatic + manual</span>
+    <h2>Findings with a patch plan attached</h2>
+    <p class="lede">Generated from an actual run of the engine against <code>vellaveto/site</code>
+    at 2026-11-04T16:08:18Z. Click a row for the exact command, verification and rollback.</p>
+  </div>
+  <span class="badge" data-s="VERIFIED">feeds VERIFIED</span>
+</div>
+
+<div class="tiles">
+  <div class="tile warn"><b>14</b><span>findings</span><small>scan 9f35388b8a1fe8c3</small></div>
+  <div class="tile bad"><b>6</b><span>high severity</span><small>7 medium · 1 low</small></div>
+  <div class="tile info"><b>291</b><span>exact versions queried</span><small>OSV querybatch + per-advisory lookup</small></div>
+  <div class="tile ok"><b>6</b><span>with a patch plan</span><small>KEV-listed: 0</small></div>
+</div>
+
+<div class="filters mt18" role="group" aria-label="Filter findings by severity">
+  <button class="chip" type="button" data-sev="all" aria-pressed="true">All</button>
+  <button class="chip" type="button" data-sev="high" aria-pressed="false">High</button>
+  <button class="chip" type="button" data-sev="medium" aria-pressed="false">Medium</button>
+  <button class="chip" type="button" data-sev="low" aria-pressed="false">Low</button>
+  <span class="muted" style="margin-left:auto;font-size:11.5px" id="scan-meta"></span>
+</div>
+
+<div class="tablewrap">
+  <table>
+    <thead><tr><th scope="col">Severity</th><th scope="col">Finding</th><th scope="col">Package</th>
+      <th scope="col">CVSS</th><th scope="col">EPSS</th><th scope="col">Fix</th></tr></thead>
+    <tbody id="fbody"></tbody>
+  </table>
+</div>
+
+<div class="drawer" id="drawer" hidden>
+  <div class="head">
+    <div><h3 id="d-title">—</h3><p class="muted" style="margin:2px 0 0;font-size:12px" id="d-meta"></p></div>
+    <button class="chip" type="button" id="d-close">Close</button>
+  </div>
+  <div class="body">
+    <div><div class="kv"><b>Patch strategy</b><span id="d-strategy">—</span></div></div>
+    <div><div class="kv"><b>Blast radius</b><span id="d-blast">—</span></div></div>
+    <div style="grid-column:1/-1">
+      <div class="kv" style="border:0;padding:0"><b>Command</b></div>
+      <div class="cmd mt8"><code id="d-cmd">—</code><button class="btn tiny ghost" type="button" id="d-copy">Copy</button></div>
+    </div>
+    <div><div class="kv"><b>Verify</b><ul style="margin:4px 0 0 16px;padding:0" id="d-verify"></ul></div></div>
+    <div><div class="kv"><b>Rollback</b><span id="d-rollback">—</span></div></div>
+    <div style="grid-column:1/-1"><div class="kv" style="border:0;padding:0"><b>Sources</b><span id="d-sources" style="font-size:12px"></span></div></div>
+  </div>
+</div>
+
+<h2 class="mt26">Exploit likelihood, not vibes</h2>
+<p class="lede">EPSS probability of exploitation in the next 30 days, joined to KEV and the
+advisory's fixed version. Bars are the real values from this scan.</p>
+<div class="two">
+  <div class="card"><h3>Top exposure in this estate</h3><div class="bars" id="bars"></div></div>
+  <div class="card soft">
+    <h3>Feed state at scan time</h3>
+    <dl style="display:grid;grid-template-columns:auto 1fr;gap:6px 12px;font-size:12.5px;margin:8px 0 0">
+      <dt class="muted">OSV.dev</dt><dd class="mono" style="margin:0;text-align:right">VERIFIED</dd>
+      <dt class="muted">CISA KEV</dt><dd class="mono" style="margin:0;text-align:right">VERIFIED (cache)</dd>
+      <dt class="muted">FIRST EPSS</dt><dd class="mono" style="margin:0;text-align:right">VERIFIED</dd>
+      <dt class="muted">KEV catalog</dt><dd class="mono" style="margin:0;text-align:right">2026.11.03</dd>
+      <dt class="muted">Observed at</dt><dd class="mono" style="margin:0;text-align:right">2026-11-04T16:08:13Z</dd>
+    </dl>
+    <div class="note mt12"><b>Rule:</b> if a feed fails, the field reads UNMEASURABLE. A missing score
+    is never rendered as zero risk.</div>
+  </div>
+</div>
+
+<div class="note mt18"><b>What the engine does and does not do.</b> It resolves exact versions from
+manifests and lockfiles, queries OSV.dev, computes CVSS v3.1 base scores from the published vector,
+joins CISA KEV and FIRST EPSS, and writes a patch plan. It does <b>not</b> perform AST reachability
+analysis, it does <b>not</b> execute the patch, and a downgrade is never recommended — when no fixed
+version sits above the installed one, it says so.</div>
+    <footer class="site">
+      <nav aria-label="Footer">
+        <a href="graph.html">Graph</a><a href="scans.html">Scans</a><a href="email.html">Email</a>
+        <a href="sara.html">Sara</a><a href="compare.html">Compare</a><a href="trust.html">Trust</a>
+        <a href="security.txt">security.txt</a>
+      </nav>
+      <div>© 2026 TrueElitze Digital · Terrell Hall · Victoria, BC, Canada<br>
+      Built 2026-11-04T16:18:46Z. Every figure is traced to a source and a timestamp; a failed
+      measurement reads UNMEASURABLE, never zero.</div>
+    </footer>
+  </main>
+</div>
+
+<div class="scrim" id="scrim" data-open="false"></div>
+<div class="palette" id="palette" data-open="false" role="dialog" aria-modal="true" aria-label="Search">
+  <label class="sr-only" for="q">Search Elitze</label>
+  <input id="q" type="text" placeholder="Search pages, findings, integrations…" autocomplete="off">
+  <div class="results" id="results"></div>
+</div>
+
+<script src="assets/data.js"></script>
+<script src="assets/site.js" defer></script>
+</body>
+</html>

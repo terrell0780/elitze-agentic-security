@@ -11,7 +11,9 @@ const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION;
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: { default: "ELITZE Agentic Security | See the threat. Control the path. Prove the fix.", template: "%s | ELITZE Agentic Security" },
+  // `absolute` (not `default` + `template`): page-level titles already carry the brand, and a
+  // template would append "| ELITZE Agentic Security" a second time on every route.
+  title: { absolute: "ELITZE Agentic Security | See the threat. Control the path. Prove the fix." },
   description: "ELITZE Agentic Security protects sensitive execution paths with identity-aware access control, reachability analysis, policy enforcement, runtime observation, and evidence-backed remediation.",
   applicationName: "ELITZE Agentic Security",
   category: "cybersecurity",

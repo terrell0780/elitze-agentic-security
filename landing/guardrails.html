@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guardrails · ELITZE Agentic Security</title>
+<meta name="description" content="Elitze Agentic Security — agent and MCP control plane: inventory, reachability, pre-execution policy, real scans with patch plans, and evidence that says UNKNOWN when it is unknown.">
+<meta property="og:title" content="Guardrails · ELITZE Agentic Security">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#040f18">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body data-nav="open">
+<a class="sr-only" href="#main">Skip to content</a>
+
+<aside class="sidebar" aria-label="Site navigation">
+  <div class="brandrow">
+    <span class="brandmark" aria-hidden="true">E</span>
+    <span class="brandtext"><b>ELITZE</b><span>Agentic Security</span></span>
+    <button class="sidebar-toggle" type="button" id="nav-toggle" aria-label="Collapse navigation">‹</button>
+  </div>
+  <div class="navgroup"><span>Overview</span><a class="navlink" href="index.html"><span class="ico" aria-hidden="true">◈</span><span class="lbl">Hub</span></a></div><div class="navgroup"><span>Control</span><a class="navlink" href="graph.html"><span class="ico" aria-hidden="true">◎</span><span class="lbl">God&#x27;s-eye graph</span></a><a class="navlink" href="guardrails.html" aria-current="page"><span class="ico" aria-hidden="true">⛨</span><span class="lbl">Guardrails</span></a><a class="navlink" href="scans.html"><span class="ico" aria-hidden="true">⧗</span><span class="lbl">Scans &amp; patches</span></a><a class="navlink" href="email.html"><span class="ico" aria-hidden="true">✉</span><span class="lbl">Email posture</span></a></div><div class="navgroup"><span>Agent</span><a class="navlink" href="sara.html"><span class="ico" aria-hidden="true">◐</span><span class="lbl">Sara</span></a></div><div class="navgroup"><span>Assurance</span><a class="navlink" href="integrations.html"><span class="ico" aria-hidden="true">⇄</span><span class="lbl">Integrations</span></a><a class="navlink" href="compare.html"><span class="ico" aria-hidden="true">⚖</span><span class="lbl">Compare</span></a><a class="navlink" href="plans.html"><span class="ico" aria-hidden="true">$</span><span class="lbl">Plans</span></a><a class="navlink" href="faq.html"><span class="ico" aria-hidden="true">?</span><span class="lbl">FAQ</span></a><a class="navlink" href="contact.html"><span class="ico" aria-hidden="true">✎</span><span class="lbl">Contact</span></a><a class="navlink" href="trust.html"><span class="ico" aria-hidden="true">✓</span><span class="lbl">Trust</span></a></div>
+  <div class="sidefoot">
+    <b>Measured build</b><br>
+    health 503 · unavailable<br>
+    2026-11-04T16:18:44Z
+  </div>
+</aside>
+
+<div class="main">
+  <div class="topbar">
+    <button class="hamburger" type="button" id="nav-burger" aria-label="Open navigation">☰</button>
+    <div class="crumbs"><a href="index.html">Hub</a><span>/</span><b>Guardrails</b></div>
+    <div class="spacer"></div>
+    <button class="searchbtn" type="button" id="open-search" aria-keyshortcuts="Control+K">
+      <span class="lbl">Search</span> <kbd>⌘K</kbd>
+    </button>
+    <a class="btn primary" href="mailto:terrell0780@gmail.com?subject=Elitze%20access%20request">Request access</a>
+  </div>
+
+  <main class="content" id="main">
+<div class="reveal">
+  <span class="tagline">Zero trust · guardrails</span>
+  <h2>Decide before the call, not after</h2>
+  <p class="lede">Change the actor, the tool and the scope. The reference policy engine evaluates
+  every rule and shows its trace — default deny, no ambient authority.</p>
+</div>
+<div class="two mt12">
+  <div class="card">
+    <div class="grid2">
+      <div><label class="field" for="p-principal">Principal</label>
+        <select id="p-principal">
+          <option value="human_verified">Human · SSO verified</option>
+          <option value="agent_sara">Agent · Sara (assistant)</option>
+          <option value="agent_unverified">Agent · unregistered runtime</option>
+          <option value="svc_ci">Service · GitHub Actions (OIDC)</option>
+        </select></div>
+      <div><label class="field" for="p-tool">Tool call</label>
+        <select id="p-tool">
+          <option value="read_inventory">mcp.filesystem.read</option>
+          <option value="create_pr">github.create_pull_request</option>
+          <option value="send_email">email.send_external</option>
+          <option value="attach_policy">aws.iam.attach_role_policy</option>
+          <option value="export_evidence">data.export_tenant_evidence</option>
+        </select></div>
+      <div><label class="field" for="p-scope">Authorization scope</label>
+        <select id="p-scope">
+          <option value="in_scope">Inside written scope</option>
+          <option value="out_of_scope">Outside written scope</option>
+          <option value="expired">Expired authorization</option>
+        </select></div>
+      <div><label class="field" for="p-approval">Human approval</label>
+        <select id="p-approval">
+          <option value="yes">Present, named operator</option>
+          <option value="no">Absent</option>
+        </select></div>
+    </div>
+    <div class="verdict" id="verdict" data-v="DENY">DENY</div>
+    <p class="muted" style="font-size:12.5px" id="verdict-why">Evaluating…</p>
+    <ul class="trace" id="trace" aria-live="polite"></ul>
+  </div>
+  <div class="card soft">
+    <h3>Invariants the runtime holds</h3>
+    <ul class="invariants mt8">
+      <li><span>01</span><div><b>No ambient authority.</b> A tool call carries its own verified identity, scope and expiry.</div></li>
+      <li><span>02</span><div><b>Default deny.</b> Absent a matching grant the call does not execute — it queues or fails closed.</div></li>
+      <li><span>03</span><div><b>Approval is a record.</b> Named operator, timestamp, decision, exact arguments.</div></li>
+      <li><span>04</span><div><b>The model is not the boundary.</b> Prompt instructions never widen a permission.</div></li>
+      <li><span>05</span><div><b>Every decision is evidenced.</b> Rule trace, inputs and outcome retained per tenant.</div></li>
+    </ul>
+    <div class="note mt12"><b>Honest scope:</b> this panel is a reference implementation of the
+    documented policy model running in your browser. The same rule set is what the runtime enforces
+    server-side; nothing here claims a live tenant.</div>
+  </div>
+</div>
+    <footer class="site">
+      <nav aria-label="Footer">
+        <a href="graph.html">Graph</a><a href="scans.html">Scans</a><a href="email.html">Email</a>
+        <a href="sara.html">Sara</a><a href="compare.html">Compare</a><a href="trust.html">Trust</a>
+        <a href="security.txt">security.txt</a>
+      </nav>
+      <div>© 2026 TrueElitze Digital · Terrell Hall · Victoria, BC, Canada<br>
+      Built 2026-11-04T16:18:46Z. Every figure is traced to a source and a timestamp; a failed
+      measurement reads UNMEASURABLE, never zero.</div>
+    </footer>
+  </main>
+</div>
+
+<div class="scrim" id="scrim" data-open="false"></div>
+<div class="palette" id="palette" data-open="false" role="dialog" aria-modal="true" aria-label="Search">
+  <label class="sr-only" for="q">Search Elitze</label>
+  <input id="q" type="text" placeholder="Search pages, findings, integrations…" autocomplete="off">
+  <div class="results" id="results"></div>
+</div>
+
+<script src="assets/data.js"></script>
+<script src="assets/site.js" defer></script>
+</body>
+</html>
