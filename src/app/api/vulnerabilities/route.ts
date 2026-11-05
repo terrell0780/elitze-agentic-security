@@ -7,14 +7,22 @@ export const runtime = "nodejs";
 const NVD_URL = "https://services.nvd.nist.gov/rest/json/cves/2.0";
 const KEV_URL = "https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json";
 const EPSS_URL = "https://api.first.org/data/v1/epss";
+const OSV_QUERY_URL = "https://api.osv.dev/v1/query";
+const OSV_VULN_URL = "https://api.osv.dev/v1/vulns/";
+const GH_ADVISORY_URL = "https://api.github.com/advisories";
 
-const modeSet = new Set(["cve", "kev", "zero-day", "package"]);
+const modeSet = new Set(["cve", "kev", "zero-day", "package", "osv", "advisory", "ghsa"]);
 
-const fetchJson = async (url: string, headers: Record<string, string> = {}) => {
+const fetchJson = async (
+  url: string,
+  headers: Record<string, string> = {},
+  init: { method?: string; body?: string } = {},
+) => {
   const response = await fetch(url, {
     headers: { accept: "application/json", "user-agent": "ELITZE-Agentic-Security/1.0", ...headers },
     cache: "no-store",
     signal: AbortSignal.timeout(12_000),
+    ...init,
   });
   if (!response.ok) throw new Error("upstream_http_" + response.status);
   return response.json() as Promise<any>;
@@ -77,6 +85,102 @@ function normalizeKev(item: any) {
     dueDate: item?.dueDate ?? null,
     external: true,
   };
+}
+
+
+type OsvInput = { package?: { name: string; ecosystem?: string }; vuln_id?: string };
+
+function normalizeOsvVuln(item: any) {
+  const id = String(item?.id ?? "");
+  const aliases = Array.isArray(item?.aliases) ? item.aliases.map(String) : [];
+  const cve = aliases.find((a: string) => /^CVE-/i.test(a)) ?? (id.startsWith("CVE-") ? id : null);
+  const severity = (item?.database_specific ?? {}).severity ?? null;
+  const vector = (item?.severity ?? []).find((s: any) => String(s?.type ?? "").startsWith("CVSS"))?.score ?? null;
+  const fixed: string[] = [];
+  for (const affected of item?.affected ?? []) {
+    for (const range of affected?.ranges ?? []) {
+      for (const event of range?.events ?? []) {
+        if (event?.fixed) fixed.push(`${affected?.package?.name ?? "?"}@${event.fixed}`);
+      }
+    }
+  }
+  return {
+    id: id || "OSV",
+    source: "OSV.dev",
+    title: String(item?.summary ?? id ?? "OSV advisory").slice(0, 200),
+    url: id ? OSV_VULN_URL + encodeURIComponent(id) : "https://api.osv.dev",
+    description: String(item?.details ?? item?.summary ?? "Open Source Vulnerability advisory."),
+    cvss: null,
+    cvss_vector: vector,
+    severity_label: severity,
+    epss: null,
+    kev: false,
+    published: item?.published ?? null,
+    modified: item?.modified ?? null,
+    aliases,
+    fixed_versions: fixed.slice(0, 12),
+    references: Array.isArray(item?.references)
+      ? item.references.slice(0, 8).map((r: any) => String(r?.url ?? r)).filter(Boolean)
+      : [],
+    external: true,
+  };
+}
+
+async function osvByPackage(query: string, ecosystem: string | null) {
+  const pkg: Record<string, string> = { name: query };
+  if (ecosystem) pkg.ecosystem = ecosystem;
+  const payload = await fetchJson(OSV_QUERY_URL, {
+    "content-type": "application/json",
+  }, { method: "POST", body: JSON.stringify({ package: pkg }) });
+  const vulns = Array.isArray(payload?.vulns) ? payload.vulns : [];
+  return vulns.slice(0, 20).map(normalizeOsvVuln);
+}
+
+async function osvById(query: string) {
+  if (!/^(CVE-|GHSA-|OSV-|PYSEC-|RUSTSEC-)/i.test(query)) return [];
+  const payload = await fetchJson(OSV_VULN_URL + encodeURIComponent(query));
+  return [normalizeOsvVuln(payload)].filter((item) => item.id && item.id !== "OSV");
+}
+
+function normalizeGhAdvisory(item: any) {
+  const ghsa = String(item?.ghsa_id ?? "");
+  const cve = String(item?.cve_id ?? "");
+  const id = cve || ghsa || "GHSA";
+  const cvss = item?.cvss?.score ?? null;
+  return {
+    id,
+    source: "GitHub Advisory",
+    title: String(item?.summary ?? id ?? "GitHub advisory").slice(0, 200),
+    url: String(item?.html_url ?? (ghsa ? "https://github.com/advisories/" + ghsa : "https://github.com/advisories")),
+    description: String(item?.description ?? item?.summary ?? "GitHub Advisory Database entry."),
+    cvss: typeof cvss === "number" ? cvss : null,
+    epss: null,
+    kev: false,
+    published: item?.published_at ?? null,
+    modified: item?.updated_at ?? null,
+    ghsa: ghsa || null,
+    severity: item?.severity ?? null,
+    ecosystems: Array.isArray(item?.vulnerabilities)
+      ? [...new Set(item.vulnerabilities.map((v: any) => String(v?.package?.ecosystem ?? "")).filter(Boolean))]
+      : [],
+    references: Array.isArray(item?.references) ? item.references.slice(0, 8).map(String) : [],
+    external: true,
+  };
+}
+
+async function githubAdvisories(query: string) {
+  const headers: Record<string, string> = {
+    accept: "application/vnd.github+json",
+    "x-github-api-version": "2022-11-28",
+  };
+  const token = process.env.GITHUB_TOKEN?.trim() || process.env.GH_TOKEN?.trim();
+  if (token) headers.authorization = "Bearer " + token;
+  const url = new URL(GH_ADVISORY_URL);
+  url.searchParams.set("per_page", "20");
+  if (query) url.searchParams.set("keywords", query);
+  const payload = await fetchJson(url.toString(), headers);
+  const rows = Array.isArray(payload) ? payload : [];
+  return rows.map(normalizeGhAdvisory);
 }
 
 async function cisaKev(query: string) {
@@ -173,26 +277,52 @@ export async function GET(request: NextRequest) {
   const mode = (params.get("mode") ?? "cve").trim().toLowerCase();
   const query = (params.get("q") ?? "").trim().slice(0, 240);
   if (!modeSet.has(mode)) return NextResponse.json({ ok: false, error: "invalid_mode", truth_state: "UNMEASURABLE", evidence_reference: null }, { status: 400 });
-  if (!query) return NextResponse.json({ ok: false, error: "query_required", truth_state: "UNMEASURABLE", evidence_reference: null }, { status: 400 });
+  if (!query && mode !== "kev") return NextResponse.json({ ok: false, error: "query_required", truth_state: "UNMEASURABLE", evidence_reference: null }, { status: 400 });
   const vprContext = parseVprContext(params);
 
   try {
     let results: any[] = [];
     const sourceStates: Record<string, string> = {};
 
+    const ecosystem = params.get("ecosystem")?.trim() || null;
     if (mode === "kev") {
       try { results = await cisaKev(query); sourceStates.cisaKev = "LIVE"; }
       catch { sourceStates.cisaKev = "UNAVAILABLE"; }
+    } else if (mode === "osv") {
+      try {
+        results = await osvById(query);
+        sourceStates.osv = "LIVE";
+      } catch {
+        try {
+          results = await osvByPackage(query, ecosystem);
+          sourceStates.osv = "LIVE";
+        } catch { sourceStates.osv = "UNAVAILABLE"; }
+      }
+    } else if (mode === "advisory" || mode === "ghsa") {
+      try { results = await githubAdvisories(query); sourceStates.githubAdvisory = "LIVE"; }
+      catch { sourceStates.githubAdvisory = "UNAVAILABLE"; }
+      results = await enrichEpss(results);
     } else if (mode === "cve" || mode === "package") {
       try { results = await nvd(query); sourceStates.nvd = "LIVE"; }
       catch { sourceStates.nvd = "UNAVAILABLE"; }
+      if (mode === "package") {
+        try {
+          const osvResults = await osvByPackage(query, ecosystem);
+          results.push(...osvResults);
+          sourceStates.osv = "LIVE";
+        } catch { sourceStates.osv = "UNAVAILABLE"; }
+      }
       results = await enrichEpss(results);
     } else {
-      const [kevResults, nvdResults] = await Promise.allSettled([cisaKev(query), nvd(query)]);
+      const [kevResults, nvdResults, advisoryResults] = await Promise.allSettled([
+        cisaKev(query), nvd(query), githubAdvisories(query),
+      ]);
       if (kevResults.status === "fulfilled") { results.push(...kevResults.value); sourceStates.cisaKev = "LIVE"; }
       else sourceStates.cisaKev = "UNAVAILABLE";
       if (nvdResults.status === "fulfilled") { results.push(...nvdResults.value); sourceStates.nvd = "LIVE"; }
       else sourceStates.nvd = "UNAVAILABLE";
+      if (advisoryResults.status === "fulfilled") { results.push(...advisoryResults.value); sourceStates.githubAdvisory = "LIVE"; }
+      else sourceStates.githubAdvisory = "UNAVAILABLE";
       results = await enrichEpss(results);
     }
 

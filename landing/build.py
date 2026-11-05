@@ -4,7 +4,7 @@ Inputs are read live at build time — the newest scan JSON, the platform health
 the CISA KEV cache and DNS-over-HTTPS records. A failed source renders as UNMEASURABLE.
 
     python build.py                       # newest scan, all pages
-    python build.py --label vellaveto/site
+    python build.py --label authorized-sample-tree
 """
 from __future__ import annotations
 
@@ -27,7 +27,7 @@ KEV_CACHE = [HERE.parent / "elitze-scan" / "data" / "cache" / "kev.json",
 
 NAV = [
     ("Overview", [("index.html", "Hub", "◈")]),
-    ("Control", [("graph.html", "God's-eye graph", "◎"),
+    ("Control", [("graph.html", "Security Atlas", "◎"),
                  ("guardrails.html", "Guardrails", "⛨"),
                  ("scans.html", "Scans & patches", "⧗"),
                  ("email.html", "Email posture", "✉")]),
@@ -241,7 +241,7 @@ def tiles(scan: dict, health_state: dict[str, str], kev: int | None, dnsf: dict[
 
 def page_hub(scan: dict, health_state: dict[str, str], kev: int | None, dnsf: dict[str, str]) -> str:
     hub = [
-        ("graph.html", "God's-eye graph", "Identity → gateway → tool → data, with the evidence state of every node.", "interactive"),
+        ("graph.html", "Security Atlas", "Identity → gateway → tool → data, with the evidence state of every node.", "interactive"),
         ("guardrails.html", "Guardrails", "Default-deny policy decisions with the rule trace shown.", "zero trust"),
         ("scans.html", "Scans & patches", "14 real advisories with commands, verification and rollback.", "measured"),
         ("email.html", "Email posture", "SPF, DMARC, MX and header forensics — including what fails.", "measured"),
@@ -277,7 +277,7 @@ Where a value could not be read it says UNMEASURABLE.</div>"""
 
 def page_graph(scan: dict) -> str:
     return """<div class="reveal">
-  <span class="tagline">God's-eye view</span>
+  <span class="tagline">Security Atlas</span>
   <h2>The whole estate, one field</h2>
   <p class="lede">Identity → gateway → tool → data. Click any node for its evidence state. Rings
   mark what is verified, declared, or still unknown.</p>
@@ -666,8 +666,8 @@ def page_faq() -> str:
          "No. The engine produces a plan — target version, command, verification, rollback, blast radius. Execution stays with a human or an approved CI job."),
         ("Why does one finding have no fix?",
          "Because every advisory fix for that package is older than the installed version. Recommending it would be a downgrade, so the plan is withheld and the finding says why."),
-        ("Is Sara the same as Lindy?",
-         "No. Sara is Elitze's security assistant. The agent surface borrows the shape people expect from workflow agents — triggers, email triage, scheduling, approvals — but it operates inside tenant authorization and cannot self-grant."),
+        ("Is Sara a general-purpose chatbot?",
+         "No. Sara is the ELITZE security assistant. It investigates, drafts and prepares inside tenant authorization and cannot self-grant. It is not a general-purpose agent."),
         ("Do you hold SOC 2 or ISO 27001?",
          "No. None held, stated plainly on the trust page."),
         ("How do I pay?",
@@ -732,7 +732,7 @@ def main() -> int:
 
     pages = {
         "index.html": ("Hub", "Hub", page_hub(scan, health_state, kev, dnsf)),
-        "graph.html": ("God's-eye graph", "God's-eye graph", page_graph(scan)),
+        "graph.html": ("Security Atlas", "Security Atlas", page_graph(scan)),
         "guardrails.html": ("Guardrails", "Guardrails", page_guardrails()),
         "scans.html": ("Scans & patches", "Scans & patches", page_scans(scan)),
         "email.html": ("Email posture", "Email posture", page_email(dnsf)),

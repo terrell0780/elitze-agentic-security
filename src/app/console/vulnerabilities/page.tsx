@@ -50,6 +50,8 @@ const modes = [
   { value: "kev", label: "CISA KEV" },
   { value: "zero-day", label: "Zero-day signals" },
   { value: "package", label: "Package / product" },
+  { value: "osv", label: "OSV.dev" },
+  { value: "advisory", label: "GitHub Advisory" },
 ];
 
 function score(value?: number | null) {
@@ -76,7 +78,7 @@ export default function VulnerabilitiesPage() {
 
   const runSearch = useCallback(async (value = query, selectedMode = mode) => {
     const q = value.trim();
-    if (!q) return;
+    if (!q && selectedMode !== "kev") return;
     setBusy(true);
     setError(null);
     try {

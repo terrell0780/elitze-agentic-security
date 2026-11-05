@@ -44,10 +44,10 @@
     (D.scan.findings || []).forEach(function (f) {
       INDEX.push({ t: f.title, k: "finding · " + f.severity, target: "scans.html", id: f.id });
     });
-    ["God's-eye graph", "Guardrail simulator", "Patch plans", "DMARC", "TeamSpeak",
+    ["Security Atlas", "Guardrail simulator", "Patch plans", "DMARC", "TeamSpeak",
      "Parity matrix", "Pricing", "Trust page", "security.txt"].forEach(function (t) {
       var map = {
-        "God's-eye graph": "graph.html", "Guardrail simulator": "guardrails.html",
+        "Security Atlas": "graph.html", "Guardrail simulator": "guardrails.html",
         "Patch plans": "scans.html", "DMARC": "email.html", "TeamSpeak": "integrations.html",
         "Parity matrix": "compare.html", "Pricing": "plans.html", "Trust page": "trust.html",
         "security.txt": "security.txt"
