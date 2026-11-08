@@ -92,7 +92,7 @@ export default function HomePage() {
                 ["About", "/about"],
                 ["FAQ", "/faq"],
                 ["Console", "/console"],
-                ["Acquisition / Sales", "/sales"],
+                ["Console", "/console"],
               ].map(([label, href]) => (
                 <Link key={href} href={href} onClick={() => setMobileOpen(false)} className="rounded-lg px-3 py-3 text-sm text-[var(--muted)]">
                   {label}
@@ -126,9 +126,9 @@ export default function HomePage() {
               <Link href="/console" className="group inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-slate-950 shadow-[0_16px_46px_rgba(34,211,238,.12)]">
                 Enter ELITZE <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" />
               </Link>
-              <Link href="/sales" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold">
-                Acquisition / Enterprise <ArrowRight className="h-4 w-4" />
-              </Link>
+              <a href="mailto:tsh_cook@hotmail.com" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold">
+                Contact tsh_cook@hotmail.com <ArrowRight className="h-4 w-4" />
+              </a>
             </div>
             <div className="mt-8 flex flex-wrap gap-2 text-[10px] font-semibold uppercase tracking-[.14em] text-[var(--muted)]">
               <span className="rounded-full border border-[var(--border)] px-3 py-1.5">Agent discovery</span>
@@ -255,9 +255,9 @@ export default function HomePage() {
           <Link href="/console" className="inline-flex items-center gap-2 rounded-xl bg-[var(--accent)] px-5 py-3 text-sm font-semibold text-slate-950">
             Open Console <ArrowRight className="h-4 w-4" />
           </Link>
-          <Link href="/sales" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold">
-            Acquisition / Enterprise sales
-          </Link>
+          <a href="mailto:tsh_cook@hotmail.com" className="inline-flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--panel)] px-5 py-3 text-sm font-semibold">
+            Contact tsh_cook@hotmail.com <ArrowRight className="h-4 w-4" />
+          </a>
         </div>
       </section>
 
@@ -270,7 +270,7 @@ export default function HomePage() {
           <nav className="flex flex-wrap gap-4">
             <Link href="/privacy">Privacy</Link>
             <Link href="/terms">Terms</Link>
-            <Link href="/sales">Sales / Acquisition</Link>
+            <a className="hover:text-slate-300" href="mailto:tsh_cook@hotmail.com">Support</a>
             <Link href="/security">Security</Link>
           </nav>
         </div>
