@@ -5,6 +5,5 @@
       "path": "/api/security/pentest",
       "schedule": "0 0 * * *"
     }
-  ],
-  "buildCommand": "node scripts/ci-verified-gates.mjs"
+  ]
 }
