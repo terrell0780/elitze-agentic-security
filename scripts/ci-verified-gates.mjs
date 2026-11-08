@@ -19,8 +19,10 @@ const gates = [
 
 for (const [name, args] of gates) {
   console.log(`\n=== ${name} ===`);
-  const result = spawnSync("npm", args, {
+  const npmCommand = process.platform === "win32" ? "npm" : "npm";
+  const result = spawnSync(npmCommand, args, {
     stdio: "inherit",
+    shell: process.platform === "win32",
     env: { ...process.env, CI: "true" },
   });
 
