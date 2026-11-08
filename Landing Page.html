@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ELITZE Security — Enterprise Cybersecurity Platform</title>
+<meta name="description" content="ELITZE Security helps security teams detect, investigate, contain, and remediate risk from one control plane.">
+<style>
+:root { --bg:#070b12; --panel:#0d1520; --card:#101b2c; --ink:#e8f1ff; --muted:#93a8c8; --line:rgba(147,168,200,.18); --accent:#26e6c7; --warn:#ffb347; --radius:14px; }
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Plus Jakarta Sans",system-ui,sans-serif;line-height:1.6}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+nav.top{position:sticky;top:0;z-index:20;backdrop-filter:blur(18px);background:color-mix(in srgb,var(--bg) 84%,transparent);border-bottom:1px solid var(--line)}
+.wrap{width:min(1160px,calc(100% - 2rem));margin-inline:auto}
+.nav-row{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:64px}
+.brand{font-weight:700;letter-spacing:-.02em;color:var(--ink)}
+.nav-links{display:flex;gap:1.2rem;color:var(--muted);font-size:.95rem}
+nav a{color:var(--muted);text-decoration:none}
+nav a:hover{color:var(--ink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.5rem;min-height:46px;padding:0 1.1rem;border-radius:10px;border:1px solid var(--line);color:var(--ink);background:var(--card);font-weight:600}
+.btn.primary{background:var(--accent);color:#001216;border-color:var(--accent)}
+.hero{padding:5rem 0 2.5rem}
+.eyebrow{color:var(--accent);font-size:.84rem;letter-spacing:.12em;text-transform:uppercase;font-weight:600}
+h1{font-size:clamp(2.6rem,5vw,4.5rem);line-height:1.05;margin:.8rem 0;letter-spacing:-.03em;max-width:12ch}
+.lead{max-width:62ch;font-size:1.15rem;color:var(--muted)}
+.hero-grid{display:grid;gap:2rem;grid-template-columns:1fr}
+.checks{list-style:none;padding:0;margin:1.5rem 0 0;display:grid;gap:.6rem;color:var(--muted)}
+.checks li{padding-left:1.4rem;position:relative}
+.checks li::before{content:"+" ;color:var(--accent);position:absolute;left:0}
+.visual{min-height:280px;background:linear-gradient(195deg,#0e1b2f,#070b12);border:1px solid var(--line);border-radius:var(--radius);position:relative;overflow:hidden}
+.pane{position:absolute;inset:1.5rem;border:1px solid rgba(38,230,199,.28);border-radius:10px;background:rgba(8,17,30,.8);padding:1rem;font-family:ui-monospace,monospace;color:#8df7dd;font-size:.82rem;overflow:hidden}
+.scan{position:absolute;left:0;right:0;height:2px;background:var(--accent);box-shadow:0 0 24px var(--accent);top:30%;animation:scan 3.6s ease-in-out infinite}
+@keyframes scan{0%{top:18%;opacity:.3}50%{top:78%;opacity:1}100%{top:18%;opacity:.3}}
+section{padding:3.5rem 0;border-top:1px solid var(--line)}
+h2{font-size:2rem;letter-spacing:-.02em;margin:0 0 .75rem}
+.section-lead{max-width:72ch;color:var(--muted);margin-bottom:1.5rem}
+.cols{display:grid;gap:1rem;grid-template-columns:1fr}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:1.2rem}
+.card h3{margin:0 0 .35rem;font-size:1.08rem}
+.card p{margin:0;color:var(--muted);font-size:.94rem}
+.capability{display:grid;gap:1.1rem;margin-bottom:1.2rem}
+.media{min-height:130px;border:1px solid var(--line);border-radius:var(--radius);background:#091322;padding:1rem;color:#93ffd2;font-family:ui-monospace,monospace;font-size:.82rem}
+.steps{display:grid;gap:1rem;grid-template-columns:1fr}
+.step-num{color:var(--accent);font-weight:700;margin-right:.4rem}
+.contact-panel{text-align:center;padding:4.5rem 1rem}
+.email{display:inline-block;font-family:ui-monospace,monospace;color:var(--accent);font-size:1.05rem;padding:.85rem 1.25rem;border:1px solid var(--line);border-radius:10px;background:var(--card)}
+footer{border-top:1px solid var(--line);text-align:center;color:#6f85a8;font-size:.85rem;padding:1.4rem}
+@media (min-width:880px){.hero-grid{grid-template-columns:1.05fr .95fr}.cols{grid-template-columns:repeat(3,1fr)}.steps{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<nav class="top"><div class="wrap nav-row">
+  <a class="brand" href="#hero">ELITZE SECURITY</a>
+  <div class="nav-links"><a href="#problems">Problem</a><a href="#capabilities">Capabilities</a><a href="#workflow">Workflow</a><a href="#custody">Custody</a><a href="#contact">Contact</a></div>
+  <a class="btn primary" href="#contact">Request support</a>
+</div></nav>
+
+<header class="hero" id="hero"><div class="wrap hero-grid">
+  <section>
+    <div class="eyebrow">Enterprise cybersecurity control plane</div>
+    <h1>Detect. Contain. Patch. Prove.</h1>
+    <p class="lead">ELITZE Security unifies threat intelligence, infiltration scanning, containment controls, and agent-reviewed remediation workflows for security teams that need clear action paths during incidents.</p>
+    <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:1.5rem">
+      <a class="btn primary" href="#contact">Email tsh_cook@hotmail.com</a>
+      <a class="btn" href="#capabilities">See capabilities</a>
+    </div>
+    <ul class="checks">
+      <li>Threat telemetry and incident records stay inside the investigation context</li>
+      <li>Control actions include quarantine, patch, and gateway-level blocking</li>
+      <li>Human review remains visible for sensitive security changes</li>
+    </ul>
+  </section>
+  <div class="visual" role="img" aria-label="Live operations view">
+    <div class="pane">
+      <p style="margin:0">Operational summary</p>
+      <p style="margin:.8rem 0 0">threat node 185.42.11.9</p>
+      <p style="margin:.4rem 0 0">target runtime API</p>
+      <p style="margin:.4rem 0 0">containment available</p>
+    </div>
+    <div class="scan"></div>
+  </div>
+</div></header>
+
+<main>
+  <section id="problems"><div class="wrap">
+    <h2>Security work loses time when tools do not connect.</h2>
+    <p class="section-lead">Teams often move between visibility, scanning, response, and review tools while pressure increases. ELITZE is built around one practical question: what can we see, contain, and safely change right now?</p>
+    <div class="cols">
+      <div class="card"><h3>Keep context attached</h3><p>Threat records retain attacker origin, target asset, mode of entry, and defense action rather than forcing responders to reconstruct each step.</p></div>
+      <div class="card"><h3>Make controls reviewable</h3><p>Whitelist-oriented boundaries and human approval gates support automated and agent-assisted actions without removing oversight.</p></div>
+      <div class="card"><h3>Preserve custody</h3><p>Customer-managed KMS, zero-egress options, and append-only Merkle audit chains help teams preserve technical control of sensitive environments.</p></div>
+    </div>
+  </div></section>
+
+  <section id="capabilities"><div class="wrap">
+    <h2>Documented capabilities</h2>
+    <p class="section-lead">The list below describes platform surfaces named in repository documentation. It avoids unsupported performance claims and unverified benchmark numbers.</p>
+    <div class="capability">
+      <div><h3>Threat overview and evidence export</h3><p>Interactive globe and map formats include hover-based incident records, origin, target asset, defense response, and selectable evidence export.</p></div>
+      <div class="media">threat / origin / target / proof hash / export path</div>
+    </div>
+    <div class="capability">
+      <div><h3>Infiltration scan and containment</h3><p>Streaming scan, mitigation-oriented kill-chain tracking, quarantine, patch synthesis, and gateway blocking are paired with response views and approval states.</p></div>
+      <div class="media">stage / progress / approval required / contained</div>
+    </div>
+    <div class="capability">
+      <div><h3>Agent fleet and guardrails</h3><p>OWASP-oriented guardrails include anti-hijack rules, tool restriction, secret redaction, execution depth limits, egress controls, and human-in-the-loop approval.</p></div>
+      <div class="media">auto-pilot / least-privilege tools / egress checked</div>
+    </div>
+  </div></section>
+
+  <section id="workflow"><div class="wrap">
+    <h2>Operational workflow</h2>
+    <p class="section-lead">The intended workflow is simple and reviewable. Actions remain recorded for engineering follow-up, remediation, and incident review.</p>
+    <div class="cols">
+      <div class="card"><h3>Detect</h3><p>Threat telemetry and lateral-movement signals surface with location and object context.</p></div>
+      <div class="card"><h3>Contain</h3><p>Quarantine, patch, or block at the perimeter from the incident-centered control surface.</p></div>
+      <div class="card"><h3>Validate</h3><p>Human approval and signature-backed audit records validate high-risk changes.</p></div>
+      <div class="card"><h3>Report</h3><p>Evidence, event history, and contact information remain available through official support channels.</p></div>
+    </div>
+  </div></section>
+
+  <section id="custody"><div class="wrap">
+    <h2>Data custody and compliance posture</h2>
+    <p class="section-lead">ELITZE emphasizes client-controlled secrets and evidence-oriented operation. Deployment-specific claims should be validated in your environment before production adoption.</p>
+    <div class="cols">
+      <div class="card"><h3>Customer key control</h3><p>Blueprint includes AWS KMS, GCP Cloud KMS, and Vault options for supported custody models.</p></div>
+      <div class="card"><h3>Export and evidence</h3><p>CSV, TSV, and JSON exports are supported across spreadsheet, incident, and threat surfaces.</p></div>
+      <div class="card"><h3>Human-gated change</h3><p>Sensitive operations intentionally leave review and approval with the operator rather than assuming autonomous execution.</p></div>
+    </div>
+  </div></section>
+
+  <section id="contact"><div class="wrap contact-panel">
+    <h2>Official contact channel</h2>
+    <p style="max-width:56ch;margin-inline:auto;color:var(--muted)">For technical inquiries, product demonstrations, security audits, or operational deployment questions, use the sole official contact address below.</p>
+    <p style="margin-top:1.6rem"><a class="email" href="mailto:tsh_cook@hotmail.com">tsh_cook@hotmail.com</a></p>
+    <p style="margin-top:1.5rem;color:#6f85a8;font-size:.9rem">Organization: TrueElitze Digital. Principal architect: Terrell Hall.</p>
+  </div></section>
+</main>
+
+<footer>Copyright 2026 Terrell Hall TrueElitze Digital. All rights reserved.</footer>
+</body>
+</html>
