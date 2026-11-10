@@ -89,6 +89,7 @@
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "drizzle-kit": "0.31.10",
+    "braces": "file:vendor/braces",
     "eslint": "10.13.0",
     "eslint-config-next": "16.4.3",
     "fill-range": "7.1.1",
@@ -103,7 +104,6 @@
   "buildName": "Elitze-Agentic-Security",
   "overrides": {
     "esbuild": "0.25.0",
-    "braces": "file:vendor/braces",
     "sharp": "0.35.5"
   },
   "description": "Identity-aware security controls for AI agents, MCP servers, tools, and sensitive execution paths.",
