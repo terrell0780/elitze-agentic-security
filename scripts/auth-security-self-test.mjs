@@ -25,7 +25,8 @@ const loginPage = read("src/app/login/page.tsx");
 
 assert.match(auth, /httpOnly:\s*true/);
 assert.match(auth, /secure:\s*process\.env\.NODE_ENV === "production"/);
-assert.match(auth, /sameSite:\s*"lax"/);
+assert.match(auth, /sameSite: secure \? \("none" as const\) : \("lax" as const\)/);
+assert.match(auth, /sameSite: process\.env\.NODE_ENV === "production" \? "none" : "lax"/);
 assert.match(auth, /SESSION_IDLE_HOURS/);
 assert.match(auth, /SESSION_ROTATION_HOURS/);
 assert.match(auth, /assertSameOrigin/);

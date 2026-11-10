@@ -152,10 +152,11 @@ export async function consumeRateLimit(bucket: string, maxAttempts: number, wind
 }
 
 function cookieOptions(expires: Date) {
+  const secure = process.env.NODE_ENV === "production";
   return {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax" as const,
+    secure,
+    sameSite: secure ? ("none" as const) : ("lax" as const),
     path: "/",
     expires,
     priority: "high" as const,
@@ -173,7 +174,7 @@ export async function issueMfaLoginChallenge(user: AuthUser) {
   (await cookies()).set("elitze_mfa_challenge", raw, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     path: "/",
     expires,
   });
@@ -349,7 +350,7 @@ export async function issuePrivilegedReauthChallenge(user: AuthUser) {
   (await cookies()).set("elitze_reauth", raw, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     path: "/",
     expires,
   });
