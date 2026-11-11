@@ -1,0 +1,223 @@
+export type SeoResource = {
+  slug: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  sectionTitle: string;
+  keywords: string[];
+  panels: { title: string; body: string; state: string }[];
+  links: { title: string; href: string; description: string }[];
+};
+
+export const seoResources: Record<string, SeoResource> = {
+  "penetration-testing": {
+    slug: "penetration-testing",
+    eyebrow: "Penetration testing / authorized validation",
+    title: "Penetration testing with scope, evidence, and control.",
+    description: "ELITZE helps security teams plan authorized penetration testing against defined assets, identities, tools, and execution paths without presenting an unverified scan as a confirmed compromise.",
+    sectionTitle: "A defensible penetration-testing workflow",
+    keywords: ["penetration testing", "automated penetration testing", "pentesting platform", "ethical hacking"],
+    panels: [
+      { title: "Scope before execution", body: "Define tenant, asset, authorization, time window, and permitted techniques before a validation run can proceed.", state: "Authorization first" },
+      { title: "Evidence-linked findings", body: "Keep source records, request identifiers, timestamps, and returned evidence attached to each finding instead of relying on a severity label alone.", state: "Source linked" },
+      { title: "Automate repeatable checks", body: "Use controlled automation for approved checks while preserving human approval for actions that can affect production systems or sensitive data.", state: "Controlled automation" },
+      { title: "Separate exposure from exploitability", body: "A discovered service or vulnerability does not automatically prove tenant reachability or successful exploitation. ELITZE keeps those states distinct.", state: "Truth bounded" },
+      { title: "Retest the fix", body: "Close the loop by recording the post-remediation check and showing whether the original control path changed.", state: "Retestable" },
+      { title: "Reports for operators", body: "Give defenders an actionable next step, evidence reference, owner, and verification state for every approved test result.", state: "Operational proof" },
+    ],
+    links: [
+      { title: "Adversary emulation", href: "/adversary-emulation", description: "Translate authorized attack hypotheses into scoped validation plans." },
+      { title: "Vulnerability scanning", href: "/vulnerability-scanning", description: "Prioritize public intelligence without confusing it with tenant exposure." },
+      { title: "Threat detection", href: "/threat-detection", description: "Correlate observed signals and preserve the evidence behind response decisions." },
+    ],
+  },
+  "vulnerability-scanning": {
+    slug: "vulnerability-scanning",
+    eyebrow: "Vulnerability scanning / exposure context",
+    title: "Vulnerability scanning that keeps context attached.",
+    description: "ELITZE brings vulnerability intelligence, known-exploited signals, reachability context, and remediation evidence together while clearly labeling what is observed, external, declared, or still unmeasurable.",
+    sectionTitle: "From CVE signal to verified remediation",
+    keywords: ["vulnerability scanner", "vulnerability scanning", "CVE scanner", "vulnerability management"],
+    panels: [
+      { title: "Authoritative sources", body: "Query external vulnerability sources such as NVD, CISA KEV, EPSS, OSV, and GitHub advisories when their integrations are configured.", state: "External source" },
+      { title: "Reachability is separate", body: "A public CVE record does not establish that a tenant asset is affected or reachable. Asset evidence must be supplied independently.", state: "Not inferred" },
+      { title: "Known-exploited priority", body: "Use CISA KEV context to prioritize investigation while preserving the source, observation time, and action required.", state: "KEV aware" },
+      { title: "Evidence-aware scoring", body: "Caller-declared asset criticality and exposure context remain declared inputs; they are not represented as observed facts.", state: "Declared inputs" },
+      { title: "Remediation ownership", body: "Connect a finding to an owner, required action, due date, source URL, and retest state.", state: "Actionable" },
+      { title: "No fabricated results", body: "When a source is unavailable or a query returns no evidence, ELITZE says so instead of substituting synthetic findings.", state: "Truthful empty state" },
+    ],
+    links: [
+      { title: "Network security testing", href: "/network-security", description: "Connect vulnerability findings to authorized network validation." },
+      { title: "Attack surface management", href: "/attack-surface-management", description: "Discover and prioritize the assets and relationships that matter." },
+      { title: "Security integrations", href: "/security-integrations", description: "Connect approved scanning and security-tool sources." },
+    ],
+  },
+  "network-security": {
+    slug: "network-security",
+    eyebrow: "Network security / reachability validation",
+    title: "Network security testing for the paths that matter.",
+    description: "ELITZE helps teams reason about network exposure, service reachability, segmentation, and authorized validation without treating a port, route, or external signal as proof of compromise.",
+    sectionTitle: "Network controls with an evidence boundary",
+    keywords: ["network security testing", "network scanning", "network penetration testing"],
+    panels: [
+      { title: "Asset and route context", body: "Connect network observations to the asset, tenant, workload, and authorization scope that give the result meaning.", state: "Context required" },
+      { title: "Segmentation evidence", body: "Record whether a path was observed as reachable, blocked, or not tested. A missing observation remains unknown.", state: "Observed state" },
+      { title: "Approved tool execution", body: "Gate Nmap and other authorized security-tool actions through tenant policy, operator approval, and explicit scope.", state: "Policy gated" },
+      { title: "External intelligence boundary", body: "Public vulnerability intelligence can inform priority, but it cannot establish network access to a private tenant asset.", state: "External only" },
+      { title: "Sensitive target handling", body: "Require stronger authorization and evidence handling for production, regulated, or high-criticality targets.", state: "Risk aware" },
+      { title: "Retest after change", body: "Compare pre-change and post-change observations and preserve the source references behind both states.", state: "Change proof" },
+    ],
+    links: [
+      { title: "Penetration testing", href: "/penetration-testing", description: "Plan authorized validation with scope and retest evidence." },
+      { title: "Web application security", href: "/web-application-security", description: "Extend network context into application and API paths." },
+      { title: "Threat detection", href: "/threat-detection", description: "Correlate observed authentication, tool, and exfiltration signals." },
+    ],
+  },
+  "web-application-security": {
+    slug: "web-application-security",
+    eyebrow: "Web application security / API testing",
+    title: "Web application security testing with clear proof.",
+    description: "ELITZE supports an evidence-first approach to web application and API security testing, connecting OWASP-oriented hypotheses to authorization, observations, remediation, and retesting.",
+    sectionTitle: "Application security beyond a scan report",
+    keywords: ["web application penetration testing", "application security testing", "OWASP testing"],
+    panels: [
+      { title: "OWASP-oriented coverage", body: "Organize validation around authentication, authorization, input handling, session security, sensitive data, and business-logic boundaries.", state: "Threat informed" },
+      { title: "API and tool boundaries", body: "Trace requests through APIs, MCP servers, tools, and downstream resources instead of treating the web edge as the complete system.", state: "Path aware" },
+      { title: "Authorization before test", body: "Require an explicit target, owner, permitted method, and test window before sensitive application testing proceeds.", state: "Approved scope" },
+      { title: "Finding truth state", body: "Keep reproduced, observed, declared, inferred, unknown, and unmeasurable states visible in the result.", state: "Truth labeled" },
+      { title: "Evidence for developers", body: "Return the request path, source record, impact context, and remediation evidence developers need to fix the issue.", state: "Developer ready" },
+      { title: "Verification loop", body: "Retest the exact control path after the fix and preserve the post-change result.", state: "Verified change" },
+    ],
+    links: [
+      { title: "MCP security", href: "/mcp-security", description: "Secure the agent-to-tool and tool-to-resource boundary." },
+      { title: "Security operations", href: "/security-operations", description: "Connect application findings to investigation and response." },
+      { title: "Penetration testing", href: "/penetration-testing", description: "Run authorized validation without overstating results." },
+    ],
+  },
+  "offensive-security": {
+    slug: "offensive-security",
+    eyebrow: "Offensive security / adversary emulation",
+    title: "Offensive security that improves defensive certainty.",
+    description: "ELITZE helps teams run authorized offensive-security and adversary-emulation workflows with explicit objectives, scope, evidence capture, and retesting rather than theatrical attack claims.",
+    sectionTitle: "Adversary emulation with operational discipline",
+    keywords: ["offensive security", "red team testing", "adversary emulation"],
+    panels: [
+      { title: "Scenario design", body: "Define the actor, objective, target, technique, preconditions, and stop conditions before the exercise begins.", state: "Scoped" },
+      { title: "ATT&CK context", body: "Use technique references as structured context while keeping a source-authored technique distinct from an inferred mapping.", state: "Reference bounded" },
+      { title: "Human approval", body: "Require an authorized operator and tenant policy decision for actions that can affect systems, identities, or data.", state: "Human governed" },
+      { title: "Detection validation", body: "Connect an emulation step to the telemetry and detection rule that should observe it, then record whether evidence arrived.", state: "Detection linked" },
+      { title: "No implied breach", body: "A planned or blocked exercise is not presented as a successful compromise. Outcome states remain explicit.", state: "No overclaim" },
+      { title: "Lessons into control", body: "Convert findings into policy, monitoring, remediation, and retest work with accountable owners.", state: "Defensive loop" },
+    ],
+    links: [
+      { title: "Threat detection", href: "/threat-detection", description: "Validate whether observed signals support a defensible response." },
+      { title: "Penetration testing", href: "/penetration-testing", description: "Run focused, authorized validation against a defined scope." },
+      { title: "AI agent security", href: "/ai-agent-security", description: "Apply offensive-security thinking to agent execution paths." },
+    ],
+  },
+  "security-integrations": {
+    slug: "security-integrations",
+    eyebrow: "Security integrations / connected evidence",
+    title: "Connect security tools without losing the evidence chain.",
+    description: "ELITZE connects approved security-tool and intelligence sources such as Nmap, Metasploit, Nuclei, John the Ripper, and Aircrack-ng through policy, scope, source attribution, and explicit result states.",
+    sectionTitle: "Integrations that remain accountable",
+    keywords: ["cybersecurity tools", "Nmap security testing", "Metasploit security testing", "Nuclei security testing"],
+    panels: [
+      { title: "Source-specific adapters", body: "Keep each tool’s request, response, version, timestamp, and source identity visible instead of flattening everything into a generic alert.", state: "Source linked" },
+      { title: "Authorization gate", body: "Sensitive security-tool actions require tenant scope, operator identity, policy, and approval before execution.", state: "Policy gated" },
+      { title: "Nmap and network context", body: "Use authorized Nmap observations to inform reachability while keeping untested paths unknown.", state: "Reachability bounded" },
+      { title: "Metasploit and exploit validation", body: "Treat exploit execution as a high-impact action with explicit authorization and a result that does not exceed returned evidence.", state: "High impact" },
+      { title: "Credential and wireless tools", body: "John the Ripper and Aircrack-ng workflows remain restricted to approved targets, declared purpose, and controlled evidence handling.", state: "Restricted" },
+      { title: "Unavailable means unavailable", body: "A disconnected integration is labeled not configured or unavailable; ELITZE does not manufacture tool output.", state: "Honest state" },
+    ],
+    links: [
+      { title: "Network security", href: "/network-security", description: "Connect network observations to asset and route context." },
+      { title: "Penetration testing", href: "/penetration-testing", description: "Build repeatable, authorized testing workflows." },
+      { title: "Platform integrations", href: "/integrations", description: "Review the broader ELITZE connection model." },
+    ],
+  },
+  "ai-agent-security": {
+    slug: "ai-agent-security",
+    eyebrow: "AI security / governed agent execution",
+    title: "AI agent security for the path from intent to action.",
+    description: "ELITZE helps security teams govern AI agents, agent identities, tools, APIs, MCP servers, and sensitive actions with policy enforcement, runtime observation, and evidence-backed remediation.",
+    sectionTitle: "Security controls for autonomous systems",
+    keywords: ["AI agent security", "agentic AI security", "AI agent governance", "AI runtime security"],
+    panels: [
+      { title: "Agent identity", body: "Tie a sensitive action to the human, agent, workload, tenant, and authorization path that produced it.", state: "Identity aware" },
+      { title: "Least privilege", body: "Grant only the tool, resource, scope, and duration required for the approved task instead of relying on broad standing credentials.", state: "Least privilege" },
+      { title: "Deterministic policy", body: "Keep security-critical authorization outside the model’s judgment and enforce it at the control point before execution.", state: "Control point" },
+      { title: "Runtime observation", body: "Record what the agent requested, which tool was invoked, which resource was reached, and what the source returned.", state: "Observed path" },
+      { title: "Prompt injection boundary", body: "Treat model and tool output as untrusted input. Prompt safety does not replace authorization, validation, and sandboxing.", state: "Untrusted input" },
+      { title: "Evidence-backed response", body: "Preserve action IDs, timestamps, source references, decisions, and remediation state for investigation and retesting.", state: "Auditable" },
+    ],
+    links: [
+      { title: "MCP security", href: "/mcp-security", description: "Secure the protocol boundary between agents, tools, and resources." },
+      { title: "Security operations", href: "/security-operations", description: "Bring agent activity into investigation and response workflows." },
+      { title: "Agentic SOC", href: "/agentic-soc", description: "Explore the public Agentic SOC operating model." },
+    ],
+  },
+  "mcp-security": {
+    slug: "mcp-security",
+    eyebrow: "MCP security / Model Context Protocol",
+    title: "MCP security for servers, tools, and data access.",
+    description: "ELITZE helps teams discover, authorize, observe, and retest Model Context Protocol connections so AI agents can use tools without creating invisible or over-privileged access paths.",
+    sectionTitle: "A security boundary around MCP",
+    keywords: ["MCP security", "MCP server security", "Model Context Protocol security", "MCP gateway security"],
+    panels: [
+      { title: "MCP inventory", body: "Track approved and observed MCP servers, connectors, tools, owners, and communication state so shadow connections are easier to identify.", state: "Discovery" },
+      { title: "Agent identity broker", body: "Keep the agent visible in the authorization path rather than treating delegated human consent as the complete identity story.", state: "Identity aware" },
+      { title: "Tool authorization", body: "Authorize specific tools and resources with tenant policy, least privilege, approval, and time-bounded access.", state: "Fine grained" },
+      { title: "Tool poisoning defense", body: "Treat tool definitions, prompts, resources, and responses as untrusted input requiring validation and explicit boundaries.", state: "Supply chain aware" },
+      { title: "Session audit", body: "Record which agent accessed which server, invoked which tool, on behalf of whom, and what the source returned.", state: "Traceable" },
+      { title: "Blocked is not breached", body: "A denied MCP action is preserved as control evidence, not mislabeled as proof that an attack succeeded.", state: "Truth bounded" },
+    ],
+    links: [
+      { title: "AI agent security", href: "/ai-agent-security", description: "Govern the larger agent identity and execution lifecycle." },
+      { title: "Web application security", href: "/web-application-security", description: "Connect MCP actions to API and application boundaries." },
+      { title: "Security integrations", href: "/security-integrations", description: "Connect approved tools and source systems." },
+    ],
+  },
+  "attack-surface-management": {
+    slug: "attack-surface-management",
+    eyebrow: "Attack surface / exposure management",
+    title: "Attack surface management that maps real relationships.",
+    description: "ELITZE helps security teams discover assets, identities, services, tools, and execution relationships so exposure management starts with observed context rather than a flat inventory.",
+    sectionTitle: "From asset discovery to exposure priority",
+    keywords: ["attack surface management", "asset discovery", "exposure management", "AI attack surface"],
+    panels: [
+      { title: "Asset discovery", body: "Bring together approved sources for identities, workloads, services, repositories, APIs, MCP servers, and sensitive resources.", state: "Source based" },
+      { title: "Relationship mapping", body: "Show how a user, agent, tool, service, and data resource are connected, while labeling inferred relationships separately from observed ones.", state: "Graph context" },
+      { title: "Shadow surface", body: "Use integration and runtime evidence to identify unmanaged agents, tools, and MCP servers that are outside the approved inventory.", state: "Visibility" },
+      { title: "Exposure priority", body: "Combine asset criticality, network exposure, data classification, exploit context, and evidence state without hiding missing inputs.", state: "Contextual" },
+      { title: "Owner and action", body: "Attach an owner, required action, due date, and source record to the exposure that needs attention.", state: "Operational" },
+      { title: "Retest changed paths", body: "Confirm whether remediation altered the actual reachable path instead of closing a ticket without verification.", state: "Verified change" },
+    ],
+    links: [
+      { title: "Vulnerability scanning", href: "/vulnerability-scanning", description: "Prioritize CVE and known-exploited intelligence with context." },
+      { title: "Network security", href: "/network-security", description: "Validate routes, segmentation, and reachability." },
+      { title: "AI agent security", href: "/ai-agent-security", description: "Map the growing agent and tool attack surface." },
+    ],
+  },
+  "security-operations": {
+    slug: "security-operations",
+    eyebrow: "Security operations / evidence-first response",
+    title: "Security operations for decisions you can prove.",
+    description: "ELITZE gives security operations teams a governed path from signal to decision, action, evidence, remediation, and retest across human and AI-driven workflows.",
+    sectionTitle: "A security operations loop that stays honest",
+    keywords: ["security operations platform", "security monitoring", "incident response", "threat intelligence"],
+    panels: [
+      { title: "Normalize the signal", body: "Keep source identity, observation time, event ID, and truth state attached to the signal that entered the workflow.", state: "Source linked" },
+      { title: "Prioritize with context", body: "Use identity, asset, exposure, vulnerability, and policy context without turning missing evidence into a confident score.", state: "Context aware" },
+      { title: "Govern the action", body: "Route sensitive response actions through authorization, approval, tenant boundaries, and least-privilege controls.", state: "Governed" },
+      { title: "Investigate with evidence", body: "Give analysts the records, relationships, decisions, and source references needed to explain what happened.", state: "Explainable" },
+      { title: "Remediate with ownership", body: "Connect the decision to a responsible owner and a concrete next step rather than producing an unowned alert queue.", state: "Actionable" },
+      { title: "Prove the outcome", body: "Retest the path and preserve the post-control state. A closed ticket is not automatically verified remediation.", state: "Retestable" },
+    ],
+    links: [
+      { title: "Threat detection", href: "/threat-detection", description: "Correlate observed signals without overstating the result." },
+      { title: "Agentic SOC", href: "/agentic-soc", description: "Explore governed AI-assisted security operations." },
+      { title: "Offensive security", href: "/offensive-security", description: "Validate detections and controls with authorized exercises." },
+    ],
+  },
+};

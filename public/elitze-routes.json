@@ -183,6 +183,46 @@
     {
       "path": "/how-to",
       "title": "Interactive How-to Guides"
+    },
+    {
+      "path": "/ai-agent-security",
+      "title": "AI Agent Security"
+    },
+    {
+      "path": "/attack-surface-management",
+      "title": "Attack Surface Management"
+    },
+    {
+      "path": "/mcp-security",
+      "title": "MCP Security"
+    },
+    {
+      "path": "/network-security",
+      "title": "Network Security"
+    },
+    {
+      "path": "/offensive-security",
+      "title": "Offensive Security"
+    },
+    {
+      "path": "/penetration-testing",
+      "title": "Penetration Testing"
+    },
+    {
+      "path": "/security-integrations",
+      "title": "Security Integrations"
+    },
+    {
+      "path": "/security-operations",
+      "title": "Security Operations"
+    },
+    {
+      "path": "/vulnerability-scanning",
+      "title": "Vulnerability Scanning"
+    },
+    {
+      "path": "/web-application-security",
+      "title": "Web Application Security"
     }
   ]
 }
