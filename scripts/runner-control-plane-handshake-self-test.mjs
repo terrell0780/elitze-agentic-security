@@ -11,7 +11,7 @@ const child = spawn(process.execPath, ["runner/server.mjs"], {
     ...process.env,
     PORT: String(port),
     ELITZE_RUNNER_HMAC_SECRET: secret,
-    ELITZE_CALLBACK_ORIGIN: "https://elitze.info",
+    ELITZE_CALLBACK_ORIGIN: "https://www.elitze.info",
     ELITZE_RUNNER_ALLOWED_HOSTS: "example.com",
     ELITZE_RUNNER_UPDATE_TEMPLATES: "false",
   },

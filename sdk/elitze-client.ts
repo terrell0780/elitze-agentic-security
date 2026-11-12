@@ -11,7 +11,7 @@
  *
  * Example:
  *   const elitze = new ElitzeClient({
- *     baseUrl: process.env.ELITZE_URL ?? "https://elitze.info",
+ *     baseUrl: process.env.ELITZE_URL ?? "https://www.elitze.info",
  *     apiKey: process.env.ELITZE_API_KEY,
  *   });
  *
@@ -25,7 +25,7 @@ export type ElitzeAgentRiskAction = "ALLOW" | "REVIEW" | "RESTRICT" | "BLOCK";
 export type ElitzeReoDecision = "APPROVE" | "REVIEW" | "QUEUE" | "BLOCK";
 
 export type ElitzeClientOptions = {
-  /** ELITZE deployment URL, for example https://elitze.info. */
+  /** ELITZE deployment URL, for example https://www.elitze.info. */
   baseUrl?: string;
   /** API credential for protected ELITZE control-plane endpoints. Server-side only. */
   apiKey?: string;

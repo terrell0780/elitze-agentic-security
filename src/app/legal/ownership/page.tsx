@@ -54,7 +54,7 @@ export default function OwnershipPage() {
 
         <div className="mt-8 rounded-[24px] border border-[var(--accent-border)] bg-[var(--accent-soft)] p-6">
           <div className="text-[9px] font-bold uppercase tracking-[.2em] text-[var(--accent)]">Canonical ELITZE identity</div>
-          <div className="mt-3 text-sm font-semibold">ELITZE Agentic Security · https://elitze.info · https://www.elitze.info</div>
+          <div className="mt-3 text-sm font-semibold">ELITZE Agentic Security · https://www.elitze.info · apex redirects to www</div>
           <div className="mt-2 text-xs leading-5 text-[var(--muted-strong)]">The detailed diligence register is maintained in the controlled legal documentation. It is not itself a transfer instrument or legal opinion.</div>
         </div>
 

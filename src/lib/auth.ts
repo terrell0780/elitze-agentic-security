@@ -11,7 +11,7 @@ const SESSION_IDLE_HOURS = 12;
 const SESSION_ROTATION_HOURS = 24;
 const PASSWORD_MIN = 12;
 const RATE_WINDOW_SECONDS = 15 * 60;
-const DUMMY_PASSWORD_HASH = "scrypt$16384$8$1$fixed-elitze-dummy-salt$1QW9Zfy7_xUt37q5OriffuvgMKnlAqlCu2b-M6LxnCBx82L5WdVeFJchv1_r9OBA1mc6CcPKXY03CwBE4qIdGw";
+const TIMING_SAFE_FALLBACK_HASH = "scrypt$16384$8$1$fixed-elitze-timing-salt$1QW9Zfy7_xUt37q5OriffuvgMKnlAqlCu2b-M6LxnCBx82L5WdVeFJchv1_r9OBA1mc6CcPKXY03CwBE4qIdGw";
 
 type ScryptResult = Buffer<ArrayBuffer>;
 
@@ -446,7 +446,7 @@ export async function registerUser(
 export async function authenticate(email: string, password: string) {
   const normalized = normalizeEmail(email);
   if (isReservedNonDeliverableEmail(normalized)) {
-    await verifyPassword(password, DUMMY_PASSWORD_HASH);
+    await verifyPassword(password, TIMING_SAFE_FALLBACK_HASH);
     return null;
   }
   const db = getPgPool();
@@ -476,11 +476,11 @@ export async function authenticate(email: string, password: string) {
     | undefined;
 
   if (!row) {
-    await verifyPassword(password, DUMMY_PASSWORD_HASH);
+    await verifyPassword(password, TIMING_SAFE_FALLBACK_HASH);
     return null;
   }
   if (row.lockedUntil && new Date(row.lockedUntil).getTime() > Date.now()) {
-    await verifyPassword(password, DUMMY_PASSWORD_HASH);
+    await verifyPassword(password, TIMING_SAFE_FALLBACK_HASH);
     return null;
   }
 

@@ -9,7 +9,9 @@ const tracked = execFileSync("git", ["ls-files"], { cwd: root, encoding: "utf8" 
   .split(/\r?\n/)
   .filter(Boolean);
 
-const textFiles = tracked.filter((file) => /\.(ts|tsx|js|mjs|json|md|yml|yaml|sql|css|txt)$/.test(file));
+const textFiles = tracked.filter((file) =>
+  fs.existsSync(path.join(root, file)) && /\.(ts|tsx|js|mjs|json|md|yml|yaml|sql|css|txt)$/.test(file),
+);
 const staleDomain = ["elitze", "ca"].join(".");
 const staleCa = textFiles.filter((file) => read(file).toLowerCase().includes(staleDomain));
 
@@ -20,8 +22,8 @@ assert.equal(fs.existsSync(path.join(root, "src/lib/database-verify.ts")), true)
 
 const env = read(".env.example");
 assert.match(env, /^NEXT_PUBLIC_SITE_URL=https:\/\/(?:www\.)?elitze\.info$/m);
-assert.match(env, /^ELITZE_SAML_SP_ENTITY_ID=https:\/\/elitze\.info\/api\/auth\/saml\/metadata$/m);
-assert.match(env, /^ELITZE_SAML_ACS_URL=https:\/\/elitze\.info\/api\/auth\/saml\/callback$/m);
+assert.match(env, /^ELITZE_SAML_SP_ENTITY_ID=https:\/\/www\.elitze\.info\/api\/auth\/saml\/metadata$/m);
+assert.match(env, /^ELITZE_SAML_ACS_URL=https:\/\/www\.elitze\.info\/api\/auth\/saml\/callback$/m);
 assert.match(env, /^ELITZE_WEBAUTHN_RP_ID=elitze\.info$/m);
 assert.match(env, /^ELITZE_CONTACT_EMAIL=tsh_cook@hotmail\.com$/m);
 assert.doesNotMatch(env, /^(?:CANONICAL_DOMAIN|ALLOWED_ORIGINS)=/m);
@@ -114,4 +116,3 @@ assert.match(read("src/db/index.ts"), /configureRuntimeRole\(databasePool, proce
 assert.match(read("src/lib/database.ts"), /configureRuntimeRole\(pool, process\.env\.ELITZE_DB_RUNTIME_ROLE\)/);
 assert.match(read("src/lib/production-readiness.ts"), /tenantDatabaseIsolation/, "tenant database isolation must be included in release readiness");
 assert.match(read("src/lib/database-isolation-readiness.ts"), /BYPASSRLS/, "runtime roles that bypass RLS must block readiness");
-
