@@ -1,0 +1,7 @@
+Contact: mailto:security@elitze.info
+Expires: 2027-11-04T00:00:00Z
+Encryption: https://elitze.info/.well-known/security.txt
+Preferred-Languages: en
+Canonical: https://www.elitze.info/.well-known/security.txt
+Policy: https://terrell0780.github.io/elitze-landing/trust.html
+Acknowledgments: https://terrell0780.github.io/elitze-landing/trust.html

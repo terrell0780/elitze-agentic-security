@@ -3,6 +3,7 @@ import { productionConfig } from "@/config/production";
 
 const routes = [
   "/",
+  "/sales",
   "/platform",
   "/security",
   "/compliance",

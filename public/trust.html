@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trust &amp; security — Elitze Agentic Security</title>
+<meta name="description" content="How Elitze Agentic Security handles data, tenancy, subprocessors, retention and disclosure. No certification claims that are not held.">
+<style>
+  :root{--deep:#04121c;--navy2:#061c2c;--teal:#0e7490;--aqua:#22d3ee;--foam:#a5f3fc;--sand:#fcd34d;
+        --ink:#e8f6ff;--muted:#8fb3c7;--line:#12384f;--max:960px}
+  *{box-sizing:border-box}
+  body{margin:0;color:var(--ink);font:16px/1.65 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    background:radial-gradient(900px 520px at 12% -10%,#0b3a51 0%,transparent 60%),linear-gradient(180deg,var(--deep),var(--navy2) 45%,var(--deep))}
+  a{color:var(--foam)}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 22px}
+  header{border-bottom:1px solid var(--line);background:rgba(4,18,28,.85);position:sticky;top:0;backdrop-filter:blur(10px)}
+  .bar{display:flex;align-items:center;justify-content:space-between;height:64px}
+  .logo{font-weight:800;font-size:18px}.logo i{font-style:normal;color:var(--aqua)}
+  nav{display:flex;gap:18px;font-size:14.5px}nav a{color:var(--muted)}
+  h1{font-size:clamp(30px,4.4vw,44px);line-height:1.1;margin:52px 0 12px;letter-spacing:-.5px}
+  h2{font-size:22px;margin:38px 0 10px}
+  p,li{color:#a9c7d6}
+  table{width:100%;border-collapse:collapse;margin-top:12px;font-size:14.5px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);color:#a9c7d6}
+  th{color:var(--ink);font-weight:650}
+  .note{background:rgba(7,36,56,.6);border:1px dashed #1c5c79;border-radius:14px;padding:18px 20px;margin-top:24px}
+  .note b{color:var(--sand)}
+  code{font:13px ui-monospace,Menlo,monospace;color:var(--sand);background:#07283a;padding:1px 5px;border-radius:5px}
+  footer{margin:52px 0 60px;color:#6f93a8;font-size:13px;border-top:1px solid var(--line);padding-top:18px}
+  ul{padding-left:20px}
+</style>
+</head>
+<body>
+<header><div class="wrap bar"><div class="logo">ELITZE<i>.</i></div>
+<nav aria-label="Main"><a href="./">Home</a><a href="./#faq">FAQ</a><a href="mailto:terrell0780@gmail.com">Contact</a></nav></div></header>
+
+<main class="wrap">
+  <h1>Trust &amp; security</h1>
+  <p>What we run, where data lives, what we log, what we refuse to claim. This page is written for the person doing vendor review, not for marketing.</p>
+
+  <h2>What is held today</h2>
+  <table>
+    <thead><tr><th>Item</th><th>Status</th></tr></thead>
+    <tbody>
+      <tr><td>SOC 2 / ISO 27001</td><td><b>Not held.</b> No claim is made anywhere on this site.</td></tr>
+      <tr><td>Penetration test summary</td><td>Not published yet</td></tr>
+      <tr><td>Vulnerability disclosure policy</td><td>Active — report to <a href="mailto:security@elitze.info">security@elitze.info</a>, acknowledge in 48h, 90-day coordinated disclosure</td></tr>
+      <tr><td>Status page / uptime history</td><td>In progress</td></tr>
+      <tr><td>Subprocessor list</td><td>Published below</td></tr>
+      <tr><td>Data processing agreement</td><td>Available on request</td></tr>
+      <tr><td>Security whitepaper</td><td>Available on request</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Subprocessors</h2>
+  <table>
+    <thead><tr><th>Vendor</th><th>Purpose</th><th>Data touched</th><th>Region</th></tr></thead>
+    <tbody>
+      <tr><td>Vercel</td><td>Application hosting</td><td>Request metadata, session traffic</td><td>Global edge</td></tr>
+      <tr><td>Neon (Lakebase Postgres)</td><td>Primary database</td><td>Tenant records, evidence rows</td><td>aws-us-east-2</td></tr>
+      <tr><td>GitHub</td><td>Source control, identity</td><td>Code, commit metadata</td><td>US</td></tr>
+      <tr><td>Email provider (SMTP)</td><td>Transactional mail</td><td>Address, message content</td><td>US</td></tr>
+    </tbody>
+  </table>
+
+  <h2>Tenancy and isolation</h2>
+  <ul>
+    <li>Tenant-scoped records with row-level isolation enforced in the database, not only in the UI.</li>
+    <li>Every authorization decision, execution and retest is written with its tenant binding.</li>
+    <li>Connector credentials are scoped to the minimum the connector needs; read-only first.</li>
+  </ul>
+
+  <h2>What we log — and what we never log</h2>
+  <ul>
+    <li><b>Log:</b> decision, actor identity, tool and capability, outcome, timestamp, retest result.</li>
+    <li><b>Never log:</b> raw secrets, bearer tokens, full request bodies containing credentials. Sensitive keys are redacted at the boundary.</li>
+    <li>Missing evidence is recorded as <code>UNKNOWN</code>, <code>UNMEASURABLE</code> or <code>INSUFFICIENT_REACH</code> — it is never replaced with a success state.</li>
+  </ul>
+
+  <h2>Retention and deletion</h2>
+  <p>Retention is agreed in the engagement scope before any data is ingested. At the end of an engagement you can request deletion, and you receive written confirmation. Evidence exports are yours to keep.</p>
+
+  <h2>Disclosure</h2>
+  <p>Report vulnerabilities to <a href="mailto:security@elitze.info">security@elitze.info</a>. We acknowledge within 48 hours, triage within 5 business days, and coordinate disclosure for 90 days. Good-faith research within a written scope is authorised; nothing outside that scope is.</p>
+
+  <div class="note">
+    <b>Why this page is short:</b> a trust page that lists certifications a company does not hold is worse
+    than no page at all. When SOC 2 Type I is issued, it will appear here with the auditor's name and the
+    period it covers. Until then the answer is “not held”, and that is the honest answer.
+  </div>
+
+  <footer>
+    © 2026 TrueElitze Digital · Terrell Hall · Victoria, BC, Canada ·
+    <a href="mailto:terrell0780@gmail.com">terrell0780@gmail.com</a> · <a href="./">elitze-landing</a>
+  </footer>
+</main>
+</body>
+</html>
