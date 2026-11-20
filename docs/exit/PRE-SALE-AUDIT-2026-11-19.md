@@ -122,7 +122,7 @@ Gartner (as of the search): CrowdStrike **4.8★**, Palo Alto **4.5★**. Yahoo 
 | Identity at hyperscaler scale (Entra, CrowdStrike Identity) | Inventory + policy, not a directory |
 | 24/7 MDR (Falcon Complete, Unit 42, Wayfinder) | No MDR |
 | SOC 2, ISO 27001, FedRAMP tracks | **None held** (trust copy already says this — keep it) |
-| Charlotte AI / Purple AI / Security Copilot / Prisma AIRS | Sara is a scoped assistant, not those |
+| Charlotte AI / Purple AI / Microsoft security assistants / Prisma AIRS | Sara is a scoped assistant, not those |
 
 **Parity is not the exit.** A CrowdStrike-sized buyer will not buy Elitze to replace Falcon. They will buy it — if it works — to fill the **agent / MCP tool-call** gap their consoles still treat as log noise.
 
