@@ -133,7 +133,7 @@ Gartner (as of the search): CrowdStrike **4.8★**, Palo Alto **4.5★**. Yahoo 
 - Prisma AIRS: AI Gateway, Agent Identity, Agentic Endpoint, MCP webinar.
 - CrowdStrike: AI Detection & Response, Agent Security, Supply Chain (coding agents).
 - SentinelOne: Purple AI + “governed closed-loop response” (3 Aug 2026).
-- Microsoft: Security Copilot agents + Entra Agent ID.
+- Microsoft: Microsoft security assistants agents + Entra Agent ID.
 
 **Where Elitze can look and run better — if the 503 dies**
 
