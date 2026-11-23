@@ -105,8 +105,8 @@ Both typecheck clean. They require commit and push to take effect.
 - Verify a live authorized security-runner signed handshake.
 - Verify configured email and external provider workflows with authorized credentials.
 - Verify backup/restore and customer-pilot evidence where required.
-- Restore or redirect the search-indexed `/sales` URL (currently HTTP 404 to crawlers).
-- Add validation, rate limiting, or explicit demo-labelling to the unauthenticated stateless evaluator endpoints (`/api/security/gateway/decision`, `/api/security/enterprise`, `/api/secops/exposure-priority`, `/api/reo/*`).
+- ~~Restore or redirect the search-indexed `/sales` URL (currently HTTP 404 to crawlers).~~ `/sales` returns 200 and is listed in the sitemap (verified 2026-11-23).
+- ~~Add validation, rate limiting, or explicit demo-labelling to the unauthenticated stateless evaluator endpoints (`/api/security/gateway/decision`, `/api/security/enterprise`, `/api/secops/exposure-priority`, `/api/reo/*`).~~ Those endpoints now validate the request body and return `evaluator: "STATELESS_EVALUATOR"` / `authoritative: false`; the paid-quota `/api/reo/intelligence/*` proxies require an authenticated session. Distributed rate limiting still depends on a trusted edge (`ELITZE_TRUST_PROXY`).
 
 The database catalog was previously observed with zero RLS-enabled tenant tables and no tenant policies; therefore full database-enforced tenant isolation is **not verified**.
 

@@ -6,16 +6,19 @@ import {
   identityRiskScore,
   responseGate,
 } from "@/lib/elitze-secure/enterprise-controls";
+import { STATELESS_EVALUATOR, readEvaluatorBody } from "@/lib/security/stateless-evaluator";
 
 export async function POST(request: NextRequest) {
-  const body = await request.json();
+  const body = readEvaluatorBody(await request.json().catch(() => null));
+  if (!body) return Response.json({ error: "invalid_request_body" }, { status: 400 });
+  const input = body as Record<string, any>;
   const result: Record<string, unknown> = {};
 
-  if (body.exposure) result.exposureScore = calculateExposureScore(body.exposure);
-  if (Array.isArray(body.events)) result.detection = correlateEvents(body.events, body.ruleId || "unassigned");
-  if (body.aiAction) result.aiDecision = enforceAIAction(body.aiAction);
-  if (body.identity) result.identityRisk = identityRiskScore(body.identity);
-  if (body.response) result.response = responseGate(body.response, body.approved === true);
+  if (input.exposure) result.exposureScore = calculateExposureScore(input.exposure);
+  if (Array.isArray(input.events)) result.detection = correlateEvents(input.events, input.ruleId || "unassigned");
+  if (input.aiAction) result.aiDecision = enforceAIAction(input.aiAction);
+  if (input.identity) result.identityRisk = identityRiskScore(input.identity);
+  if (input.response) result.response = responseGate(input.response, input.approved === true);
 
-  return Response.json(result);
+  return Response.json({ ...result, ...STATELESS_EVALUATOR });
 }

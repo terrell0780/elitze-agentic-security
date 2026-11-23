@@ -1,9 +1,15 @@
 import { NextRequest } from "next/server";
+import { getCurrentUser } from "@/lib/auth";
 
 export const dynamic="force-dynamic";
 export const runtime="nodejs";
 
 export async function GET(request: NextRequest) {
+  // This route spends paid third-party quota with a server-held credential, so it
+  // requires an authenticated ELITZE session rather than serving anonymous callers.
+  const user = await getCurrentUser().catch(() => null);
+  if (!user) return Response.json({ok:false,error:"authentication_required"},{status:401});
+
   const key=process.env.SIMILARWEB_API_KEY;
   if (!key) return Response.json({ok:false,status:"UNAVAILABLE",reason:"SIMILARWEB_API_KEY is not configured."},{status:503});
   const domain=request.nextUrl.searchParams.get("domain");

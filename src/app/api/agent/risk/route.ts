@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { evaluateAgentRisk } from "@/lib/elitze-secure/agent-risk";
+import { STATELESS_EVALUATOR } from "@/lib/security/stateless-evaluator";
 
 const schema = z.object({
   autonomy: z.number().finite(),
@@ -26,6 +27,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       ok: true,
       result: evaluateAgentRisk(parsed.data),
+      ...STATELESS_EVALUATOR,
     });
   } catch (error) {
     console.error("ELITZE agent risk evaluation failed", error);

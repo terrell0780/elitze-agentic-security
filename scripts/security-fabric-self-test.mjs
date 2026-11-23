@@ -66,8 +66,10 @@ assert.equal((consolePage.match(/<header\b/g) ?? []).length,1);
 assert.equal((consolePage.match(/import Link from "next\/link";/g) ?? []).length,1);
 assert.match(consolePage,/href="\/console\/analyst"/);
 assert.equal((envExample.match(/^NEXT_PUBLIC_SITE_URL=/gm) ?? []).length,1);
-assert.match(envExample,/ELITZE_SAML_SP_ENTITY_ID=https:\/\/elitze\.info/);
-assert.match(envExample,/ELITZE_SAML_ACS_URL=https:\/\/elitze\.info/);
+// The canonical production origin is https://www.elitze.info (src/config/production.ts),
+// so the SAML SP entity ID and ACS URL default to the canonical host.
+assert.match(envExample,/ELITZE_SAML_SP_ENTITY_ID=https:\/\/(?:www\.)?elitze\.info/);
+assert.match(envExample,/ELITZE_SAML_ACS_URL=https:\/\/(?:www\.)?elitze\.info/);
 assert.match(envExample,/ELITZE_WEBAUTHN_RP_ID=elitze\.info/);
 assert.match(envExample,/ELITZE_WEBAUTHN_ORIGIN=https:\/\/elitze\.info,https:\/\/www\.elitze\.info/);
 assert.match(envExample,/ELITZE_ALLOWED_ORIGINS=https:\/\/elitze\.info,https:\/\/www\.elitze\.info/);

@@ -131,11 +131,13 @@ ELITZE may normalize security evidence from business platforms when an explicitl
 
 Every observation must capture source, timestamp, tenant/system, actor, object, authorization context, and evidence freshness where available. Collecting an observation does not establish that a platform is secure or compliant.
 
+SAP is one supported business-platform source class: SAP S/4HANA security configuration, SAP BTP identity and authorization, Cloud Identity Services, roles and privileged access, and security/audit logs can be normalized only when an explicitly authorized SAP feed has been reviewed and tested. A catalog entry or adapter does not mean a customer SAP connection exists.
+
 ## Adversarial validation evidence
 
 Adversarial testing evidence may be ingested only from explicitly authorized sources and within the approved scope. The evidence contract should capture authorization, target scope, test identifier, execution time, observed attack path, validated exploitability, affected asset/identity, impact evidence, remediation reference, retest result, safety controls, emergency-stop state, and operator/approval context.
 
-Active testing must remain behind explicit authorization, scope controls, impact limits, and audit logging.
+Active testing must remain behind explicit authorization, scope controls, impact limits, and audit logging. Pentera is one supported adversarial exposure validation source class (external attack-surface validation, internal attack-path validation, validated exploitability, remediation and retest state); naming the integration does not imply a live Pentera connection or partnership.
 
 ## Controlled integration boundary
 
